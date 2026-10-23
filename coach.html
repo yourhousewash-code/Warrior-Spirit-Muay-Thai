@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Coach Uploads | Warrior Spirit</title>
+<title>Coach Login | Warrior Spirit</title>
 <link rel="icon" href="img/logo.webp" type="image/webp">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap">
 <style>
@@ -34,19 +34,20 @@ input{font:18px var(--body);padding:14px;background:var(--ink);border:1px solid 
 
   <section id="gate">
     <div style="display:grid;gap:16px">
-      <h1>Coach uploads</h1>
+      <h1>Coach login</h1>
       <p>For Warrior Spirit coaches only.</p>
       <form id="login" style="display:grid;gap:14px">
-        <label for="pin">Access code<input id="pin" type="password" autocomplete="current-password" required></label>
-        <p class="err" id="err" hidden>That code isn’t right. Try again or ask Steve.</p>
-        <button class="btn" type="submit">Enter</button>
+        <label for="user">Username<input id="user" autocomplete="username" autocapitalize="none" required></label>
+        <label for="pin">Password<input id="pin" type="password" autocomplete="current-password" required></label>
+        <p class="err" id="err" hidden>That username or password isn’t right. Try again or ask Steve.</p>
+        <button class="btn" type="submit">Log in</button>
       </form>
     </div>
   </section>
 
   <section id="area" hidden>
     <div style="display:grid;gap:16px">
-      <h1>Send photos &amp; videos</h1>
+      <h1 id="hi">Send photos &amp; videos</h1>
       <p>Training, fight nights, the team, the gym. Everything you send goes straight into the Warrior Spirit photo folder for the website and socials.</p>
       <a class="btn" id="go" href="#" target="_blank" rel="noopener" aria-disabled="true">Upload photos &amp; videos</a>
       <p class="err" id="notset" hidden>The upload link hasn’t been connected yet.</p>
@@ -56,7 +57,7 @@ input{font:18px var(--body);padding:14px;background:var(--ink);border:1px solid 
         <div><b>3.</b> Wait for the tick before closing the page.</div>
         <div>Only send photos of children if their parents are happy for them to be used.</div>
       </div>
-      <button class="out" type="button" id="logout">Sign out</button>
+      <button class="out" type="button" id="logout">Log out</button>
     </div>
   </section>
 </main>
@@ -64,9 +65,9 @@ input{font:18px var(--body);padding:14px;background:var(--ink);border:1px solid 
 (function(){
   /* Set these two values:
      UPLOAD_URL: the OneDrive "Request files" link
-     PIN_HASH: SHA-256 of the access code (current code: warriors) */
+     PIN_HASH: SHA-256 of "username:password" (username lower case) */
   var UPLOAD_URL='';
-  var PIN_HASH='45e8f3d947cf74cea9a04e7172c768a99b3c43862b48bc2f4dad348c63a3a409';
+  var PIN_HASH='afc1efc3493927c2531a18076cb9fad6e36d89893198685a8fd2807fb6e5536d';
   var KEY='ws-coach-ok';
   function show(on){document.getElementById('gate').hidden=on;document.getElementById('area').hidden=!on;
     var go=document.getElementById('go');
@@ -74,7 +75,7 @@ input{font:18px var(--body);padding:14px;background:var(--ink);border:1px solid 
   function hash(t){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
   try{if(sessionStorage.getItem(KEY)===PIN_HASH)show(true)}catch(e){}
   document.getElementById('login').addEventListener('submit',function(e){e.preventDefault();
-    var v=document.getElementById('pin').value.trim().toLowerCase();
+    var v=document.getElementById('user').value.trim().toLowerCase()+':'+document.getElementById('pin').value;
     hash(v).then(function(h){if(h===PIN_HASH){try{sessionStorage.setItem(KEY,h)}catch(e){}document.getElementById('err').hidden=true;show(true)}else{document.getElementById('err').hidden=false;document.getElementById('pin').select()}})});
   document.getElementById('logout').addEventListener('click',function(){try{sessionStorage.removeItem(KEY)}catch(e){}location.reload()});
 })();
