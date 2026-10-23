@@ -41,9 +41,6 @@
       <h2><i>1</i>Choose your coach</h2>
       <div class="coachpick" id="coaches">
         <button type="button" data-coach="" aria-pressed="true"><div class="any">Any</div><span>Any coach</span></button>
-        <button type="button" data-coach="jay" aria-pressed="false"><img src="photos/jay-portrait.webp" alt=""><span>Jay</span></button>
-        <button type="button" data-coach="aaron" aria-pressed="false"><img src="photos/aaron.webp" alt=""><span>Aaron</span></button>
-        <button type="button" data-coach="kian" aria-pressed="false"><img src="photos/kian.webp" alt=""><span>Kian</span></button>
       </div>
     </section>
 
@@ -134,7 +131,8 @@ const money = v => '£' + (Number.isInteger(v) ? v : v.toFixed(2));
 const q = new URLSearchParams(location.search);
 const legacyType = q.get('type') === 'friend';
 const state = {
-  coach: ['jay', 'aaron', 'kian'].includes(q.get('coach')) ? q.get('coach') : '',
+  coach: /^[a-z]{2,20}$/.test(q.get('coach') || '') ? q.get('coach') : '',
+  wantStart: Number(q.get('start')) || 0,
   type: legacyType ? 'fundamentals' : (q.get('type') || 'fundamentals'),
   format: legacyType ? 'double' : (['one', 'double', 'group'].includes(q.get('format')) ? q.get('format') : 'one'),
   mins: [60, 90, 120].includes(Number(q.get('mins'))) ? Number(q.get('mins')) : 60,
@@ -142,7 +140,7 @@ const state = {
 };
 
 /* price helpers across the chosen coach (or every coach) */
-const coachesInPlay = () => state.coach ? [state.coach] : ['jay', 'aaron', 'kian'];
+const coachesInPlay = () => state.coach ? [state.coach] : state.meta.coaches.map(c => c.id);
 const priceFor = (c, f, m) => { const v = state.meta.prices[c]?.[f]?.[m]; return typeof v === 'number' && v > 0 ? v : null; };
 function cheapest(f, m) {
   const vals = coachesInPlay().flatMap(c => m ? [priceFor(c, f, m)] : state.meta.durations.map(d => priceFor(c, f, d))).filter(v => v);
@@ -159,6 +157,9 @@ async function loadMeta() {
   try { state.meta = await api(`/api/pt?action=open&mins=${state.mins}&format=${state.format}`); }
   catch (err) { $('#slots').innerHTML = `<p class="err">${esc(err.message)}</p>`; return; }
   if (!state.meta.types[state.type]) state.type = 'fundamentals';
+  if (state.coach && !state.meta.coaches.some(c => c.id === state.coach)) state.coach = '';
+  $('#coaches').innerHTML = `<button type="button" data-coach="" aria-pressed="true"><div class="any">Any</div><span>Any coach</span></button>` +
+    state.meta.coaches.map(c => `<button type="button" data-coach="${esc(c.id)}" aria-pressed="false">${c.photo ? `<img src="${esc(c.photo)}" alt="">` : `<div class="any">${esc(c.first[0])}</div>`}<span>${esc(c.first)}</span></button>`).join('');
   state.starts = state.meta.starts;
   drawAll();
   try { state.user = (await api('/api/auth?action=me')).user; } catch {}
@@ -167,7 +168,9 @@ async function loadStarts() {
   $('#slots').innerHTML = '<p class="empty">Loading times…</p>';
   try { const r = await api(`/api/pt?action=open&mins=${state.mins}&format=${state.format}${state.coach ? '&coach=' + state.coach : ''}`); state.meta.prices = r.prices; state.starts = r.starts; }
   catch (err) { $('#slots').innerHTML = `<p class="err">${esc(err.message)}</p>`; return; }
+  if (state.wantStart) { const hit = state.starts.find(s => s.start === state.wantStart && (!state.coach || s.coach === state.coach)); if (hit) state.pick = `${hit.coach}|${hit.start}`; state.wantStart = 0; }
   drawSlots(); drawConfirm();
+  if (state.pick && !$('#confirmStep').hidden && !state.scrolled) { state.scrolled = true; $('#confirmStep').scrollIntoView({ block: 'start' }); }
 }
 function drawAll() { drawCoaches(); drawTypes(); drawFormats(); drawDurations(); drawSlots(); drawConfirm(); }
 
@@ -269,7 +272,7 @@ $('#bookForm').addEventListener('submit', async e => {
   }
 });
 
-loadMeta().then(() => { if (state.coach) { fixChoice(); drawFormats(); drawDurations(); loadStarts(); } });
+loadMeta().then(() => { if (state.coach || state.wantStart) { fixChoice(); drawFormats(); drawDurations(); loadStarts(); } });
 </script>
 <script>
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});

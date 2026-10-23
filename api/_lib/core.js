@@ -9,12 +9,35 @@ export const SITE = process.env.SITE_URL || 'https://warrior-spirit-muay-thai.ve
 export const GYM = 'Warrior Spirit Muay Thai & Kickboxing';
 export const ADDRESS = 'Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB';
 
-/* Coaches. Starting password for all three is "Muaythai"; each coach can change it after logging in. */
-export const COACHES = {
-  jay:   { id: 'jay',   name: 'Jay Shepherd', first: 'Jay',   admin: true,  envEmail: 'COACH_EMAIL_JAY' },
-  aaron: { id: 'aaron', name: 'Aaron Bekir',  first: 'Aaron', admin: false, envEmail: 'COACH_EMAIL_AARON' },
-  kian:  { id: 'kian',  name: 'Kian Hughes',  first: 'Kian',  admin: false, envEmail: 'COACH_EMAIL_KIAN' },
+/* Coaches. The original three start with the password "Muaythai"; Jay can add more coaches from the coach area.
+   COACHES is filled from the database at the start of every request (loadCoaches). */
+export const BASE_COACHES = {
+  jay:   { id: 'jay',   name: 'Jay Shepherd', first: 'Jay',   admin: true,  active: true, base: true, photo: 'photos/jay-portrait.webp', envEmail: 'COACH_EMAIL_JAY' },
+  aaron: { id: 'aaron', name: 'Aaron Bekir',  first: 'Aaron', admin: false, active: true, base: true, photo: 'photos/aaron.webp', envEmail: 'COACH_EMAIL_AARON' },
+  kian:  { id: 'kian',  name: 'Kian Hughes',  first: 'Kian',  admin: false, active: true, base: true, photo: 'photos/kian.webp', envEmail: 'COACH_EMAIL_KIAN' },
 };
+export const COACHES = {};
+export async function loadCoaches() {
+  const saved = await redis.get('coaches');
+  const list = Array.isArray(saved) && saved.length ? saved : Object.values(BASE_COACHES);
+  for (const k of Object.keys(COACHES)) delete COACHES[k];
+  for (const c of list) {
+    const base = BASE_COACHES[c.id];
+    COACHES[c.id] = { ...(base || {}), ...c, admin: c.id === 'jay', active: c.active !== false };
+  }
+  /* A new coach shows on the website and booking page once Jay has published their profile. */
+  for (const c of Object.values(COACHES)) {
+    const live = await redis.get(`profile:${c.id}:live`);
+    c.listed = c.active && (!!c.base || !!live);
+    c.photoUrl = live?.photo ? `/api/profile?action=photo&coach=${c.id}&v=${encodeURIComponent(live.photo.split('/').pop())}` : (c.photo || '');
+  }
+  return COACHES;
+}
+export async function saveCoaches() {
+  await redis.set('coaches', Object.values(COACHES).map(({ listed, ...c }) => c));
+}
+export const activeIds = () => Object.keys(COACHES).filter(k => COACHES[k].active);
+export const publicIds = () => Object.keys(COACHES).filter(k => COACHES[k].listed);
 export const START_PASSWORD = 'Muaythai';
 
 /* What the session focuses on. */
@@ -108,7 +131,7 @@ function appendCookie(res, c) {
 }
 export function coachSession(req) {
   const d = unsign(cookies(req).ws_coach);
-  return d && COACHES[d.id] ? COACHES[d.id] : null;
+  return d && COACHES[d.id] && COACHES[d.id].active ? COACHES[d.id] : null;
 }
 export function userSession(req) {
   const d = unsign(cookies(req).ws_user);
@@ -148,7 +171,7 @@ export function fmt(ms) {
 }
 export async function coachEmail(cid) {
   const saved = await redis.get(`coach:${cid}:email`);
-  return saved || process.env[COACHES[cid].envEmail] || '';
+  return saved || (COACHES[cid]?.envEmail ? process.env[COACHES[cid].envEmail] : '') || '';
 }
 
 /* ---------- email ---------- */

@@ -1,11 +1,12 @@
 import { Readable } from 'node:stream';
 import { handleUpload } from '@vercel/blob/client';
 import { list, get, del } from '@vercel/blob';
-import { coachSession, send, bad, clean, COACHES, setupProblem } from './_lib/core.js';
+import { coachSession, send, bad, clean, COACHES, loadCoaches, activeIds, publicIds, setupProblem } from './_lib/core.js';
 
 export default async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
+  await loadCoaches();
   const c = coachSession(req);
   if (!c) return bad(res, 'Please log in.', 401);
   const action = clean(req.query.action, 20);

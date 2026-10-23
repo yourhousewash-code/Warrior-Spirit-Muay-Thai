@@ -1,5 +1,5 @@
 import {
-  redis, COACHES, TYPES, FORMATS, DURATIONS, DEFAULT_PRICES, getPrices, priceOf, minsLabel,
+  redis, COACHES, loadCoaches, activeIds, publicIds, TYPES, FORMATS, DURATIONS, DEFAULT_PRICES, getPrices, priceOf, minsLabel,
   send, bad, setupProblem, body, clean, id, fmt, mail, coachEmail, coachSession, userSession, SITE, ADDRESS,
 } from './_lib/core.js';
 import {
@@ -7,11 +7,11 @@ import {
   realSlots, generated, parseVirtual, getClasses, getCover, classInstances, freeIntervals, startsIn,
 } from './_lib/avail.js';
 
-const IDS = Object.keys(COACHES);
 
 export default async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
+  await loadCoaches();
   const action = clean(req.query.action, 40);
   const b = body(req);
   try {
@@ -21,13 +21,13 @@ export default async function handler(req, res) {
         /* Start times customers can book for a given length, with each coach's prices. */
         const from = Date.now() + 2 * 3600e3, to = Date.now() + 42 * DAY;
         const pick = clean(req.query.coach, 20);
-        const which = COACHES[pick] ? [pick] : IDS;
+        const which = COACHES[pick]?.listed ? [pick] : publicIds();
         const mins = DURATIONS.includes(Number(req.query.mins)) ? Number(req.query.mins) : 60;
         const format = FORMATS[req.query.format] ? req.query.format : 'one';
         const real = await realSlots('all', from - DAY, to + DAY);
         const classes = await classInstances(from - DAY, to + DAY);
         const prices = {};
-        for (const c of IDS) prices[c] = await getPrices(c);
+        for (const c of publicIds()) prices[c] = await getPrices(c);
         const starts = [];
         for (const c of which) {
           if (!priceOf(prices[c], format, mins)) continue;
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
         starts.sort((a2, b2) => a2.start - b2.start || a2.coach.localeCompare(b2.coach));
         return send(res, 200, {
           starts, mins, format, prices,
-          coaches: Object.values(COACHES).map(c => ({ id: c.id, name: c.name, first: c.first })),
+          coaches: publicIds().map(k => coachPub(k)),
           types: Object.fromEntries(Object.entries(TYPES).filter(([, v]) => !v.hidden)), formats: FORMATS, durations: DURATIONS,
         });
       }
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
         const real = await realSlots('all', from - DAY, to + DAY);
         const classes = await classInstances(from - DAY, to + DAY);
         const items = [], offs = {};
-        for (const cid of which === 'all' ? IDS : [which]) {
+        for (const cid of which === 'all' ? activeIds() : [which]) {
           const g = await generated(cid, from, to, real, classes);
           offs[cid] = g.off.filter(o => o.to >= firstDate && o.from <= addDays(firstDate, days));
           for (const s of real.filter(s => s.coach === cid && s.start >= from && s.start <= to && s.status !== 'cancelled')) {
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
           items.push(...g.blocked.map(s => ({ ...pub(s), status: 'blocked', source: 'weekly' })));
         }
         const allOff = {};
-        for (const cid of IDS) allOff[cid] = offs[cid] || (await getOff(cid));
+        for (const cid of activeIds()) allOff[cid] = offs[cid] || (await getOff(cid));
         for (const k of classes.filter(k => k.start >= from && k.start <= to)) {
           items.push({ id: k.id, type: 'class', status: k.cancelled ? 'cancelled' : 'class', name: k.name, coach: k.coach, coachName: COACHES[k.coach]?.name || k.coach,
             usual: k.usual, cover: k.cover, classId: k.classId, date: k.date, start: k.start, mins: k.mins, when: fmt(k.start),
@@ -277,7 +277,7 @@ export default async function handler(req, res) {
         const mins = Number(b.mins), start = Number(b.start);
         if (!TYPES[type] || TYPES[type].hidden) return bad(res, 'Choose what you want to work on.');
         if (!FORMATS[format]) return bad(res, 'Choose 1-to-1, double or group.');
-        if (!COACHES[coach] || !DURATIONS.includes(mins) || !Number.isFinite(start)) return bad(res, 'Pick a time.');
+        if (!COACHES[coach]?.listed || !DURATIONS.includes(mins) || !Number.isFinite(start)) return bad(res, 'Pick a time.');
         const price = priceOf(await getPrices(coach), format, mins);
         if (!price) return bad(res, `${COACHES[coach].first} doesn’t offer that session. Pick another option.`);
         if (start < Date.now() + 2 * 3600e3) return bad(res, 'That time is too soon to book online. Message the gym instead.');
@@ -351,6 +351,10 @@ async function dropSlot(s) {
 }
 const describe = bk => [TYPES[bk.type]?.name || bk.type, bk.format ? FORMATS[bk.format]?.name : '', bk.price ? `£${bk.price}` : ''].filter(Boolean).join(' · ');
 function bookingInfo(bk) { return { id: bk.id, name: bk.name, email: bk.email, mobile: bk.mobile, type: describe(bk), format: bk.format || '', price: bk.price ? Number(bk.price) : null, notes: bk.notes || '' }; }
+function coachPub(k) {
+  const c = COACHES[k];
+  return { id: k, name: c.name, first: c.first, photo: c.photoUrl || c.photo || '' };
+}
 function pub(s) { return { id: s.id, coach: s.coach, coachName: COACHES[s.coach]?.name || s.coach, start: s.start, mins: s.mins, when: fmt(s.start) }; }
 function view(bk) {
   const start = Number(bk.start);

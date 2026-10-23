@@ -1,31 +1,11 @@
 import { Readable } from 'node:stream';
 import { get } from '@vercel/blob';
-import { redis, COACHES, send, bad, setupProblem, body, clean, coachSession, coachEmail, mail, SITE } from './_lib/core.js';
+import { redis, COACHES, loadCoaches, activeIds, publicIds, send, bad, setupProblem, body, clean, coachSession, coachEmail, mail, SITE } from './_lib/core.js';
+import { liveProfile, profilePhotoUrl } from './_lib/profiles.js';
 
-/* What each coach's profile says on the website today. Coaches edit from here; Jay approves Aaron's and Kian's changes. */
-const DEFAULTS = {
-  jay: {
-    role: 'Owner & head coach',
-    intro: 'James “Jay” Shepherd has been teaching kickboxing for over 18 years and holds a 3rd Dan black belt. He coaches people of every age, from seven-year-olds at their first class to adults getting fit and fighters getting ready for the ring.',
-    background: 'He leads the fight team and runs fight camps, building each camp backwards from the fight date. His fighters have competed at amateur and semi-pro level, and he has taken kids to around a hundred interclubs, so he knows how to bring a nervous first-timer through their first bout as well as how to sharpen an experienced fighter.\n\nIn the gym he\'s the one holding the pads, watching your feet and telling you the one thing that will make the next round better. On fight night he\'s in the corner.',
-    chips: 'Qualified kickboxing coach\nDBS checked\nFirst-aid trained\nHead coach\nFight team\nFight camps\nKids & juniors\nCornering\n1-to-1 PT',
-    ask: 'your first interclub, fight camp, or getting your child started.',
-    instagram: '',
-  },
-  aaron: {
-    role: 'Trainer',
-    intro: 'Aaron trains members on the pads and in the classes, and makes sure every round counts.',
-    background: '', chips: 'Trainer\nPads\nClasses', ask: '', instagram: 'aaronbekir_',
-  },
-  kian: {
-    role: 'Trainer',
-    intro: 'Kian coaches in the classes and on the pads, helping members tighten up their technique.',
-    background: '', chips: 'Trainer\nFought at MAX Muay Thai, Thailand\nTechnique\nClasses', ask: '', instagram: 'kianh_pt',
-  },
-};
 const FIELDS = { role: 40, intro: 500, background: 2000, chips: 400, ask: 160, instagram: 40, photo: 300 };
 
-async function live(c) { return (await redis.get(`profile:${c}:live`)) || { ...DEFAULTS[c], photo: '' }; }
+const live = liveProfile;
 async function draft(c) { return await redis.get(`profile:${c}:draft`); }
 function cleanProfile(c, inp) {
   const out = {};
@@ -36,20 +16,21 @@ function cleanProfile(c, inp) {
   if (out.photo && !out.photo.startsWith(`profiles/${c}/`)) out.photo = '';
   return out;
 }
-const photoUrl = (c, p) => p ? `/api/profile?action=photo&coach=${c}&v=${encodeURIComponent(p.split('/').pop())}` : '';
+const photoUrl = profilePhotoUrl;
 
 export default async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
+  await loadCoaches();
   const action = clean(req.query.action, 30);
   const b = body(req);
   try {
     /* ----- public: approved profiles for the website ----- */
     if (action === 'public') {
       const out = {};
-      for (const c of Object.keys(COACHES)) {
+      for (const c of activeIds()) {
         const p = await redis.get(`profile:${c}:live`);
-        if (p) out[c] = { ...p, photo: photoUrl(c, p.photo) };
+        if (p) out[c] = { ...p, photo: photoUrl(c, p.photo), name: COACHES[c].name, first: COACHES[c].first, base: !!COACHES[c].base };
       }
       res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60');
       return send(res, 200, { profiles: out });
