@@ -3,7 +3,7 @@
 import { redis, TZ } from './core.js';
 
 export const DAY = 864e5;
-export const LENGTHS = [30, 45, 60, 75, 90];
+export const LENGTHS = [30, 45, 60, 75, 90, 120];
 
 function tzOffset(ms) {
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
