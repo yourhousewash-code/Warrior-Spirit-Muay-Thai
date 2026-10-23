@@ -92,8 +92,12 @@ export async function generated(c, from, to, real, classes) {
   const [weekly, off, skip] = await Promise.all([getWeekly(c), getOff(c), getSkip(c)]);
   const open = [], blocked = [];
   if (!weekly.length) return { open, blocked, off };
+  /* A coach is never free while teaching. Other coaches' classes also block PT, unless the coach has said
+     they're happy to be available during classes for that block of hours (overClass). */
+  const ks = (classes || await classInstances(from - DAY, to + DAY)).filter(k => !k.cancelled);
   const busy = (real || await realSlots(c, from - DAY, to + DAY)).filter(s => s.coach === c && s.status !== 'cancelled')
-    .concat((classes || await classInstances(from - DAY, to + DAY)).filter(k => k.coach === c && !k.cancelled));
+    .concat(ks.filter(k => k.coach === c));
+  const busyAll = busy.concat(ks.filter(k => k.coach !== c));
   for (let date = londonDate(from), end = londonDate(to); date <= end; date = addDays(date, 1)) {
     if (isOff(off, date)) continue;
     const wd = dow(date);
@@ -103,7 +107,7 @@ export async function generated(c, from, to, real, classes) {
       const stop = londonMs(date, r.end);
       let t = londonMs(date, r.start);
       while (t + len <= stop) {
-        const hit = busy.filter(x => overlaps(x, { start: t, mins }));
+        const hit = (r.overClass ? busy : busyAll).filter(x => overlaps(x, { start: t, mins }));
         if (hit.length) { const e = Math.max(...hit.map(x => x.start + x.mins * 6e4)); t = Math.ceil(e / 9e5) * 9e5; continue; }
         if (t >= from && t <= to) {
           const s = { id: `w:${c}:${t}:${mins}`, coach: c, start: t, mins, source: 'weekly', status: 'open' };

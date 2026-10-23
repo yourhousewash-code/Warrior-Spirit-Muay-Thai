@@ -116,6 +116,7 @@ export default async function handler(req, res) {
         const who = target(c, b.coach);
         const list = (Array.isArray(b.weekly) ? b.weekly : []).slice(0, 40).map(r => ({
           day: Number(r.day), start: String(r.start), end: String(r.end), mins: Number(r.mins) || 60,
+          ...(typeof r.overClass === 'boolean' ? { overClass: r.overClass } : {}),
         }));
         for (const r of list) {
           if (!(r.day >= 0 && r.day <= 6) || !validTime(r.start) || !validTime(r.end)) return bad(res, 'Check the times. Each row needs a start and an end.');
@@ -123,6 +124,14 @@ export default async function handler(req, res) {
           if (!LENGTHS.includes(r.mins)) return bad(res, 'Choose a session length.');
         }
         list.sort((a, b2) => a.day - b2.day || a.start.localeCompare(b2.start));
+        /* Hours that overlap someone else's class need a yes/no from the coach. */
+        const timetable = await getClasses(), clashes = [];
+        list.forEach((r, i) => {
+          const hit = timetable.filter(k => k.day === r.day && k.coach !== who && k.start < r.end && r.start < k.end);
+          if (!hit.length) { delete r.overClass; return; }
+          if (typeof r.overClass !== 'boolean') clashes.push({ index: i, day: r.day, start: r.start, end: r.end, classes: hit.map(k => ({ name: k.name, start: k.start, end: k.end, coach: COACHES[k.coach]?.first || k.coach })) });
+        });
+        if (clashes.length) return send(res, 200, { needConfirm: true, weekly: list, clashes });
         await redis.set(`coach:${who}:weekly`, list);
         return send(res, 200, { weekly: list });
       }
@@ -165,7 +174,13 @@ export default async function handler(req, res) {
         } else starts = (Array.isArray(b.starts) ? b.starts : []).map(Number).filter(Number.isFinite).slice(0, 60);
         if (!starts.length) return bad(res, 'Choose a date and time.');
         const now = Date.now(), weekly = (await generated(who, now, now + 121 * DAY)).open;
-        const teaching = (await classInstances(now, now + 121 * DAY)).filter(k => k.coach === who && !k.cancelled);
+        const ks = (await classInstances(now, now + 121 * DAY)).filter(k => !k.cancelled);
+        const teaching = ks.filter(k => k.coach === who), others = ks.filter(k => k.coach !== who);
+        const hits = start => others.filter(x => x.start < start + mins * 6e4 && x.start + x.mins * 6e4 > start);
+        if (!b.force) {
+          const list = [...new Set(starts.flatMap(st => hits(st).map(k => `${fmt(k.start).replace(' at ', ', ')}: ${k.name}`)))];
+          if (list.length) return send(res, 200, { needConfirm: true, clashes: list });
+        }
         let added = 0, skipped = 0;
         for (const start of starts) {
           if (start < now || start > now + 120 * DAY) { skipped++; continue; }

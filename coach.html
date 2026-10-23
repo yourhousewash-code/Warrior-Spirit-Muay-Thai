@@ -60,6 +60,12 @@
 .range .x{background:none;border:1px solid var(--line);color:var(--soft);width:42px;height:44px;cursor:pointer;font-size:18px}
 .addr{background:none;border:1px dashed var(--line);color:var(--soft);padding:10px;font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;justify-self:start}
 .closed{color:var(--muted);padding-top:10px}
+.cnote{font-size:14px;color:var(--muted)}.cnote.yes{color:var(--ok)}
+.cnote button{background:none;border:0;color:var(--soft);text-decoration:underline;cursor:pointer;font:inherit;padding:0 0 0 6px}
+.detail.clash{border-left-color:var(--tbc)}
+.cq{display:grid;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
+.cq.done{opacity:.6}
+.cq [aria-pressed="true"]{outline:2px solid var(--bone)}
 .crow{display:grid;grid-template-columns:130px 1fr 135px 135px 110px 42px;gap:8px;align-items:center}
 .crow .x{background:none;border:1px solid var(--line);color:var(--soft);width:42px;height:44px;cursor:pointer;font-size:18px}
 @media (max-width:760px){.crow{grid-template-columns:1fr 1fr;padding:10px 0;border-top:1px solid var(--line)}.crow [data-cf=name]{grid-column:1/-1;order:-1}}
@@ -198,8 +204,9 @@
       <form class="panel" id="weeklyForm">
         <h2>Regular weekly hours</h2>
         <p class="muted">The times you’re normally free for PT. These repeat every week, and customers can book them up to 6 weeks ahead. Holidays below block them out automatically.</p>
-        <p class="note" id="wdefault" hidden>These are the recommended starting hours: weekdays 6–10pm and Saturday 8am–12pm. Change them any time and press Save. Times you’re teaching a class are left out automatically.</p>
+        <p class="note" id="wdefault" hidden>These are the recommended starting hours: weekdays 6–10pm and Saturday 8am–12pm. Change them any time and press Save. While any class is on you’re shown as not available, unless you choose to be.</p>
         <div class="wk" id="weekly"></div>
+        <div class="detail clash" id="wclash" hidden></div>
         <p class="err" id="werr" hidden></p><p class="ok" id="wok" hidden></p>
         <button class="btn" type="submit" style="justify-self:start">Save weekly hours</button>
       </form>
@@ -239,6 +246,7 @@
             <label for="ab">Back-to-back<select id="ab"><option value="1">1 slot</option><option value="2">2 in a row</option><option value="3">3 in a row</option><option value="4">4 in a row</option></select></label>
           </div>
           <label for="aw">Repeat<select id="aw"><option value="1">Just this date</option><option value="2">Weekly for 2 weeks</option><option value="4">Weekly for 4 weeks</option></select></label>
+          <div class="detail clash" id="aclash" hidden></div>
           <p class="err" id="aerr" hidden></p><p class="ok" id="aok" hidden></p>
           <button class="btn" type="submit" style="justify-self:start">Add times</button>
           <div class="list" id="extraList"></div>
@@ -553,21 +561,47 @@ function drawWeekly() {
     const rs = weekly.map((r, i) => ({ ...r, i })).filter(r => r.day === d);
     return `<div class="wkrow"><b>${DAYS[d]}</b><div class="ranges">${rs.length ? rs.map(r => `<div class="range" data-i="${r.i}">
         <input type="time" step="900" data-f="start" value="${r.start}" aria-label="${DAYS[d]} start"><span>to</span><input type="time" step="900" data-f="end" value="${r.end}" aria-label="${DAYS[d]} end">
-        ${lenSel(r.mins)}<button type="button" class="x" data-del="${r.i}" aria-label="Remove">×</button></div>`).join('') : '<div class="closed">Not available</div>'}
+        ${lenSel(r.mins)}<button type="button" class="x" data-del="${r.i}" aria-label="Remove">×</button></div>${r.overClass === true ? `<div class="cnote yes">✓ Available for PT during classes in these hours <button type="button" data-oc="${r.i}">Change</button></div>` : r.overClass === false ? `<div class="cnote">Not bookable while classes are on <button type="button" data-oc="${r.i}">Change</button></div>` : ''}`).join('') : '<div class="closed">Not available</div>'}
         <button type="button" class="addr" data-addday="${d}">+ Add hours</button></div></div>`;
   }).join('');
 }
-$('#weekly').addEventListener('input', e => { const row = e.target.closest('[data-i]'); if (!row) return; const r = weekly[row.dataset.i]; const f = e.target.dataset.f; r[f] = f === 'mins' ? Number(e.target.value) : e.target.value; });
+$('#weekly').addEventListener('input', e => { const row = e.target.closest('[data-i]'); if (!row) return; const r = weekly[row.dataset.i]; const f = e.target.dataset.f; r[f] = f === 'mins' ? Number(e.target.value) : e.target.value; if (f !== 'mins') delete r.overClass; });
 $('#weekly').addEventListener('click', e => {
   const a = e.target.closest('[data-addday]'), x = e.target.closest('[data-del]');
   if (a) { const d = Number(a.dataset.addday); const last = weekly.filter(r => r.day === d).pop(); weekly.push(last ? { day: d, start: last.end, end: last.end < '21:00' ? addHours(last.end, 2) : '22:00', mins: last.mins } : { day: d, start: '17:00', end: '20:00', mins: 60 }); drawWeekly(); }
   if (x) { weekly.splice(Number(x.dataset.del), 1); drawWeekly(); }
+  const oc = e.target.closest('[data-oc]'); if (oc) { delete weekly[Number(oc.dataset.oc)].overClass; $('#weeklyForm').requestSubmit(); }
 });
+const hm = t => { const [h, m] = t.split(':').map(Number); return `${h % 12 || 12}${m ? ':' + String(m).padStart(2, '0') : ''}${h < 12 ? 'am' : 'pm'}`; };
+/* Ask before marking hours available while a class is on. */
+function askClashes(box, items, onDone) {
+  const answers = {};
+  box.hidden = false;
+  box.innerHTML = `<b class="t">Clash with a class</b><p>These hours overlap a class. Do you still want to be bookable for PT while the class is on?</p>` + items.map((c, n) => `<div class="cq" data-q="${n}">
+      <div><strong>${esc(c.title)}</strong><div class="muted">${esc(c.detail)}</div></div>
+      <div class="row"><button type="button" class="btn small" data-ans="yes">Yes, mark available</button><button type="button" class="btn small ghost" data-ans="no">No, not during the class</button></div></div>`).join('');
+  box.onclick = e => {
+    const b = e.target.closest('[data-ans]'); if (!b) return;
+    const q = b.closest('[data-q]'), n = Number(q.dataset.q);
+    answers[n] = b.dataset.ans === 'yes';
+    q.querySelectorAll('[data-ans]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    q.classList.add('done');
+    if (Object.keys(answers).length === items.length) { box.hidden = true; box.onclick = null; onDone(answers); }
+  };
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 const addHours = (t, h) => { const [hh, mm] = t.split(':').map(Number); return `${String(Math.min(hh + h, 23)).padStart(2, '0')}:${String(mm).padStart(2, '0')}`; };
 $('#weeklyForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#werr'), ''); show($('#wok'), '');
-  try { weekly = (await api('/api/pt?action=weekly', { coach: avWho(), weekly })).weekly; drawWeekly(); $('#wdefault').hidden = true; show($('#wok'), 'Saved. These times now repeat every week.'); }
-  catch (err) { show($('#werr'), err.message); }
+  try {
+    const r = await api('/api/pt?action=weekly', { coach: avWho(), weekly });
+    weekly = r.weekly; drawWeekly();
+    if (r.needConfirm) {
+      return askClashes($('#wclash'), r.clashes.map(c => ({ title: `${DAYS[c.day]} ${hm(c.start)}–${hm(c.end)}`, detail: 'Clashes with ' + c.classes.map(k => `${k.name} ${hm(k.start)}–${hm(k.end)} (${k.coach})`).join(', ') })),
+        ans => { r.clashes.forEach((c, n) => { weekly[c.index].overClass = ans[n]; }); $('#weeklyForm').requestSubmit(); });
+    }
+    $('#wdefault').hidden = true; show($('#wok'), 'Saved. These times now repeat every week.');
+  } catch (err) { show($('#werr'), err.message); }
 });
 function drawOff(list) {
   $('#offList').innerHTML = list.length ? list.map(o => `<div class="item" style="border-left-color:var(--hol)"><div><b>${esc(nice(o.from))}${o.to !== o.from ? ' – ' + esc(nice(o.to)) : ''}</b><div class="meta">${esc(o.note || 'Day off')}</div></div>
@@ -587,14 +621,16 @@ $('#offList').addEventListener('click', async e => {
   const b = e.target.closest('[data-offdel]'); if (!b) return;
   try { const r = await api('/api/pt?action=off-remove', { coach: avWho(), id: b.dataset.offdel }); drawOff(r.off.filter(o => o.to >= ukDate(Date.now()))); } catch (err) { alertBox(err.message); }
 });
-$('#addForm').addEventListener('submit', async e => {
-  e.preventDefault(); show($('#aerr'), ''); show($('#aok'), '');
+async function addExtra(force) {
+  show($('#aerr'), ''); show($('#aok'), '');
   try {
-    const r = await api('/api/pt?action=add', { coach: avWho(), mins: Number($('#am').value), date: $('#ad').value, time: $('#at').value, weeks: Number($('#aw').value), count: Number($('#ab').value) });
-    show($('#aok'), `${r.added} time${r.added === 1 ? '' : 's'} added.` + (r.skipped ? ` ${r.skipped} skipped because they clash with times you already have, or are in the past.` : ''));
+    const r = await api('/api/pt?action=add', { coach: avWho(), force, mins: Number($('#am').value), date: $('#ad').value, time: $('#at').value, weeks: Number($('#aw').value), count: Number($('#ab').value) });
+    if (r.needConfirm) return askClashes($('#aclash'), [{ title: 'These times overlap a class', detail: r.clashes.join(' · ') }], ans => { if (ans[0]) addExtra(true); else show($('#aerr'), 'Nothing added. Pick a time outside class times.'); });
+    show($('#aok'), `${r.added} time${r.added === 1 ? '' : 's'} added.` + (r.skipped ? ` ${r.skipped} skipped because they clash with times you already have, a class you teach, or are in the past.` : ''));
     loadExtra();
   } catch (err) { show($('#aerr'), err.message); }
-});
+}
+$('#addForm').addEventListener('submit', e => { e.preventDefault(); addExtra(false); });
 async function loadExtra() {
   try {
     const { slots } = await api(`/api/pt?action=schedule&coach=${avWho()}`);
