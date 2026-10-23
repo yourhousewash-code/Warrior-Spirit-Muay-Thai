@@ -42,6 +42,20 @@ body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 .rating{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 10px;text-decoration:none;color:var(--soft);font-size:15px}
 .rating .stars{color:#f5c542;letter-spacing:2px;font-size:18px}
 .rating b{font:900 24px var(--display);color:var(--bone)}
+
+.coachcards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.coachcard{background:var(--ink-2);display:grid;grid-template-rows:auto 1fr;border-top:4px solid var(--red);min-width:0}
+.coachcard .photo{aspect-ratio:4/4}
+.ccb{padding:20px 20px 22px;display:grid;gap:10px;align-content:start;grid-template-rows:auto auto auto auto auto auto 1fr}
+.ccb h3{font-size:34px}
+.ccb>p{color:var(--soft);font-size:16px}
+.ccb .ticks{font-size:15px}
+.ccfoot{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;align-self:end;padding-top:12px;border-top:1px solid var(--line)}
+.ccfoot .btn{padding:13px 16px;font-size:14px}
+.clink{font:700 14px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.clink:hover{color:var(--bone)}
+@media (max-width:980px){.coachcards{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.coachcards{grid-template-columns:1fr}}
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SportsActivityLocation", "name": "Warrior Spirit Muay Thai & Kickboxing", "alternateName": ["Warrior Spirit Muay Thai", "Hoddesdon Muay Thai & K1 Kickboxing", "WMT Muay Thai"], "telephone": "+447904032142", "address": {"@type": "PostalAddress", "streetAddress": "Next Gen Fitness, Mount Grace Road", "addressLocality": "Potters Bar", "postalCode": "EN6 1RB", "addressCountry": "GB"}, "areaServed": ["Potters Bar", "Barnet", "Cuffley", "Brookmans Park", "Hatfield", "Cheshunt", "Enfield", "Hoddesdon", "Borehamwood", "St Albans", "Welwyn Garden City"], "sameAs": ["https://www.instagram.com/warriorspirit_muaythai/", "https://www.tiktok.com/@warriorspirit32"], "priceRange": "\u00a3\u00a3"}</script>
 <title>Warrior Spirit Muay Thai</title>
@@ -810,7 +824,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band" id="pt-sessions" aria-labelledby="pts-h">
     <div class="wrap">
-      <div class="stack head"><span class="kick">Choose your session</span><h2 id="pts-h">Five ways to train 1-to-1</h2><p class="lede">From your very first pad session to the last hard round before a fight. Every session is booked outside class times, around you.</p>
+      <div class="stack head"><span class="kick">Choose your session</span><h2 id="pts-h">Five ways to train 1-to-1</h2><p class="lede">From your very first pad session to the last hard round before a fight. Every session is booked outside class times, around you. <a href="#pt-coaches">Choose your coach</a>.</p>
         <p class="legend2"><span class="meter" aria-label="Intensity 1 out of 5"><i class="on"></i><i></i><i></i><i></i><i></i></span> <span>Intensity, from gentle to fight pace</span></p></div>
       <div class="ptcards">
         <article class="ptcard" id="pt-fund">
@@ -866,6 +880,49 @@ a.tagc{text-decoration:none}
           <a class="btn" href="#contact" data-enq="PT: Train with a friend">Book a friend session</a>
         </div>
       </article>
+    </div>
+  </section>
+  <section class="band flush" id="pt-coaches" aria-labelledby="ptc-h">
+    <div class="wrap">
+      <div class="stack head"><span class="kick">Choose your coach</span><h2 id="ptc-h">Train 1-to-1 with</h2><p class="lede">Every coach runs PT sessions outside class times. Pick the person, or just tell us your goal and we'll match you.</p></div>
+      <div class="coachcards">
+        <article class="coachcard">
+          <div class="photo"><img src="photos/pads-1.webp" alt="Jay Shepherd" loading="lazy" style="object-position:50% 35%"></div>
+          <div class="ccb">
+            <span class="tagc">Owner &amp; head coach</span>
+            <h3>Jay Shepherd</h3>
+            <p>18+ years teaching, 3rd Dan black belt. The coach for anyone who wants it done properly, from first session to fight night.</p>
+            <div class="best"><b>Offers</b></div>
+            <ul class="ticks"><li>Fundamentals for complete beginners</li><li>Technique &amp; Skills, K1 and Muay Thai</li><li>Fight Camp for fighters with a date</li><li>Kids and junior 1-to-1s</li></ul>
+            <div class="pchips"><span>DBS checked</span><span>First-aid trained</span></div>
+            <div class="ccfoot"><a class="btn" href="#contact" data-enq="PT with Jay">Book a session with Jay</a><a class="clink" href="#jay">About Jay →</a></div>
+          </div>
+        </article>
+        <article class="coachcard">
+          <div class="photo"><img src="photos/aaron.webp" alt="Aaron Bekir" loading="lazy" style="object-position:50% 25%"></div>
+          <div class="ccb">
+            <span class="tagc">Trainer</span>
+            <h3>Aaron Bekir</h3>
+            <p>A fighter himself, Aaron brings fight-night intensity to every round on the pads.</p>
+            <div class="best"><b>Offers</b></div>
+            <ul class="ticks"><li>Fitness Pads for a hard, sweaty hour</li><li>Technique &amp; Skills for members levelling up</li><li>Fight Camp pad work and sparring</li></ul>
+            <div class="pchips"><span>Fighter</span></div>
+            <div class="ccfoot"><a class="btn" href="#contact" data-enq="PT with Aaron">Book a session with Aaron</a><a class="clink" href="#aaron">About Aaron →</a></div>
+          </div>
+        </article>
+        <article class="coachcard">
+          <div class="photo"><img src="photos/kian.webp" alt="Kian Hughes" loading="lazy" style="object-position:50% 15%"></div>
+          <div class="ccb">
+            <span class="tagc">Trainer</span>
+            <h3>Kian Hughes</h3>
+            <p>Kian has fought at MAX Muay Thai in Thailand and coaches with the same energy he fights with.</p>
+            <div class="best"><b>Offers</b></div>
+            <ul class="ticks"><li>Fitness Pads</li><li>Technique &amp; Skills</li><li>Fight Camp preparation</li></ul>
+            <div class="pchips"><span>Fought in Thailand</span></div>
+            <div class="ccfoot"><a class="btn" href="#contact" data-enq="PT with Kian">Book a session with Kian</a><a class="clink" href="#kian">About Kian →</a></div>
+          </div>
+        </article>
+        </div>
     </div>
   </section>
   <section class="band flush" aria-label="Benefits of personal training">
@@ -1072,7 +1129,7 @@ a.tagc{text-decoration:none}
         <div class="cstats"><div><b>18+</b><span>Years teaching</span></div><div><b>3rd Dan</b><span>Kickboxing black belt</span></div><div><b>~100</b><span>Kids interclubs</span></div></div>
         <div class="pchips"><span>Qualified kickboxing coach</span><span>DBS checked</span><span>First-aid trained</span><span>Head coach</span><span>Fight team</span><span>Fight camps</span><span>Kids &amp; juniors</span><span>Cornering</span><span>1-to-1 PT</span></div>
         <p class="ask"><b>Ask Jay about</b> your first interclub, fight camp, or getting your child started.</p>
-        <div class="cta"><a class="btn" href="#contact" data-enq="First class">Train with Jay</a></div>
+        <div class="cta"><a class="btn" href="#contact" data-enq="PT with Jay">Book a PT session with Jay</a><a class="btn ghost" href="#contact" data-enq="First class">Train in Jay’s classes</a></div>
       </div>
     </div>
   </section>
@@ -1096,7 +1153,7 @@ a.tagc{text-decoration:none}
         <p class="ptext"><span class="tbc">His background: how long he has trained, fights or titles, and which classes he takes</span></p>
         <div class="pchips"><span>Trainer</span><span>Pads</span><span>Classes</span></div>
         <p class="ask"><b>Ask Aaron about</b> <span class="tbc">what he loves teaching</span>.</p>
-        <div class="cta"><a class="igbtn" href="https://www.instagram.com/aaronbekir_/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@aaronbekir_</span></a><a class="btn" href="#contact" data-enq="First class">Train with Aaron</a></div>
+        <div class="cta"><a class="igbtn" href="https://www.instagram.com/aaronbekir_/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@aaronbekir_</span></a><a class="btn" href="#contact" data-enq="PT with Aaron">Book a PT session with Aaron</a></div>
       </div>
     </div>
   </section>
@@ -1111,7 +1168,7 @@ a.tagc{text-decoration:none}
         <p class="ptext"><span class="tbc">His background: how long he has trained, fights or titles, and which classes he takes</span></p>
         <div class="pchips"><span>Trainer</span><span>Fought at MAX Muay Thai, Thailand</span><span>Technique</span><span>Classes</span></div>
         <p class="ask"><b>Ask Kian about</b> <span class="tbc">what he loves teaching</span>.</p>
-        <div class="cta"><a class="igbtn" href="https://www.instagram.com/kianh_pt/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@kianh_pt</span></a><a class="btn" href="#contact" data-enq="First class">Train with Kian</a></div>
+        <div class="cta"><a class="igbtn" href="https://www.instagram.com/kianh_pt/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@kianh_pt</span></a><a class="btn" href="#contact" data-enq="PT with Kian">Book a PT session with Kian</a></div>
       </div>
     </div>
   </section>
@@ -1882,7 +1939,7 @@ a.tagc{text-decoration:none}
       </div>
       <form id="enquiry" novalidate>
         <h3>Send us a message</h3>
-        <label class="full" for="enq">What's it about?<select id="enq"><option>First class</option><option>Kids class</option><option>Personal training</option><optgroup label="Personal training sessions"><option>PT: Fundamentals</option><option>PT: Fitness Pads</option><option>PT: Technique &amp; Skills</option><option>PT: Fight Camp</option><option>PT: Train with a friend</option></optgroup><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
+        <label class="full" for="enq">What's it about?<select id="enq"><option>First class</option><option>Kids class</option><option>Personal training</option><optgroup label="Personal training sessions"><option>PT: Fundamentals</option><option>PT: Fitness Pads</option><option>PT: Technique &amp; Skills</option><option>PT: Fight Camp</option><option>PT: Train with a friend</option><option>PT with Jay</option><option>PT with Aaron</option><option>PT with Kian</option></optgroup><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
         <label for="name">Name<input id="name" autocomplete="name" required></label>
         <label for="phone">Mobile<input id="phone" type="tel" autocomplete="tel"></label>
         <label for="email">Email<input id="email" type="email" autocomplete="email"></label>
