@@ -106,6 +106,15 @@ export function send(res, status, data) {
   res.json(data);
 }
 export function bad(res, msg, status = 400) { send(res, status, { error: msg }); }
+
+/* Tells the site owner exactly what's missing in Vercel instead of a vague error. */
+export function setupProblem() {
+  const missing = [];
+  if (!(process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL)) missing.push('the Upstash Redis database (Vercel → Storage)');
+  const s = process.env.SESSION_SECRET;
+  if (!s || s.length < 16) missing.push('the SESSION_SECRET setting (Vercel → Settings → Environment Variables)');
+  return missing.length ? `The booking system isn’t switched on yet. Missing: ${missing.join(' and ')}. Add it, then redeploy.` : null;
+}
 export function body(req) {
   if (req.body && typeof req.body === 'object') return req.body;
   try { return JSON.parse(req.body || '{}'); } catch { return {}; }

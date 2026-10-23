@@ -123,7 +123,7 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '
 let me = null;
 
 async function init() {
-  try { me = (await api('/api/auth?action=coach-me')).coach; } catch { me = null; }
+  try { me = (await api('/api/auth?action=coach-me')).coach; } catch (err) { me = null; show($('#lerr'), err.message); }
   $('#loginView').hidden = !!me; $('#dash').hidden = !me; $('#logout').hidden = !me;
   if (!me) return;
   $('#hello').textContent = `Hi ${me.first}`;
@@ -270,6 +270,9 @@ $('#pwForm').addEventListener('submit', async e => {
 });
 
 init();
+</script>
+<script>
+document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});
 </script>
 </body>
 </html>

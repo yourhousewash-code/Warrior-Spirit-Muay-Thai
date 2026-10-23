@@ -85,3 +85,7 @@ textarea{min-height:80px;resize:vertical}
 .empty{padding:18px;border:1px dashed var(--line);color:var(--muted);text-align:center}
 .summary{display:grid;gap:4px;padding:16px;background:var(--ink-3);border-left:4px solid var(--red)}
 .summary b{font:900 26px/1 var(--display);text-transform:uppercase}
+
+.pw{position:relative;display:block}
+.pw input{padding-right:78px}
+.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--soft);font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:8px}

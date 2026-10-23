@@ -205,5 +205,8 @@ $('#bookForm').addEventListener('submit', async e => {
 
 load();
 </script>
+<script>
+document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});
+</script>
 </body>
 </html>

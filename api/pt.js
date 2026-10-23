@@ -1,5 +1,5 @@
 import {
-  redis, COACHES, TYPES, send, bad, body, clean, id, fmt, mail, coachEmail,
+  redis, COACHES, TYPES, send, bad, setupProblem, body, clean, id, fmt, mail, coachEmail,
   coachSession, userSession, SITE, ADDRESS,
 } from './_lib/core.js';
 
@@ -7,6 +7,8 @@ const DAY = 864e5;
 const MINS = [30, 45, 60, 75, 90];
 
 export default async function handler(req, res) {
+  const problem = setupProblem();
+  if (problem) return bad(res, problem, 503);
   const action = clean(req.query.action, 40);
   const b = body(req);
   try {

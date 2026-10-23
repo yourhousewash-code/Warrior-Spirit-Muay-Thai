@@ -1,11 +1,13 @@
 import crypto from 'node:crypto';
 import {
-  redis, COACHES, send, bad, body, clean, validEmail, rateLimit,
+  redis, COACHES, send, bad, setupProblem, body, clean, validEmail, rateLimit,
   hashPassword, checkPassword, checkCoachPassword, setSession, clearSession,
   coachSession, userSession, coachEmail, mail, SITE,
 } from './_lib/core.js';
 
 export default async function handler(req, res) {
+  const problem = setupProblem();
+  if (problem) return bad(res, problem, 503);
   const action = clean(req.query.action, 40);
   const b = body(req);
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0] || 'x';
