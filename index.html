@@ -1,0 +1,1945 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="img/logo.webp" type="image/webp">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+</style>
+<title>Warrior Spirit Muay Thai</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Warrior Spirit Muay Thai & Kickboxing gym. Beginners, pads, sparring, kids classes, personal training and a fight team.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: photo-led fight poster. Full-bleed real gym photos, roundel red/navy, 1180px content column */
+:root{
+  --ink:#0b0c10; --ink-2:#14161d; --red:#e3141e; --navy:#1d3a8f; --bone:#f3f0ea;
+  --muted:#a3a8b6; --soft:#cfd2da; --line:#262a35; --tbc:#f5c542; --ok:#7be3a6;
+  --display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
+  --cond:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Barlow",system-ui,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(80px + env(safe-area-inset-top,0px))}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--ink);color:var(--bone);font:17px/1.6 var(--body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--ink)}
+a{color:inherit}
+img,video{display:block;max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band{padding-block:clamp(64px,9vw,112px)}
+.flush{padding-top:0}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;line-height:.9;margin:0;text-wrap:balance}
+h2{font-size:clamp(44px,7.5vw,88px);font-weight:900}
+h3{font-size:30px;font-weight:900}
+p{margin:0;max-width:62ch}
+.kick{font:700 14px/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--red);display:inline-flex;align-items:center;gap:10px}
+.kick::before{content:"";width:28px;height:3px;background:currentColor}
+.lede{font-size:clamp(18px,2vw,21px);color:#d4d6dd}
+.stack{display:grid;gap:18px;align-content:start}
+.head{margin-bottom:44px}
+.tbc{color:var(--tbc);border-bottom:1px dashed var(--tbc);font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:10px;font:700 17px/1 var(--cond);text-transform:uppercase;letter-spacing:.12em;text-decoration:none;padding:18px 28px;border:2px solid var(--red);background:var(--red);color:#fff;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -10px rgba(227,20,30,.7)}
+.btn.ghost{background:rgba(0,0,0,.25);border-color:var(--bone)}
+:focus-visible{outline:3px solid var(--tbc);outline-offset:3px}
+.photo{position:relative;overflow:hidden;background:var(--ink-2)}
+.photo img,.photo video{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.photo:hover img{transform:scale(1.04)}
+.cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rgba(11,12,16,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex:none}
+.brand img{width:52px;height:52px}
+.brand b{font:900 24px/.95 var(--display);text-transform:uppercase;display:block}
+.brand span{font:600 12px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;font:700 15px var(--cond);text-transform:uppercase;letter-spacing:.1em}
+.nav ul a{text-decoration:none;color:var(--muted)}
+.nav ul a:hover{color:var(--bone)}
+.nav .btn{padding:13px 18px;font-size:15px;flex:none}
+@media (max-width:1080px){.nav ul{display:none}}
+@media (max-width:420px){.brand span{display:none}.nav .btn{padding:11px 12px;font-size:13px}}
+
+.hero{position:relative;min-height:min(88vh,840px);display:grid;align-items:end;overflow:hidden}
+.slides{position:absolute;inset:0}
+.slides>*{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 35%;opacity:0;transition:opacity 1.2s ease}
+.slides>.on{opacity:1;animation:drift 7s ease-out both}
+@keyframes drift{from{transform:scale(1.06)}to{transform:scale(1)}}
+.dots{position:absolute;z-index:2;right:max(16px,env(safe-area-inset-right,0px));bottom:28px;display:flex;gap:8px}
+.dots button{width:34px;height:5px;border:0;padding:0;background:rgba(243,240,234,.35);cursor:pointer}
+.dots button[aria-pressed="true"]{background:var(--red)}
+@media (max-width:700px){.dots{bottom:auto;top:16px}}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,12,16,.9) 0%,rgba(11,12,16,.5) 30%,rgba(11,12,16,0) 55%),linear-gradient(0deg,var(--ink) 0%,transparent 35%)}
+.hero .wrap{position:relative;z-index:1;width:100%;max-width:none;padding-block:120px 64px;padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero-in{display:grid;gap:22px;max-width:600px}
+.hero-badge{width:clamp(110px,14vw,170px);filter:drop-shadow(0 10px 30px rgba(0,0,0,.6))}
+.hero h1{font-size:clamp(64px,10vw,136px);font-weight:900}
+.hero h1 em{font-style:normal;color:var(--red)}
+.cta{display:flex;flex-wrap:wrap;gap:14px}
+@media (max-width:700px){.hero::after{background:linear-gradient(0deg,var(--ink) 8%,rgba(11,12,16,.78) 55%,rgba(11,12,16,.4))}}
+
+.facts{background:var(--red)}
+.facts .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.fact{padding:22px 18px;border-right:1px solid rgba(255,255,255,.25);display:grid;gap:4px;min-width:0}
+.fact:last-child{border-right:0}
+.fact b{font:900 34px/1 var(--display);text-transform:uppercase}
+.fact span{font:600 14px var(--cond);letter-spacing:.1em;text-transform:uppercase;opacity:.9}
+@media (max-width:760px){.facts .wrap{grid-template-columns:repeat(2,1fr)}.fact:nth-child(2){border-right:0}.fact:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.25)}}
+
+.reel{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding-block:4px}
+.reel .photo{aspect-ratio:3/4}
+@media (max-width:760px){.reel{grid-template-columns:repeat(3,1fr)}}
+
+.ben{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.benefit{display:grid;grid-template-columns:210px 1fr;background:var(--ink-2);min-width:0}
+.benefit .photo{min-height:230px}
+.benefit .t{padding:24px 24px 26px;display:grid;gap:10px;align-content:start}
+.benefit .t span,.tagc{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.benefit .t p{color:var(--soft);font-size:16px}
+@media (max-width:980px){.ben{grid-template-columns:1fr}}
+@media (max-width:520px){.benefit{grid-template-columns:1fr}.benefit .photo{min-height:0;aspect-ratio:16/9}}
+
+.paths{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.pathc{position:relative;min-height:580px;display:grid;align-items:end;overflow:hidden}
+.pathc::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,12,16,.97) 40%,rgba(11,12,16,.2))}
+.pathc .in{position:relative;z-index:1;padding:32px clamp(20px,3vw,40px) 36px;display:grid;gap:14px}
+.pathc .in>span{font:700 14px var(--cond);letter-spacing:.18em;text-transform:uppercase;color:var(--tbc)}
+.pathc.fighter .in>span{color:var(--red)}
+.ticks{margin:0;padding:0;list-style:none;display:grid;gap:8px;color:#dfe1e7}
+.ticks li{padding-left:22px;position:relative}
+.ticks li::before{content:"";position:absolute;left:0;top:.65em;width:10px;height:3px;background:var(--red)}
+.gel{margin-top:4px;background:var(--red);padding:26px clamp(20px,3vw,40px);display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center;justify-content:space-between}
+.gel b{font:900 clamp(30px,4vw,46px)/1 var(--display);text-transform:uppercase}
+@media (max-width:860px){.paths{grid-template-columns:1fr}.pathc{min-height:500px}}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{display:grid;grid-template-rows:auto 1fr;background:var(--ink-2);border-bottom:4px solid var(--red);min-width:0}
+.card .photo{aspect-ratio:4/5}
+.card .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,12,16,.9),transparent 55%)}
+.card .lbl{position:absolute;left:16px;right:16px;bottom:14px;z-index:1;display:grid;gap:4px}
+.card .lbl span{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--tbc)}
+.card .body{padding:18px 18px 22px;display:grid;gap:10px;align-content:start;color:var(--soft);font-size:16px}
+.when{font:700 14px var(--cond);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card.kids{border-bottom-color:var(--navy)}
+@media (max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.cards{grid-template-columns:1fr}.card .photo{aspect-ratio:16/11}}
+
+.split{display:grid;grid-template-columns:1fr 1.1fr;min-height:620px}
+.split.rev{grid-template-columns:1.1fr 1fr}
+.split.rev>.photo{order:2}
+.split>.photo{min-height:400px}
+.split .txt{padding:clamp(48px,7vw,96px) clamp(20px,5vw,72px);display:grid;gap:22px;align-content:center;background:var(--ink-2)}
+.limbs{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--line)}
+.limb{background:var(--ink-2);padding:16px 14px;display:grid;gap:2px}
+.limb b{font:900 26px/1 var(--display);text-transform:uppercase}
+.limb b i{font-style:normal;color:var(--red);margin-right:6px}
+.limb span{font:600 14px var(--cond);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+@media (max-width:860px){.split,.split.rev{grid-template-columns:1fr}.split.rev>.photo{order:0}}
+
+.tt{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.day{background:var(--ink-2);border-top:4px solid var(--red);padding:16px 14px;display:grid;gap:12px;align-content:start;min-width:0}
+.day h3{font-size:26px}
+.sess{display:grid;gap:1px;padding-top:10px;border-top:1px solid var(--line)}
+.sess b{font:700 18px var(--cond);text-transform:uppercase;letter-spacing:.04em}
+.sess span{font-variant-numeric:tabular-nums;color:var(--muted);font-size:15px}
+.sess.k b{color:#8fa9ff}.sess.beg b{color:var(--ok)}
+.day.sat{border-top-color:var(--navy)}
+.note{display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:20px;color:var(--muted);font-size:15px}
+@media (max-width:1000px){.tt{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:560px){.tt{grid-template-columns:1fr 1fr}}
+
+.ptgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);border:2px solid var(--line)}
+.ptb{background:var(--ink);padding:22px 20px 24px;display:grid;gap:8px;align-content:start}
+.ptb b{font:900 24px/1 var(--display);text-transform:uppercase}
+.ptb p{color:var(--soft);font-size:16px}
+.ptbar{display:flex;flex-wrap:wrap;gap:16px 40px;align-items:center;justify-content:space-between;margin-top:24px;padding:24px clamp(20px,3vw,32px);background:var(--ink-2);border-left:6px solid var(--red)}
+.ptbar .amt{font:900 64px/1 var(--display)}
+.ptbar .amt small{font:700 18px var(--cond);color:var(--muted);margin-left:4px}
+@media (max-width:860px){.ptgrid{grid-template-columns:1fr}}
+
+.fight{position:relative;overflow:hidden}
+.fight::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,12,16,.97) 45%,rgba(11,12,16,.6))}
+.fight .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
+.ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line)}
+.rung{background:rgba(11,12,16,.85);padding:16px 14px;display:grid;gap:4px}
+.rung small{font:700 12px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.rung b{font:900 24px/1 var(--display);text-transform:uppercase}
+.rung span{font-size:14px;color:var(--muted)}
+.walkout{aspect-ratio:9/16;max-height:640px;border:2px solid var(--bone);justify-self:center;width:100%;max-width:360px;margin:0}
+.walkout figcaption{position:absolute;left:0;right:0;bottom:0;padding:14px;background:linear-gradient(0deg,rgba(11,12,16,.9),transparent);font:700 14px var(--cond);letter-spacing:.14em;text-transform:uppercase}
+@media (max-width:860px){.fight .wrap{grid-template-columns:1fr}.fight::after{background:rgba(11,12,16,.9)}.ladder{grid-template-columns:1fr}}
+
+.camp{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.campi{border-top:4px solid var(--red);background:var(--ink-2);padding:22px 22px 26px;display:grid;gap:10px;align-content:start}
+.campi p{color:var(--soft);font-size:16px}
+@media (max-width:860px){.camp{grid-template-columns:1fr}}
+
+.coach{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,64px);align-items:center}
+.coach .photo{aspect-ratio:4/5}
+.tagline{font:900 clamp(30px,4vw,44px)/1 var(--display);text-transform:uppercase;color:var(--red)}
+.cstats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);border:2px solid var(--line)}
+.cstats div{background:var(--ink);padding:16px 14px;display:grid;gap:4px}
+.cstats b{font:900 40px/1 var(--display);color:var(--red)}
+.cstats span{font:600 14px var(--cond);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mono{display:grid;place-items:center;background:radial-gradient(120% 90% at 50% 0%,rgba(227,20,30,.35),transparent 60%),linear-gradient(160deg,#1a1d27,#0d0e13)}
+.mono .wm{position:absolute;width:70%;height:auto;opacity:.08;object-fit:contain}
+.mono span{position:relative;font:900 clamp(110px,14vw,170px)/1 var(--display);color:var(--bone)}
+.mono em{position:absolute;bottom:12px;left:14px;font:700 12px var(--cond);font-style:normal;letter-spacing:.16em;text-transform:uppercase;color:var(--tbc)}
+.team{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.member{background:var(--ink-2);border-bottom:4px solid var(--red);display:grid;grid-template-rows:auto 1fr;min-width:0}
+.member .photo{aspect-ratio:4/5}
+.member .mi{padding:20px 20px 24px;display:grid;gap:8px;align-content:start}
+.member p{color:var(--soft);font-size:16px}
+@media (max-width:760px){.coach{grid-template-columns:1fr}.coach .photo{aspect-ratio:16/11}.cstats{grid-template-columns:1fr}}
+@media (max-width:860px){.team{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.team{grid-template-columns:1fr}.member .photo{aspect-ratio:16/11}}
+
+.prices{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.price{background:var(--ink-2);padding:30px 26px;display:grid;gap:14px;align-content:start;border:1px solid var(--line);min-width:0}
+.price.top{border:2px solid var(--red);background:linear-gradient(160deg,rgba(227,20,30,.18),var(--ink-2) 60%)}
+.price .amt{font:900 72px/1 var(--display);font-variant-numeric:tabular-nums}
+.price .amt small{font:700 18px var(--cond);color:var(--muted);margin-left:4px}
+.price ul{margin:0;padding-left:18px;color:var(--soft);display:grid;gap:6px}
+@media (max-width:860px){.prices{grid-template-columns:1fr}}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.chip{border:1px solid var(--line);background:var(--ink-2);color:var(--muted);padding:9px 16px;font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--bone);color:var(--ink);border-color:var(--bone)}
+.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.post{background:var(--ink-2);display:grid;grid-template-rows:auto 1fr;min-width:0}
+.post .photo{aspect-ratio:16/10}
+.post.feature{grid-column:span 2;grid-template-columns:1.2fr 1fr;grid-template-rows:none}
+.post.feature .photo{aspect-ratio:auto;min-height:340px}
+.post .pb{padding:20px 20px 24px;display:grid;gap:10px;align-content:start}
+.post .meta{display:flex;gap:12px;align-items:center;font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase}
+.post .meta time,.post .meta .by{color:var(--muted)}
+.post h3{font-size:28px}
+.post p{color:var(--soft);font-size:16px}
+.post .more{display:grid;gap:10px}
+.readbtn{justify-self:start;background:none;border:0;border-bottom:2px solid var(--red);color:var(--bone);padding:2px 0;font:700 15px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.play{position:absolute;left:14px;bottom:14px;background:var(--red);font:700 12px var(--cond);letter-spacing:.14em;text-transform:uppercase;padding:6px 10px}
+@media (max-width:980px){.posts{grid-template-columns:1fr 1fr}.post.feature{grid-template-columns:1fr}.post.feature .photo{min-height:0;aspect-ratio:16/10}}
+@media (max-width:620px){.posts{grid-template-columns:1fr}.post.feature{grid-column:auto}}
+.socials{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);margin-top:28px}
+.soc{background:var(--ink-2);padding:22px;display:flex;gap:16px;align-items:center;text-decoration:none;min-width:0}
+.soc svg{width:38px;height:38px;flex:none}
+.soc b{display:block;font:900 24px/1 var(--display);text-transform:uppercase}
+.soc span{font-size:15px;color:var(--muted);overflow-wrap:anywhere}
+.soc:hover{background:#1b1e27}
+@media (max-width:760px){.socials{grid-template-columns:1fr}}
+
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:230px;gap:4px}
+.gallery .photo:nth-child(1){grid-column:span 2;grid-row:span 2}
+.gallery .photo:nth-child(4){grid-row:span 2}
+.gallery .photo:nth-child(7){grid-column:span 2}
+@media (max-width:760px){.gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:170px}.gallery .photo:nth-child(4){grid-row:span 1}}
+
+.faqgrid{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px}
+details{border-bottom:1px solid var(--line)}
+details:first-child{border-top:1px solid var(--line)}
+summary{cursor:pointer;list-style:none;padding:20px 44px 20px 0;font:700 21px var(--cond);text-transform:uppercase;letter-spacing:.04em;position:relative}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:6px;top:12px;font:900 32px var(--display);color:var(--red)}
+details[open] summary::after{content:"–"}
+details p{padding:0 0 22px;color:var(--soft)}
+@media (max-width:860px){.faqgrid{grid-template-columns:1fr}}
+
+.contact{position:relative;overflow:hidden}
+.contact::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,12,16,.7),rgba(11,12,16,.97) 50%)}
+.contact .wrap{position:relative;z-index:1;display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:start}
+.cdetails{display:grid;gap:2px;background:var(--line);margin-top:8px}
+.cd{background:rgba(20,22,29,.92);padding:16px 18px;display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:baseline}
+.cd small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.cd a{text-decoration:none}
+.hours{display:grid;grid-template-columns:auto auto;gap:2px 16px;font-variant-numeric:tabular-nums;justify-content:start}
+form{display:grid;grid-template-columns:1fr 1fr;gap:14px;background:rgba(20,22,29,.95);padding:26px;border-top:4px solid var(--red)}
+form h3{grid-column:1/-1;font-size:34px}
+label{display:grid;gap:6px;font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);min-width:0}
+input,select,textarea{font:16px var(--body);color:var(--bone);background:var(--ink);border:1px solid var(--line);padding:13px 14px;width:100%}
+textarea{min-height:110px;resize:vertical}
+.full{grid-column:1/-1}
+.consent{display:flex;gap:10px;align-items:flex-start;font:400 15px var(--body);letter-spacing:0;text-transform:none;color:var(--soft)}
+.consent input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--red)}
+.ok{grid-column:1/-1;border:1px solid var(--ok);color:#c7f3da;padding:14px 16px}
+.err{grid-column:1/-1;color:#ffb3b6;font-size:15px}
+@media (max-width:860px){.contact .wrap{grid-template-columns:1fr}.contact::after{background:rgba(11,12,16,.92)}form{grid-template-columns:1fr}.cd{grid-template-columns:1fr;gap:2px}}
+
+footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080b;color:var(--muted);font-size:15px}
+.foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px}
+.foot img{width:96px}
+.foot h4{margin:0 0 10px;font:700 15px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--bone)}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.foot a{text-decoration:none}.foot a:hover{color:var(--bone)}
+.draft{margin-top:36px;font-size:13px;color:var(--tbc)}
+@media (max-width:860px){.foot{grid-template-columns:1fr 1fr}}
+
+/* pages + menu */
+.view>section.flush:first-child{padding-top:clamp(64px,9vw,112px)}
+.nav ul a[aria-current="page"]{color:var(--bone);box-shadow:0 3px 0 var(--red)}
+.navr{display:flex;align-items:center;gap:10px;flex:none}
+.burger{display:none;width:48px;height:48px;border:1px solid var(--line);background:var(--ink-2);cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:6px}
+.burger span{display:block;width:22px;height:2px;background:var(--bone);transition:transform .2s,opacity .2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+@media (max-width:1080px){
+ .burger{display:flex}
+ .nav ul{position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:0;background:#07080b;border-bottom:3px solid var(--red);padding:8px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+ .nav ul.open{display:flex}
+ .nav ul a{display:block;padding:14px 4px;font-size:22px;border-bottom:1px solid var(--line)}
+ .nav ul a[aria-current="page"]{box-shadow:none;color:var(--red)}
+}
+@media (max-width:420px){.navr .btn{display:none}}
+.explore{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.ex{position:relative;aspect-ratio:3/4;overflow:hidden;text-decoration:none;display:block;background:var(--ink-2)}
+.ex img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.ex:hover img{transform:scale(1.05)}
+.ex::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,12,16,.92),transparent 60%)}
+.ex span{position:absolute;z-index:1;left:16px;right:16px;bottom:16px;display:grid;gap:2px}
+.ex small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.ex b{font:900 30px/1 var(--display);text-transform:uppercase}
+@media (max-width:860px){.explore{grid-template-columns:1fr 1fr}}
+.nextband{background:var(--red)}
+.nextband .wrap{display:flex;flex-wrap:wrap;gap:20px 40px;align-items:center;justify-content:space-between;padding-block:44px}
+.nextband .kick{color:#fff}
+.nextband h2{font-size:clamp(38px,5vw,64px)}
+.nextband .btn{background:var(--ink);border-color:var(--ink)}
+
+/* ticker */
+.ticker{display:flex;align-items:stretch;background:#07080b;border-bottom:1px solid var(--line);overflow:hidden;position:relative;z-index:3}
+.live{flex:none;display:flex;align-items:center;gap:8px;background:var(--red);color:#fff;padding:0 16px 0 max(16px,env(safe-area-inset-left,0px));font:700 14px var(--cond);letter-spacing:.18em;text-transform:uppercase}
+.live i{width:9px;height:9px;border-radius:50%;background:#fff;animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+.tk-view{flex:1;min-width:0;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 40px,#000 calc(100% - 40px),transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 40px,#000 calc(100% - 40px),transparent)}
+.tk-track{display:flex;width:max-content;animation:tk var(--tk-dur,60s) linear infinite}
+.ticker:hover .tk-track,.ticker:focus-within .tk-track{animation-play-state:paused}
+@keyframes tk{to{transform:translateX(-50%)}}
+.tk-item{display:flex;align-items:center;gap:10px;padding:13px 26px;white-space:nowrap;font:600 16px var(--body);color:var(--soft);text-decoration:none;border-right:1px solid var(--line)}
+.tk-item b{font:700 14px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.tk-item.hot b{color:var(--tbc)}
+.tk-item strong{color:var(--bone)}
+a.tk-item:hover{color:var(--bone)}
+@media (prefers-reduced-motion:reduce){.tk-view{overflow-x:auto;mask-image:none;-webkit-mask-image:none}.tk-track{animation:none}}
+/* socials */
+.sicons{display:flex;gap:6px;align-items:center}
+.sicons a{width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--line);color:var(--soft);text-decoration:none;background:var(--ink-2)}
+.sicons a:hover{color:#fff;background:var(--red);border-color:var(--red)}
+.sicons svg{width:20px;height:20px}
+@media (max-width:1240px){.navr .sicons{display:none}}
+.foot .sicons{margin-top:12px}
+
+/* videos */
+.featured{margin:0;position:relative;background:#000;border:2px solid var(--line)}
+.featured video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.featured figcaption{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;padding:14px 18px;background:var(--ink-2)}
+.featured figcaption b{font:900 26px var(--display);text-transform:uppercase}
+.featured figcaption span{color:var(--muted)}
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.vcard{display:grid;grid-template-rows:auto 1fr;background:var(--ink-2);border:0;padding:0;text-align:left;color:inherit;font:inherit;cursor:pointer;min-width:0}
+.vcard[hidden]{display:none}
+.vthumb{position:relative;display:block;aspect-ratio:16/9;overflow:hidden;background:#000}
+.vthumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.vcard:hover .vthumb img{transform:scale(1.05)}
+.vplay{position:absolute;inset:0;margin:auto;width:62px;height:62px;border-radius:50%;background:rgba(227,20,30,.92);display:grid;place-items:center;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.vplay svg{width:28px;height:28px;margin-left:3px}
+.vdur{position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.8);font:700 13px var(--cond);letter-spacing:.08em;padding:3px 8px;font-variant-numeric:tabular-nums}
+.vmeta{display:grid;gap:4px;padding:16px 18px 20px}
+.vmeta small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.vmeta b{font:900 24px/1.05 var(--display);text-transform:uppercase}
+.vmeta span{color:var(--soft);font-size:15px}
+@media (max-width:980px){.vgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.vgrid{grid-template-columns:1fr}}
+.ytband{margin-top:28px;padding:22px 24px;background:var(--ink-2);border-left:6px solid var(--red)}
+.vmodal{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.92);display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.vmodal[hidden]{display:none}
+.vm-in{width:min(1100px,100%);display:grid;gap:10px}
+.vm-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.vm-top b{font:900 26px var(--display);text-transform:uppercase}
+.vm-close{width:48px;height:48px;border:1px solid var(--line);background:var(--ink-2);color:#fff;font-size:20px;cursor:pointer}
+#vmVideo{width:100%;max-height:78vh;background:#000}
+.fnhead{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:end;justify-content:space-between;margin-bottom:28px}
+.loops{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:4px}
+.loop{margin:0;position:relative;overflow:hidden;background:#000;aspect-ratio:16/9}
+.loop.big{grid-row:span 2;aspect-ratio:auto}
+.loop video{width:100%;height:100%;object-fit:cover;display:block}
+.loop figcaption{position:absolute;left:0;right:0;bottom:0;padding:12px 14px;background:linear-gradient(0deg,rgba(11,12,16,.9),transparent);font:700 14px var(--cond);letter-spacing:.16em;text-transform:uppercase}
+@media (max-width:760px){.loops{grid-template-columns:1fr 1fr;grid-template-rows:auto}.loop.big{grid-column:span 2;grid-row:auto;aspect-ratio:16/9}}
+
+/* sound buttons */
+.snd{position:absolute;z-index:4;right:12px;bottom:12px;display:inline-flex;align-items:center;gap:8px;padding:9px 14px 9px 11px;border:1px solid rgba(243,240,234,.5);background:rgba(11,12,16,.75);color:#fff;font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.snd svg{width:20px;height:20px}
+.snd:hover{background:rgba(11,12,16,.92)}
+.snd.on{background:var(--red);border-color:var(--red)}
+.snd[hidden]{display:none}
+.hero .snd{right:max(16px,env(safe-area-inset-right,0px));bottom:52px}
+.fight .snd{right:max(16px,env(safe-area-inset-right,0px));bottom:16px}
+@media (max-width:700px){.hero .snd{bottom:auto;top:40px}}
+
+.strikes{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.strikes .loop{aspect-ratio:16/10}
+@media (max-width:900px){.strikes{grid-template-columns:1fr 1fr}}
+/* team page */
+.teamhero{position:relative;overflow:hidden;min-height:460px;display:grid;align-items:end}
+.teamhero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,12,16,.92) 0%,rgba(11,12,16,.55) 45%,rgba(11,12,16,.15)),linear-gradient(0deg,var(--ink),transparent 40%)}
+.teamhero .wrap{position:relative;z-index:1;width:100%;padding-block:110px 56px}
+.teamhero h1{font-size:clamp(56px,9vw,120px);font-weight:900;max-width:12ch}
+.tjump{display:flex;flex-wrap:wrap;gap:8px}
+.tjump a{padding:10px 18px;border:1px solid var(--bone);text-decoration:none;font:700 15px var(--cond);letter-spacing:.14em;text-transform:uppercase;background:rgba(11,12,16,.4)}
+.tjump a:hover{background:var(--red);border-color:var(--red)}
+.ptext{color:var(--soft)}
+.pchips{display:flex;flex-wrap:wrap;gap:6px}
+.pchips span{padding:6px 12px;background:var(--ink-2);border:1px solid var(--line);font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.ask{border-left:4px solid var(--red);padding-left:14px;color:var(--soft)}
+.ask b{color:var(--bone);margin-right:4px}
+.igbtn{display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border:2px solid var(--bone);text-decoration:none;font:700 16px var(--cond);letter-spacing:.06em}
+.igbtn svg{width:22px;height:22px}
+.igbtn:hover{background:var(--bone);color:var(--ink)}
+.jaystrip{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.jaystrip .photo{aspect-ratio:4/3}
+@media (max-width:760px){.jaystrip{grid-template-columns:1fr 1fr}}
+.profile{padding-block:clamp(56px,8vw,96px);border-top:1px solid var(--line)}
+.pgrid{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(28px,5vw,64px);align-items:center}
+.pgrid>.photo{aspect-ratio:4/5}
+.profile.rev .pgrid>.photo{order:2}
+.profile.rev{background:var(--ink-2)}
+.profile.rev .pchips span{background:var(--ink)}
+@media (max-width:760px){.pgrid{grid-template-columns:1fr}.pgrid>.photo{aspect-ratio:16/11}.profile.rev .pgrid>.photo{order:0}}
+.vals{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--line);border:2px solid var(--line)}
+.vals div{background:var(--ink);padding:22px 20px 24px;display:grid;gap:8px;align-content:start}
+.vals b{font:900 24px/1 var(--display);text-transform:uppercase}
+.vals p{color:var(--soft);font-size:16px}
+@media (max-width:900px){.vals{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.vals{grid-template-columns:1fr}}
+
+/* news */
+.news{background:linear-gradient(180deg,#07080b,var(--ink))}
+.newshead{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:end;justify-content:space-between;margin-bottom:32px}
+.countdown{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;background:var(--tbc);color:#1a1405;font:700 18px var(--cond);letter-spacing:.12em;text-transform:uppercase}
+.countdown.done{background:var(--ink-2);color:var(--bone);border:1px solid var(--line)}
+.ngrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ncard{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:var(--ink-2);border-top:4px solid var(--red);min-width:0}
+.nposter{background:#000}
+.nposter img{width:100%;height:100%;object-fit:cover;aspect-ratio:1}
+.nbody{padding:22px 22px 24px;display:grid;gap:10px;align-content:start}
+.nbody p{color:var(--soft);font-size:16px}
+.ntix{border-left:4px solid var(--red);padding-left:12px}
+.ntix b{color:var(--bone);margin-right:6px;font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase}
+.nevent{display:grid;grid-template-columns:1fr 1.2fr 1.6fr;gap:2px;background:var(--line);margin-top:18px;border:2px solid var(--line)}
+.nevent div{background:var(--ink);padding:16px 18px;display:grid;gap:2px;min-width:0}
+.nevent small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.nevent b{font:900 22px/1.1 var(--display);text-transform:uppercase}
+.nevent span{color:var(--soft);font-size:15px;overflow-wrap:anywhere}
+@media (max-width:1000px){.ngrid{grid-template-columns:1fr}}
+@media (max-width:560px){.ncard{grid-template-columns:1fr}.nevent{grid-template-columns:1fr}}
+
+/* areas */
+.tier{margin-top:28px}
+.tier h3{font-size:26px;margin-bottom:12px;color:var(--red)}
+.tcards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tcard{position:relative;aspect-ratio:4/3;overflow:hidden;text-decoration:none;display:block;background:var(--ink-2)}
+.tcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;transition:transform .5s,opacity .3s}
+.tcard:hover img{transform:scale(1.05);opacity:.75}
+.tcard span{position:absolute;left:14px;right:14px;bottom:12px;display:grid}
+.tcard b{font:900 30px/1 var(--display);text-transform:uppercase}
+.tcard small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--tbc)}
+@media (max-width:900px){.tcards{grid-template-columns:1fr 1fr}}
+.townhero{position:relative;overflow:hidden;min-height:520px;display:grid;align-items:end}
+.townhero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,12,16,.94) 0%,rgba(11,12,16,.6) 50%,rgba(11,12,16,.2)),linear-gradient(0deg,var(--ink),transparent 40%)}
+.townhero .wrap{position:relative;z-index:1;width:100%;padding-block:100px 56px}
+.townhero h1{font-size:clamp(52px,8.5vw,110px);font-weight:900;max-width:14ch}
+.crumb{font:700 14px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.crumb:hover{color:var(--bone)}
+.tgrid{display:grid;grid-template-columns:1.3fr .9fr;gap:clamp(28px,5vw,64px);align-items:start}
+.getting{background:var(--ink-2);border-top:4px solid var(--red);padding:24px;display:grid;gap:14px}
+.rlist{display:grid;gap:2px;background:var(--line)}
+.rlist div{background:var(--ink);padding:12px 14px;display:grid;gap:2px}
+.rlist small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.rlist span{color:var(--soft);font-size:16px}
+.also{color:var(--soft)}
+.tnote{color:var(--muted);font-size:14px}
+@media (max-width:860px){.tgrid{grid-template-columns:1fr}}
+.nearby,.townchips{display:flex;flex-wrap:wrap;gap:8px}
+.nearby a,.townchips a{display:inline-flex;align-items:baseline;gap:10px;padding:12px 16px;background:var(--ink-2);border:1px solid var(--line);text-decoration:none;font:700 17px var(--cond);letter-spacing:.06em;text-transform:uppercase}
+.nearby a small,.townchips a small{font:600 13px var(--body);color:var(--muted);text-transform:none;letter-spacing:0}
+.nearby a:hover,.townchips a:hover{border-color:var(--red);background:#1b1e27}
+
+/* programmes, levels, faq */
+.psec{display:grid;gap:10px}.psec h3{font-size:32px}.psec p{color:var(--soft);max-width:62ch}
+.related{display:grid;gap:8px;margin-top:8px}.related a{font:700 16px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--red);text-decoration:none}
+.progs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.progs a{position:relative;aspect-ratio:1;overflow:hidden;text-decoration:none;background:var(--ink-2)}
+.progs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;transition:opacity .3s,transform .5s}
+.progs a:hover img{opacity:.75;transform:scale(1.05)}
+.progs span{position:absolute;left:12px;right:12px;bottom:10px;display:grid}
+.progs small{font:700 12px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--tbc)}
+.progs b{font:900 26px/1 var(--display);text-transform:uppercase}
+@media (max-width:900px){.progs{grid-template-columns:repeat(2,1fr)}}
+.ladder2{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--line);border:2px solid var(--line)}
+.ladder2 div{background:var(--ink-2);padding:20px 18px 22px;display:grid;gap:6px;align-content:start}
+.ladder2 small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.ladder2 b{font:900 30px/1 var(--display);text-transform:uppercase}
+.ladder2 p{color:var(--soft);font-size:15px}
+@media (max-width:1000px){.ladder2{grid-template-columns:1fr}}
+.faqall{display:grid;grid-template-columns:1fr 1fr;gap:28px 48px}
+.faqg h3{font-size:28px;color:var(--red);margin-bottom:6px}
+@media (max-width:860px){.faqall{grid-template-columns:1fr}}
+a.tagc{text-decoration:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#home"><img src="img/logo.webp" alt="Warrior Spirit Muay Thai logo"><div><b>Warrior Spirit</b><span>Muay Thai &amp; Kickboxing</span></div></a>
+    <nav aria-label="Main"><ul id="menu">
+      <li><a href="#home" data-nav="home">Home</a></li>
+      <li><a href="#classes" data-nav="classes">Classes</a></li>
+      <li><a href="#pt" data-nav="pt">PT</a></li>
+      <li><a href="#fight" data-nav="fight">Fight team</a></li>
+      <li><a href="#videos" data-nav="videos">Videos</a></li>
+      <li><a href="#team" data-nav="team">Team</a></li>
+      <li><a href="#blog" data-nav="blog">Blog</a></li>
+      <li><a href="#areas" data-nav="areas">Areas</a></li>
+      <li><a href="#faq" data-nav="faq">FAQ</a></li>
+      <li><a href="#contact" data-nav="contact">Contact</a></li>
+    </ul></nav>
+    <div class="navr">
+      <div class="sicons" data-socials></div>
+      <a class="btn" href="#contact" data-enq="First class">Book a class</a>
+      <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<div class="view" data-view="home">
+  <div class="ticker" aria-label="What's on at Warrior Spirit">
+    <span class="live"><i></i>Live</span>
+    <div class="tk-view"><div class="tk-track" id="tkTrack"></div></div>
+  </div>
+
+  <section class="hero">
+    <div class="slides" id="slides" aria-label="Warrior Spirit in pictures">
+      <img class="on" src="photos/kids-coach.webp" alt="Head coach Jay with a young member" style="object-position:50% 30%">
+      <video src="video/loop-action.mp4" poster="video/loop-action.jpg" muted loop playsinline preload="none" aria-label="Fight night action"></video>
+      <img src="photos/pads-1.webp" alt="Jay holding pads for a fighter" loading="lazy" style="object-position:35% 40%">
+      <img src="photos/corner-crowd.webp" alt="Jay in the corner with a packed crowd" loading="lazy" style="object-position:30% 40%">
+      <img src="photos/jay-win.webp" alt="Jay celebrating a win with his fighter" loading="lazy" style="object-position:65% 40%">
+      <video src="video/strike-1.mp4" poster="video/strike-1.jpg" muted loop playsinline preload="none" aria-label="Fighters exchanging strikes"></video>
+      <img src="photos/wraps.webp" alt="Jay wrapping a fighter's hands" loading="lazy" style="object-position:50% 45%">
+      <img src="photos/pads-2.webp" alt="Jay taking a knee on the pads" loading="lazy" style="object-position:40% 40%">
+    </div>
+    <div class="dots" id="dots" role="group" aria-label="Choose photo"></div>
+    <div class="wrap">
+      <div class="hero-in">
+        <img class="hero-badge" src="img/logo.webp" alt="">
+        <h1>Find your<br><em>warrior</em> spirit</h1>
+        <p class="lede">Muay Thai and kickboxing for complete beginners, fitness fans, kids and fighters. Real technique, coached properly, in a gym that looks after its own.</p>
+        <div class="cta">
+          <a class="btn" href="#contact" data-enq="First class">Book your first class →</a>
+          <a class="btn ghost" href="#timetable">See the timetable</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="facts" aria-label="At a glance">
+    <div class="wrap">
+      <div class="fact"><b>Thu 7pm</b><span>Beginners class</span></div>
+      <div class="fact"><b>Ages 7–13</b><span>Kids Mon–Thu</span></div>
+      <div class="fact"><b>£75</b><span>Adults, all inclusive</span></div>
+      <div class="fact"><b>From £35</b><span>1-to-1 PT per hour</span></div>
+    </div>
+  </section>
+
+  <section class="band news" id="news" aria-labelledby="news-h">
+    <div class="wrap">
+      <div class="newshead">
+        <div class="stack"><span class="kick">Fight news</span><h2 id="news-h">Two debuts at Warriors of Hope 2</h2></div>
+        <span class="countdown" id="fnCount">Saturday 24 October</span>
+      </div>
+      <div class="ngrid">
+        <article class="ncard">
+          <div class="nposter"><img src="photos/poster-dino.webp" alt="Warriors of Hope 2 poster: White v Leonida, Muay Thai" loading="lazy"></div>
+          <div class="nbody">
+            <a class="tagc" href="#fight-levels">N-Class debut</a>
+            <h3>Dino Leonida steps up</h3>
+            <p>Dino Leonida makes his N-Class debut against White on the Warriors of Hope 2 card. Months of camp come down to this one. Come and make some noise for him.</p>
+            <p class="ntix"><b>Tickets</b> Get yours from Dino.</p>
+          </div>
+        </article>
+        <article class="ncard">
+          <div class="nposter"><img src="photos/poster-leo.webp" alt="Warriors of Hope 2 poster: Leo Prodromou-Beckwith, Muay Thai" loading="lazy"></div>
+          <div class="nbody">
+            <a class="tagc" href="#fight-levels">N-Class debut</a>
+            <h3>Leo's first big night</h3>
+            <p>Young warrior Leo Prodromou-Beckwith makes his N-Class debut on the same show. Please get behind him and show him what Warrior Spirit support sounds like.</p>
+            <p class="ntix"><b>Tickets</b> Ask Leo or the gym.</p>
+          </div>
+        </article>
+      </div>
+      <div class="nevent">
+        <div><small>When</small><b>Saturday 24 October 2026</b></div>
+        <div><small>Where</small><b>John Bunyan Sports &amp; Fitness</b><span>Mile Road, Bedford MK42 9TS</span></div>
+        <div><small>Tickets</small><b>From our fighters</b><span>or Warrior Promotions: 07800 874581 · warriorpromotions160@gmail.com</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="reel" aria-label="Life at Warrior Spirit">
+    <div class="photo"><img src="photos/fight-ring.webp" alt="Warrior Spirit fighter throwing a jab in the ring" loading="lazy"></div>
+    <div class="photo"><img src="photos/pads-kick.webp" alt="Switch kick on the pads" loading="lazy"></div>
+    <div class="photo"><img src="photos/medal.webp" alt="Young fighter with his medal" loading="lazy"></div>
+    <div class="photo"><img src="photos/knee.webp" alt="Fighter posing with a knee strike" loading="lazy"></div>
+    <div class="photo"><img src="photos/win-corner.webp" alt="Fighter and coach celebrating a win" loading="lazy"></div>
+    <div class="photo"><img src="photos/bag.webp" alt="Member hugging the heavy bag after training" loading="lazy"></div>
+  </div>
+
+  <section class="band" id="why">
+    <div class="wrap">
+      <div class="stack head">
+        <span class="kick">Why train Muay Thai</span>
+        <h2>Stronger in the gym. Stronger outside it.</h2>
+        <p class="lede">Muay Thai changes more than your fitness. People walk in to lose weight or learn to defend themselves, and stay for how it makes them feel.</p>
+      </div>
+      <div class="ben">
+        <article class="benefit"><div class="photo"><img src="photos/medal.webp" alt="Fighter with a medal after his bout" loading="lazy"></div><div class="t"><span>Confidence</span><h3>Walk taller</h3><p>Standing your ground, taking a hard round and still going builds a quiet confidence that follows you to work, school and everywhere else. Knowing you can look after yourself changes how you carry yourself.</p></div></article>
+        <article class="benefit"><div class="photo"><img src="photos/pads-1.webp" alt="Pad work drill" loading="lazy"></div><div class="t"><span>Fitness</span><h3>Fight fit</h3><p>Rounds on pads and bags work your heart, lungs, legs and core all at once. You build real strength, stamina and flexibility, burn serious calories, and never get bored doing it.</p></div></article>
+        <article class="benefit"><div class="photo"><img src="photos/team-medal.webp" alt="The team together after a show" loading="lazy"></div><div class="t"><span>Team</span><h3>A solo sport, a team gym</h3><p>When the bell goes, it's you in there. But nobody gets there alone. Your training partners hold your pads, push you through the last round and are in your corner on fight night.</p></div></article>
+        <article class="benefit"><div class="photo"><img src="photos/bag.webp" alt="Member with the heavy bag" loading="lazy"></div><div class="t"><span>Head space</span><h3>Leave the day at the door</h3><p>You can't think about work while someone is throwing a kick at you. An hour on the mat clears your head, burns off stress and builds the discipline to keep showing up.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band flush" id="members">
+    <div class="wrap">
+      <div class="stack head">
+        <span class="kick">Two kinds of member, one team</span>
+        <h2>Train for you. Or train to fight.</h2>
+        <p class="lede">Some people join for fitness and a good crowd. Some want to get in the ring. We coach both, side by side, and each gets what they came for.</p>
+      </div>
+      <div class="paths">
+        <article class="pathc">
+          <img class="cover" src="photos/sparring.webp" alt="Members laughing during light sparring" loading="lazy">
+          <div class="in"><span>Fitness &amp; social</span><h3 style="font-size:clamp(34px,4vw,48px)">Here to get fit and have fun</h3>
+            <ul class="ticks"><li>Get fit without ever stepping in a ring</li><li>Learn proper technique at your own pace</li><li>Sparring is always your choice</li><li>A friendly crowd that becomes your mates</li></ul></div>
+        </article>
+        <article class="pathc fighter">
+          <img class="cover" src="photos/fight-ring.webp" alt="Fighter in the ring" loading="lazy" style="object-position:50% 25%">
+          <div class="in"><span>Fight team</span><h3 style="font-size:clamp(34px,4vw,48px)">Here to compete</h3>
+            <ul class="ticks"><li>A clear path from interclubs to amateur and semi-pro</li><li>Structured fight camps built around your date</li><li>Hard sparring with the right partners</li><li>Coaches in your corner who have been there many times</li></ul></div>
+        </article>
+      </div>
+      <div class="gel"><b>Same mat. Same team.</b><p>Fighters sharpen their skills holding pads for newer members. Fitness members train next to people preparing for fights, and push harder because of it. That mix is what makes the gym.</p></div>
+    </div>
+  </section>
+
+  <section class="band flush" aria-labelledby="fn-h">
+    <div class="wrap">
+      <div class="fnhead"><div class="stack"><span class="kick">Fight night</span><h2 id="fn-h">This is what we train for</h2></div><a class="btn" href="#videos">Watch with sound →</a></div>
+      <div class="loops">
+        <figure class="loop big"><video data-loop src="video/loop-action.mp4" poster="video/loop-action.jpg" muted loop playsinline preload="none" aria-label="Warrior Spirit fighters exchanging in the ring"></video><figcaption>In the ring</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/loop-win.mp4" poster="video/loop-win.jpg" muted loop playsinline preload="none" aria-label="Clinch then hands raised"></video><figcaption>Hands raised</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/loop-decision.mp4" poster="video/loop-decision.jpg" muted loop playsinline preload="none" aria-label="Decision and the crowd"></video><figcaption>The decision</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section class="band flush" aria-label="Explore">
+    <div class="wrap">
+      <div class="explore">
+        <a class="ex" href="#classes"><img src="photos/pads-2.webp" alt="" loading="lazy"><span><small>Classes &amp; prices</small><b>Timetable</b></span></a>
+        <a class="ex" href="#pt"><img src="photos/pads-kick.webp" alt="" loading="lazy"><span><small>1-to-1</small><b>Personal training</b></span></a>
+        <a class="ex" href="#fight"><img src="photos/corner-crowd.webp" alt="" loading="lazy"><span><small>Compete</small><b>Fight team</b></span></a>
+        <a class="ex" href="#team"><img src="photos/jay-portrait.webp" alt="" loading="lazy"><span><small>Coaches</small><b>Meet the team</b></span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="split" aria-labelledby="limbs-h">
+    <div class="photo"><img src="photos/knee.webp" alt="Fighter showing a knee strike" loading="lazy" style="object-position:50% 30%"></div>
+    <div class="txt">
+      <span class="kick">The art of eight limbs</span>
+      <h2 id="limbs-h">Eight weapons. One workout.</h2>
+      <p class="lede">Boxing gives you two weapons. Muay Thai gives you eight, and every one of them works your whole body.</p>
+      <div class="limbs">
+        <div class="limb"><b><i>2</i>Fists</b><span>Jab, cross, hook</span></div>
+        <div class="limb"><b><i>2</i>Elbows</b><span>Sok, close range</span></div>
+        <div class="limb"><b><i>2</i>Knees</b><span>Khao, from the clinch</span></div>
+        <div class="limb"><b><i>2</i>Shins</b><span>Roundhouse and teep</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band flush" aria-label="Gallery">
+    <div class="gallery">
+      <div class="photo"><img src="photos/venue.webp" alt="Fight night venue with the ring set up" loading="lazy"></div>
+      <div class="photo"><img src="photos/coaches-cheer.webp" alt="Coaches cheering from ringside" loading="lazy"></div>
+      <div class="photo"><img src="photos/pads-2.webp" alt="Pad work warm-up" loading="lazy"></div>
+      <div class="photo"><img src="photos/knee.webp" alt="Knee strike" loading="lazy"></div>
+      <div class="photo"><img src="photos/interview.webp" alt="Filming an interview in the gym" loading="lazy"></div>
+      <div class="photo"><img src="photos/sparring.webp" alt="Sparring" loading="lazy"></div>
+      <div class="photo"><img src="photos/corner-crowd.webp" alt="Corner team with a packed crowd" loading="lazy"></div>
+      <div class="photo"><img src="photos/wraps.webp" alt="Wrapping hands" loading="lazy"></div>
+    </div>
+  </section>
+
+  <section class="band flush" aria-label="Areas we cover">
+    <div class="wrap">
+      <div class="fnhead"><div class="stack"><span class="kick">Training near you</span><h2>Potters Bar and beyond</h2></div><a class="btn ghost" href="#areas">All areas →</a></div>
+      <div class="townchips"><a href="#potters-bar">Potters Bar<small>In town</small></a><a href="#brookmans-park">Brookmans Park<small>About 5 min</small></a><a href="#cuffley">Cuffley<small>About 10 min</small></a><a href="#barnet">Barnet<small>About 10–15 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a><a href="#hoddesdon">Hoddesdon<small>About 25 min</small></a><a href="#welwyn-garden-city">Welwyn Garden City<small>About 20 min</small></a><a href="#st-albans">St Albans<small>About 20–25 min</small></a><a href="#radlett">Radlett<small>About 15 min</small></a><a href="#southgate-cockfosters">Southgate & Cockfosters<small>About 15–20 min</small></a></div>
+    </div>
+  </section>
+
+  <section class="nextband"><div class="wrap"><div><span class="kick">Ready?</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="classes" hidden>
+  <section class="band flush" id="classes">
+    <div class="wrap">
+      <div class="stack head">
+        <span class="kick">Classes</span>
+        <h2>Pick your way in</h2>
+        <p class="lede">Our coaches take every level, from complete beginners to fighters in camp. Start where you are; we'll take it from there.</p>
+      </div>
+      <div class="cards">
+        <article class="card"><div class="photo"><img src="photos/pads-2.webp" alt="Beginner kicking the pads" loading="lazy"><div class="lbl"><span>Start here</span><h3>Beginners</h3></div></div><div class="body"><span class="when">Thursday 7pm</span><p>Stance, footwork, punches, kicks and the teep, taught from zero. No sparring, no pressure. Bring a friend.</p></div></article>
+        <article class="card"><div class="photo"><img src="photos/pads-1.webp" alt="Pad work" loading="lazy"><div class="lbl"><span>All levels</span><h3>Pads</h3></div></div><div class="body"><span class="when">Tue &amp; Thu 6pm · Tue 7pm</span><p>Partner pad rounds that build real power and fitness. The hardest-working hour of your week.</p></div></article>
+        <article class="card"><div class="photo"><img src="photos/sparring.webp" alt="Light sparring" loading="lazy"><div class="lbl"><span>All levels</span><h3>Drills &amp; Sparring</h3></div></div><div class="body"><span class="when">Mon &amp; Wed 6:30pm · Fri 6pm</span><p>Technical drilling and controlled sparring. You spar only when you and the coach say you're ready.</p></div></article>
+        <article class="card kids"><div class="photo"><img src="photos/kids-coach.webp" alt="Coach with a young member in gloves" loading="lazy" style="object-position:50% 30%"><div class="lbl"><span>Ages 7–13</span><h3>Kids Muay Thai</h3></div></div><div class="body"><span class="when">Mon–Thu 5:30pm</span><p>Confidence, discipline and fitness for 7 to 13 year olds, in a safe and fun 50-minute class.</p></div></article>
+      </div>
+    </div>
+      <div class="wrap" style="margin-top:28px"><div class="stack head" style="margin-bottom:16px"><span class="kick">Find your programme</span></div><div class="progs"><a href="#kids-muay-thai"><img src="photos/kids-coach.webp" alt="" loading="lazy"><span><small>Ages 7–13</small><b>Kids Muay Thai</b></span></a><a href="#kickboxing"><img src="photos/pads-kick.webp" alt="" loading="lazy"><span><small>Kickboxing in Potters Bar</small><b>Kickboxing</b></span></a><a href="#fitness"><img src="photos/pads-1.webp" alt="" loading="lazy"><span><small>Get fight fit</small><b>Fitness</b></span></a><a href="#women"><img src="photos/pads-2.webp" alt="" loading="lazy"><span><small>Muay Thai for women</small><b>Women</b></span></a><a href="#self-defence"><img src="photos/sparring.webp" alt="" loading="lazy"><span><small>Confidence when it counts</small><b>Self-defence</b></span></a></div><p class="tnote" style="margin-top:14px"><a href="#faq">Read the FAQ</a> · <a href="#fight-levels">Fight levels explained</a></p></div>
+  </section>
+
+  <section class="band" id="timetable">
+    <div class="wrap">
+      <div class="stack head"><span class="kick">Timetable</span><h2>When we train</h2></div>
+      <div class="tt">
+        <div class="day"><h3>Mon</h3><div class="sess k"><b>Kids</b><span>17:30–18:20</span></div><div class="sess"><b>Drills &amp; sparring</b><span>18:30–19:30</span></div></div>
+        <div class="day"><h3>Tue</h3><div class="sess k"><b>Kids</b><span>17:30–18:20</span></div><div class="sess"><b>Pads</b><span>18:00–19:00</span></div><div class="sess"><b>Pads</b><span>19:00–20:00</span></div></div>
+        <div class="day"><h3>Wed</h3><div class="sess k"><b>Kids</b><span>17:30–18:20</span></div><div class="sess"><b>Drills &amp; sparring</b><span>18:30–19:30</span></div></div>
+        <div class="day"><h3>Thu</h3><div class="sess k"><b>Kids</b><span>17:30–18:20</span></div><div class="sess"><b>Pads</b><span>18:00–19:00</span></div><div class="sess beg"><b>Beginners</b><span>19:00–20:00</span></div></div>
+        <div class="day"><h3>Fri</h3><div class="sess"><b>Sparring</b><span>18:00–19:00</span></div></div>
+        <div class="day sat"><h3>Sat</h3><div class="sess"><b>Personal training</b><span>08:00–12:00</span></div></div>
+      </div>
+      <div class="note"><span>Open gym for members 9am–9pm weekdays</span><span>Sunday closed</span><span>1-to-1 sessions most afternoons and evenings</span></div>
+    </div>
+  </section>
+
+  <section class="band" id="prices">
+    <div class="wrap">
+      <div class="stack head"><span class="kick">Membership</span><h2>Simple prices</h2><p class="lede">One price covers everything. No hidden extras.</p></div>
+      <div class="prices">
+        <article class="price top"><span class="tagc">Adults</span><span class="amt">£75<small>/ month</small></span><p>All inclusive.</p><ul><li>Every class on the timetable</li><li>Open gym 9am–9pm weekdays</li><li>Fight team pathway</li></ul><a class="btn" href="#contact" data-enq="First class">Book a class</a></article>
+        <article class="price"><span class="tagc">Kids 7–13</span><span class="amt">£65<small>/ month</small></span><p>Kids Muay Thai.</p><ul><li>Monday to Thursday, 5:30pm</li><li>Confidence and discipline</li><li>Interclubs when they're ready</li></ul><a class="btn ghost" href="#contact" data-enq="Kids class">Ask about kids</a></article>
+        <article class="price"><span class="tagc">1-to-1</span><span class="amt"><small style="margin:0 6px 0 0">from</small>£35<small>/ hour</small></span><p>Personal training with a coach.</p><ul><li>Fast-track your technique</li><li>Fight prep or fitness goals</li><li>Saturday mornings and weekday slots</li></ul><a class="btn ghost" href="#contact" data-enq="Personal training">Book PT</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="faq-short">
+    <div class="wrap faqgrid">
+      <div class="stack"><span class="kick">First visit</span><h2>Nervous? Good.</h2><p class="lede">Everyone here walked in for the first time once. These are the questions people ask most.</p></div>
+      <div>
+        <details open><summary>Do I need experience or fitness?</summary><p>No. Come to Thursday's 7pm beginners class and work at your own pace. Fitness comes from training, not before it.</p></details>
+        <details><summary>Will I have to spar?</summary><p>Only when you want to and the coach says you're ready. Beginners work on pads and bags.</p></details>
+        <details><summary>What do I bring?</summary><p>Shorts, a T-shirt, water and a towel. We train barefoot. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details>
+        <details><summary>Is it OK for women?</summary><p>Yes. Classes are mixed, friendly and closely coached, and Muay Thai is one of the most popular martial arts for women.</p></details>
+        <details><summary>What age can kids start?</summary><p>Kids Muay Thai is for ages 7 to 13, Monday to Thursday at 5:30pm, £65 a month.</p></details>
+        <details><summary>Is personal training worth it?</summary><p>If you want to progress faster, build confidence before joining a class, or prepare for a fight, yes. Sessions start from £35 an hour.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="nextband"><div class="wrap"><div><span class="kick">Thursday 7pm beginners</span><h2>Come and try it</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="pt" hidden>
+  <section class="split rev" id="pt" aria-labelledby="pt-h">
+    <div class="photo"><img src="photos/pads-kick.webp" alt="Coach holding pads for a one-to-one session" loading="lazy"></div>
+    <div class="txt">
+      <span class="kick">Personal training</span>
+      <h2 id="pt-h">One coach. One hour. All about you.</h2>
+      <p class="lede">A 1-to-1 session gets you further in an hour than weeks of working it out on your own. It suits nervous beginners, busy people and fighters alike.</p>
+    </div>
+  </section>
+  <section class="band flush" aria-label="Benefits of personal training">
+    <div class="wrap" style="padding-top:44px">
+      <div class="ptgrid">
+        <div class="ptb"><b>Faster progress</b><p>Every pad, every combination, every correction is for you. Technique that takes months in a busy class clicks in a few sessions.</p></div>
+        <div class="ptb"><b>Confidence first</b><p>Nervous about walking into a class? Learn the basics privately, then join the group already knowing what you're doing.</p></div>
+        <div class="ptb"><b>Built around your goal</b><p>Weight loss, fitness, self-defence, a first interclub or a title fight: the session is planned around what you want.</p></div>
+        <div class="ptb"><b>Fight preparation</b><p>Extra pad rounds, game plans and sharpening during fight camp, on top of team training.</p></div>
+        <div class="ptb"><b>Flexible times</b><p>Saturday mornings plus weekday afternoon and evening slots that fit round work and family.</p></div>
+        <div class="ptb"><b>Support beyond the gym</b><p>Motivation, check-ins and practical nutrition tips to keep you on track between sessions.</p></div>
+      </div>
+      <div class="ptbar">
+        <div><span class="tagc">1-to-1 personal training</span><div class="amt"><small style="margin:0 6px 0 0">from</small>£35<small>/ hour</small></div></div>
+        <p style="color:var(--soft)">Saturdays 8am–12pm, plus weekday afternoon and evening slots.</p>
+        <a class="btn" href="#contact" data-enq="Personal training">Enquire about PT</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="nextband"><div class="wrap"><div><span class="kick">1-to-1 · from £35 an hour</span><h2>Book your first session</h2></div><a class="btn" href="#contact" data-enq="Personal training">Enquire about PT →</a></div></section>
+</div>
+
+<div class="view" data-view="fight" hidden>
+  <section class="band fight" id="fight-team">
+    <video class="cover" data-loop src="video/loop-action.mp4" poster="video/loop-action.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
+    <div class="wrap">
+      <div class="stack">
+        <span class="kick">Fight team</span>
+        <h2>Our fighters step through the ropes</h2>
+        <p class="lede">We have taken kids to around a hundred interclubs, and coached fighters at amateur and semi-pro level on shows like Warriors League Nak Muay Rising and Warrior Promotions' Warriors of Hope.</p>
+        <div class="ladder">
+          <div class="rung"><small>Step 1</small><b>Interclubs</b><span>Your first taste of the ring, against fighters at your level.</span></div>
+          <div class="rung"><small>Step 2</small><b>Amateur</b><span>Full bouts on licensed shows, with a proper camp behind you.</span></div>
+          <div class="rung"><small>Step 3</small><b>Semi-pro</b><span>For fighters ready to step up, guided every step by the coaches.</span></div>
+        </div>
+        <div class="cta"><a class="btn" href="#contact" data-enq="Fight team">Talk to us about fighting</a><a class="btn ghost" href="#fight-levels">Fight levels explained</a></div>
+      </div>
+      <figure class="photo walkout">
+        <video src="photos/walkout-clip.mp4" poster="photos/walkout-poster.jpg" autoplay muted loop playsinline aria-label="Warrior Spirit corner team walking out to the ring"></video>
+        <figcaption>Walking out on fight night</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="band" id="fight-camp">
+    <div class="wrap">
+      <div class="split rev" style="min-height:0;margin-bottom:18px">
+        <div class="photo" style="min-height:360px"><img src="photos/wraps.webp" alt="Coaches wrapping a fighter's hands before a bout" loading="lazy"></div>
+        <div class="txt">
+          <span class="kick">Fight camp</span>
+          <h2>We get you ready for fight night</h2>
+          <p class="lede">Got a fight booked, or want one? Our fight camps give you the training, advice and experience to walk out prepared.</p>
+        </div>
+      </div>
+      <div class="camp">
+        <article class="campi"><h3>Training plan</h3><p>A camp built backwards from your fight date: pads, technical sparring, clinch work and conditioning, peaking at the right time.</p></article>
+        <article class="campi"><h3>Weight &amp; recovery</h3><p>Practical advice on making weight safely, fuelling sessions and recovering properly, so you arrive strong rather than drained.</p></article>
+        <article class="campi"><h3>Fight night</h3><p>Hands wrapped, warm-up on the pads, a game plan and an experienced corner. You will never walk out alone.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band flush" aria-label="Fight clips">
+    <div class="wrap">
+      <div class="fnhead"><div class="stack"><span class="kick">From fight night</span><h2>Camp pays off</h2></div><a class="btn ghost" href="#videos">More videos →</a></div>
+      <div class="strikes">
+        <figure class="loop"><video data-loop src="video/strike-1.mp4" poster="video/strike-1.jpg" muted loop playsinline preload="none" aria-label="Combination"></video><figcaption>Combination</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-2.mp4" poster="video/strike-2.jpg" muted loop playsinline preload="none" aria-label="Trading shots"></video><figcaption>Trading shots</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-4.mp4" poster="video/strike-4.jpg" muted loop playsinline preload="none" aria-label="Kicks in"></video><figcaption>Kicks in</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-6.mp4" poster="video/strike-6.jpg" muted loop playsinline preload="none" aria-label="Close range"></video><figcaption>Close range</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="nextband"><div class="wrap"><div><span class="kick">Fight team</span><h2>Want to fight?</h2></div><a class="btn" href="#contact" data-enq="First class">Talk to us →</a></div></section>
+</div>
+
+<div class="view" data-view="videos" hidden>
+  <section class="band" id="videos-top">
+    <div class="wrap">
+      <div class="stack head">
+        <span class="kick">Videos</span>
+        <h2>Fight nights on film</h2>
+        <p class="lede">Walkouts, rounds, results and the noise of the crowd. Turn your sound up.</p>
+      </div>
+      <figure class="featured">
+        <video id="featured" src="video/highlights.mp4" poster="video/highlights.jpg" controls playsinline preload="metadata"></video>
+        <figcaption><b>Fight night highlights</b><span>56 seconds of Warrior Spirit fighters in action</span></figcaption>
+      </figure>
+    </div>
+  </section>
+  <section class="band flush" id="strikes">
+    <div class="wrap">
+      <div class="fnhead"><div class="stack"><span class="kick">Kicks &amp; punches</span><h2>The good bits</h2></div><p class="lede" style="max-width:40ch">Short clips from fight night. Tap the speaker on any clip to hear the impact and the crowd.</p></div>
+      <div class="strikes">
+        <figure class="loop"><video data-loop src="video/strike-1.mp4" poster="video/strike-1.jpg" muted loop playsinline preload="none" aria-label="Combination"></video><figcaption>Combination</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-2.mp4" poster="video/strike-2.jpg" muted loop playsinline preload="none" aria-label="Trading shots"></video><figcaption>Trading shots</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-3.mp4" poster="video/strike-3.jpg" muted loop playsinline preload="none" aria-label="Kick and counter"></video><figcaption>Kick and counter</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-4.mp4" poster="video/strike-4.jpg" muted loop playsinline preload="none" aria-label="Kicks in"></video><figcaption>Kicks in</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-5.mp4" poster="video/strike-5.jpg" muted loop playsinline preload="none" aria-label="Pressure"></video><figcaption>Pressure</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-6.mp4" poster="video/strike-6.jpg" muted loop playsinline preload="none" aria-label="Close range"></video><figcaption>Close range</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-7.mp4" poster="video/strike-7.jpg" muted loop playsinline preload="none" aria-label="Exchange in the middle"></video><figcaption>Exchange in the middle</figcaption></figure>
+        <figure class="loop"><video data-loop src="video/strike-8.mp4" poster="video/strike-8.jpg" muted loop playsinline preload="none" aria-label="Under the lights"></video><figcaption>Under the lights</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band flush" id="video-gallery">
+    <div class="wrap">
+      <div class="chips" role="group" aria-label="Filter videos">
+        <button class="chip" type="button" data-vf="all" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-vf="fight" aria-pressed="false">Fight nights</button>
+        <button class="chip" type="button" data-vf="win" aria-pressed="false">Wins</button>
+        <button class="chip" type="button" data-vf="training" aria-pressed="false">Training</button>
+      </div>
+      <div class="vgrid">
+        <button class="vcard" type="button" data-cat="fight" data-src="video/strikes-reel.mp4" data-title="Kicks and punches">
+          <span class="vthumb"><img src="video/strikes-reel.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:34</span></span>
+          <span class="vmeta"><small>Fight reel</small><b>Kicks and punches</b><span>Eight of the best exchanges from our fight nights.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="fight win" data-src="video/cre8-jul24.mp4" data-title="Fight night at CRE8 Gym">
+          <span class="vthumb"><img src="video/cre8-jul24.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">5:29</span></span>
+          <span class="vmeta"><small>July 2024</small><b>Fight night at CRE8 Gym</b><span>Walkout, three rounds and the decision.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="fight win" data-src="video/fight-oct23-b.mp4" data-title="Clinch work and the win">
+          <span class="vthumb"><img src="video/fight-oct23-b.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">2:12</span></span>
+          <span class="vmeta"><small>October 2023</small><b>Clinch work and the win</b><span>Pressure, knees in the clinch, then hands raised.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="fight" data-src="video/fight-oct23-a.mp4" data-title="Under the lights">
+          <span class="vthumb"><img src="video/fight-oct23-a.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">2:18</span></span>
+          <span class="vmeta"><small>October 2023</small><b>Under the lights</b><span>Full round from ringside.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="fight" data-src="video/fight-oct23-c.mp4" data-title="Round by round">
+          <span class="vthumb"><img src="video/fight-oct23-c.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">2:06</span></span>
+          <span class="vmeta"><small>October 2023</small><b>Round by round</b><span>Another round from the same show.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="win" data-src="video/decision-oct23.mp4" data-title="Decision and trophies">
+          <span class="vthumb"><img src="video/decision-oct23.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:37</span></span>
+          <span class="vmeta"><small>October 2023</small><b>Decision and trophies</b><span>The result, the trophy and the crowd.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="fight" data-src="video/warriors-league-22.mp4" data-title="Warriors League">
+          <span class="vthumb"><img src="video/warriors-league-22.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:30</span></span>
+          <span class="vmeta"><small>October 2022</small><b>Warriors League</b><span>In the ring at Warriors League.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="fight" data-src="video/ringside-oct23.mp4" data-title="Ringside">
+          <span class="vthumb"><img src="video/ringside-oct23.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:17</span></span>
+          <span class="vmeta"><small>October 2023</small><b>Ringside</b><span>The view from the corner.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="fight" data-src="photos/walkout-clip.mp4" data-title="Walking out">
+          <span class="vthumb"><img src="photos/walkout-poster.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:09</span></span>
+          <span class="vmeta"><small>March 2026</small><b>Walking out</b><span>The corner team heading to the ring.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="training" data-src="photos/pads-clip.mp4" data-title="Warm-up on the pads">
+          <span class="vthumb"><img src="photos/pads-poster.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:07</span></span>
+          <span class="vmeta"><small>March 2026</small><b>Warm-up on the pads</b><span>Getting sharp before fight time.</span></span>
+        </button>
+      </div>
+      <div class="ytband">
+        <div><span class="kick">More on YouTube</span><p>Full fights, technique breakdowns and training videos. <span class="tbc">YouTube channel link to add</span></p></div>
+      </div>
+    </div>
+  </section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Want to be on here?</span><h2>Start your fight journey</h2></div><a class="btn" href="#contact" data-enq="Fight team">Talk to us →</a></div></section>
+</div>
+
+<div class="vmodal" id="vmodal" hidden role="dialog" aria-modal="true" aria-label="Video player">
+  <div class="vm-in">
+    <div class="vm-top"><b id="vmTitle"></b><button type="button" class="vm-close" id="vmClose" aria-label="Close video">✕</button></div>
+    <video id="vmVideo" controls playsinline></video>
+  </div>
+</div>
+
+<div class="view" data-view="team" hidden>
+  <section class="teamhero">
+    <img class="cover" src="photos/team-medal.webp" alt="The Warrior Spirit team after a show">
+    <div class="wrap"><div class="stack"><span class="kick">Meet the team</span><h1>The people in your corner</h1><p class="lede">Four people who train, coach and turn up for every member, whether you're here for fitness or for fight night.</p>
+      <nav class="tjump" aria-label="Team members"><a href="#jay">Jay</a><a href="#aaron">Aaron</a><a href="#charlie">Charlie</a><a href="#steve">Steve</a></nav></div></div>
+  </section>
+
+  <section class="band jayfeat" id="jay">
+    <div class="wrap coach">
+      <div class="photo"><img src="photos/jay-portrait.webp" alt="Jay, head coach" loading="lazy"></div>
+      <div class="stack">
+        <span class="kick">Head coach</span>
+        <h2>Jay</h2>
+        <p class="tagline">Years of coaching. All ages. All levels.</p>
+        <p class="lede">Jay has spent years coaching people of every age, from seven-year-olds at their first class to adults getting fit and fighters getting ready for the ring.</p>
+        <p class="ptext">He leads the fight team and runs fight camps, building each camp backwards from the fight date. His fighters have competed at amateur and semi-pro level, and he has taken kids to around a hundred interclubs, so he knows how to bring a nervous first-timer through their first bout as well as how to sharpen an experienced fighter.</p>
+        <p class="ptext">In the gym he's the one holding the pads, watching your feet and telling you the one thing that will make the next round better. On fight night he's in the corner.</p>
+        <div class="cstats"><div><b>~100</b><span>Kids interclubs</span></div><div><b>Amateur</b><span>Fighters coached</span></div><div><b>Semi-pro</b><span>Fighters coached</span></div></div>
+        <div class="pchips"><span>Head coach</span><span>Fight team</span><span>Fight camps</span><span>Kids &amp; juniors</span><span>Cornering</span><span>1-to-1 PT</span></div>
+        <p class="ask"><b>Ask Jay about</b> your first interclub, fight camp, or getting your child started.</p>
+        <div class="cta"><a class="btn" href="#contact" data-enq="First class">Train with Jay</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band flush" aria-label="Jay in action">
+    <div class="wrap"><div class="jaystrip">
+      <div class="photo"><img src="photos/pads-1.webp" alt="Jay holding pads" loading="lazy"></div>
+      <div class="photo"><img src="photos/wraps.webp" alt="Jay wrapping hands before a fight" loading="lazy"></div>
+      <div class="photo"><img src="photos/jay-win.webp" alt="Jay celebrating a win" loading="lazy"></div>
+      <div class="photo"><img src="photos/corner-crowd.webp" alt="Jay in the corner" loading="lazy"></div>
+    </div></div>
+  </section>
+
+  <section class="profile" id="aaron">
+    <div class="wrap pgrid">
+      <div class="photo mono"><img src="img/logo.webp" alt="" class="wm"><span>A</span><em>Photo coming</em></div>
+      <div class="stack">
+        <span class="kick">Trainer</span>
+        <h2>Aaron</h2>
+        <p class="lede">Aaron trains members on the pads and in the classes, and makes sure every round counts.</p>
+        <p class="ptext"><span class="tbc">His background: how long he has trained, fights or titles, and which classes he takes</span></p>
+        <div class="pchips"><span>Trainer</span><span>Pads</span><span>Classes</span></div>
+        <p class="ask"><b>Ask Aaron about</b> <span class="tbc">what he loves teaching</span>.</p>
+        <div class="cta"><a class="igbtn" href="https://www.instagram.com/aaronbekir_/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@aaronbekir_</span></a><a class="btn" href="#contact" data-enq="First class">Train with Aaron</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile rev" id="charlie">
+    <div class="wrap pgrid">
+      <div class="photo mono"><img src="img/logo.webp" alt="" class="wm"><span>C</span><em>Photo coming</em></div>
+      <div class="stack">
+        <span class="kick">Trainer</span>
+        <h2>Charlie</h2>
+        <p class="lede">Charlie coaches in the classes and on the pads, helping members tighten up their technique.</p>
+        <p class="ptext"><span class="tbc">His background: how long he has trained, fights or titles, and which classes he takes</span></p>
+        <div class="pchips"><span>Trainer</span><span>Technique</span><span>Classes</span></div>
+        <p class="ask"><b>Ask Charlie about</b> <span class="tbc">what he loves teaching</span>.</p>
+        <div class="cta"><a class="igbtn" href="https://www.instagram.com/charliekyriakou/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@charliekyriakou</span></a><a class="btn" href="#contact" data-enq="First class">Train with Charlie</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile" id="steve">
+    <div class="wrap pgrid">
+      <div class="photo mono"><img src="img/logo.webp" alt="" class="wm"><span>S</span><em>Photo coming</em></div>
+      <div class="stack">
+        <span class="kick">Trainer &amp; marketing</span>
+        <h2>Steve</h2>
+        <p class="lede">Steve trains members and keeps them on track outside the gym too, with motivation, check-ins and practical nutrition tips.</p>
+        <p class="ptext">He looks after the gym’s marketing, from this website to the videos and fight-night posts on social media. If you see Warrior Spirit online, Steve is usually behind it.</p><p class="ptext">Whether your goal is losing weight, getting fit or making weight for a fight, Steve helps you plan the food and habits that go with your training.</p>
+        <div class="pchips"><span>Trainer</span><span>Nutrition tips</span><span>Motivation</span><span>Marketing</span></div>
+        <p class="ask"><b>Ask Steve about</b> nutrition, staying motivated, or fight-night photos and videos.</p>
+        <div class="cta"><a class="igbtn" href="https://www.instagram.com/saunders_80/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@saunders_80</span></a><a class="btn" href="#contact" data-enq="First class">Train with Steve</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band values" aria-labelledby="val-h">
+    <div class="wrap">
+      <div class="stack head"><span class="kick">How we coach</span><h2 id="val-h">What you get from all of us</h2></div>
+      <div class="vals">
+        <div><b>Everyone gets coached</b><p>Beginners and fighters get the same attention. Nobody is left in the corner on their own.</p></div>
+        <div><b>Safety first</b><p>Sparring is controlled and only when you're ready. Technique before power.</p></div>
+        <div><b>Honest feedback</b><p>We'll tell you what you're doing well and the one thing to fix next.</p></div>
+        <div><b>We turn up</b><p>For classes, for fight camps, and in the corner on fight night.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="nextband"><div class="wrap"><div><span class="kick">Say hello</span><h2>Come and meet us</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="blog" hidden>
+  <section class="band flush" id="blog">
+    <div class="wrap">
+      <div class="stack head">
+        <span class="kick">Blog &amp; news</span>
+        <h2>From the gym</h2>
+        <p class="lede">Fight results, training tips, nutrition and videos from the team.</p>
+      </div>
+      <div class="chips" role="group" aria-label="Filter posts">
+        <button class="chip" type="button" data-f="all" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-f="fight" aria-pressed="false">Fight news</button>
+        <button class="chip" type="button" data-f="tips" aria-pressed="false">Training tips</button>
+        <button class="chip" type="button" data-f="nutrition" aria-pressed="false">Nutrition</button>
+        <button class="chip" type="button" data-f="video" aria-pressed="false">Videos</button>
+      </div>
+      <div class="posts">
+        <article class="post feature" data-cat="fight">
+          <div class="photo"><img src="photos/team-medal.webp" alt="Warrior Spirit team with medals" loading="lazy"></div>
+          <div class="pb">
+            <div class="meta"><span class="tagc">Fight news</span><time datetime="2026-03-28">28 March 2026</time></div>
+            <h3>Medals and big smiles on show day</h3>
+            <p>A proud day for the team. Our young fighters stepped through the ropes, put the work from camp into practice, and came home with medals.</p>
+            <div class="more" hidden><p>Every one of them earned it on the pads and in sparring in the weeks before. Thanks to the families who came to support, and to the coaches in the corner all day.</p><p><span class="tbc">Add fighter names and results</span></p></div>
+            <button class="readbtn" type="button">Read more</button>
+          </div>
+        </article>
+        <article class="post" data-cat="video">
+          <div class="photo"><video src="photos/pads-clip.mp4" poster="photos/pads-poster.jpg" muted loop playsinline preload="none" aria-label="Warm-up on the pads before a fight"></video><span class="play">Video</span></div>
+          <div class="pb">
+            <div class="meta"><span class="tagc">Video</span><time datetime="2026-03-28">28 March 2026</time></div>
+            <h3>Warming up on the pads</h3>
+            <p>Behind the scenes before the fights: getting sharp on the pads so the first round isn't the warm-up.</p>
+            <button class="readbtn" type="button" data-play>Play clip</button>
+          </div>
+        </article>
+        <article class="post" data-cat="tips">
+          <div class="photo"><img src="photos/wraps.webp" alt="Hand wrapping before a bout" loading="lazy"></div>
+          <div class="pb">
+            <div class="meta"><span class="tagc">Training tips</span></div>
+            <h3>Why we wrap every time</h3>
+            <p>Wraps support the small bones in your hands and your wrist. Here's why they matter in every session, not just fight night.</p>
+            <div class="more" hidden><p>Wrap firmly, but not so tight you lose feeling. Cover the wrist, the back of the hand and between the knuckles. Your coach will show you the method we use, so ask at your first class.</p></div>
+            <button class="readbtn" type="button">Read more</button>
+          </div>
+        </article>
+        <article class="post" data-cat="fight">
+          <div class="photo"><img src="photos/corner-crowd.webp" alt="Coaches in the corner between rounds" loading="lazy"></div>
+          <div class="pb">
+            <div class="meta"><span class="tagc">Fight news</span></div>
+            <h3>In the corner at Nak Muay Rising</h3>
+            <p>One minute between rounds. What the corner says, and why fighters train to listen.</p>
+            <div class="more" hidden><p>Breathe, drink, one or two clear instructions, then back out. Those sixty seconds can turn a fight, and we practise them in camp so they're second nature on the night.</p></div>
+            <button class="readbtn" type="button">Read more</button>
+          </div>
+        </article>
+        <article class="post" data-cat="nutrition">
+          <div class="photo"><img src="photos/bag.webp" alt="Member after a hard session" loading="lazy"></div>
+          <div class="pb">
+            <div class="meta"><span class="tagc">Nutrition</span><span class="by">by Steve</span></div>
+            <h3>Five simple rules for fuelling training</h3>
+            <p>No fad diets. Just the basics that keep you training hard and recovering well.</p>
+            <div class="more" hidden><p>1. Eat a proper meal two to three hours before training. 2. Drink water through the day, not just in class. 3. Get some protein in every meal. 4. Plan food for busy days so you're not grabbing rubbish. 5. Sleep counts as much as food.</p></div>
+            <button class="readbtn" type="button">Read more</button>
+          </div>
+        </article>
+        <article class="post" data-cat="fight">
+          <div class="photo"><img src="photos/win-corner.webp" alt="Fighter and coach celebrating" loading="lazy"></div>
+          <div class="pb">
+            <div class="meta"><span class="tagc">Fight news</span></div>
+            <h3>Hands raised</h3>
+            <p>That moment when camp pays off. Another win for a Warrior Spirit fighter.</p>
+            <div class="more" hidden><p><span class="tbc">Add fighter, opponent, show and result</span></p></div>
+            <button class="readbtn" type="button">Read more</button>
+          </div>
+        </article>
+      </div>
+
+      <div class="socials">
+        <a class="soc" href="https://www.instagram.com/warriorspirit_muaythai/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          <div><b>Instagram</b><span>@warriorspirit_muaythai</span></div></a>
+        <div class="soc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg>
+          <div><b>YouTube</b><span class="tbc">Channel link to add</span></div></div>
+        <div class="soc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 3v11a4 4 0 1 1-4-4"/><path d="M14 3c.5 3 2.5 5 5 5"/></svg>
+          <div><b>TikTok</b><span class="tbc">Account link to add</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="nextband"><div class="wrap"><div><span class="kick">Train with us</span><h2>See it for yourself</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="areas" data-title="Areas we cover | Warrior Spirit Muay Thai, Potters Bar" data-desc="Muay Thai and kickboxing in Potters Bar for Barnet, Cuffley, Cheshunt, Hatfield, Enfield, St Albans, Hoddesdon and nearby." hidden>
+  <section class="band">
+    <div class="wrap">
+      <div class="stack head"><span class="kick">Areas we cover</span><h2>Training from your town</h2><p class="lede">Warrior Spirit is in Potters Bar, and members come from all over south Hertfordshire and north London. Find your town for travel times, routes and the classes that suit you best.</p></div>
+      <div class="tier"><h3>Our home town</h3><div class="tcards"><a class="tcard" href="#potters-bar"><img src="photos/hero-corner.webp" alt="" loading="lazy"><span><b>Potters Bar</b><small>In town</small></span></a></div></div><div class="tier"><h3>Close by</h3><div class="tcards"><a class="tcard" href="#brookmans-park"><img src="photos/pads-1.webp" alt="" loading="lazy"><span><b>Brookmans Park</b><small>About 5 min</small></span></a><a class="tcard" href="#cuffley"><img src="photos/pads-2.webp" alt="" loading="lazy"><span><b>Cuffley</b><small>About 10 min</small></span></a><a class="tcard" href="#barnet"><img src="photos/sparring.webp" alt="" loading="lazy"><span><b>Barnet</b><small>About 10–15 min</small></span></a></div></div><div class="tier"><h3>Worth the drive</h3><div class="tcards"><a class="tcard" href="#hatfield"><img src="photos/pads-kick.webp" alt="" loading="lazy"><span><b>Hatfield</b><small>About 15 min</small></span></a><a class="tcard" href="#borehamwood"><img src="photos/knee.webp" alt="" loading="lazy"><span><b>Borehamwood</b><small>About 15 min</small></span></a><a class="tcard" href="#enfield"><img src="photos/win-corner.webp" alt="" loading="lazy"><span><b>Enfield</b><small>About 15–20 min</small></span></a><a class="tcard" href="#waltham-cross"><img src="photos/bag.webp" alt="" loading="lazy"><span><b>Waltham Cross</b><small>About 15 min</small></span></a><a class="tcard" href="#cheshunt"><img src="photos/team-medal.webp" alt="" loading="lazy"><span><b>Cheshunt</b><small>About 15–20 min</small></span></a><a class="tcard" href="#radlett"><img src="photos/pads-2.webp" alt="" loading="lazy"><span><b>Radlett</b><small>About 15 min</small></span></a><a class="tcard" href="#southgate-cockfosters"><img src="photos/win-corner.webp" alt="" loading="lazy"><span><b>Southgate & Cockfosters</b><small>About 15–20 min</small></span></a></div></div><div class="tier"><h3>Further afield</h3><div class="tcards"><a class="tcard" href="#hoddesdon"><img src="photos/corner-crowd.webp" alt="" loading="lazy"><span><b>Hoddesdon</b><small>About 25 min</small></span></a><a class="tcard" href="#welwyn-garden-city"><img src="photos/pads-1.webp" alt="" loading="lazy"><span><b>Welwyn Garden City</b><small>About 20 min</small></span></a><a class="tcard" href="#st-albans"><img src="photos/sparring.webp" alt="" loading="lazy"><span><b>St Albans</b><small>About 20–25 min</small></span></a></div></div>
+      <p class="tnote" style="margin-top:20px">Travel times are approximate, by car, off-peak. Don't see your town? <a href="#contact">Ask us</a>.</p>
+    </div>
+  </section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Wherever you're coming from</span><h2>Come and try a class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="potters-bar" data-title="Muay Thai &amp; Kickboxing near Potters Bar | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Potters Bar at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/hero-corner.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Our home town · In town</span>
+      <h1>Muay Thai near Potters Bar</h1>
+      <p class="lede">Warrior Spirit is Potters Bar’s own Muay Thai and kickboxing gym. No long drive, no excuses: finish work, grab your kit and you can be on the pads within minutes.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Potters Bar members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">Being local means you can train two, three, four times a week without it taking over your life. The evening classes are timed for people coming straight from work or the school run.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Being so close, most Potters Bar members mix classes with open-gym sessions on the bags during the day, 9am to 9pm on weekdays.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Potters Bar</h3>
+        <div class="rlist"><div><small>By car</small><span>A few minutes from anywhere in town, and handy for the M25 (junction 24) and A1(M) (junction 1).</span></div><div><small>By train</small><span>Potters Bar station is on the Great Northern line, so it’s easy from Hadley Wood, Brookmans Park and Hatfield too.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Little Heath, Bentley Heath and South Mimms.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Potters Bar questions</span><h2>Good to know</h2></div><div><details><summary>Is there a Muay Thai gym in Potters Bar?</summary><p>Yes. Warrior Spirit is a Muay Thai and kickboxing gym in Potters Bar with classes for beginners, kids, fitness and fighters.</p></details><details><summary>Do you do kids Muay Thai in Potters Bar?</summary><p>Yes. Kids Muay Thai runs Monday to Thursday at 5:30pm for ages 7 to 13, £65 a month.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#brookmans-park">Brookmans Park<small>About 5 min</small></a><a href="#cuffley">Cuffley<small>About 10 min</small></a><a href="#barnet">Barnet<small>About 10–15 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Potters Bar to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="brookmans-park" data-title="Muay Thai &amp; Kickboxing near Brookmans Park | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Brookmans Park at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/pads-1.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Close by · About 5 min</span>
+      <h1>Muay Thai near Brookmans Park</h1>
+      <p class="lede">Live in Brookmans Park? Warrior Spirit is just down the road in Potters Bar, close enough to train before dinner and still be home for the evening.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Brookmans Park members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">Brookmans Park doesn’t have a Muay Thai gym of its own, so members come to us for proper striking coaching, a friendly crowd and a fight team if they want one.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> The 6pm pads class on Tuesdays and Thursdays is popular with Brookmans Park members: in and out with the evening still free.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Brookmans Park</h3>
+        <div class="rlist"><div><small>By car</small><span>About 5 minutes down the road into Potters Bar.</span></div><div><small>By train</small><span>One stop from Brookmans Park to Potters Bar on the Great Northern line.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Welham Green and Bell Bar.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Brookmans Park questions</span><h2>Good to know</h2></div><div><details><summary>How far is Warrior Spirit from Brookmans Park?</summary><p>About 5 minutes by car, or one stop on the train to Potters Bar.</p></details><details><summary>Can my kids train if we live in Brookmans Park?</summary><p>Yes. Kids classes run Monday to Thursday at 5:30pm, so it fits straight after school.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#cuffley">Cuffley<small>About 10 min</small></a><a href="#barnet">Barnet<small>About 10–15 min</small></a><a href="#potters-bar">Potters Bar<small>In town</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Brookmans Park to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="cuffley" data-title="Muay Thai &amp; Kickboxing near Cuffley | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Cuffley at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/pads-2.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Close by · About 10 min</span>
+      <h1>Muay Thai near Cuffley</h1>
+      <p class="lede">From Cuffley it’s a short run along the Northaw Road to Warrior Spirit in Potters Bar, for real Muay Thai coaching without heading into London.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Cuffley members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">If you want a proper fight gym that still welcomes complete beginners, that’s exactly what we are.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Start with Thursday’s 7pm beginners class. By the time you’ve driven over from Cuffley you’ll have shaken off the working day.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Cuffley</h3>
+        <div class="rlist"><div><small>By car</small><span>About 10 minutes via Northaw on the B156.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Northaw and Goffs Oak.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Cuffley questions</span><h2>Good to know</h2></div><div><details><summary>Is there Muay Thai near Cuffley?</summary><p>Yes. Warrior Spirit in Potters Bar is about 10 minutes from Cuffley by car.</p></details><details><summary>Do I need experience?</summary><p>No. Thursday’s beginners class starts from zero.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#brookmans-park">Brookmans Park<small>About 5 min</small></a><a href="#barnet">Barnet<small>About 10–15 min</small></a><a href="#potters-bar">Potters Bar<small>In town</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Cuffley to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="barnet" data-title="Muay Thai &amp; Kickboxing near Barnet | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Barnet at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/sparring.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Close by · About 10–15 min</span>
+      <h1>Muay Thai near Barnet</h1>
+      <p class="lede">Barnet is right on our doorstep. Head up the Great North Road and you’re at Warrior Spirit in Potters Bar, a proper Muay Thai gym without the London prices.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Barnet members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">Adults train with us for £75 a month, all inclusive. That’s every class on the timetable plus open gym, which is a big saving on most London gyms.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Our Monday and Wednesday 6:30pm drills and sparring classes suit Barnet members who want technical work with a bit of an edge.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Barnet</h3>
+        <div class="rlist"><div><small>By car</small><span>About 10 to 15 minutes up the A1000 Great North Road.</span></div><div><small>By train</small><span>From New Barnet or Hadley Wood, Potters Bar is one or two stops up the Great Northern line.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to High Barnet, New Barnet and Hadley Wood.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Barnet questions</span><h2>Good to know</h2></div><div><details><summary>Is there a Muay Thai gym near Barnet?</summary><p>Yes. Warrior Spirit is in Potters Bar, about 10 to 15 minutes from Barnet.</p></details><details><summary>How much is membership?</summary><p>Adults £75 a month, all inclusive. Kids £65 a month.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#brookmans-park">Brookmans Park<small>About 5 min</small></a><a href="#cuffley">Cuffley<small>About 10 min</small></a><a href="#potters-bar">Potters Bar<small>In town</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Barnet to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="hatfield" data-title="Muay Thai &amp; Kickboxing near Hatfield | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Hatfield at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/pads-kick.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Worth the drive · About 15 min</span>
+      <h1>Muay Thai near Hatfield</h1>
+      <p class="lede">Training in Muay Thai from Hatfield is easy: a quick run down the A1(M) or three stops on the train gets you to Warrior Spirit in Potters Bar.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Hatfield members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">Studying or working shifts? We keep things flexible, with evening classes, open gym all day on weekdays and 1-to-1 sessions when classes don’t fit.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Can’t make the class times? Book a 1-to-1 session from £35 an hour, then join the group classes when you can.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Hatfield</h3>
+        <div class="rlist"><div><small>By car</small><span>About 15 minutes down the A1(M).</span></div><div><small>By train</small><span>Hatfield to Potters Bar is three stops on the Great Northern line.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Welham Green and the University of Hertfordshire area.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Hatfield questions</span><h2>Good to know</h2></div><div><details><summary>How do I get to Warrior Spirit from Hatfield?</summary><p>About 15 minutes by car down the A1(M), or three stops by train to Potters Bar.</p></details><details><summary>Do you have options for students?</summary><p><span class="tbc">Student pricing, if offered</span></p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Hatfield to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="borehamwood" data-title="Muay Thai &amp; Kickboxing near Borehamwood | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Borehamwood at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/knee.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Worth the drive · About 15 min</span>
+      <h1>Muay Thai near Borehamwood</h1>
+      <p class="lede">From Borehamwood and Elstree it’s a straightforward drive round to Warrior Spirit in Potters Bar for Muay Thai, kickboxing and kids classes.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Borehamwood members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">Whether you’re after fitness, confidence or your first fight, you’ll train with coaches who take beginners and fighters seriously.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Tuesday is a good night to start: two pads classes back to back at 6pm and 7pm.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Borehamwood</h3>
+        <div class="rlist"><div><small>By car</small><span>About 15 minutes via South Mimms.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Elstree and Shenley.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Borehamwood questions</span><h2>Good to know</h2></div><div><details><summary>Is there Muay Thai near Borehamwood?</summary><p>Yes. Warrior Spirit in Potters Bar is about 15 minutes away.</p></details><details><summary>Can I try a class first?</summary><p>Yes. Send us a message and we’ll point you to the best class to start with.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Borehamwood to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="enfield" data-title="Muay Thai &amp; Kickboxing near Enfield | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Enfield at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/win-corner.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Worth the drive · About 15–20 min</span>
+      <h1>Muay Thai near Enfield</h1>
+      <p class="lede">From Enfield it’s a short trip along The Ridgeway to Warrior Spirit in Potters Bar for proper Muay Thai coaching, a fight team and a gym that knows your name.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Enfield members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">We’re a small team, so you won’t get lost in a crowd. Coaches watch your technique, correct it and push you on.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Enfield parents: kids classes are at 5:30pm Monday to Thursday, early enough to get home for tea.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Enfield</h3>
+        <div class="rlist"><div><small>By car</small><span>About 15 to 20 minutes along The Ridgeway or via the M25.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Enfield Chase, Gordon Hill and Crews Hill.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Enfield questions</span><h2>Good to know</h2></div><div><details><summary>How far is Warrior Spirit from Enfield?</summary><p>About 15 to 20 minutes by car.</p></details><details><summary>Do you take complete beginners?</summary><p>Yes. Thursday’s 7pm class is built for beginners.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Enfield to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="waltham-cross" data-title="Muay Thai &amp; Kickboxing near Waltham Cross | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Waltham Cross at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/bag.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Worth the drive · About 15 min</span>
+      <h1>Muay Thai near Waltham Cross</h1>
+      <p class="lede">From Waltham Cross, Warrior Spirit is a quick hop along the M25 to Potters Bar for Muay Thai, kickboxing and fight training.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Waltham Cross members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">It’s close enough to make three sessions a week realistic, which is when Muay Thai really starts to change your fitness and confidence.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Friday’s 6pm sparring session is a great way to finish the week once you’ve got the basics.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Waltham Cross</h3>
+        <div class="rlist"><div><small>By car</small><span>About 15 minutes along the M25, junction 25 to junction 24.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Theobalds and Goffs Oak.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Waltham Cross questions</span><h2>Good to know</h2></div><div><details><summary>Is there a Muay Thai gym near Waltham Cross?</summary><p>Warrior Spirit in Potters Bar is about 15 minutes along the M25.</p></details><details><summary>What should I bring to my first class?</summary><p>Shorts, a T-shirt, water and a towel. We train barefoot.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Waltham Cross to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="cheshunt" data-title="Muay Thai &amp; Kickboxing near Cheshunt | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Cheshunt at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/team-medal.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Worth the drive · About 15–20 min</span>
+      <h1>Muay Thai near Cheshunt</h1>
+      <p class="lede">Cheshunt is home ground for part of our team, and Warrior Spirit in Potters Bar is only 15 to 20 minutes away.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Cheshunt members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">It’s worth the trip for what you can’t easily get closer to home: a fight team with a clear path from interclubs to amateur and semi-pro, structured fight camps, and coaches who corner you on the night.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Thinking of competing? Talk to us about the fight team. Cheshunt fighters train the same camps as everyone else.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Cheshunt</h3>
+        <div class="rlist"><div><small>By car</small><span>About 15 to 20 minutes on the M25 (junction 25 to 24), or across through Goffs Oak and Cuffley.</span></div><div><small>Car share</small><span>Ask us about sharing lifts with other members coming from your way.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Turnford, Goffs Oak and Flamstead End.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Cheshunt questions</span><h2>Good to know</h2></div><div><details><summary>Is it worth travelling from Cheshunt?</summary><p>We think so. The fight team, fight camps and coaching are what make the trip worth it.</p></details><details><summary>How long does it take from Cheshunt?</summary><p>About 15 to 20 minutes by car.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Cheshunt to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="hoddesdon" data-title="Muay Thai &amp; Kickboxing near Hoddesdon | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Hoddesdon at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/corner-crowd.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Further afield · About 25 min</span>
+      <h1>Muay Thai near Hoddesdon</h1>
+      <p class="lede">We have members who drive in from Hoddesdon. If you’re serious about your Muay Thai, it’s worth the trip down the A10 to Warrior Spirit in Potters Bar.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Hoddesdon members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">What brings people from Hoddesdon is the fight side: structured fight camps, regular interclubs and shows, and a corner team that has been there many times.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Can only make it twice a week? Pair a Tuesday pads class with Friday sparring, and add 1-to-1 sessions in fight camp.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Hoddesdon</h3>
+        <div class="rlist"><div><small>By car</small><span>About 25 minutes via the A10 and the M25.</span></div><div><small>Car share</small><span>Ask us about sharing lifts with other members coming from your way.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Broxbourne and Wormley.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Hoddesdon questions</span><h2>Good to know</h2></div><div><details><summary>Do people really travel from Hoddesdon?</summary><p>Yes. We already have members who make the trip each week.</p></details><details><summary>Can I join the fight team if I live further away?</summary><p>Yes. Talk to us about your goals and how often you can train.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#welwyn-garden-city">Welwyn Garden City<small>About 20 min</small></a><a href="#st-albans">St Albans<small>About 20–25 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Hoddesdon to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="welwyn-garden-city" data-title="Muay Thai &amp; Kickboxing near Welwyn Garden City | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Welwyn Garden City at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/pads-1.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Further afield · About 20 min</span>
+      <h1>Muay Thai near Welwyn Garden City</h1>
+      <p class="lede">From Welwyn Garden City it’s a straight run down the A1(M) to Warrior Spirit in Potters Bar for Muay Thai, kickboxing and fight training.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Welwyn Garden City members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">The A1(M) makes the trip quick in the evenings, so two or three sessions a week are realistic, and that’s when the fitness and confidence really start to build.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Pair Thursday’s 7pm beginners class with a Saturday morning 1-to-1 to get up to speed quickly.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Welwyn Garden City</h3>
+        <div class="rlist"><div><small>By car</small><span>About 20 minutes down the A1(M) to junction 1.</span></div><div><small>By train</small><span>Welwyn Garden City to Potters Bar is a direct Great Northern service.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Welwyn, Digswell and Panshanger.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Welwyn Garden City questions</span><h2>Good to know</h2></div><div><details><summary>How far is Warrior Spirit from Welwyn Garden City?</summary><p>About 20 minutes by car down the A1(M), or a direct train to Potters Bar.</p></details><details><summary>Is it suitable for beginners?</summary><p>Yes. Thursday’s 7pm class is built for complete beginners.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hoddesdon">Hoddesdon<small>About 25 min</small></a><a href="#st-albans">St Albans<small>About 20–25 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Welwyn Garden City to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="st-albans" data-title="Muay Thai &amp; Kickboxing near St Albans | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for St Albans at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/sparring.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Further afield · About 20–25 min</span>
+      <h1>Muay Thai near St Albans</h1>
+      <p class="lede">Training from St Albans? Warrior Spirit in Potters Bar is a short trip round the M25 for coached Muay Thai, kickboxing and a fight team that competes.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why St Albans members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">If you want structured coaching, a clear route from beginner to interclubs, and coaches who know every member by name, it’s worth the drive.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Tuesday’s back-to-back pads classes at 6pm and 7pm make one trip count double.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from St Albans</h3>
+        <div class="rlist"><div><small>By car</small><span>About 20 to 25 minutes via London Colney and the M25 (junction 22 to 24).</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to London Colney and Colney Heath.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">St Albans questions</span><h2>Good to know</h2></div><div><details><summary>Is there Muay Thai near St Albans?</summary><p>Warrior Spirit in Potters Bar is about 20 to 25 minutes from St Albans by car.</p></details><details><summary>Can I just come for fitness?</summary><p>Yes. Plenty of people train purely for fitness and never spar.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hoddesdon">Hoddesdon<small>About 25 min</small></a><a href="#welwyn-garden-city">Welwyn Garden City<small>About 20 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">St Albans to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="radlett" data-title="Muay Thai &amp; Kickboxing near Radlett | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Radlett at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/pads-2.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Worth the drive · About 15 min</span>
+      <h1>Muay Thai near Radlett</h1>
+      <p class="lede">From Radlett and Shenley it’s about a quarter of an hour across to Warrior Spirit in Potters Bar for Muay Thai and kickboxing.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Radlett members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">Radlett has plenty of gyms but very little real striking coaching. Here you’ll learn proper technique from coaches who also corner fighters.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Kids classes at 5:30pm Monday to Thursday fit neatly after school for Radlett families.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Radlett</h3>
+        <div class="rlist"><div><small>By car</small><span>About 15 minutes via Shenley and South Mimms.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Shenley and Aldenham.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Radlett questions</span><h2>Good to know</h2></div><div><details><summary>How far is Warrior Spirit from Radlett?</summary><p>About 15 minutes by car via Shenley.</p></details><details><summary>Do you run kids classes?</summary><p>Yes. Ages 7 to 13, Monday to Thursday at 5:30pm.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Radlett to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="southgate-cockfosters" data-title="Muay Thai &amp; Kickboxing near Southgate & Cockfosters | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Southgate & Cockfosters at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/win-corner.webp" alt="">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#areas">← Areas we cover</a>
+      <span class="kick">Worth the drive · About 15–20 min</span>
+      <h1>Muay Thai near Southgate & Cockfosters</h1>
+      <p class="lede">North London’s doorstep to Hertfordshire: from Southgate and Cockfosters, Warrior Spirit in Potters Bar is a straight drive up the A111.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack">
+        <span class="kick">Why Southgate & Cockfosters members train here</span>
+        <h2>Worth every mile</h2>
+        <p class="lede">You get proper Muay Thai coaching and a fight team without London prices. Adults pay £75 a month, all inclusive.</p>
+        <ul class="ticks"><li>Beginners class every Thursday at 7pm</li><li><a href="#kids-muay-thai">Kids Muay Thai</a>, ages 7 to 13, Monday to Thursday</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 <a href="#pt">personal training</a> from £35 an hour</li><li>A <a href="#fight">fight team</a> from interclubs to semi-pro</li></ul>
+        <p class="ask"><b>Tip</b> Monday and Wednesday 6:30pm drills and sparring are ideal once you have the basics.</p>
+      </div>
+      <aside class="getting">
+        <h3>Getting here from Southgate & Cockfosters</h3>
+        <div class="rlist"><div><small>By car</small><span>About 15 to 20 minutes up Cockfosters Road (A111).</span></div><div><small>By train</small><span>From Hadley Wood station, Potters Bar is one stop on the Great Northern line.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <p class="also">Also close to Oakwood, Cockfosters and Hadley Wood.</p>
+        <p class="tnote">Times are approximate, off-peak.</p>
+      </aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Southgate & Cockfosters questions</span><h2>Good to know</h2></div><div><details><summary>Is there Muay Thai near Southgate or Cockfosters?</summary><p>Warrior Spirit in Potters Bar is about 15 to 20 minutes up the A111.</p></details><details><summary>How much does it cost?</summary><p>Adults £75 a month all inclusive, kids £65 a month.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Southgate & Cockfosters to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="kids-muay-thai" data-title="Kids Muay Thai & Kickboxing in Potters Bar | Warrior Spirit" data-desc="Kids Muay Thai and kickboxing in Potters Bar for ages 7 to 13. Monday to Thursday 5:30pm, £65 a month." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/kids-coach.webp" alt="" style="object-position:50% 30%">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#classes">← Classes</a>
+      <span class="kick">Ages 7–13</span>
+      <h1>Kids Muay Thai</h1>
+      <p class="lede">Confidence, discipline and fitness for 7 to 13 year olds. Fun, safe, properly coached Muay Thai, Monday to Thursday at 5:30pm.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Kids class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack"><div class="psec"><h3>What your child gets</h3><p>Kids learn real Muay Thai technique: stance, footwork, punches, kicks, knees and defence, taught in a way that keeps them moving and having fun.</p><p>Along the way they build things that matter outside the gym too: confidence, focus, respect for others and the habit of working hard at something.</p></div><div class="psec"><h3>Safe and supervised</h3><p>Classes are led by experienced coaches who have trained kids of every age. There is no hard sparring for children; pad work, drills and games make up most of the session.</p><p>For kids who want to go further, we take them to interclubs, friendly skill-based bouts against children at their level, only when they and their parents are ready. Over the years we’ve been to around a hundred.</p></div></div>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Monday to Thursday, 5:30pm to 6:20pm</li><li>Ages 7 to 13</li><li>£65 a month</li><li>No experience needed</li><li>Interclubs when they’re ready</li></ul><a class="btn" href="#contact" data-enq="Kids class">Enquire</a></aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#fight-levels">Fight levels explained →</a><a href="#faq">FAQ →</a></div></div><div><details><summary>What age can kids start Muay Thai?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Will my child get hurt?</summary><p>Safety comes first. Kids work on pads and drills, and there is no hard sparring.</p></details><details><summary>What do they need to bring?</summary><p>Shorts, a T-shirt and a water bottle. We train barefoot.</p></details><details><summary>Can parents watch?</summary><p><span class="tbc">Confirm whether parents can watch</span></p></details></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Kids Muay Thai</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Kids class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="kickboxing" data-title="Kickboxing Classes in Potters Bar | Warrior Spirit Muay Thai" data-desc="Kickboxing classes in Potters Bar for beginners and fitness. Learn Muay Thai, the most complete form of kickboxing." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/pads-kick.webp" alt="" style="object-position:50% 30%">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#classes">← Classes</a>
+      <span class="kick">Kickboxing in Potters Bar</span>
+      <h1>Kickboxing classes</h1>
+      <p class="lede">Looking for kickboxing? Muay Thai is kickboxing with everything included: punches and kicks, plus knees, elbows and the clinch.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack"><div class="psec"><h3>Muay Thai or kickboxing?</h3><p>Most kickboxing styles use punches and kicks. Muay Thai, from Thailand, adds knees, elbows and clinch work, which is why it’s called the art of eight limbs.</p><p>In our classes you learn proper kickboxing technique first, then build in the extra Muay Thai weapons as you go. Many members never fight and just love the workout.</p></div><div class="psec"><h3>Beginners welcome</h3><p>You don’t need any experience or fitness to start. Thursday’s 7pm class is built for beginners, and sparring is always your choice.</p></div></div>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Beginners every Thursday at 7pm</li><li>Pads, drills and sparring classes</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 sessions from £35 an hour</li></ul><a class="btn" href="#contact" data-enq="First class">Enquire</a></aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#fitness">Fitness →</a><a href="#faq">FAQ →</a></div></div><div><details><summary>What’s the difference between Muay Thai and kickboxing?</summary><p>Muay Thai uses punches, kicks, knees, elbows and the clinch. Most kickboxing styles use only punches and kicks.</p></details><details><summary>Do you teach K1 kickboxing?</summary><p><span class="tbc">Confirm whether you teach K1 rules</span></p></details><details><summary>Do you do boxing classes?</summary><p>We focus on Muay Thai and kickboxing, which include a lot of boxing technique, but we don’t run separate boxing classes.</p></details></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Kickboxing</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="fitness" data-title="Kickboxing & Muay Thai Fitness Classes, Potters Bar | Warrior Spirit" data-desc="Get fit with Muay Thai and kickboxing in Potters Bar. Pad work, bag work and conditioning, no sparring needed." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/pads-1.webp" alt="" style="object-position:50% 30%">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#classes">← Classes</a>
+      <span class="kick">Get fight fit</span>
+      <h1>Muay Thai for fitness</h1>
+      <p class="lede">The hardest-working hour of your week, and the most fun. Pad rounds, bag work and conditioning that get you fit without ever needing to fight.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack"><div class="psec"><h3>Why it works</h3><p>Muay Thai works your whole body at once: legs, core, shoulders, heart and lungs. Rounds of work and rest push your fitness in a way a treadmill never will.</p><p>Because you’re learning a skill, it never gets boring. You’re too busy thinking about the next combination to watch the clock.</p></div><div class="psec"><h3>Go at your own pace</h3><p>Every round can be as hard as you make it. Complete beginners and fighters train side by side, each working at their own level.</p><p>Want help with food and habits too? Steve shares practical nutrition tips to go with your training.</p></div></div>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>No sparring needed</li><li>Pads classes Tuesday and Thursday</li><li>Open gym 9am to 9pm on weekdays</li><li>Nutrition tips and motivation</li></ul><a class="btn" href="#contact" data-enq="First class">Enquire</a></aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#kickboxing">Kickboxing →</a><a href="#pt">Personal training →</a></div></div><div><details><summary>Is Muay Thai good for weight loss?</summary><p>It’s a demanding full-body workout, and combined with sensible eating it’s a great way to lose weight.</p></details><details><summary>Do I have to spar?</summary><p>No. Plenty of members train purely for fitness.</p></details><details><summary>How often should I train?</summary><p>Two or three times a week is a great place to start.</p></details></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Fitness</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="women" data-title="Muay Thai & Kickboxing for Women, Potters Bar | Warrior Spirit" data-desc="Women’s Muay Thai and kickboxing in Potters Bar. Friendly mixed classes, fitness, confidence and self-defence skills." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/pads-2.webp" alt="" style="object-position:50% 30%">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#classes">← Classes</a>
+      <span class="kick">Muay Thai for women</span>
+      <h1>Muay Thai for women</h1>
+      <p class="lede">Muay Thai is one of the most popular martial arts for women, for fitness, confidence and knowing you can look after yourself.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack"><div class="psec"><h3>What to expect</h3><p>Our classes are mixed, friendly and closely coached. You’ll be paired with partners who suit your size and experience, and nobody is thrown in at the deep end.</p><p>Many women start for fitness and stay for the confidence it builds. Some go on to compete; most don’t, and both are welcome.</p></div><div class="psec"><h3>Start your way</h3><p>If walking into a class feels like a big step, book a 1-to-1 session first to learn the basics, then join the group knowing what you’re doing.</p></div></div>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Friendly mixed classes</li><li>Partners matched to your level</li><li>1-to-1 sessions from £35 an hour</li><li>Sparring always optional</li></ul><a class="btn" href="#contact" data-enq="First class">Enquire</a></aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#self-defence">Self-defence →</a><a href="#fitness">Fitness →</a></div></div><div><details><summary>Do you run women-only classes?</summary><p><span class="tbc">Confirm whether you run women-only sessions</span></p></details><details><summary>Will I be partnered with men?</summary><p>Coaches pair people sensibly by size and experience, and you can always ask to work with someone specific.</p></details></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Women</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="self-defence" data-title="Self-Defence Classes in Potters Bar | Warrior Spirit Muay Thai" data-desc="Build real self-defence skills and confidence with Muay Thai in Potters Bar. Striking, clinch work and awareness." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/sparring.webp" alt="" style="object-position:50% 30%">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#classes">← Classes</a>
+      <span class="kick">Confidence when it counts</span>
+      <h1>Self-defence through Muay Thai</h1>
+      <p class="lede">Muay Thai is a tested striking art. Regular training builds the skills, fitness and calm under pressure that make you harder to target.</p>
+      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap tgrid">
+      <div class="stack"><div class="psec"><h3>Why Muay Thai</h3><p>You learn to strike properly, protect yourself, deal with someone grabbing you in the clinch, and keep your head when things get intense, all practised against a resisting partner.</p><p>Just as important, the confidence you build changes how you carry yourself day to day.</p></div><div class="psec"><h3>A sensible approach</h3><p>We teach a martial art, not a quick-fix course. The best self-defence is awareness and avoiding trouble; training gives you the skills and composure if you ever need them.</p></div></div>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Real striking and clinch skills</li><li>Fitness and confidence</li><li>Beginners every Thursday at 7pm</li><li>Suitable for adults and kids</li></ul><a class="btn" href="#contact" data-enq="First class">Enquire</a></aside>
+    </div>
+  </section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#women">Women →</a><a href="#kids-muay-thai">Kids Muay Thai →</a></div></div><div><details><summary>Is Muay Thai good for self-defence?</summary><p>It teaches effective striking, clinch work and composure under pressure, practised safely with a partner.</p></details><details><summary>How long before I can defend myself?</summary><p>Basic skills come within weeks; confidence grows with regular training.</p></details></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Self-defence</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="fight-levels" data-title="Muay Thai Fight Levels Explained: Interclubs, N, C, B and A Class | Warrior Spirit" data-desc="What are interclubs and N-Class, C-Class, B-Class and A-Class Muay Thai fights? A plain-English guide from Warrior Spirit, Potters Bar." hidden>
+  <section class="townhero">
+    <img class="cover" src="photos/poster-dino.webp" alt="" style="object-position:50% 20%">
+    <div class="wrap"><div class="stack">
+      <a class="crumb" href="#fight">← Fight team</a>
+      <span class="kick">Fighting explained</span>
+      <h1>Interclubs to A-Class</h1>
+      <p class="lede">How Muay Thai fighters progress in the UK, from a first friendly interclub to full-rules bouts. A plain-English guide for members and parents.</p>
+    </div></div>
+  </section>
+  <section class="band">
+    <div class="wrap">
+      <div class="ladder2">
+        <div><small>Start</small><b>Interclubs</b><p>Friendly, controlled bouts between gyms, usually with protective kit. Great for kids and first-timers to experience the ring safely. We have taken kids to around a hundred.</p></div>
+        <div><small>Level 1</small><b>N-Class</b><p>Novice bouts for fighters new to competing. Protective rules apply, so it is the usual first step onto a proper show. Dino and Leo make their N-Class debuts at Warriors of Hope 2.</p></div>
+        <div><small>Level 2</small><b>C-Class</b><p>For fighters with a few bouts behind them. Rules are still protective but the level and intensity step up.</p></div>
+        <div><small>Level 3</small><b>B-Class</b><p>Experienced fighters with fewer restrictions. Fights are harder and camps get longer.</p></div>
+        <div><small>Top</small><b>A-Class</b><p>Full Muay Thai rules for the most experienced fighters, including semi-pro and pro level bouts.</p></div>
+      </div>
+      <p class="tnote" style="margin-top:16px">Exact rules, round lengths and protective kit vary between promotions and governing bodies. Your coach will explain the rules for each fight.</p>
+    </div>
+  </section>
+  <section class="band flush">
+    <div class="wrap tgrid">
+      <div class="stack"><span class="kick">How we move fighters up</span><h2>Only when you’re ready</h2>
+        <p class="lede">Nobody is pushed into fighting. Coaches move fighters up a level when their skills, fitness and experience say they’re ready, and every fight has a proper camp behind it.</p>
+        <div class="cta"><a class="btn" href="#fight">The fight team →</a><a class="btn ghost" href="#contact" data-enq="Fight team">Talk to us about fighting</a></div></div>
+      <aside class="getting"><h3>Parents: is it safe?</h3><p class="also">Kids compete at interclubs with protective kit, matched by age, weight and experience, and only with your agreement. Coaches are in the corner every time.</p></aside>
+    </div>
+  </section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Want to compete?</span><h2>Start with an interclub</h2></div><a class="btn" href="#contact" data-enq="Fight team">Talk to us →</a></div></section>
+</div>
+
+<div class="view" data-view="faq" data-title="Muay Thai & Kickboxing FAQ | Warrior Spirit, Potters Bar" data-desc="Answers to common questions about Muay Thai and kickboxing classes at Warrior Spirit in Potters Bar: prices, kids, kit, sparring and fighting." hidden>
+  <section class="band">
+    <div class="wrap">
+      <div class="stack head"><span class="kick">FAQ</span><h2>Your questions, answered</h2><p class="lede">Everything people usually ask before their first class. Can’t see yours? <a href="#contact">Ask us</a>.</p></div>
+      <div class="faqall"><div class="faqg"><h3>Getting started</h3><details><summary>Do I need any experience?</summary><p>No. Thursday’s 7pm beginners class starts from zero.</p></details><details><summary>Do I need to be fit?</summary><p>No. Fitness comes from training. Everyone works at their own pace.</p></details><details><summary>What should I wear?</summary><p>Shorts and a T-shirt. We train barefoot.</p></details><details><summary>What should I bring?</summary><p>Water and a towel. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details><details><summary>Can I borrow kit?</summary><p><span class="tbc">Confirm whether gloves can be borrowed</span></p></details><details><summary>How do I book my first class?</summary><p>Send us a message through the contact form and we’ll point you to the best class.</p></details></div><div class="faqg"><h3>Classes and membership</h3><details><summary>How much is membership?</summary><p>Adults £75 a month, all inclusive. Kids £65 a month.</p></details><details><summary>How much is personal training?</summary><p>1-to-1 sessions start from £35 an hour.</p></details><details><summary>When are classes?</summary><p>Monday to Friday evenings, with kids classes Monday to Thursday at 5:30pm. See the timetable.</p></details><details><summary>Is there open gym?</summary><p>Yes, members can use the gym from 9am to 9pm on weekdays outside class times.</p></details><details><summary>Are you open at weekends?</summary><p>Saturday mornings are for personal training, 8am to 12pm. Sunday is closed.</p></details><details><summary>Do you have a contract?</summary><p><span class="tbc">Confirm contract and notice terms</span></p></details></div><div class="faqg"><h3>Muay Thai and kickboxing</h3><details><summary>What is Muay Thai?</summary><p>The national sport of Thailand, known as the art of eight limbs because it uses fists, elbows, knees and shins.</p></details><details><summary>Is Muay Thai the same as kickboxing?</summary><p>It is a form of kickboxing that adds knees, elbows and the clinch.</p></details><details><summary>Do you do boxing?</summary><p>We don’t run separate boxing classes, but Muay Thai includes plenty of boxing technique.</p></details><details><summary>Is Muay Thai good for fitness?</summary><p>Yes. It’s a demanding full-body workout that builds strength, stamina and coordination.</p></details><details><summary>Do I have to spar?</summary><p>No. Sparring is optional and only once a coach says you’re ready.</p></details></div><div class="faqg"><h3>Kids</h3><details><summary>What age can kids start?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Is it safe for children?</summary><p>Yes. Kids train on pads and drills with no hard sparring, supervised by experienced coaches.</p></details><details><summary>Can kids compete?</summary><p>When they and their parents are ready, we take kids to interclubs.</p></details></div><div class="faqg"><h3>Fighting</h3><details><summary>How do I join the fight team?</summary><p>Train regularly, then talk to the coaches. They’ll tell you when you’re ready for an interclub.</p></details><details><summary>What is an interclub?</summary><p>A friendly, controlled bout between gyms, usually with protective kit.</p></details><details><summary>What do N-Class and C-Class mean?</summary><p>They’re levels for amateur fighters. See our guide to fight levels.</p></details></div><div class="faqg"><h3>Getting here</h3><details><summary>Where are you?</summary><p>Potters Bar, Hertfordshire. <span class="tbc">Full address</span></p></details><details><summary>Is there parking?</summary><p><span class="tbc">Parking details</span></p></details><details><summary>Which areas do members come from?</summary><p>Potters Bar, Barnet, Cuffley, Cheshunt, Hatfield, Enfield, Hoddesdon and more. See areas we cover.</p></details></div></div>
+    </div>
+  </section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Still unsure?</span><h2>Just come and try it</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+</div>
+
+<div class="view" data-view="contact" hidden>
+  <section class="band contact" id="contact">
+    <img class="cover" src="photos/team-medal.webp" alt="" loading="lazy">
+    <div class="wrap">
+      <div class="stack">
+        <span class="kick">Contact</span>
+        <h2>Get in touch</h2>
+        <p class="lede">Book your first class, ask about kids classes or PT, or just come and say hello.</p>
+        <div class="cdetails">
+          <div class="cd"><small>Address</small><span class="tbc">Gym address and postcode</span></div>
+          <div class="cd"><small>Phone</small><span class="tbc">Phone number</span></div>
+          <div class="cd"><small>WhatsApp</small><span class="tbc">WhatsApp number</span></div>
+          <div class="cd"><small>Email</small><span class="tbc">Email address</span></div>
+          <div class="cd"><small>Instagram</small><a href="https://www.instagram.com/warriorspirit_muaythai/" target="_blank" rel="noopener">@warriorspirit_muaythai</a></div>
+          <div class="cd"><small>Hours</small><div class="hours"><span>Mon–Fri</span><span>09:00–21:00</span><span>Saturday</span><span>08:00–12:00 (PT)</span><span>Sunday</span><span>Closed</span></div></div>
+        </div>
+      </div>
+      <form id="enquiry" novalidate>
+        <h3>Send us a message</h3>
+        <label class="full" for="enq">What's it about?<select id="enq"><option>First class</option><option>Kids class</option><option>Personal training</option><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
+        <label for="name">Name<input id="name" autocomplete="name" required></label>
+        <label for="phone">Mobile<input id="phone" type="tel" autocomplete="tel"></label>
+        <label for="email">Email<input id="email" type="email" autocomplete="email"></label>
+        <label for="reply">Best way to reply<select id="reply"><option>WhatsApp</option><option>Phone call</option><option>Text</option><option>Email</option></select></label>
+        <label for="exp">Experience<select id="exp"><option>None at all</option><option>Under a year</option><option>1 year or more</option><option>Have fought</option></select></label>
+        <label for="when">Best days to train<input id="when" placeholder="e.g. Tue and Thu evenings"></label>
+        <label class="full" for="msg">Message<textarea id="msg" placeholder="Goals, injuries, your child's age, questions"></textarea></label>
+        <label class="full consent" for="okc"><input type="checkbox" id="okc"> I'm happy for Warrior Spirit to contact me about this enquiry.</label>
+        <div class="err" id="err" hidden></div>
+        <div class="full"><button class="btn" type="submit">Send enquiry</button></div>
+        <div class="ok" id="ok" hidden>Thanks. Your message is ready. On the live site it goes straight to the gym, and we'll reply the way you asked.</div>
+      </form>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="stack" style="gap:12px"><img src="img/logo.webp" alt="Warrior Spirit Muay Thai"><p>Warrior Spirit Muay Thai &amp; Kickboxing</p></div>
+      <div><h4>Train</h4><ul><li><a href="#classes">Classes</a></li><li><a href="#timetable">Timetable</a></li><li><a href="#pt">Personal training</a></li><li><a href="#prices">Prices</a></li></ul></div>
+      <div><h4>Gym</h4><ul><li><a href="#fight">Fight team</a></li><li><a href="#videos">Videos</a></li><li><a href="#team">Meet the team</a></li><li><a href="#blog">Blog</a></li><li><a href="#areas">Areas we cover</a></li><li><a href="#contact">Contact</a></li></ul></div>
+      <div><h4>Programmes</h4><ul><li><a href="#kids-muay-thai">Kids Muay Thai</a></li><li><a href="#kickboxing">Kickboxing</a></li><li><a href="#fitness">Fitness</a></li><li><a href="#women">Women</a></li><li><a href="#self-defence">Self-defence</a></li><li><a href="#fight-levels">Fight levels</a></li><li><a href="#faq">FAQ</a></li></ul></div><div><h4>Areas we cover</h4><ul><li><a href="#potters-bar">Potters Bar</a></li><li><a href="#brookmans-park">Brookmans Park</a></li><li><a href="#cuffley">Cuffley</a></li><li><a href="#barnet">Barnet</a></li><li><a href="#hatfield">Hatfield</a></li><li><a href="#borehamwood">Borehamwood</a></li><li><a href="#enfield">Enfield</a></li><li><a href="#waltham-cross">Waltham Cross</a></li><li><a href="#cheshunt">Cheshunt</a></li><li><a href="#hoddesdon">Hoddesdon</a></li><li><a href="#welwyn-garden-city">Welwyn Garden City</a></li><li><a href="#st-albans">St Albans</a></li><li><a href="#radlett">Radlett</a></li><li><a href="#southgate-cockfosters">Southgate & Cockfosters</a></li></ul></div><div><h4>Follow</h4><p>Training, fight nights and results.</p><div class="sicons" data-socials></div></div>
+    </div>
+    <p class="draft">Draft v11 · yellow underlined items still to confirm</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  /* tap-for-sound on the silent clips */
+  var OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="m16 9 5 6m0-6-5 6"/></svg>';
+  var ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  var all=[];
+  function upd(v){var b=v._snd;b.classList.toggle('on',!v.muted);b.innerHTML=(v.muted?OFF:ON)+'<span>'+(v.muted?'Sound on':'Sound off')+'</span>';b.setAttribute('aria-label',v.muted?'Turn sound on':'Turn sound off')}
+  function hero(v){return !!v.closest('#slides')}
+  document.querySelectorAll('.loop video, .fight > video.cover, .walkout video, #slides video').forEach(function(v){
+    var host=v.closest('.loop, .walkout, .fight, .hero');if(!host)return;
+    var b=document.createElement('button');b.type='button';b.className='snd';v._snd=b;host.appendChild(b);all.push(v);v.muted=true;upd(v);
+    b.addEventListener('click',function(){
+      if(v.muted){all.forEach(function(o){if(o!==v&&!o.muted){o.muted=true;upd(o);if(hero(o)&&window.__hero)window.__hero.go()}});
+        v.muted=false;var pr=v.play();if(pr)pr.catch(function(){});if(hero(v)&&window.__hero)window.__hero.stop()}
+      else{v.muted=true;if(hero(v)&&window.__hero)window.__hero.go()}
+      upd(v)});
+    v.addEventListener('pause',function(){if(!v.muted&&!hero(v)){v.muted=true;upd(v)}});
+    if(hero(v)){b.hidden=!v.classList.contains('on');new MutationObserver(function(){var on=v.classList.contains('on');b.hidden=!on;if(!on&&!v.muted){v.muted=true;upd(v)}}).observe(v,{attributes:true,attributeFilter:['class']})}
+  });
+  window.addEventListener('hashchange',function(){all.forEach(function(v){if(!v.muted){v.muted=true;upd(v);if(hero(v)&&window.__hero)window.__hero.go()}})});
+})();
+(function(){
+  /* video gallery + player */
+  var modal=document.getElementById('vmodal'),mv=document.getElementById('vmVideo'),last=null;
+  function openV(src,title,btn){last=btn;document.getElementById('vmTitle').textContent=title;mv.src=src;modal.hidden=false;var f=document.getElementById('featured');if(f)f.pause();var pr=mv.play();if(pr)pr.catch(function(){});document.getElementById('vmClose').focus()}
+  function closeV(){mv.pause();mv.removeAttribute('src');mv.load();modal.hidden=true;if(last)last.focus()}
+  document.querySelectorAll('.vcard').forEach(function(b){b.addEventListener('click',function(){openV(b.getAttribute('data-src'),b.getAttribute('data-title'),b)})});
+  document.getElementById('vmClose').addEventListener('click',closeV);
+  modal.addEventListener('click',function(e){if(e.target===modal)closeV()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)closeV()});
+  window.addEventListener('hashchange',function(){if(!modal.hidden)closeV();var f=document.getElementById('featured');if(f)f.pause()});
+  document.querySelectorAll('[data-vf]').forEach(function(c){c.addEventListener('click',function(){var f=c.getAttribute('data-vf');document.querySelectorAll('[data-vf]').forEach(function(x){x.setAttribute('aria-pressed',x===c?'true':'false')});document.querySelectorAll('.vcard').forEach(function(v){v.hidden=!(f==='all'||v.getAttribute('data-cat').split(' ').indexOf(f)>=0)})})});
+  /* silent loops play only while on screen */
+  var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var loops=[].slice.call(document.querySelectorAll('video[data-loop]'));
+  if(!still&&'IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var pr=e.target.play();if(pr)pr.catch(function(){})}else e.target.pause()})},{threshold:.25});loops.forEach(function(v){io.observe(v)})}
+})();
+(function(){
+  /* Social accounts: add a link here and its icon appears in the header and footer */
+  var SOCIAL={
+    instagram:'https://www.instagram.com/warriorspirit_muaythai/',
+    facebook:'',
+    youtube:'',
+    tiktok:''
+  };
+  var ICON={
+    instagram:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+    facebook:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H8v4h2v8h4v-8h3l1-4h-4V8z"/></svg>',
+    youtube:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg>',
+    tiktok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 3v11a4 4 0 1 1-4-4"/><path d="M14 3c.5 3 2.5 5 5 5"/></svg>'
+  };
+  var NAME={instagram:'Instagram',facebook:'Facebook',youtube:'YouTube',tiktok:'TikTok'};
+  document.querySelectorAll('[data-socials]').forEach(function(box){
+    Object.keys(SOCIAL).forEach(function(k){if(!SOCIAL[k])return;var a=document.createElement('a');a.href=SOCIAL[k];a.target='_blank';a.rel='noopener';a.setAttribute('aria-label',NAME[k]);a.title=NAME[k];a.innerHTML=ICON[k];box.appendChild(a)})});
+
+  /* Ticker: what's on, worked out from today's date (UK time) */
+  var TT={1:[['Kids Muay Thai','17:30'],['Drills & sparring','18:30']],2:[['Kids Muay Thai','17:30'],['Pads','18:00'],['Pads','19:00']],3:[['Kids Muay Thai','17:30'],['Drills & sparring','18:30']],4:[['Kids Muay Thai','17:30'],['Pads','18:00'],['Beginners','19:00']],5:[['Sparring','18:00']],6:[['Personal training','08:00–12:00']],0:[]};
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  /* Events: shown until the day after the date */
+  var EVENTS=[
+    {date:'2026-10-24',text:'<strong>Warriors of Hope 2</strong>: Dino Leonida and Leo Prodromou-Beckwith make their N-Class debuts, Saturday 24 October in Bedford. Tickets from the fighters.',href:'#news'}
+  ];
+  var now=new Date(),uk;
+  try{uk=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}))}catch(e){uk=now}
+  var dow=uk.getDay(),mins=uk.getHours()*60+uk.getMinutes(),todayKey=uk.getFullYear()+'-'+String(uk.getMonth()+1).padStart(2,'0')+'-'+String(uk.getDate()).padStart(2,'0');
+  function toMin(t){var p=t.split(':');return +p[0]*60+ +p[1].slice(0,2)}
+  function daysUntil(d){var a=new Date(todayKey+'T00:00:00'),b=new Date(d+'T00:00:00');return Math.round((b-a)/86400000)}
+  var items=[];
+  (function(){var c=document.getElementById('fnCount');if(!c)return;var n=daysUntil('2026-10-24');c.textContent=n>1?n+' days to go · Sat 24 Oct':n===1?'Tomorrow night':n===0?'Tonight':'Results coming soon';if(n<0)c.classList.add('done')})();
+  EVENTS.forEach(function(ev){var n=daysUntil(ev.date);if(n<0)return;var when=n===0?'Tonight':n===1?'Tomorrow':'Fight night';items.push({cls:'hot',label:when,html:ev.text,href:ev.href})});
+  var left=(TT[dow]||[]).filter(function(c){return toMin(c[1])+60>mins});
+  if(left.length){items.push({label:'Today',html:left.map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
+  else{var nd=(dow+1)%7;while(!TT[nd].length)nd=(nd+1)%7;items.push({label:nd===(dow+1)%7?'Tomorrow':DAYS[nd],html:TT[nd].map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
+  items.push({label:'New here?',html:'<strong>Beginners class</strong> every Thursday at 7pm. No experience needed.',href:'#contact'});
+  items.push({label:'Kids',html:'<strong>Kids Muay Thai</strong> Monday to Thursday, 5:30pm, ages 7 to 13.',href:'#classes'});
+  items.push({label:'Gym',html:dow===0?'Gym closed today. Back Monday at 9am.':dow===6?'Saturday is personal training only, 8am–12pm.':'Open gym for members until <strong>9pm</strong> today.'});
+  items.push({label:'PT',html:'<strong>1-to-1 personal training</strong> from £35 an hour. Saturday mornings and weekday slots.',href:'#pt'});
+  items.push({label:'Membership',html:'Adults <strong>£75 a month</strong>, all inclusive. Kids £65.',href:'#classes'});
+  items.push({label:'Watch',html:'<strong>Fight night highlights</strong> are up on the Videos page. Sound on.',href:'#videos'});
+  items.push({label:'Blog',html:'<strong>Medals and big smiles on show day</strong>. Read the latest from the gym.',href:'#blog'});
+  items.push({label:'Follow',html:'<strong>@warriorspirit_muaythai</strong> for fight nights, training and results.',href:SOCIAL.instagram,ext:true});
+  function render(){return items.map(function(it){var tag=it.href?'a':'span',attrs=it.href?' href="'+it.href+'"'+(it.ext?' target="_blank" rel="noopener"':''):'';return '<'+tag+' class="tk-item'+(it.cls?' '+it.cls:'')+'"'+attrs+'><b>'+it.label+'</b><span>'+it.html+'</span></'+tag+'>'}).join('')}
+  var tr=document.getElementById('tkTrack');tr.innerHTML=render()+'<div aria-hidden="true" style="display:flex">'+render()+'</div>';
+  [].forEach.call(tr.lastChild.querySelectorAll('a'),function(a){a.tabIndex=-1});
+  tr.style.setProperty('--tk-dur',Math.max(40,items.length*7)+'s');
+})();
+(function(){
+  var views=[].slice.call(document.querySelectorAll('.view')),menu=document.getElementById('menu'),burger=document.getElementById('burger');
+  function closeMenu(){menu.classList.remove('open');burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label','Open menu')}
+  burger.addEventListener('click',function(){var o=!menu.classList.contains('open');menu.classList.toggle('open',o);burger.setAttribute('aria-expanded',o?'true':'false');burger.setAttribute('aria-label',o?'Close menu':'Open menu')});
+  function route(){
+    var h=location.hash.slice(1)||'home',v=null,target=null;
+    views.forEach(function(x){if(x.getAttribute('data-view')===h)v=x});
+    if(!v){var el=document.getElementById(h);if(el&&el.closest('.view')){v=el.closest('.view');target=el}}
+    if(!v)v=views[0];
+    views.forEach(function(x){x.hidden=x!==v});
+    var key=v.getAttribute('data-view');
+    document.title=v.getAttribute('data-title')||(key==='home'?'Warrior Spirit Muay Thai':'Warrior Spirit Muay Thai');
+    var md=document.querySelector('meta[name="description"]');if(md&&v.getAttribute('data-desc'))md.setAttribute('content',v.getAttribute('data-desc'));
+    document.querySelectorAll('[data-nav]').forEach(function(a){if(a.getAttribute('data-nav')===key)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+    closeMenu();
+    if(target)target.scrollIntoView();else window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',route);
+  document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)route()});
+  route();
+})();
+(function(){
+  var imgs=[].slice.call(document.querySelectorAll('#slides>*')),dots=document.getElementById('dots'),i=0,t;
+  function show(n){imgs[i].classList.remove('on');dots.children[i].setAttribute('aria-pressed','false');i=(n+imgs.length)%imgs.length;imgs[i].classList.add('on');imgs.forEach(function(x,k){if(x.tagName==='VIDEO'){if(k===i){x.currentTime=0;var pr=x.play();if(pr)pr.catch(function(){})}else x.pause()}});dots.children[i].setAttribute('aria-pressed','true')}
+  imgs.forEach(function(im,k){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Photo '+(k+1));b.setAttribute('aria-pressed',k?'false':'true');b.addEventListener('click',function(){show(k);restart()});dots.appendChild(b)});
+  var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function restart(){clearInterval(t);if(!still)t=setInterval(function(){show(i+1)},6000)}
+  restart();
+  window.__hero={stop:function(){clearInterval(t)},go:restart};
+  var sel=document.getElementById('enq');
+  document.querySelectorAll('[data-enq]').forEach(function(a){a.addEventListener('click',function(){sel.value=a.getAttribute('data-enq')})});
+  document.querySelectorAll('.chip').forEach(function(c){c.addEventListener('click',function(){
+    var f=c.getAttribute('data-f');
+    document.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',x===c?'true':'false')});
+    document.querySelectorAll('.post').forEach(function(p){p.hidden=!(f==='all'||p.getAttribute('data-cat')===f)});
+  })});
+  document.querySelectorAll('.readbtn').forEach(function(b){b.addEventListener('click',function(){
+    var post=b.closest('.post');
+    if(b.hasAttribute('data-play')){var v=post.querySelector('video');if(v.paused){v.muted=false;v.play().catch(function(){});b.textContent='Pause clip'}else{v.pause();b.textContent='Play clip'}return}
+    var m=post.querySelector('.more');m.hidden=!m.hidden;b.textContent=m.hidden?'Read more':'Show less';
+  })});
+  document.getElementById('enquiry').addEventListener('submit',function(e){
+    e.preventDefault();
+    var err=document.getElementById('err'),n=document.getElementById('name'),p=document.getElementById('phone'),em=document.getElementById('email');
+    err.hidden=true;document.getElementById('ok').hidden=true;
+    if(!n.value.trim()){err.textContent='Add your name so we know who to reply to.';err.hidden=false;n.focus();return}
+    if(!p.value.trim()&&!em.value.trim()){err.textContent='Add a mobile number or email so we can get back to you.';err.hidden=false;p.focus();return}
+    if(!document.getElementById('okc').checked){err.textContent='Tick the box so we can contact you about your enquiry.';err.hidden=false;return}
+    document.getElementById('ok').hidden=false;
+  });
+})();
+</script>
+
+</body>
+</html>
