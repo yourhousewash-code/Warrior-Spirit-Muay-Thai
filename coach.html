@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap">
 <link rel="stylesheet" href="/assets/app.css">
 <style>
-:root{--free:#1f9d55;--free-bg:rgba(31,157,85,.16);--booked:#e3141e;--booked-bg:rgba(227,20,30,.18);--hol:#8b5cf6;--hol-bg:rgba(139,92,246,.16);--none:#5b6070}
+:root{--cls:#2f6fe4;--cls-bg:rgba(47,111,228,.2);--free:#1f9d55;--free-bg:rgba(31,157,85,.16);--booked:#e3141e;--booked-bg:rgba(227,20,30,.18);--hol:#8b5cf6;--hol-bg:rgba(139,92,246,.16);--none:#5b6070}
 .calhead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 .ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .seg{display:inline-flex;border:1px solid var(--line)}
@@ -60,6 +60,44 @@
 .range .x{background:none;border:1px solid var(--line);color:var(--soft);width:42px;height:44px;cursor:pointer;font-size:18px}
 .addr{background:none;border:1px dashed var(--line);color:var(--soft);padding:10px;font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;justify-self:start}
 .closed{color:var(--muted);padding-top:10px}
+.crow{display:grid;grid-template-columns:130px 1fr 135px 135px 110px 42px;gap:8px;align-items:center}
+.crow .x{background:none;border:1px solid var(--line);color:var(--soft);width:42px;height:44px;cursor:pointer;font-size:18px}
+@media (max-width:760px){.crow{grid-template-columns:1fr 1fr;padding:10px 0;border-top:1px solid var(--line)}.crow [data-cf=name]{grid-column:1/-1;order:-1}}
+.chip.class{background:var(--cls-bg);border-color:var(--cls)}
+.chip.cancelled{background:none;border-color:var(--none);color:var(--muted);text-decoration:line-through}
+.chip.needs,.ev.needs{box-shadow:inset 0 0 0 2px var(--booked)}
+.tg{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tg-grid{display:grid;min-width:min-content;gap:0 3px}
+.tg-corner{position:sticky;left:0;background:var(--ink-2);z-index:3}
+.tg-day{padding:4px 4px 6px;font:700 13px var(--cond);letter-spacing:.08em;text-transform:uppercase;color:var(--soft);border-bottom:1px solid var(--line)}
+.tg-day b{font:inherit}
+.tg-day.today{color:var(--bone);border-bottom:2px solid var(--bone)}
+.tg-lanes{display:flex;margin-top:3px}
+.tg-lanes span{flex:1;text-align:center;color:var(--muted);font-size:12px}
+.tg-times{position:sticky;left:0;background:var(--ink-2);z-index:3}
+.tg-times div{position:absolute;left:0;right:0}
+.tg-times div.gap{display:flex;align-items:center;justify-content:flex-end;transform:none;color:var(--none)}
+.tg-seg{position:absolute;left:0;right:0;border-top:1px solid var(--line)}
+.tg-seg.gap{background:repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 4px,transparent 4px 8px)}
+.tg-times div{font:600 11px var(--body);color:var(--muted);text-align:right;padding-right:6px;transform:translateY(-6px)}
+.tg-times div:first-child{transform:none}
+.tg-col{position:relative;background:var(--ink);border-left:1px solid var(--line)}
+.tg-col.past{opacity:.45}
+.tg-lane{position:absolute;top:0;bottom:0;border-right:1px dashed rgba(255,255,255,.05)}
+.tg-lane.hol{background:var(--hol-bg)}
+.tg-hol{position:absolute;top:4px;left:4px;right:4px;font:700 11px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd;text-align:center}
+.ev{position:absolute;border:0;border-left:3px solid;padding:2px 3px;font:600 11px/1.25 var(--body);color:var(--bone);text-align:left;overflow:hidden;cursor:pointer;z-index:1}
+.ev b,.ev span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg.one .ev b{display:inline;margin-right:6px}.tg.one .ev span{display:inline}
+.ev b{font:700 12px var(--cond);letter-spacing:0}
+.ev.open{background:var(--free-bg);border-color:var(--free)}
+.ev.booked{background:#5b1418;border-color:var(--booked)}
+.ev.blocked{background:repeating-linear-gradient(45deg,#1b1e27 0 6px,#14161d 6px 12px);border-color:var(--none);color:var(--muted)}
+.ev.class{background:#173469;border-color:var(--cls)}
+.ev.cancelled{background:#14161d;border-color:var(--none);color:var(--muted);text-decoration:line-through}
+.ev[aria-pressed="true"]{outline:2px solid var(--bone);outline-offset:1px;z-index:2}
+.tg-now{position:absolute;left:0;right:0;height:2px;background:var(--tbc);z-index:1;pointer-events:none}
+.tg.one .ev,.tg.one .ev b{font-size:13px}
 @media (max-width:820px){.tiles{grid-template-columns:1fr}}
 @media (max-width:760px){
   .cal{grid-template-columns:1fr}
@@ -112,17 +150,19 @@
 
       <div class="panel">
         <div class="calhead">
-          <h2 id="calTitle">Next 2 weeks</h2>
+          <h2 id="calTitle">This week</h2>
           <div class="ctrls">
             <select id="calWho" hidden aria-label="Whose calendar"></select>
-            <div class="seg" role="group" aria-label="Weeks shown"><button type="button" data-weeks="2" aria-pressed="true">2 weeks</button><button type="button" data-weeks="4" aria-pressed="false">4 weeks</button></div>
+            <div class="seg" role="group" aria-label="Calendar view"><button type="button" data-cview="day">Day</button><button type="button" data-cview="week">Week</button><button type="button" data-cview="2w">2 weeks</button><button type="button" data-cview="4w">4 weeks</button></div>
             <button type="button" class="arrow" id="calPrev" aria-label="Earlier">‹</button>
+            <button type="button" class="arrow" id="calToday" style="width:auto;padding:0 12px;font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase">Today</button>
             <button type="button" class="arrow" id="calNext" aria-label="Later">›</button>
           </div>
         </div>
         <div class="legend">
-          <span><i style="background:var(--free)"></i>Available to book</span>
-          <span><i style="background:var(--booked)"></i>Booked</span>
+          <span><i style="background:var(--cls)"></i>Class</span>
+          <span><i style="background:var(--free)"></i>Free PT slot</span>
+          <span><i style="background:var(--booked)"></i>PT booked</span>
           <span><i style="background:var(--hol)"></i>Holiday / day off</span>
           <span><i style="background:var(--none)"></i>✕ No availability</span>
         </div>
@@ -158,9 +198,19 @@
       <form class="panel" id="weeklyForm">
         <h2>Regular weekly hours</h2>
         <p class="muted">The times you’re normally free for PT. These repeat every week, and customers can book them up to 6 weeks ahead. Holidays below block them out automatically.</p>
+        <p class="note" id="wdefault" hidden>These are the recommended starting hours: weekdays 6–10pm and Saturday 8am–12pm. Change them any time and press Save. Times you’re teaching a class are left out automatically.</p>
         <div class="wk" id="weekly"></div>
         <p class="err" id="werr" hidden></p><p class="ok" id="wok" hidden></p>
         <button class="btn" type="submit" style="justify-self:start">Save weekly hours</button>
+      </form>
+
+      <form class="panel" id="classForm" hidden>
+        <h2>Class timetable</h2>
+        <p class="muted">Who teaches each class every week. Only you (Jay) can change this. To swap a coach for just one date, tap the class on the calendar instead.</p>
+        <div class="list" id="classList"></div>
+        <button type="button" class="addr" id="classAdd">+ Add a class</button>
+        <p class="err" id="cerr" hidden></p><p class="ok" id="cok" hidden></p>
+        <button class="btn" type="submit" style="justify-self:start">Save class timetable</button>
       </form>
 
       <div class="grid2">
@@ -309,56 +359,123 @@ $('#logout').addEventListener('click', async () => { await api('/api/auth?action
 function alertBox(msg) { const p = document.createElement('p'); p.className = 'err'; p.textContent = msg; document.querySelector('[data-view]:not([hidden])').prepend(p); setTimeout(() => p.remove(), 6000); }
 
 /* ---------- calendar ---------- */
-const cal = { weeks: 2, offset: 0, items: [], off: {}, sel: null };
+const VIEWS = { day: 1, week: 7, '2w': 14, '4w': 28 };
+const cal = { view: matchMedia('(max-width:760px)').matches ? 'day' : 'week', offset: 0, items: [], off: {}, sel: null };
 function monday(d) { const w = dowOf(d); return addDays(d, -((w + 6) % 7)); }
-document.querySelectorAll('[data-weeks]').forEach(b => b.addEventListener('click', () => {
-  cal.weeks = Number(b.dataset.weeks); document.querySelectorAll('[data-weeks]').forEach(x => x.setAttribute('aria-pressed', x === b)); loadCal();
-}));
-$('#calPrev').addEventListener('click', () => { cal.offset -= cal.weeks; loadCal(); });
-$('#calNext').addEventListener('click', () => { cal.offset += cal.weeks; loadCal(); });
+function syncViewBtns() { document.querySelectorAll('[data-cview]').forEach(x => x.setAttribute('aria-pressed', x.dataset.cview === cal.view)); }
+document.querySelectorAll('[data-cview]').forEach(b => b.addEventListener('click', () => { cal.view = b.dataset.cview; cal.offset = 0; syncViewBtns(); loadCal(); }));
+$('#calPrev').addEventListener('click', () => { cal.offset--; loadCal(); });
+$('#calNext').addEventListener('click', () => { cal.offset++; loadCal(); });
+$('#calToday').addEventListener('click', () => { cal.offset = 0; loadCal(); });
 $('#calWho').addEventListener('change', loadCal);
+const hourOf = ms => { const [h, m] = time(ms).split(':').map(Number); return h + m / 60; };
+const COLS = { jay: 'Jay', aaron: 'Aaron', kian: 'Kian' };
 
 async function loadCal() {
-  const start = addDays(monday(ukDate(Date.now())), cal.offset * 7);
+  syncViewBtns();
+  const days = VIEWS[cal.view], today = ukDate(Date.now());
+  const base = cal.view === 'day' || cal.view === 'week' ? today : monday(today);
+  const start = addDays(base, cal.offset * days);
   const who = me.admin ? $('#calWho').value : '';
-  $('#calTitle').textContent = cal.offset === 0 ? `Next ${cal.weeks} weeks` : `${nice(start)} – ${nice(addDays(start, cal.weeks * 7 - 1))}`;
-  $('#calPrev').disabled = cal.offset <= 0;
+  const end = addDays(start, days - 1);
+  $('#calTitle').textContent = cal.view === 'day' ? (start === today ? 'Today' : new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(start + 'T12:00:00Z')))
+    : cal.offset === 0 ? (cal.view === 'week' ? 'Next 7 days' : `Next ${days / 7} weeks`) : `${nice(start)} – ${nice(end)}`;
+  $('#calPrev').disabled = end < today;
   try {
-    const r = await api(`/api/pt?action=calendar&days=${cal.weeks * 7}&from=${start}${who ? '&coach=' + who : ''}`);
-    cal.items = r.items; cal.off = r.off; cal.start = start; cal.who = r.coach;
+    const r = await api(`/api/pt?action=calendar&days=${days}&from=${start}${who ? '&coach=' + who : ''}`);
+    cal.items = r.items.filter(x => x.type !== 'class' || x.mine); cal.off = r.off; cal.start = start; cal.days = days; cal.who = r.coach;
     drawCal();
-  } catch (err) { $('#cal').innerHTML = `<p class="err" style="grid-column:1/-1">${esc(err.message)}</p>`; }
+  } catch (err) { $('#cal').innerHTML = `<p class="err">${esc(err.message)}</p>`; }
 }
+function holsFor(d) { return Object.entries(cal.off).flatMap(([c, list]) => list.filter(o => o.from <= d && d <= o.to).map(o => ({ ...o, c }))); }
+function label(x) {
+  if (x.type === 'class') return x.status === 'cancelled' ? `${esc(x.name)} (cancelled)` : esc(x.name);
+  return x.status === 'booked' ? esc(x.booking?.name || 'Booked') : x.status === 'blocked' ? 'Blocked' : 'Free';
+}
+function kind(x) { return x.type === 'class' ? (x.status === 'cancelled' ? 'class cancelled' : 'class' + (x.needsCover ? ' needs' : '')) : x.status; }
+function visible(x) { return x.type === 'class' || x.status === 'booked' || x.start > Date.now(); }
 function drawCal() {
+  if (cal.view === 'day' || cal.view === 'week') drawGrid(); else drawOverview();
+  drawDetail();
+}
+/* Day and week: time grid. Hours with nothing on are squashed into a thin strip, so the busy evening hours get the room. */
+function drawGrid() {
+  const all = cal.who === 'all', lanes = all ? Object.keys(COLS) : [cal.who];
+  const dates = Array.from({ length: cal.days }, (_, i) => addDays(cal.start, i));
+  const items = cal.items.filter(visible);
+  const H = 40, GAP = 18, today = ukDate(Date.now()), nowH = hourOf(Date.now());
+  const busy = new Set();
+  for (const x of items) { const a = hourOf(x.start), e = a + x.mins / 60; for (let h = Math.floor(a); h < Math.ceil(e); h++) busy.add(h); }
+  if (!busy.size) for (let h = 17; h < 22; h++) busy.add(h);
+  const lo = Math.min(...busy), hi = Math.max(...busy) + 1;
+  const segs = []; let y = 0;
+  for (let h = lo; h < hi;) {
+    if (busy.has(h)) { segs.push({ from: h, to: h + 1, y, h: H, on: true }); y += H; h++; }
+    else { let e = h; while (e < hi && !busy.has(e)) e++; segs.push({ from: h, to: e, y, h: GAP, on: false }); y += GAP; h = e; }
+  }
+  const total = y;
+  const yAt = hr => { const sg = segs.find(g => hr >= g.from && hr < g.to) || segs[segs.length - 1]; return sg.on ? sg.y + (hr - sg.from) * H : sg.y + GAP / 2; };
+  const lines = segs.map(g => `<div class="tg-seg${g.on ? '' : ' gap'}" style="top:${g.y}px;height:${g.h}px"></div>`).join('');
+  let head = `<div class="tg-corner"></div>`;
+  let body = `<div class="tg-times" style="height:${total}px">${segs.map(g => `<div class="${g.on ? '' : 'gap'}" style="top:${g.y}px;height:${g.h}px">${g.on ? String(g.from).padStart(2, '0') + ':00' : '⋯'}</div>`).join('')}</div>`;
+  for (const d of dates) {
+    const hols = holsFor(d);
+    head += `<div class="tg-day${d === today ? ' today' : ''}"><b>${esc(nice(d))}</b>${all ? `<div class="tg-lanes">${lanes.map(l => `<span>${cal.days === 1 ? COLS[l] : COLS[l][0]}</span>`).join('')}</div>` : ''}</div>`;
+    body += `<div class="tg-col${d < today ? ' past' : ''}" style="height:${total}px">${lines}`;
+    lanes.forEach((l, li) => {
+      const w = 100 / lanes.length, h = hols.find(o => o.c === l);
+      body += `<div class="tg-lane${h ? ' hol' : ''}" style="left:${li * w}%;width:${w}%">${h ? `<span class="tg-hol">${esc(h.note || 'Day off')}</span>` : ''}`;
+      const mine = items.filter(x => ukDate(x.start) === d && x.coach === l).sort((p, q) => p.start - q.start);
+      const ends = []; mine.forEach(x => { let c = ends.findIndex(e => e <= x.start); if (c < 0) { c = ends.length; ends.push(0); } ends[c] = x.start + x.mins * 6e4; x._c = c; });
+      const n = Math.max(ends.length, 1);
+      for (const x of mine) {
+        const a = hourOf(x.start), top = yAt(a), ht = Math.max(yAt(a + x.mins / 60 - 0.001) - top - 2, 18);
+        body += `<button type="button" class="ev ${kind(x)}" data-item="${esc(x.id)}" aria-pressed="${cal.sel === x.id}" style="top:${top}px;height:${ht}px;left:calc(${x._c * 100 / n}% + 1px);width:calc(${100 / n}% - 2px)" title="${time(x.start)} ${label(x)}"><b>${time(x.start)}</b><span>${label(x)}</span></button>`;
+      }
+      body += '</div>';
+    });
+    if (d === today && nowH > lo && nowH < hi) body += `<div class="tg-now" style="top:${yAt(nowH)}px"></div>`;
+    body += '</div>';
+  }
+  $('#cal').className = 'tg' + (cal.days === 1 ? ' one' : '');
+  $('#cal').innerHTML = `<div class="tg-grid" style="grid-template-columns:48px repeat(${dates.length},minmax(${all && cal.days > 1 ? 132 : 84}px,1fr))">${head}${body}</div>`;
+}
+/* 2 and 4 weeks: compact overview */
+function drawOverview() {
   const today = ukDate(Date.now()), all = cal.who === 'all';
   let html = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => `<div class="hd">${d}</div>`).join('');
-  for (let i = 0; i < cal.weeks * 7; i++) {
+  for (let i = 0; i < cal.days; i++) {
     const d = addDays(cal.start, i);
-    const items = cal.items.filter(x => ukDate(x.start) === d && (x.status === 'booked' || x.start > Date.now()));
-    const hols = Object.entries(cal.off).flatMap(([c, list]) => list.filter(o => o.from <= d && d <= o.to).map(o => ({ ...o, c })));
+    const items = cal.items.filter(x => ukDate(x.start) === d && visible(x) && (x.type !== 'class' || all || x.mine));
+    const hols = holsFor(d);
     const isHol = hols.length && (!all || hols.length >= 3);
     const cls = ['cell', d < today ? 'past' : '', d === today ? 'today' : '', isHol ? 'hol' : ''].join(' ');
     const [, , dd] = d.split('-');
     html += `<div class="${cls}"><div class="dn"><b>${Number(dd)}</b><span class="wd">${esc(nice(d))}</span>${d === today ? '<span>Today</span>' : ''}</div>`;
     if (hols.length) html += hols.map(h => `<div class="holtag">${all ? esc(cap(h.c)) + ': ' : ''}${esc(h.note || 'Day off')}</div>`).join('');
-    for (const x of items) {
-      const label = x.status === 'booked' ? esc(x.booking?.name || 'Booked') : x.status === 'blocked' ? 'Blocked' : 'Free';
-      html += `<button type="button" class="chip ${x.status}" data-item="${esc(x.id)}" aria-pressed="${cal.sel === x.id}"><b>${all ? esc(x.coachName[0]) + ' ' : ''}${time(x.start)}</b>${label}</button>`;
-    }
+    for (const x of items) html += `<button type="button" class="chip ${kind(x)}" data-item="${esc(x.id)}" aria-pressed="${cal.sel === x.id}"><b>${all ? esc(x.coachName[0]) + ' ' : ''}${time(x.start)}</b>${label(x)}</button>`;
     if (!items.length && !isHol) html += `<div class="nonebox">✕<small>No availability</small></div>`;
     html += '</div>';
   }
+  $('#cal').className = 'cal';
   $('#cal').innerHTML = html;
-  drawDetail();
 }
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-$('#cal').addEventListener('click', e => { const c = e.target.closest('[data-item]'); if (!c) return; cal.sel = cal.sel === c.dataset.item ? null : c.dataset.item; drawCal(); });
+$('#cal').addEventListener('click', e => { const c = e.target.closest('[data-item]'); if (!c) return; cal.sel = cal.sel === c.dataset.item ? null : c.dataset.item; drawCal(); if (cal.sel) $('#detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
 function drawDetail() {
   const x = cal.items.find(i => i.id === cal.sel), box = $('#detail');
   box.hidden = !x; if (!x) return;
   const span = `${time(x.start)}–${time(x.start + x.mins * 6e4)}`;
   const day = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(x.start));
-  if (x.status === 'booked' && x.booking) {
+  if (x.type === 'class') {
+    box.style.borderColor = 'var(--cls)';
+    const opts = Object.entries(COLS).map(([k, v]) => `<option value="${k}" ${x.coach === k && !x.cancelled ? 'selected' : ''}>${v}</option>`).join('') + `<option value="none" ${x.cancelled ? 'selected' : ''}>Cancel class this date</option>`;
+    box.innerHTML = `<b class="t">Class: ${esc(x.name)}</b><div>${esc(day)}, ${span} · ${x.cancelled ? 'cancelled this date' : `taught by ${esc(x.coachName)}`}${x.cover ? ` (covering for ${esc(COLS[x.usual])})` : ''}</div>
+      ${x.needsCover ? `<div class="err">${esc(COLS[x.coach])} is on holiday that day. Choose someone to cover.</div>` : ''}
+      ${me.admin ? `<div class="row"><label style="flex:0 1 260px">Who’s teaching on this date<select id="coverSel">${opts}</select></label><button class="btn small" data-cover="${esc(x.classId)}|${esc(x.date)}">Save</button>
+        ${x.cover || x.cancelled ? `<button class="btn small ghost" data-cover="${esc(x.classId)}|${esc(x.date)}" data-reset="1">Back to usual (${esc(COLS[x.usual])})</button>` : ''}</div>
+        <p class="muted" style="font-size:14px">To change who teaches this class every week, use <b>Class timetable</b> in My availability.</p>` : ''}`;
+  } else if (x.status === 'booked' && x.booking) {
     const bk = x.booking;
     box.style.borderColor = 'var(--booked)';
     box.innerHTML = `<b class="t">Booked: ${esc(bk.name)}</b><div>${esc(day)}, ${span} · ${esc(bk.type)} · with ${esc(x.coachName)}</div>
@@ -366,7 +483,7 @@ function drawDetail() {
       <div class="row"><button class="btn small ghost" data-cancel="${esc(bk.id)}">Cancel this booking</button></div>`;
   } else if (x.status === 'open') {
     box.style.borderColor = 'var(--free)';
-    box.innerHTML = `<b class="t">Free to book</b><div>${esc(day)}, ${span} · ${esc(x.coachName)} · ${x.source === 'weekly' ? 'from weekly hours' : 'extra one-off time'}</div>
+    box.innerHTML = `<b class="t">Free PT slot</b><div>${esc(day)}, ${span} · ${esc(x.coachName)} · ${x.source === 'weekly' ? 'from weekly hours' : 'extra one-off time'}</div>
       <div class="row"><button class="btn small ghost" data-remove="${esc(x.id)}">${x.source === 'weekly' ? 'Block this time' : 'Remove this time'}</button></div>`;
   } else {
     box.style.borderColor = 'var(--none)';
@@ -374,6 +491,13 @@ function drawDetail() {
       <div class="row"><button class="btn small ghost" data-restore="${esc(x.id)}">Make bookable again</button></div>`;
   }
 }
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-cover]'); if (!b) return;
+  const [classId, date] = b.dataset.cover.split('|');
+  b.disabled = true;
+  try { await api('/api/pt?action=cover', { classId, date, coach: b.dataset.reset ? '' : $('#coverSel').value }); cal.sel = null; loadCal(); }
+  catch (err) { alertBox(err.message); b.disabled = false; }
+});
 
 /* shared actions: cancel / remove / restore */
 document.addEventListener('click', async e => {
@@ -398,10 +522,31 @@ $('#avWho').addEventListener('change', loadAvail);
 async function loadAvail() {
   try {
     const r = await api(`/api/pt?action=rules&coach=${avWho()}`);
-    weekly = r.weekly; drawWeekly(); drawOff(r.off);
+    weekly = r.weekly; drawWeekly(); drawOff(r.off); $('#wdefault').hidden = !r.isDefault;
   } catch (err) { alertBox(err.message); }
   loadExtra();
+  if (me.admin) loadClasses();
 }
+/* class timetable (Jay) */
+let classes = [];
+async function loadClasses() {
+  $('#classForm').hidden = false;
+  try { classes = (await api('/api/pt?action=classes')).classes; drawClasses(); } catch (err) { show($('#cerr'), err.message); }
+}
+function drawClasses() {
+  const daySel = v => `<select data-cf="day" aria-label="Day">${ORDER.map(d => `<option value="${d}" ${Number(v) === d ? 'selected' : ''}>${DAYS[d]}</option>`).join('')}</select>`;
+  const coachSel = v => `<select data-cf="coach" aria-label="Coach">${['jay', 'aaron', 'kian'].map(c => `<option value="${c}" ${v === c ? 'selected' : ''}>${cap(c)}</option>`).join('')}</select>`;
+  $('#classList').innerHTML = classes.map((k, i) => `<div class="crow" data-ci="${i}">${daySel(k.day)}<input data-cf="name" value="${esc(k.name)}" aria-label="Class name" maxlength="40">
+    <input type="time" step="300" data-cf="start" value="${k.start}" aria-label="Start"><input type="time" step="300" data-cf="end" value="${k.end}" aria-label="End">${coachSel(k.coach)}<button type="button" class="x" data-cdel="${i}" aria-label="Remove class">×</button></div>`).join('');
+}
+$('#classList').addEventListener('input', e => { const row = e.target.closest('[data-ci]'); if (!row) return; const k = classes[row.dataset.ci], f = e.target.dataset.cf; k[f] = f === 'day' ? Number(e.target.value) : e.target.value; });
+$('#classList').addEventListener('click', e => { const x = e.target.closest('[data-cdel]'); if (x) { classes.splice(Number(x.dataset.cdel), 1); drawClasses(); } });
+$('#classAdd').addEventListener('click', () => { classes.push({ id: '', day: 1, name: '', start: '19:00', end: '20:00', coach: 'jay' }); drawClasses(); $('#classList .crow:last-child [data-cf=name]').focus(); });
+$('#classForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#cerr'), ''); show($('#cok'), '');
+  try { classes = (await api('/api/pt?action=classes-save', { classes })).classes; drawClasses(); show($('#cok'), 'Saved. The calendar and everyone’s free PT times are updated.'); }
+  catch (err) { show($('#cerr'), err.message); }
+});
 function lenSel(v) { return `<select data-f="mins" aria-label="Session length">${[60, 75, 45, 30, 90].map(m => `<option value="${m}" ${Number(v) === m ? 'selected' : ''}>${m} min sessions</option>`).join('')}</select>`; }
 function drawWeekly() {
   $('#weekly').innerHTML = ORDER.map(d => {
@@ -421,7 +566,7 @@ $('#weekly').addEventListener('click', e => {
 const addHours = (t, h) => { const [hh, mm] = t.split(':').map(Number); return `${String(Math.min(hh + h, 23)).padStart(2, '0')}:${String(mm).padStart(2, '0')}`; };
 $('#weeklyForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#werr'), ''); show($('#wok'), '');
-  try { weekly = (await api('/api/pt?action=weekly', { coach: avWho(), weekly })).weekly; drawWeekly(); show($('#wok'), 'Saved. These times now repeat every week.'); }
+  try { weekly = (await api('/api/pt?action=weekly', { coach: avWho(), weekly })).weekly; drawWeekly(); $('#wdefault').hidden = true; show($('#wok'), 'Saved. These times now repeat every week.'); }
   catch (err) { show($('#werr'), err.message); }
 });
 function drawOff(list) {

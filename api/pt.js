@@ -4,7 +4,7 @@ import {
 } from './_lib/core.js';
 import {
   DAY, LENGTHS, londonMs, londonDate, addDays, validDate, validTime, getWeekly, getOff, isOff,
-  realSlots, generated, parseVirtual,
+  realSlots, generated, parseVirtual, getClasses, getCover, classInstances,
 } from './_lib/avail.js';
 
 const IDS = Object.keys(COACHES);
@@ -22,11 +22,12 @@ export default async function handler(req, res) {
         const pick = clean(req.query.coach, 20);
         const which = COACHES[pick] ? [pick] : IDS;
         const real = await realSlots('all', from - DAY, to + DAY);
+        const classes = await classInstances(from - DAY, to + DAY);
         let slots = [];
         for (const c of which) {
           const off = await getOff(c);
           slots.push(...real.filter(s => s.coach === c && s.status === 'open' && s.start >= from && s.start <= to && !isOff(off, londonDate(s.start))));
-          slots.push(...(await generated(c, from, to, real)).open);
+          slots.push(...(await generated(c, from, to, real, classes)).open);
         }
         slots.sort((a, b2) => a.start - b2.start);
         return send(res, 200, { slots: slots.map(pub), coaches: Object.values(COACHES).map(c => ({ id: c.id, name: c.name, first: c.first })), types: TYPES });
@@ -36,13 +37,14 @@ export default async function handler(req, res) {
       case 'calendar': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
         const which = target(c, req.query.coach, true);
-        const days = Math.min(Math.max(Number(req.query.days) || 14, 7), 42);
+        const days = Math.min(Math.max(Number(req.query.days) || 14, 1), 42);
         const firstDate = validDate(req.query.from) ? req.query.from : londonDate(Date.now());
         const from = londonMs(firstDate, '00:00'), to = londonMs(addDays(firstDate, days), '00:00') - 1;
         const real = await realSlots('all', from - DAY, to + DAY);
+        const classes = await classInstances(from - DAY, to + DAY);
         const items = [], offs = {};
         for (const cid of which === 'all' ? IDS : [which]) {
-          const g = await generated(cid, from, to, real);
+          const g = await generated(cid, from, to, real, classes);
           offs[cid] = g.off.filter(o => o.to >= firstDate && o.from <= addDays(firstDate, days));
           for (const s of real.filter(s => s.coach === cid && s.start >= from && s.start <= to && s.status !== 'cancelled')) {
             const o = { ...pub(s), status: s.status, source: s.source || 'extra' };
@@ -56,15 +58,58 @@ export default async function handler(req, res) {
           items.push(...g.open.map(s => ({ ...pub(s), status: 'open', source: 'weekly' })));
           items.push(...g.blocked.map(s => ({ ...pub(s), status: 'blocked', source: 'weekly' })));
         }
+        const allOff = {};
+        for (const cid of IDS) allOff[cid] = offs[cid] || (await getOff(cid));
+        for (const k of classes.filter(k => k.start >= from && k.start <= to)) {
+          items.push({ id: k.id, type: 'class', status: k.cancelled ? 'cancelled' : 'class', name: k.name, coach: k.coach, coachName: COACHES[k.coach]?.name || k.coach,
+            usual: k.usual, cover: k.cover, classId: k.classId, date: k.date, start: k.start, mins: k.mins, when: fmt(k.start),
+            mine: which === 'all' || k.coach === which, needsCover: !k.cancelled && !!isOff(allOff[k.coach] || [], k.date) });
+        }
         items.sort((a, b2) => a.start - b2.start);
         return send(res, 200, { from: firstDate, days, coach: which, items, off: offs });
+      }
+
+      /* ----- class timetable ----- */
+      case 'classes': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        return send(res, 200, { classes: await getClasses() });
+      }
+      case 'classes-save': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        if (!c.admin) return bad(res, 'Only Jay can change the class timetable.', 403);
+        const list = (Array.isArray(b.classes) ? b.classes : []).slice(0, 60).map(k => ({
+          id: clean(k.id, 30) || id('k'), day: Number(k.day), start: String(k.start), end: String(k.end), name: clean(k.name, 40), coach: String(k.coach),
+        }));
+        for (const k of list) {
+          if (!k.name) return bad(res, 'Every class needs a name.');
+          if (!(k.day >= 0 && k.day <= 6) || !validTime(k.start) || !validTime(k.end) || k.end <= k.start) return bad(res, `Check the times for ${k.name}.`);
+          if (!COACHES[k.coach]) return bad(res, `Choose who teaches ${k.name}.`);
+        }
+        list.sort((a, b2) => a.day - b2.day || a.start.localeCompare(b2.start));
+        await redis.set('classes', list);
+        return send(res, 200, { classes: list });
+      }
+      case 'cover': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        if (!c.admin) return bad(res, 'Only Jay can change who covers a class.', 403);
+        const key = `${clean(b.classId, 30)}|${clean(b.date, 10)}`;
+        if (!validDate(b.date)) return bad(res, 'Choose a date.');
+        const who = String(b.coach || '');
+        const cover = await getCover();
+        if (!who) delete cover[key];
+        else if (who === 'none' || COACHES[who]) cover[key] = who;
+        else return bad(res, 'Choose a coach.');
+        const cutoff = addDays(londonDate(Date.now()), -7);
+        for (const k of Object.keys(cover)) if (k.split('|')[1] < cutoff) delete cover[k];
+        await redis.set('classcover', cover);
+        return send(res, 200, { ok: true });
       }
 
       /* ----- coaches: regular weekly hours ----- */
       case 'rules': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
         const who = target(c, req.query.coach);
-        return send(res, 200, { coach: who, weekly: await getWeekly(who), off: (await getOff(who)).filter(o => o.to >= londonDate(Date.now())) });
+        return send(res, 200, { coach: who, weekly: await getWeekly(who), isDefault: !(await redis.exists(`coach:${who}:weekly`)), off: (await getOff(who)).filter(o => o.to >= londonDate(Date.now())) });
       }
       case 'weekly': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
@@ -120,13 +165,15 @@ export default async function handler(req, res) {
         } else starts = (Array.isArray(b.starts) ? b.starts : []).map(Number).filter(Number.isFinite).slice(0, 60);
         if (!starts.length) return bad(res, 'Choose a date and time.');
         const now = Date.now(), weekly = (await generated(who, now, now + 121 * DAY)).open;
+        const teaching = (await classInstances(now, now + 121 * DAY)).filter(k => k.coach === who && !k.cancelled);
         let added = 0, skipped = 0;
         for (const start of starts) {
           if (start < now || start > now + 120 * DAY) { skipped++; continue; }
           const s = { start, mins };
           const near = await realSlots(who, start - 90 * 6e4, start + mins * 6e4);
           const clash = near.some(x => x.status !== 'cancelled' && x.start < start + mins * 6e4 && x.start + x.mins * 6e4 > start)
-            || weekly.some(x => x.start < start + mins * 6e4 && x.start + x.mins * 6e4 > start);
+            || weekly.some(x => x.start < start + mins * 6e4 && x.start + x.mins * 6e4 > start)
+            || teaching.some(x => x.start < start + mins * 6e4 && x.start + x.mins * 6e4 > start);
           if (clash) { skipped++; continue; }
           const sid = id('s');
           await redis.hset(`slot:${sid}`, { id: sid, coach: who, start: s.start, mins, status: 'open', source: 'extra', created: now });
