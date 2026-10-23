@@ -56,6 +56,16 @@ body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 .clink:hover{color:var(--bone)}
 @media (max-width:980px){.coachcards{grid-template-columns:1fr 1fr}}
 @media (max-width:620px){.coachcards{grid-template-columns:1fr}}
+
+.wafab{position:fixed;z-index:30;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:inline-flex;align-items:center;gap:8px;padding:12px 18px 12px 14px;background:#25d366;color:#fff;border-radius:999px;text-decoration:none;font:700 15px var(--cond);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 10px 30px -8px rgba(0,0,0,.6)}
+.wafab svg{width:24px;height:24px}
+.wafab:hover{filter:brightness(1.06)}
+@media (max-width:520px){.wafab span{display:none}.wafab{padding:14px}}
+.policy{max-width:760px}
+.policy h3{font-size:28px;margin-top:34px;color:var(--red)}
+.policy p,.policy li{color:var(--soft)}
+.policy ul{display:grid;gap:6px;padding-left:20px}
+.draftnote{border:1px dashed var(--tbc);color:var(--tbc);padding:12px 16px;margin-bottom:12px}
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SportsActivityLocation", "name": "Warrior Spirit Muay Thai & Kickboxing", "alternateName": ["Warrior Spirit Muay Thai", "Hoddesdon Muay Thai & K1 Kickboxing", "WMT Muay Thai"], "telephone": "+447904032142", "address": {"@type": "PostalAddress", "streetAddress": "Next Gen Fitness, Mount Grace Road", "addressLocality": "Potters Bar", "postalCode": "EN6 1RB", "addressCountry": "GB"}, "areaServed": ["Potters Bar", "Barnet", "Cuffley", "Brookmans Park", "Hatfield", "Cheshunt", "Enfield", "Hoddesdon", "Borehamwood", "St Albans", "Welwyn Garden City"], "sameAs": ["https://www.instagram.com/warriorspirit_muaythai/", "https://www.tiktok.com/@warriorspirit32"], "priceRange": "\u00a3\u00a3"}</script>
 <title>Warrior Spirit Muay Thai</title>
@@ -560,7 +570,7 @@ a.tagc{text-decoration:none}
     </ul></nav>
     <div class="navr">
       <div class="sicons" data-socials></div>
-      <a class="btn" href="#contact" data-enq="First class">Book a class</a>
+      <a class="btn" href="#contact" data-enq="Free first class">Book a free class</a>
       <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -589,9 +599,9 @@ a.tagc{text-decoration:none}
       <div class="hero-in">
         <img class="hero-badge" src="img/logo.webp" alt="">
         <h1>Find your<br><em>warrior</em> spirit</h1>
-        <p class="lede">Muay Thai and kickboxing for complete beginners, fitness fans, kids and fighters. Real technique, coached properly, in a gym that looks after its own.</p>
+        <p class="lede">Muay Thai and kickboxing for complete beginners, fitness fans, kids and fighters. Real technique, coached properly, in a gym that looks after its own. <strong>Your first class is free.</strong></p>
         <div class="cta">
-          <a class="btn" href="#contact" data-enq="First class">Book your first class →</a>
+          <a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a>
           <a class="btn ghost" href="#timetable">See the timetable</a>
         </div>
         <a class="rating" href="#team"><span class="stars" aria-hidden="true">★★★★★</span><b>4.9</b><span>from 100 Google reviews across our Potters Bar and Hoddesdon listings</span></a>
@@ -601,7 +611,7 @@ a.tagc{text-decoration:none}
 
   <section class="facts" aria-label="At a glance">
     <div class="wrap">
-      <div class="fact"><b>Thu 7pm</b><span>Beginners class</span></div>
+      <div class="fact"><b>Free</b><span>Your first class</span></div>
       <div class="fact"><b>Ages 7–13</b><span>Kids Mon–Thu</span></div>
       <div class="fact"><b>£75</b><span>Adults, all inclusive</span></div>
       <div class="fact"><b>From £35</b><span>1-to-1 PT per hour</span></div>
@@ -749,7 +759,7 @@ a.tagc{text-decoration:none}
     </div>
   </section>
 
-  <section class="nextband"><div class="wrap"><div><span class="kick">Ready?</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Ready?</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="classes" hidden>
@@ -789,7 +799,7 @@ a.tagc{text-decoration:none}
     <div class="wrap">
       <div class="stack head"><span class="kick">Membership</span><h2>Simple prices</h2><p class="lede">One price covers everything. No hidden extras.</p></div>
       <div class="prices">
-        <article class="price top"><span class="tagc">Adults</span><span class="amt">£75<small>/ month</small></span><p>All inclusive.</p><ul><li>Every class on the timetable</li><li>Open gym 9am–9pm weekdays</li><li>Fight team pathway</li></ul><a class="btn" href="#contact" data-enq="First class">Book a class</a></article>
+        <article class="price top"><span class="tagc">Adults</span><span class="amt">£75<small>/ month</small></span><p>All inclusive. First class free.</p><ul><li>Every class on the timetable</li><li>Open gym 9am–9pm weekdays</li><li>Fight team pathway</li></ul><a class="btn" href="#contact" data-enq="Free first class">Book a free class</a></article>
         <article class="price"><span class="tagc">Kids 7–13</span><span class="amt">£65<small>/ month</small></span><p>Kids Muay Thai.</p><ul><li>Monday to Thursday, 5:30pm</li><li>Confidence and discipline</li><li>Interclubs when they're ready</li></ul><a class="btn ghost" href="#contact" data-enq="Kids class">Ask about kids</a></article>
         <article class="price"><span class="tagc">1-to-1</span><span class="amt"><small style="margin:0 6px 0 0">from</small>£35<small>/ hour</small></span><p>Personal training with a coach.</p><ul><li>Fast-track your technique</li><li>Five session types, beginner to fight camp</li><li>Train with a friend: £50 for two, 75 min</li></ul><a class="btn ghost" href="#pt-sessions">See PT sessions</a></article>
       </div>
@@ -810,7 +820,7 @@ a.tagc{text-decoration:none}
     </div>
   </section>
 
-  <section class="nextband"><div class="wrap"><div><span class="kick">Thursday 7pm beginners</span><h2>Come and try it</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Thursday 7pm beginners</span><h2>Come and try it</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="pt" hidden>
@@ -999,7 +1009,7 @@ a.tagc{text-decoration:none}
   </section>
 
 
-  <section class="nextband"><div class="wrap"><div><span class="kick">Fight team</span><h2>Want to fight?</h2></div><a class="btn" href="#contact" data-enq="First class">Talk to us →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Fight team</span><h2>Want to fight?</h2></div><a class="btn" href="#contact" data-enq="Free first class">Talk to us →</a></div></section>
 </div>
 
 <div class="view" data-view="videos" hidden>
@@ -1129,7 +1139,7 @@ a.tagc{text-decoration:none}
         <div class="cstats"><div><b>18+</b><span>Years teaching</span></div><div><b>3rd Dan</b><span>Kickboxing black belt</span></div><div><b>~100</b><span>Kids interclubs</span></div></div>
         <div class="pchips"><span>Qualified kickboxing coach</span><span>DBS checked</span><span>First-aid trained</span><span>Head coach</span><span>Fight team</span><span>Fight camps</span><span>Kids &amp; juniors</span><span>Cornering</span><span>1-to-1 PT</span></div>
         <p class="ask"><b>Ask Jay about</b> your first interclub, fight camp, or getting your child started.</p>
-        <div class="cta"><a class="btn" href="#contact" data-enq="PT with Jay">Book a PT session with Jay</a><a class="btn ghost" href="#contact" data-enq="First class">Train in Jay’s classes</a></div>
+        <div class="cta"><a class="btn" href="#contact" data-enq="PT with Jay">Book a PT session with Jay</a><a class="btn ghost" href="#contact" data-enq="Free first class">Train in Jay’s classes</a></div>
       </div>
     </div>
   </section>
@@ -1184,7 +1194,7 @@ a.tagc{text-decoration:none}
         <div class="cstats"><div><b>3–1</b><span>Fight record</span></div><div><b>3</b><span>Wins</span></div><div><b>1</b><span>Loss</span></div></div>
         <div class="pchips"><span>Trainer</span><span>Fighter</span><span>Nutrition tips</span><span>Motivation</span><span>Marketing</span></div>
         <p class="ask"><b>Ask Steve about</b> nutrition, staying motivated, or fight-night photos and videos.</p>
-        <div class="cta"><a class="igbtn" href="https://www.instagram.com/saunders_80/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@saunders_80</span></a><a class="btn" href="#contact" data-enq="First class">Train with Steve</a></div>
+        <div class="cta"><a class="igbtn" href="https://www.instagram.com/saunders_80/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>@saunders_80</span></a><a class="btn" href="#contact" data-enq="Free first class">Train with Steve</a></div>
       </div>
     </div>
   </section>
@@ -1201,7 +1211,7 @@ a.tagc{text-decoration:none}
     </div>
   </section>
 
-  <section class="nextband"><div class="wrap"><div><span class="kick">Say hello</span><h2>Come and meet us</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Say hello</span><h2>Come and meet us</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="blog" hidden>
@@ -1295,7 +1305,7 @@ a.tagc{text-decoration:none}
     </div>
   </section>
 
-  <section class="nextband"><div class="wrap"><div><span class="kick">Train with us</span><h2>See it for yourself</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Train with us</span><h2>See it for yourself</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="areas" data-title="Areas we cover | Warrior Spirit Muay Thai, Potters Bar" data-desc="Muay Thai and kickboxing in Potters Bar for Barnet, Cuffley, Cheshunt, Hatfield, Enfield, St Albans, Hoddesdon and nearby." hidden>
@@ -1306,7 +1316,7 @@ a.tagc{text-decoration:none}
       <p class="tnote" style="margin-top:20px">Travel times are approximate, by car, off-peak. Don't see your town? <a href="#contact">Ask us</a>.</p>
     </div>
   </section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Wherever you're coming from</span><h2>Come and try a class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Wherever you're coming from</span><h2>Come and try a class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="potters-bar" data-title="Muay Thai &amp; Kickboxing near Potters Bar | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Potters Bar at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1317,7 +1327,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Our home town · In town</span>
       <h1>Muay Thai near Potters Bar</h1>
       <p class="lede">Warrior Spirit is Potters Bar’s own Muay Thai and kickboxing gym. No long drive, no excuses: finish work, grab your kit and you can be on the pads within minutes.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1339,7 +1349,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Potters Bar questions</span><h2>Good to know</h2></div><div><details><summary>Is there a Muay Thai gym in Potters Bar?</summary><p>Yes. Warrior Spirit is a Muay Thai and kickboxing gym in Potters Bar with classes for beginners, kids, fitness and fighters.</p></details><details><summary>Do you do kids Muay Thai in Potters Bar?</summary><p>Yes. Kids Muay Thai runs Monday to Thursday at 5:30pm for ages 7 to 13, £65 a month.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#brookmans-park">Brookmans Park<small>About 5 min</small></a><a href="#cuffley">Cuffley<small>About 10 min</small></a><a href="#barnet">Barnet<small>About 10–15 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Potters Bar to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Potters Bar to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="brookmans-park" data-title="Muay Thai &amp; Kickboxing near Brookmans Park | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Brookmans Park at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1350,7 +1360,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Close by · About 5 min</span>
       <h1>Muay Thai near Brookmans Park</h1>
       <p class="lede">Live in Brookmans Park? Warrior Spirit is just down the road in Potters Bar, close enough to train before dinner and still be home for the evening.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1372,7 +1382,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Brookmans Park questions</span><h2>Good to know</h2></div><div><details><summary>How far is Warrior Spirit from Brookmans Park?</summary><p>About 5 minutes by car, or one stop on the train to Potters Bar.</p></details><details><summary>Can my kids train if we live in Brookmans Park?</summary><p>Yes. Kids classes run Monday to Thursday at 5:30pm, so it fits straight after school.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#cuffley">Cuffley<small>About 10 min</small></a><a href="#barnet">Barnet<small>About 10–15 min</small></a><a href="#potters-bar">Potters Bar<small>In town</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Brookmans Park to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Brookmans Park to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="cuffley" data-title="Muay Thai &amp; Kickboxing near Cuffley | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Cuffley at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1383,7 +1393,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Close by · About 10 min</span>
       <h1>Muay Thai near Cuffley</h1>
       <p class="lede">From Cuffley it’s a short run along the Northaw Road to Warrior Spirit in Potters Bar, for real Muay Thai coaching without heading into London.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1405,7 +1415,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Cuffley questions</span><h2>Good to know</h2></div><div><details><summary>Is there Muay Thai near Cuffley?</summary><p>Yes. Warrior Spirit in Potters Bar is about 10 minutes from Cuffley by car.</p></details><details><summary>Do I need experience?</summary><p>No. Thursday’s beginners class starts from zero.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#brookmans-park">Brookmans Park<small>About 5 min</small></a><a href="#barnet">Barnet<small>About 10–15 min</small></a><a href="#potters-bar">Potters Bar<small>In town</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Cuffley to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Cuffley to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="barnet" data-title="Muay Thai &amp; Kickboxing near Barnet | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Barnet at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1416,7 +1426,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Close by · About 10–15 min</span>
       <h1>Muay Thai near Barnet</h1>
       <p class="lede">Barnet is right on our doorstep. Head up the Great North Road and you’re at Warrior Spirit in Potters Bar, a proper Muay Thai gym without the London prices.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1438,7 +1448,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Barnet questions</span><h2>Good to know</h2></div><div><details><summary>Is there a Muay Thai gym near Barnet?</summary><p>Yes. Warrior Spirit is in Potters Bar, about 10 to 15 minutes from Barnet.</p></details><details><summary>How much is membership?</summary><p>Adults £75 a month, all inclusive. Kids £65 a month.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#brookmans-park">Brookmans Park<small>About 5 min</small></a><a href="#cuffley">Cuffley<small>About 10 min</small></a><a href="#potters-bar">Potters Bar<small>In town</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Barnet to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Barnet to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="hatfield" data-title="Muay Thai &amp; Kickboxing near Hatfield | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Hatfield at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1449,7 +1459,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Worth the drive · About 15 min</span>
       <h1>Muay Thai near Hatfield</h1>
       <p class="lede">Training in Muay Thai from Hatfield is easy: a quick run down the A1(M) or three stops on the train gets you to Warrior Spirit in Potters Bar.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1471,7 +1481,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Hatfield questions</span><h2>Good to know</h2></div><div><details><summary>How do I get to Warrior Spirit from Hatfield?</summary><p>About 15 minutes by car down the A1(M), or three stops by train to Potters Bar.</p></details><details><summary>Do you have options for students?</summary><p><span class="tbc">Student pricing, if offered</span></p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Hatfield to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Hatfield to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="borehamwood" data-title="Muay Thai &amp; Kickboxing near Borehamwood | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Borehamwood at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1482,7 +1492,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Worth the drive · About 15 min</span>
       <h1>Muay Thai near Borehamwood</h1>
       <p class="lede">From Borehamwood and Elstree it’s a straightforward drive round to Warrior Spirit in Potters Bar for Muay Thai, kickboxing and kids classes.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1504,7 +1514,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Borehamwood questions</span><h2>Good to know</h2></div><div><details><summary>Is there Muay Thai near Borehamwood?</summary><p>Yes. Warrior Spirit in Potters Bar is about 15 minutes away.</p></details><details><summary>Can I try a class first?</summary><p>Yes. Send us a message and we’ll point you to the best class to start with.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Borehamwood to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Borehamwood to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="enfield" data-title="Muay Thai &amp; Kickboxing near Enfield | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Enfield at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1515,7 +1525,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Worth the drive · About 15–20 min</span>
       <h1>Muay Thai near Enfield</h1>
       <p class="lede">From Enfield it’s a short trip along The Ridgeway to Warrior Spirit in Potters Bar for proper Muay Thai coaching, a fight team and a gym that knows your name.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1537,7 +1547,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Enfield questions</span><h2>Good to know</h2></div><div><details><summary>How far is Warrior Spirit from Enfield?</summary><p>About 15 to 20 minutes by car.</p></details><details><summary>Do you take complete beginners?</summary><p>Yes. Thursday’s 7pm class is built for beginners.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Enfield to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Enfield to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="waltham-cross" data-title="Muay Thai &amp; Kickboxing near Waltham Cross | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Waltham Cross at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1548,7 +1558,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Worth the drive · About 15 min</span>
       <h1>Muay Thai near Waltham Cross</h1>
       <p class="lede">From Waltham Cross, Warrior Spirit is a quick hop along the M25 to Potters Bar for Muay Thai, kickboxing and fight training.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1570,7 +1580,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Waltham Cross questions</span><h2>Good to know</h2></div><div><details><summary>Is there a Muay Thai gym near Waltham Cross?</summary><p>Warrior Spirit in Potters Bar is about 15 minutes along the M25.</p></details><details><summary>What should I bring to my first class?</summary><p>Shorts, a T-shirt, water and a towel. We train barefoot.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Waltham Cross to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Waltham Cross to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="cheshunt" data-title="Muay Thai &amp; Kickboxing near Cheshunt | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Cheshunt at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1581,7 +1591,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Worth the drive · About 15–20 min</span>
       <h1>Muay Thai near Cheshunt</h1>
       <p class="lede">Cheshunt is home ground for part of our team, and Warrior Spirit in Potters Bar is only 15 to 20 minutes away.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1603,7 +1613,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Cheshunt questions</span><h2>Good to know</h2></div><div><details><summary>Is it worth travelling from Cheshunt?</summary><p>We think so. The fight team, fight camps and coaching are what make the trip worth it.</p></details><details><summary>How long does it take from Cheshunt?</summary><p>About 15 to 20 minutes by car.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Cheshunt to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Cheshunt to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="hoddesdon" data-title="Muay Thai &amp; Kickboxing near Hoddesdon | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Hoddesdon at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1614,7 +1624,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Further afield · About 25 min</span>
       <h1>Muay Thai near Hoddesdon</h1>
       <p class="lede">This is where we started. Warrior Spirit was Hoddesdon Muay Thai before the club moved to Potters Bar, and members still make the trip down the A10 to train with us.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1636,7 +1646,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Hoddesdon questions</span><h2>Good to know</h2></div><div><details><summary>Were you Hoddesdon Muay Thai?</summary><p>Yes. Warrior Spirit is the old Hoddesdon Muay Thai club, now based in Potters Bar under a new name.</p></details><details><summary>Do people really travel from Hoddesdon?</summary><p>Yes. We already have members who make the trip each week.</p></details><details><summary>Can I join the fight team if I live further away?</summary><p>Yes. Talk to us about your goals and how often you can train.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#welwyn-garden-city">Welwyn Garden City<small>About 20 min</small></a><a href="#st-albans">St Albans<small>About 20–25 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Hoddesdon to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Hoddesdon to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="welwyn-garden-city" data-title="Muay Thai &amp; Kickboxing near Welwyn Garden City | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Welwyn Garden City at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1647,7 +1657,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Further afield · About 20 min</span>
       <h1>Muay Thai near Welwyn Garden City</h1>
       <p class="lede">From Welwyn Garden City it’s a straight run down the A1(M) to Warrior Spirit in Potters Bar for Muay Thai, kickboxing and fight training.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1669,7 +1679,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Welwyn Garden City questions</span><h2>Good to know</h2></div><div><details><summary>How far is Warrior Spirit from Welwyn Garden City?</summary><p>About 20 minutes by car down the A1(M), or a direct train to Potters Bar.</p></details><details><summary>Is it suitable for beginners?</summary><p>Yes. Thursday’s 7pm class is built for complete beginners.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hoddesdon">Hoddesdon<small>About 25 min</small></a><a href="#st-albans">St Albans<small>About 20–25 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Welwyn Garden City to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Welwyn Garden City to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="st-albans" data-title="Muay Thai &amp; Kickboxing near St Albans | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for St Albans at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1680,7 +1690,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Further afield · About 20–25 min</span>
       <h1>Muay Thai near St Albans</h1>
       <p class="lede">Training from St Albans? Warrior Spirit in Potters Bar is a short trip round the M25 for coached Muay Thai, kickboxing and a fight team that competes.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1702,7 +1712,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">St Albans questions</span><h2>Good to know</h2></div><div><details><summary>Is there Muay Thai near St Albans?</summary><p>Warrior Spirit in Potters Bar is about 20 to 25 minutes from St Albans by car.</p></details><details><summary>Can I just come for fitness?</summary><p>Yes. Plenty of people train purely for fitness and never spar.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hoddesdon">Hoddesdon<small>About 25 min</small></a><a href="#welwyn-garden-city">Welwyn Garden City<small>About 20 min</small></a><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">St Albans to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">St Albans to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="radlett" data-title="Muay Thai &amp; Kickboxing near Radlett | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Radlett at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1713,7 +1723,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Worth the drive · About 15 min</span>
       <h1>Muay Thai near Radlett</h1>
       <p class="lede">From Radlett and Shenley it’s about a quarter of an hour across to Warrior Spirit in Potters Bar for Muay Thai and kickboxing.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1735,7 +1745,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Radlett questions</span><h2>Good to know</h2></div><div><details><summary>How far is Warrior Spirit from Radlett?</summary><p>About 15 minutes by car via Shenley.</p></details><details><summary>Do you run kids classes?</summary><p>Yes. Ages 7 to 13, Monday to Thursday at 5:30pm.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Radlett to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Radlett to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="southgate-cockfosters" data-title="Muay Thai &amp; Kickboxing near Southgate & Cockfosters | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Southgate & Cockfosters at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
@@ -1746,7 +1756,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Worth the drive · About 15–20 min</span>
       <h1>Muay Thai near Southgate & Cockfosters</h1>
       <p class="lede">North London’s doorstep to Hertfordshire: from Southgate and Cockfosters, Warrior Spirit in Potters Bar is a straight drive up the A111.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book your first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1768,7 +1778,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Southgate & Cockfosters questions</span><h2>Good to know</h2></div><div><details><summary>Is there Muay Thai near Southgate or Cockfosters?</summary><p>Warrior Spirit in Potters Bar is about 15 to 20 minutes up the A111.</p></details><details><summary>How much does it cost?</summary><p>Adults £75 a month all inclusive, kids £65 a month.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#hatfield">Hatfield<small>About 15 min</small></a><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Southgate & Cockfosters to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Southgate & Cockfosters to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="kids-muay-thai" data-title="Kids Muay Thai & Kickboxing in Potters Bar | Warrior Spirit" data-desc="Kids Muay Thai and kickboxing in Potters Bar for ages 7 to 13. Monday to Thursday 5:30pm, £65 a month." hidden>
@@ -1779,7 +1789,7 @@ a.tagc{text-decoration:none}
       <span class="kick">Ages 7–13</span>
       <h1>Kids Muay Thai</h1>
       <p class="lede">Confidence, discipline and fitness for 7 to 13 year olds. Fun, safe, properly coached Muay Thai, Monday to Thursday at 5:30pm.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="Kids class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Kids class">Book a free class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
@@ -1788,8 +1798,8 @@ a.tagc{text-decoration:none}
       <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Monday to Thursday, 5:30pm to 6:20pm</li><li>Ages 7 to 13</li><li>£65 a month</li><li>No experience needed</li><li>Interclubs when they’re ready</li></ul><a class="btn" href="#contact" data-enq="Kids class">Enquire</a></aside>
     </div>
   </section>
-  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#fight-levels">Fight levels explained →</a><a href="#faq">FAQ →</a></div></div><div><details><summary>What age can kids start Muay Thai?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Will my child get hurt?</summary><p>Safety comes first. Kids work on pads and drills, and there is no hard sparring. Our head coach is DBS checked and first-aid trained.</p></details><details><summary>What do they need to bring?</summary><p>Shorts, a T-shirt and a water bottle. We train barefoot.</p></details><details><summary>Can parents watch?</summary><p><span class="tbc">Confirm whether parents can watch</span></p></details></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Kids Muay Thai</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Kids class">Book a class →</a></div></section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#safeguarding">Safeguarding →</a><a href="#fight-levels">Fight levels explained →</a><a href="#faq">FAQ →</a></div></div><div><details><summary>What age can kids start Muay Thai?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Will my child get hurt?</summary><p>Safety comes first. Kids work on pads and drills, and there is no hard sparring. Our head coach is DBS checked and first-aid trained.</p></details><details><summary>What do they need to bring?</summary><p>Shorts, a T-shirt and a water bottle. We train barefoot.</p></details><details><summary>Can parents watch?</summary><p><span class="tbc">Confirm whether parents can watch</span></p></details></div></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Kids Muay Thai</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Kids class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="kickboxing" data-title="Kickboxing Classes in Potters Bar | Warrior Spirit Muay Thai" data-desc="Kickboxing classes in Potters Bar for beginners and fitness. Learn Muay Thai, the most complete form of kickboxing." hidden>
@@ -1800,17 +1810,17 @@ a.tagc{text-decoration:none}
       <span class="kick">Kickboxing in Potters Bar</span>
       <h1>Kickboxing classes</h1>
       <p class="lede">Looking for kickboxing? Muay Thai is kickboxing with everything included: punches and kicks, plus knees, elbows and the clinch.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
     <div class="wrap tgrid">
       <div class="stack"><div class="psec"><h3>Muay Thai or kickboxing?</h3><p>Most kickboxing styles use punches and kicks. Muay Thai, from Thailand, adds knees, elbows and clinch work, which is why it’s called the art of eight limbs.</p><p>In our classes you learn proper kickboxing technique first, then build in the extra Muay Thai weapons as you go. Many members never fight and just love the workout.</p></div><div class="psec"><h3>Beginners welcome</h3><p>You don’t need any experience or fitness to start. Thursday’s 7pm class is built for beginners, and sparring is always your choice.</p></div></div>
-      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Beginners every Thursday at 7pm</li><li>Pads, drills and sparring classes</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 sessions from £35 an hour</li></ul><a class="btn" href="#contact" data-enq="First class">Enquire</a></aside>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Beginners every Thursday at 7pm</li><li>Pads, drills and sparring classes</li><li>Adults £75 a month, all inclusive</li><li>1-to-1 sessions from £35 an hour</li></ul><a class="btn" href="#contact" data-enq="Free first class">Enquire</a></aside>
     </div>
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#fitness">Fitness →</a><a href="#faq">FAQ →</a></div></div><div><details><summary>What’s the difference between Muay Thai and kickboxing?</summary><p>Muay Thai uses punches, kicks, knees, elbows and the clinch. Most kickboxing styles use only punches and kicks.</p></details><details><summary>Do you teach K1 kickboxing?</summary><p>Yes. The club began as Hoddesdon Muay Thai &amp; K1 Kickboxing, and K1 kickboxing is taught alongside Muay Thai.</p></details><details><summary>Do you do boxing classes?</summary><p>We focus on Muay Thai and kickboxing, which include a lot of boxing technique, but we don’t run separate boxing classes.</p></details></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Kickboxing</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Kickboxing</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="fitness" data-title="Kickboxing & Muay Thai Fitness Classes, Potters Bar | Warrior Spirit" data-desc="Get fit with Muay Thai and kickboxing in Potters Bar. Pad work, bag work and conditioning, no sparring needed." hidden>
@@ -1821,17 +1831,17 @@ a.tagc{text-decoration:none}
       <span class="kick">Get fight fit</span>
       <h1>Muay Thai for fitness</h1>
       <p class="lede">The hardest-working hour of your week, and the most fun. Pad rounds, bag work and conditioning that get you fit without ever needing to fight.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
     <div class="wrap tgrid">
       <div class="stack"><div class="psec"><h3>Why it works</h3><p>Muay Thai works your whole body at once: legs, core, shoulders, heart and lungs. Rounds of work and rest push your fitness in a way a treadmill never will.</p><p>Because you’re learning a skill, it never gets boring. You’re too busy thinking about the next combination to watch the clock.</p></div><div class="psec"><h3>Go at your own pace</h3><p>Every round can be as hard as you make it. Complete beginners and fighters train side by side, each working at their own level.</p><p>Want help with food and habits too? Steve shares practical nutrition tips to go with your training.</p></div></div>
-      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>No sparring needed</li><li>Pads classes Tuesday and Thursday</li><li>Open gym 9am to 9pm on weekdays</li><li>Nutrition tips and motivation</li></ul><a class="btn" href="#contact" data-enq="First class">Enquire</a></aside>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>No sparring needed</li><li>Pads classes Tuesday and Thursday</li><li>Open gym 9am to 9pm on weekdays</li><li>Nutrition tips and motivation</li></ul><a class="btn" href="#contact" data-enq="Free first class">Enquire</a></aside>
     </div>
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#kickboxing">Kickboxing →</a><a href="#pt">Personal training →</a></div></div><div><details><summary>Is Muay Thai good for weight loss?</summary><p>It’s a demanding full-body workout, and combined with sensible eating it’s a great way to lose weight.</p></details><details><summary>Do I have to spar?</summary><p>No. Plenty of members train purely for fitness.</p></details><details><summary>How often should I train?</summary><p>Two or three times a week is a great place to start.</p></details></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Fitness</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Fitness</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="women" data-title="Muay Thai & Kickboxing for Women, Potters Bar | Warrior Spirit" data-desc="Women’s Muay Thai and kickboxing in Potters Bar. Friendly mixed classes, fitness, confidence and self-defence skills." hidden>
@@ -1842,17 +1852,17 @@ a.tagc{text-decoration:none}
       <span class="kick">Muay Thai for women</span>
       <h1>Muay Thai for women</h1>
       <p class="lede">Muay Thai is one of the most popular martial arts for women, for fitness, confidence and knowing you can look after yourself.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
     <div class="wrap tgrid">
       <div class="stack"><div class="psec"><h3>What to expect</h3><p>Our classes are mixed, friendly and closely coached. You’ll be paired with partners who suit your size and experience, and nobody is thrown in at the deep end.</p><p>Many women start for fitness and stay for the confidence it builds. Some go on to compete; most don’t, and both are welcome.</p></div><div class="psec"><h3>Start your way</h3><p>If walking into a class feels like a big step, book a 1-to-1 session first to learn the basics, then join the group knowing what you’re doing.</p></div></div>
-      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Friendly mixed classes</li><li>Partners matched to your level</li><li>1-to-1 sessions from £35 an hour</li><li>Sparring always optional</li></ul><a class="btn" href="#contact" data-enq="First class">Enquire</a></aside>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Friendly mixed classes</li><li>Partners matched to your level</li><li>1-to-1 sessions from £35 an hour</li><li>Sparring always optional</li></ul><a class="btn" href="#contact" data-enq="Free first class">Enquire</a></aside>
     </div>
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#self-defence">Self-defence →</a><a href="#fitness">Fitness →</a></div></div><div><details><summary>Do you run women-only classes?</summary><p><span class="tbc">Confirm whether you run women-only sessions</span></p></details><details><summary>Will I be partnered with men?</summary><p>Coaches pair people sensibly by size and experience, and you can always ask to work with someone specific.</p></details></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Women</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Women</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="self-defence" data-title="Self-Defence Classes in Potters Bar | Warrior Spirit Muay Thai" data-desc="Build real self-defence skills and confidence with Muay Thai in Potters Bar. Striking, clinch work and awareness." hidden>
@@ -1863,17 +1873,17 @@ a.tagc{text-decoration:none}
       <span class="kick">Confidence when it counts</span>
       <h1>Self-defence through Muay Thai</h1>
       <p class="lede">Muay Thai is a tested striking art. Regular training builds the skills, fitness and calm under pressure that make you harder to target.</p>
-      <div class="cta"><a class="btn" href="#contact" data-enq="First class">Book a class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
+      <div class="cta"><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a><a class="btn ghost" href="#timetable">Timetable</a></div>
     </div></div>
   </section>
   <section class="band">
     <div class="wrap tgrid">
       <div class="stack"><div class="psec"><h3>Why Muay Thai</h3><p>You learn to strike properly, protect yourself, deal with someone grabbing you in the clinch, and keep your head when things get intense, all practised against a resisting partner.</p><p>Just as important, the confidence you build changes how you carry yourself day to day.</p></div><div class="psec"><h3>A sensible approach</h3><p>We teach a martial art, not a quick-fix course. The best self-defence is awareness and avoiding trouble; training gives you the skills and composure if you ever need them.</p></div></div>
-      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Real striking and clinch skills</li><li>Fitness and confidence</li><li>Beginners every Thursday at 7pm</li><li>Suitable for adults and kids</li></ul><a class="btn" href="#contact" data-enq="First class">Enquire</a></aside>
+      <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Real striking and clinch skills</li><li>Fitness and confidence</li><li>Beginners every Thursday at 7pm</li><li>Suitable for adults and kids</li></ul><a class="btn" href="#contact" data-enq="Free first class">Enquire</a></aside>
     </div>
   </section>
   <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#women">Women →</a><a href="#kids-muay-thai">Kids Muay Thai →</a></div></div><div><details><summary>Is Muay Thai good for self-defence?</summary><p>It teaches effective striking, clinch work and composure under pressure, practised safely with a partner.</p></details><details><summary>How long before I can defend myself?</summary><p>Basic skills come within weeks; confidence grows with regular training.</p></details></div></div></section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Self-defence</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Self-defence</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
 <div class="view" data-view="fight-levels" data-title="Muay Thai Fight Levels Explained: Interclubs, N, C, B and A Class | Warrior Spirit" data-desc="What are interclubs and N-Class, C-Class, B-Class and A-Class Muay Thai fights? A plain-English guide from Warrior Spirit, Potters Bar." hidden>
@@ -1913,10 +1923,36 @@ a.tagc{text-decoration:none}
   <section class="band">
     <div class="wrap">
       <div class="stack head"><span class="kick">FAQ</span><h2>Your questions, answered</h2><p class="lede">Everything people usually ask before their first class. Can’t see yours? <a href="#contact">Ask us</a>.</p></div>
-      <div class="faqall"><div class="faqg"><h3>Getting started</h3><details><summary>Do I need any experience?</summary><p>No. Thursday’s 7pm beginners class starts from zero.</p></details><details><summary>Do I need to be fit?</summary><p>No. Fitness comes from training. Everyone works at their own pace.</p></details><details><summary>What should I wear?</summary><p>Shorts and a T-shirt. We train barefoot.</p></details><details><summary>What should I bring?</summary><p>Water and a towel. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details><details><summary>Can I borrow kit?</summary><p><span class="tbc">Confirm whether gloves can be borrowed</span></p></details><details><summary>How do I book my first class?</summary><p>Send us a message through the contact form and we’ll point you to the best class.</p></details></div><div class="faqg"><h3>Classes and membership</h3><details><summary>How much is membership?</summary><p>Adults £75 a month, all inclusive. Kids £65 a month.</p></details><details><summary>How much is personal training?</summary><p>1-to-1 sessions start from £35 an hour. Train with a friend costs £50 for two people for 75 minutes.</p></details><details><summary>When are classes?</summary><p>Monday to Friday evenings, with kids classes Monday to Thursday at 5:30pm. See the timetable.</p></details><details><summary>Is there open gym?</summary><p>Yes, members can use the gym from 9am to 9pm on weekdays outside class times.</p></details><details><summary>Are you open at weekends?</summary><p>Saturday mornings are for personal training, 8am to 12pm. Sunday is closed.</p></details><details><summary>Do you have a contract?</summary><p><span class="tbc">Confirm contract and notice terms</span></p></details></div><div class="faqg"><h3>Muay Thai and kickboxing</h3><details><summary>What is Muay Thai?</summary><p>The national sport of Thailand, known as the art of eight limbs because it uses fists, elbows, knees and shins.</p></details><details><summary>Is Muay Thai the same as kickboxing?</summary><p>It is a form of kickboxing that adds knees, elbows and the clinch.</p></details><details><summary>Do you do boxing?</summary><p>We don’t run separate boxing classes, but Muay Thai includes plenty of boxing technique.</p></details><details><summary>Is Muay Thai good for fitness?</summary><p>Yes. It’s a demanding full-body workout that builds strength, stamina and coordination.</p></details><details><summary>Do I have to spar?</summary><p>No. Sparring is optional and only once a coach says you’re ready.</p></details></div><div class="faqg"><h3>Kids</h3><details><summary>What age can kids start?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Is it safe for children?</summary><p>Yes. Kids train on pads and drills with no hard sparring. Head coach Jay is DBS checked, first-aid trained and has over 18 years of teaching experience.</p></details><details><summary>Can kids compete?</summary><p>When they and their parents are ready, we take kids to interclubs.</p></details></div><div class="faqg"><h3>Fighting</h3><details><summary>How do I join the fight team?</summary><p>Train regularly, then talk to the coaches. They’ll tell you when you’re ready for an interclub.</p></details><details><summary>What is an interclub?</summary><p>A friendly, controlled bout between gyms, usually with protective kit.</p></details><details><summary>What do N-Class and C-Class mean?</summary><p>They’re levels for amateur fighters. See our guide to fight levels.</p></details></div><div class="faqg"><h3>Getting here</h3><details><summary>Where are you?</summary><p>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB.</p></details><details><summary>Is there parking?</summary><p><span class="tbc">Parking details</span></p></details><details><summary>Are you the old Hoddesdon Muay Thai?</summary><p>Yes. The club started in Hoddesdon, moved to Potters Bar and became Warrior Spirit. Along the way we also took over our friends’ gym, WMT Muay Thai.</p></details><details><summary>Which areas do members come from?</summary><p>Potters Bar, Barnet, Cuffley, Cheshunt, Hatfield, Enfield, Hoddesdon and more. See areas we cover.</p></details></div></div>
+      <div class="faqall"><div class="faqg"><h3>Getting started</h3><details><summary>Do I need any experience?</summary><p>No. Thursday’s 7pm beginners class starts from zero.</p></details><details><summary>Do I need to be fit?</summary><p>No. Fitness comes from training. Everyone works at their own pace.</p></details><details><summary>What should I wear?</summary><p>Shorts and a T-shirt. We train barefoot.</p></details><details><summary>What should I bring?</summary><p>Water and a towel. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details><details><summary>Can I borrow kit?</summary><p><span class="tbc">Confirm whether gloves can be borrowed</span></p></details><details><summary>How do I book my first class?</summary><p>Your first class is free. Send us a message through the contact form and we’ll point you to the best class.</p></details></div><div class="faqg"><h3>Classes and membership</h3><details><summary>How much is membership?</summary><p>Adults £75 a month, all inclusive. Kids £65 a month.</p></details><details><summary>How much is personal training?</summary><p>1-to-1 sessions start from £35 an hour. Train with a friend costs £50 for two people for 75 minutes.</p></details><details><summary>When are classes?</summary><p>Monday to Friday evenings, with kids classes Monday to Thursday at 5:30pm. See the timetable.</p></details><details><summary>Is there open gym?</summary><p>Yes, members can use the gym from 9am to 9pm on weekdays outside class times.</p></details><details><summary>Are you open at weekends?</summary><p>Saturday mornings are for personal training, 8am to 12pm. Sunday is closed.</p></details><details><summary>Do you have a contract?</summary><p><span class="tbc">Confirm contract and notice terms</span></p></details></div><div class="faqg"><h3>Muay Thai and kickboxing</h3><details><summary>What is Muay Thai?</summary><p>The national sport of Thailand, known as the art of eight limbs because it uses fists, elbows, knees and shins.</p></details><details><summary>Is Muay Thai the same as kickboxing?</summary><p>It is a form of kickboxing that adds knees, elbows and the clinch.</p></details><details><summary>Do you do boxing?</summary><p>We don’t run separate boxing classes, but Muay Thai includes plenty of boxing technique.</p></details><details><summary>Is Muay Thai good for fitness?</summary><p>Yes. It’s a demanding full-body workout that builds strength, stamina and coordination.</p></details><details><summary>Do I have to spar?</summary><p>No. Sparring is optional and only once a coach says you’re ready.</p></details></div><div class="faqg"><h3>Kids</h3><details><summary>What age can kids start?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Is it safe for children?</summary><p>Yes. Kids train on pads and drills with no hard sparring. Head coach Jay is DBS checked, first-aid trained and has over 18 years of teaching experience. Read our <a href="#safeguarding">safeguarding policy</a>.</p></details><details><summary>Can kids compete?</summary><p>When they and their parents are ready, we take kids to interclubs.</p></details></div><div class="faqg"><h3>Fighting</h3><details><summary>How do I join the fight team?</summary><p>Train regularly, then talk to the coaches. They’ll tell you when you’re ready for an interclub.</p></details><details><summary>What is an interclub?</summary><p>A friendly, controlled bout between gyms, usually with protective kit.</p></details><details><summary>What do N-Class and C-Class mean?</summary><p>They’re levels for amateur fighters. See our guide to fight levels.</p></details></div><div class="faqg"><h3>Getting here</h3><details><summary>Where are you?</summary><p>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB.</p></details><details><summary>Is there parking?</summary><p><span class="tbc">Parking details</span></p></details><details><summary>Are you the old Hoddesdon Muay Thai?</summary><p>Yes. The club started in Hoddesdon, moved to Potters Bar and became Warrior Spirit. Along the way we also took over our friends’ gym, WMT Muay Thai.</p></details><details><summary>Which areas do members come from?</summary><p>Potters Bar, Barnet, Cuffley, Cheshunt, Hatfield, Enfield, Hoddesdon and more. See areas we cover.</p></details></div></div>
     </div>
   </section>
-  <section class="nextband"><div class="wrap"><div><span class="kick">Still unsure?</span><h2>Just come and try it</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Still unsure?</span><h2>Just come and try it</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
+</div>
+
+<div class="view" data-view="safeguarding" data-title="Safeguarding & Child Protection | Warrior Spirit Muay Thai, Potters Bar" data-desc="How Warrior Spirit Muay Thai keeps children and young people safe: DBS-checked coaches, first aid, supervision, photo consent and how to raise a concern." hidden>
+  <section class="band">
+    <div class="wrap policy">
+      <span class="kick">Safeguarding</span>
+      <h2>Keeping children safe</h2>
+      <p class="draftnote">Draft for Jay to check before going live. Yellow items need confirming.</p>
+      <p class="lede">The safety and wellbeing of every child and young person who trains with us comes first. This page explains how we look after them and what to do if you have a concern.</p>
+      <h3>Our coaches</h3>
+      <ul><li>Head coach Jay Shepherd is DBS checked and first-aid trained.</li><li>All coaches working with children hold an up-to-date DBS check. <span class="tbc">Confirm for each coach</span></li><li>Coaches follow our code of conduct: respectful language, no one-to-one contact with children out of sight of others, and no private messaging with children.</li></ul>
+      <h3>Welfare officer</h3>
+      <p>Our club welfare officer is <span class="tbc">name</span>. You can contact them on <span class="tbc">phone or email</span> about any concern, however small.</p>
+      <h3>In class</h3>
+      <ul><li>Kids classes (ages 7 to 13) are supervised by qualified coaches at all times.</li><li>There is no hard sparring for children. Contact work is light, controlled and matched by age, size and experience.</li><li>A first-aid kit is always available, and injuries are recorded and reported to parents.</li><li>Children compete at interclubs only with parental agreement and with suitable protective kit.</li></ul>
+      <h3>Drop-off and collection</h3>
+      <p>Please bring your child into the gym and collect them from inside at the end of class. Let a coach know if someone else is collecting. <span class="tbc">Confirm whether parents can stay and watch</span></p>
+      <h3>Photos and videos</h3>
+      <p>We only use photos or videos of children on our website or social media with written permission from a parent or guardian. You can withdraw permission at any time and we’ll remove the image.</p>
+      <h3>Raising a concern</h3>
+      <p>If you’re worried about a child’s safety or wellbeing, speak to our welfare officer or head coach. If a child is in immediate danger, call 999. You can also contact the NSPCC helpline on 0808 800 5000.</p>
+      <h3>Membership and insurance</h3>
+      <p><span class="tbc">Governing body membership and insurance details</span></p>
+    </div>
+  </section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">Kids Muay Thai</span><h2>Questions? Talk to us</h2></div><a class="btn" href="#contact" data-enq="Kids class">Get in touch →</a></div></section>
 </div>
 
 <div class="view" data-view="contact" hidden>
@@ -1925,8 +1961,8 @@ a.tagc{text-decoration:none}
     <div class="wrap">
       <div class="stack">
         <span class="kick">Contact</span>
-        <h2>Get in touch</h2>
-        <p class="lede">Book your first class, ask about kids classes or PT, or just come and say hello.</p>
+        <h2>Your first class is free</h2>
+        <p class="lede">Book your free first class, ask about kids classes or PT, or just come and say hello.</p>
         <a class="rating" href="#team"><span class="stars" aria-hidden="true">★★★★★</span><b>4.9</b><span>from 100 Google reviews across our Potters Bar and Hoddesdon listings</span></a>
         <div class="cdetails">
           <div class="cd"><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB<br><a href="https://www.google.com/maps/search/?api=1&query=Warrior+Spirit+Muay+Thai+Next+Gen+Fitness+Mount+Grace+Road+Potters+Bar+EN6+1RB" target="_blank" rel="noopener">Get directions →</a></span></div>
@@ -1938,8 +1974,8 @@ a.tagc{text-decoration:none}
         </div>
       </div>
       <form id="enquiry" novalidate>
-        <h3>Send us a message</h3>
-        <label class="full" for="enq">What's it about?<select id="enq"><option>First class</option><option>Kids class</option><option>Personal training</option><optgroup label="Personal training sessions"><option>PT: Fundamentals</option><option>PT: Fitness Pads</option><option>PT: Technique &amp; Skills</option><option>PT: Fight Camp</option><option>PT: Train with a friend</option><option>PT with Jay</option><option>PT with Aaron</option><option>PT with Kian</option></optgroup><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
+        <h3>Book your free class or send a message</h3>
+        <label class="full" for="enq">What's it about?<select id="enq"><option>Free first class</option><option>Kids class</option><option>Personal training</option><optgroup label="Personal training sessions"><option>PT: Fundamentals</option><option>PT: Fitness Pads</option><option>PT: Technique &amp; Skills</option><option>PT: Fight Camp</option><option>PT: Train with a friend</option><option>PT with Jay</option><option>PT with Aaron</option><option>PT with Kian</option></optgroup><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
         <label for="name">Name<input id="name" autocomplete="name" required></label>
         <label for="phone">Mobile<input id="phone" type="tel" autocomplete="tel"></label>
         <label for="email">Email<input id="email" type="email" autocomplete="email"></label>
@@ -1957,19 +1993,27 @@ a.tagc{text-decoration:none}
 </div>
 </main>
 
+<a class="wafab" id="waFab" href="#contact" aria-label="Message us on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg><span>WhatsApp</span></a>
 <footer>
   <div class="wrap">
     <div class="foot">
       <div class="stack" style="gap:12px"><img src="img/logo.webp" alt="Warrior Spirit Muay Thai"><p>Warrior Spirit Muay Thai &amp; Kickboxing<br>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB<br>07904 032142</p></div>
       <div><h4>Train</h4><ul><li><a href="#classes">Classes</a></li><li><a href="#timetable">Timetable</a></li><li><a href="#pt">Personal training</a></li><li><a href="#prices">Prices</a></li></ul></div>
       <div><h4>Gym</h4><ul><li><a href="#fight">Fight team</a></li><li><a href="#videos">Videos</a></li><li><a href="#team">Meet the team</a></li><li><a href="#blog">Blog</a></li><li><a href="#areas">Areas we cover</a></li><li><a href="#contact">Contact</a></li></ul></div>
-      <div><h4>Programmes</h4><ul><li><a href="#kids-muay-thai">Kids Muay Thai</a></li><li><a href="#kickboxing">Kickboxing</a></li><li><a href="#fitness">Fitness</a></li><li><a href="#women">Women</a></li><li><a href="#self-defence">Self-defence</a></li><li><a href="#fight-levels">Fight levels</a></li><li><a href="#faq">FAQ</a></li></ul></div><div><h4>Areas we cover</h4><ul><li><a href="#potters-bar">Potters Bar</a></li><li><a href="#brookmans-park">Brookmans Park</a></li><li><a href="#cuffley">Cuffley</a></li><li><a href="#barnet">Barnet</a></li><li><a href="#hatfield">Hatfield</a></li><li><a href="#borehamwood">Borehamwood</a></li><li><a href="#enfield">Enfield</a></li><li><a href="#waltham-cross">Waltham Cross</a></li><li><a href="#cheshunt">Cheshunt</a></li><li><a href="#hoddesdon">Hoddesdon</a></li><li><a href="#welwyn-garden-city">Welwyn Garden City</a></li><li><a href="#st-albans">St Albans</a></li><li><a href="#radlett">Radlett</a></li><li><a href="#southgate-cockfosters">Southgate & Cockfosters</a></li></ul></div><div><h4>Follow</h4><p>Training, fight nights and results.</p><div class="sicons" data-socials></div></div>
+      <div><h4>Programmes</h4><ul><li><a href="#kids-muay-thai">Kids Muay Thai</a></li><li><a href="#kickboxing">Kickboxing</a></li><li><a href="#fitness">Fitness</a></li><li><a href="#women">Women</a></li><li><a href="#self-defence">Self-defence</a></li><li><a href="#fight-levels">Fight levels</a></li><li><a href="#safeguarding">Safeguarding</a></li><li><a href="#faq">FAQ</a></li></ul></div><div><h4>Areas we cover</h4><ul><li><a href="#potters-bar">Potters Bar</a></li><li><a href="#brookmans-park">Brookmans Park</a></li><li><a href="#cuffley">Cuffley</a></li><li><a href="#barnet">Barnet</a></li><li><a href="#hatfield">Hatfield</a></li><li><a href="#borehamwood">Borehamwood</a></li><li><a href="#enfield">Enfield</a></li><li><a href="#waltham-cross">Waltham Cross</a></li><li><a href="#cheshunt">Cheshunt</a></li><li><a href="#hoddesdon">Hoddesdon</a></li><li><a href="#welwyn-garden-city">Welwyn Garden City</a></li><li><a href="#st-albans">St Albans</a></li><li><a href="#radlett">Radlett</a></li><li><a href="#southgate-cockfosters">Southgate & Cockfosters</a></li></ul></div><div><h4>Follow</h4><p>Training, fight nights and results.</p><div class="sicons" data-socials></div></div>
     </div>
     <p class="draft">Draft v11 · yellow underlined items still to confirm</p>
   </div>
 </footer>
 
 <script>
+(function(){
+  /* WhatsApp: add the number (e.g. '447700900000', no + or spaces) and the button opens WhatsApp */
+  var WA='';
+  var b=document.getElementById('waFab');if(!b)return;
+  if(WA){b.href='https://wa.me/'+WA+'?text='+encodeURIComponent('Hi, I’d like to book my free first class at Warrior Spirit.');b.target='_blank';b.rel='noopener'}
+  else{b.addEventListener('click',function(){var r=document.getElementById('reply');if(r)r.value='WhatsApp'})}
+})();
 (function(){
   /* tap-for-sound on the silent clips */
   var OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="m16 9 5 6m0-6-5 6"/></svg>';
@@ -2042,7 +2086,7 @@ a.tagc{text-decoration:none}
   var left=(TT[dow]||[]).filter(function(c){return toMin(c[1])+60>mins});
   if(left.length){items.push({label:'Today',html:left.map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
   else{var nd=(dow+1)%7;while(!TT[nd].length)nd=(nd+1)%7;items.push({label:nd===(dow+1)%7?'Tomorrow':DAYS[nd],html:TT[nd].map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
-  items.push({label:'New here?',html:'<strong>Beginners class</strong> every Thursday at 7pm. No experience needed.',href:'#contact'});
+  items.push({label:'New here?',html:'<strong>Your first class is free.</strong> Beginners every Thursday at 7pm, no experience needed.',href:'#contact'});
   items.push({label:'Kids',html:'<strong>Kids Muay Thai</strong> Monday to Thursday, 5:30pm, ages 7 to 13.',href:'#classes'});
   items.push({label:'Gym',html:dow===0?'Gym closed today. Back Monday at 9am.':dow===6?'Saturday is personal training only, 8am–12pm.':'Open gym for members until <strong>9pm</strong> today.'});
   items.push({label:'PT',html:'<strong>Personal training</strong> from £35 an hour, or <strong>train with a friend</strong>: two people, 75 minutes, £50.',href:'#pt'});
