@@ -2,9 +2,12 @@ import {
   redis, COACHES, TYPES, send, bad, setupProblem, body, clean, id, fmt, mail, coachEmail,
   coachSession, userSession, SITE, ADDRESS,
 } from './_lib/core.js';
+import {
+  DAY, LENGTHS, londonMs, londonDate, addDays, validDate, validTime, getWeekly, getOff, isOff,
+  realSlots, generated, parseVirtual,
+} from './_lib/avail.js';
 
-const DAY = 864e5;
-const MINS = [30, 45, 60, 75, 90];
+const IDS = Object.keys(COACHES);
 
 export default async function handler(req, res) {
   const problem = setupProblem();
@@ -16,56 +19,155 @@ export default async function handler(req, res) {
       /* ----- public: open slots ----- */
       case 'open': {
         const from = Date.now() + 2 * 3600e3, to = Date.now() + 42 * DAY;
-        const coach = clean(req.query.coach, 20);
-        const key = COACHES[coach] ? `slots:coach:${coach}` : 'slots:all';
-        const ids = await redis.zrange(key, from, to, { byScore: true });
-        const slots = (await getSlots(ids)).filter(s => s.status === 'open').map(pub);
-        return send(res, 200, { slots, coaches: Object.values(COACHES).map(c => ({ id: c.id, name: c.name, first: c.first })), types: TYPES });
+        const pick = clean(req.query.coach, 20);
+        const which = COACHES[pick] ? [pick] : IDS;
+        const real = await realSlots('all', from - DAY, to + DAY);
+        let slots = [];
+        for (const c of which) {
+          const off = await getOff(c);
+          slots.push(...real.filter(s => s.coach === c && s.status === 'open' && s.start >= from && s.start <= to && !isOff(off, londonDate(s.start))));
+          slots.push(...(await generated(c, from, to, real)).open);
+        }
+        slots.sort((a, b2) => a.start - b2.start);
+        return send(res, 200, { slots: slots.map(pub), coaches: Object.values(COACHES).map(c => ({ id: c.id, name: c.name, first: c.first })), types: TYPES });
       }
 
-      /* ----- coaches: manage availability ----- */
+      /* ----- coaches: calendar ----- */
+      case 'calendar': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const which = target(c, req.query.coach, true);
+        const days = Math.min(Math.max(Number(req.query.days) || 14, 7), 42);
+        const firstDate = validDate(req.query.from) ? req.query.from : londonDate(Date.now());
+        const from = londonMs(firstDate, '00:00'), to = londonMs(addDays(firstDate, days), '00:00') - 1;
+        const real = await realSlots('all', from - DAY, to + DAY);
+        const items = [], offs = {};
+        for (const cid of which === 'all' ? IDS : [which]) {
+          const g = await generated(cid, from, to, real);
+          offs[cid] = g.off.filter(o => o.to >= firstDate && o.from <= addDays(firstDate, days));
+          for (const s of real.filter(s => s.coach === cid && s.start >= from && s.start <= to && s.status !== 'cancelled')) {
+            const o = { ...pub(s), status: s.status, source: s.source || 'extra' };
+            if (s.bookingId) {
+              const bk = await redis.hgetall(`booking:${s.bookingId}`);
+              if (bk && bk.status === 'booked') o.booking = bookingInfo(bk);
+            }
+            if (o.status === 'booked' && !o.booking) continue;
+            items.push(o);
+          }
+          items.push(...g.open.map(s => ({ ...pub(s), status: 'open', source: 'weekly' })));
+          items.push(...g.blocked.map(s => ({ ...pub(s), status: 'blocked', source: 'weekly' })));
+        }
+        items.sort((a, b2) => a.start - b2.start);
+        return send(res, 200, { from: firstDate, days, coach: which, items, off: offs });
+      }
+
+      /* ----- coaches: regular weekly hours ----- */
+      case 'rules': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const who = target(c, req.query.coach);
+        return send(res, 200, { coach: who, weekly: await getWeekly(who), off: (await getOff(who)).filter(o => o.to >= londonDate(Date.now())) });
+      }
+      case 'weekly': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const who = target(c, b.coach);
+        const list = (Array.isArray(b.weekly) ? b.weekly : []).slice(0, 40).map(r => ({
+          day: Number(r.day), start: String(r.start), end: String(r.end), mins: Number(r.mins) || 60,
+        }));
+        for (const r of list) {
+          if (!(r.day >= 0 && r.day <= 6) || !validTime(r.start) || !validTime(r.end)) return bad(res, 'Check the times. Each row needs a start and an end.');
+          if (r.end <= r.start) return bad(res, `The end time must be after the start time (${r.start}–${r.end}).`);
+          if (!LENGTHS.includes(r.mins)) return bad(res, 'Choose a session length.');
+        }
+        list.sort((a, b2) => a.day - b2.day || a.start.localeCompare(b2.start));
+        await redis.set(`coach:${who}:weekly`, list);
+        return send(res, 200, { weekly: list });
+      }
+
+      /* ----- coaches: holidays & days off ----- */
+      case 'off-add': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const who = target(c, b.coach);
+        const from = clean(b.from, 10), to = clean(b.to, 10) || from;
+        if (!validDate(from) || !validDate(to)) return bad(res, 'Choose the dates.');
+        if (to < from) return bad(res, 'The last day must be on or after the first day.');
+        const off = await getOff(who);
+        off.push({ id: id('o'), from, to, note: clean(b.note, 60) });
+        off.sort((a, b2) => a.from.localeCompare(b2.from));
+        await redis.set(`coach:${who}:off`, off.filter(o => o.to >= addDays(londonDate(Date.now()), -1)));
+        const clashes = (await realSlots(who, londonMs(from, '00:00'), londonMs(addDays(to, 1), '00:00') - 1)).filter(s => s.status === 'booked').length;
+        return send(res, 200, { off, clashes });
+      }
+      case 'off-remove': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const who = target(c, b.coach);
+        const off = (await getOff(who)).filter(o => o.id !== clean(b.id, 40));
+        await redis.set(`coach:${who}:off`, off);
+        return send(res, 200, { off });
+      }
+
+      /* ----- coaches: one-off extra slots ----- */
       case 'add': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const who = target(c, b.coach);
         const mins = Number(b.mins);
-        if (!MINS.includes(mins)) return bad(res, 'Choose a session length.');
-        const starts = (Array.isArray(b.starts) ? b.starts : []).map(Number).filter(n => Number.isFinite(n)).slice(0, 60);
+        if (!LENGTHS.includes(mins)) return bad(res, 'Choose a session length.');
+        let starts = [];
+        if (validDate(b.date) && validTime(b.time)) {
+          const weeks = Math.min(Math.max(Number(b.weeks) || 1, 1), 12), count = Math.min(Math.max(Number(b.count) || 1, 1), 6);
+          for (let w = 0; w < weeks; w++) {
+            const t0 = londonMs(addDays(b.date, w * 7), b.time);
+            for (let k = 0; k < count; k++) starts.push(t0 + k * mins * 6e4);
+          }
+        } else starts = (Array.isArray(b.starts) ? b.starts : []).map(Number).filter(Number.isFinite).slice(0, 60);
         if (!starts.length) return bad(res, 'Choose a date and time.');
-        const now = Date.now(), added = [], skipped = [];
+        const now = Date.now(), weekly = (await generated(who, now, now + 121 * DAY)).open;
+        let added = 0, skipped = 0;
         for (const start of starts) {
-          if (start < now || start > now + 120 * DAY) { skipped.push(start); continue; }
-          const near = await getSlots(await redis.zrange(`slots:coach:${c.id}`, start - 90 * 60e3, start + mins * 60e3 - 1, { byScore: true }));
-          const clash = near.some(s => s.status !== 'cancelled' && s.start < start + mins * 60e3 && s.start + s.mins * 60e3 > start);
-          if (clash) { skipped.push(start); continue; }
+          if (start < now || start > now + 120 * DAY) { skipped++; continue; }
+          const s = { start, mins };
+          const near = await realSlots(who, start - 90 * 6e4, start + mins * 6e4);
+          const clash = near.some(x => x.status !== 'cancelled' && x.start < start + mins * 6e4 && x.start + x.mins * 6e4 > start)
+            || weekly.some(x => x.start < start + mins * 6e4 && x.start + x.mins * 6e4 > start);
+          if (clash) { skipped++; continue; }
           const sid = id('s');
-          await redis.hset(`slot:${sid}`, { id: sid, coach: c.id, start, mins, status: 'open', created: now });
-          await redis.zadd(`slots:coach:${c.id}`, { score: start, member: sid });
+          await redis.hset(`slot:${sid}`, { id: sid, coach: who, start: s.start, mins, status: 'open', source: 'extra', created: now });
+          await redis.zadd(`slots:coach:${who}`, { score: start, member: sid });
           await redis.zadd('slots:all', { score: start, member: sid });
-          added.push(sid);
+          added++;
         }
-        return send(res, 200, { added: added.length, skipped: skipped.length });
+        return send(res, 200, { added, skipped });
       }
       case 'remove': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
-        const s = await redis.hgetall(`slot:${clean(b.slotId, 40)}`);
+        const sid = clean(b.slotId, 60);
+        const v = parseVirtual(sid);
+        if (v) {
+          if (v.coach !== c.id && !c.admin) return bad(res, 'Not allowed.', 403);
+          await redis.sadd(`coach:${v.coach}:skip`, String(v.start));
+          return send(res, 200, { ok: true });
+        }
+        const s = await redis.hgetall(`slot:${sid}`);
         if (!s || (s.coach !== c.id && !c.admin)) return bad(res, 'Slot not found.', 404);
         if (s.status === 'booked') return bad(res, 'This slot is booked. Cancel the booking first.', 409);
-        await redis.del(`slot:${s.id}`);
-        await redis.zrem(`slots:coach:${s.coach}`, s.id);
-        await redis.zrem('slots:all', s.id);
+        await dropSlot(s);
+        return send(res, 200, { ok: true });
+      }
+      case 'restore': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const v = parseVirtual(clean(b.slotId, 60));
+        if (!v || (v.coach !== c.id && !c.admin)) return bad(res, 'Not allowed.', 403);
+        await redis.srem(`coach:${v.coach}:skip`, String(v.start));
         return send(res, 200, { ok: true });
       }
       case 'schedule': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
-        const which = c.admin && req.query.coach === 'all' ? 'all' : (c.admin && COACHES[req.query.coach] ? req.query.coach : c.id);
-        const key = which === 'all' ? 'slots:all' : `slots:coach:${which}`;
-        const from = Date.now() - DAY, to = Date.now() + 120 * DAY;
-        const slots = await getSlots(await redis.zrange(key, from, to, { byScore: true }));
+        const which = target(c, req.query.coach, true);
+        const slots = await realSlots(which, Date.now() - DAY, Date.now() + 120 * DAY);
         const out = [];
         for (const s of slots) {
-          const o = { ...pub(s), status: s.status };
+          const o = { ...pub(s), status: s.status, source: s.source || 'extra' };
           if (s.bookingId) {
             const bk = await redis.hgetall(`booking:${s.bookingId}`);
-            if (bk && bk.status === 'booked') o.booking = { id: bk.id, name: bk.name, email: bk.email, mobile: bk.mobile, type: TYPES[bk.type]?.name || bk.type, notes: bk.notes || '' };
+            if (bk && bk.status === 'booked') o.booking = bookingInfo(bk);
           }
           out.push(o);
         }
@@ -76,16 +178,34 @@ export default async function handler(req, res) {
       case 'book': {
         const email = userSession(req); if (!email) return bad(res, 'Please log in to book.', 401);
         const u = await redis.hgetall(`user:${email}`); if (!u) return bad(res, 'Please log in again.', 401);
-        const s = await redis.hgetall(`slot:${clean(b.slotId, 40)}`);
         const type = clean(b.type, 30);
-        if (!s || s.status !== 'open') return bad(res, 'Sorry, that slot has just gone. Pick another.', 409);
         if (!TYPES[type]) return bad(res, 'Choose a session type.');
-        if (TYPES[type].mins > Number(s.mins)) return bad(res, `${TYPES[type].name} needs a ${TYPES[type].mins}-minute slot. Pick a longer slot.`);
-        if (Number(s.start) < Date.now() + 2 * 3600e3) return bad(res, 'That slot is too soon to book online. Message the gym instead.');
+        const sidIn = clean(b.slotId, 60);
+        let s, v = parseVirtual(sidIn);
+        if (v) {
+          if (!COACHES[v.coach]) return bad(res, 'Slot not found.', 404);
+          const still = (await generated(v.coach, v.start - 1, v.start + 1)).open.find(x => x.id === sidIn);
+          if (!still) return bad(res, 'Sorry, that slot has just gone. Pick another.', 409);
+          s = { ...still, status: 'open' };
+        } else {
+          s = await redis.hgetall(`slot:${sidIn}`);
+          if (s) { s.start = Number(s.start); s.mins = Number(s.mins); }
+          if (s && isOff(await getOff(s.coach), londonDate(s.start))) s = null;
+        }
+        if (!s || s.status !== 'open') return bad(res, 'Sorry, that slot has just gone. Pick another.', 409);
+        if (TYPES[type].mins > s.mins) return bad(res, `${TYPES[type].name} needs a ${TYPES[type].mins}-minute slot. Pick a longer slot.`);
+        if (s.start < Date.now() + 2 * 3600e3) return bad(res, 'That slot is too soon to book online. Message the gym instead.');
         const bid = id('b');
-        const got = await redis.set(`slotlock:${s.id}`, bid, { nx: true });
+        const got = await redis.set(`slotlock:${s.coach}:${s.start}`, bid, { nx: true, ex: 200 * 86400 });
         if (!got) return bad(res, 'Sorry, someone has just booked that slot. Pick another.', 409);
-        const bk = { id: bid, slotId: s.id, coach: s.coach, email, name: u.name, mobile: u.mobile, type, start: Number(s.start), mins: Number(s.mins), notes: clean(b.notes, 400), status: 'booked', created: Date.now() };
+        if (v) {
+          const sid = id('s');
+          await redis.hset(`slot:${sid}`, { id: sid, coach: s.coach, start: s.start, mins: s.mins, status: 'open', source: 'weekly', created: Date.now() });
+          await redis.zadd(`slots:coach:${s.coach}`, { score: s.start, member: sid });
+          await redis.zadd('slots:all', { score: s.start, member: sid });
+          s.id = sid;
+        }
+        const bk = { id: bid, slotId: s.id, coach: s.coach, email, name: u.name, mobile: u.mobile, type, start: s.start, mins: s.mins, notes: clean(b.notes, 400), status: 'booked', created: Date.now() };
         await redis.hset(`booking:${bid}`, bk);
         await redis.hset(`slot:${s.id}`, { status: 'booked', bookingId: bid });
         await redis.zadd(`bookings:user:${email}`, { score: bk.start, member: bid });
@@ -110,9 +230,14 @@ export default async function handler(req, res) {
         if (!byCustomer && !byCoach) return bad(res, 'You can’t cancel this booking.', 403);
         if (byCustomer && !byCoach && Number(bk.start) - Date.now() < DAY) return bad(res, 'Bookings can only be cancelled online up to 24 hours before. Please message the gym.', 409);
         await redis.hset(`booking:${bk.id}`, { status: 'cancelled', cancelledBy: byCoach ? 'coach' : 'customer', cancelledAt: Date.now() });
-        await redis.del(`slotlock:${bk.slotId}`);
-        if (await redis.exists(`slot:${bk.slotId}`)) {
-          await redis.hset(`slot:${bk.slotId}`, { status: byCoach && b.removeSlot ? 'cancelled' : 'open', bookingId: '' });
+        await redis.del(`slotlock:${bk.coach}:${bk.start}`);
+        const s = await redis.hgetall(`slot:${bk.slotId}`);
+        if (s) {
+          if (s.source === 'weekly') {
+            await dropSlot(s);
+            if (byCoach && b.removeSlot) await redis.sadd(`coach:${s.coach}:skip`, String(s.start));
+          } else if (byCoach && b.removeSlot) await dropSlot(s);
+          else await redis.hset(`slot:${s.id}`, { status: 'open', bookingId: '' });
         }
         await notify(byCoach ? 'cancelled-by-coach' : 'cancelled-by-customer', { ...bk, start: Number(bk.start), mins: Number(bk.mins) });
         return send(res, 200, { ok: true });
@@ -125,11 +250,18 @@ export default async function handler(req, res) {
   }
 }
 
-async function getSlots(ids) {
-  const out = [];
-  for (const i of ids) { const s = await redis.hgetall(`slot:${i}`); if (s) out.push({ ...s, start: Number(s.start), mins: Number(s.mins) }); }
-  return out;
+/* Which coach a request is about: a coach sees their own; Jay (admin) can pick any, or all. */
+function target(c, want, allowAll = false) {
+  if (c.admin && allowAll && want === 'all') return 'all';
+  if (c.admin && COACHES[want]) return want;
+  return c.id;
 }
+async function dropSlot(s) {
+  await redis.del(`slot:${s.id}`);
+  await redis.zrem(`slots:coach:${s.coach}`, s.id);
+  await redis.zrem('slots:all', s.id);
+}
+function bookingInfo(bk) { return { id: bk.id, name: bk.name, email: bk.email, mobile: bk.mobile, type: TYPES[bk.type]?.name || bk.type, notes: bk.notes || '' }; }
 function pub(s) { return { id: s.id, coach: s.coach, coachName: COACHES[s.coach]?.name || s.coach, start: s.start, mins: s.mins, when: fmt(s.start) }; }
 function view(bk) {
   const start = Number(bk.start);

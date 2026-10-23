@@ -8,6 +8,72 @@
 <link rel="icon" href="img/logo.webp" type="image/webp">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap">
 <link rel="stylesheet" href="/assets/app.css">
+<style>
+:root{--free:#1f9d55;--free-bg:rgba(31,157,85,.16);--booked:#e3141e;--booked-bg:rgba(227,20,30,.18);--hol:#8b5cf6;--hol-bg:rgba(139,92,246,.16);--none:#5b6070}
+.calhead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line)}
+.seg button{background:none;border:0;color:var(--muted);padding:9px 14px;font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--bone);color:var(--ink)}
+.arrow{background:var(--ink);border:1px solid var(--line);color:var(--bone);width:40px;height:40px;cursor:pointer;font-size:18px}
+.ctrls select{width:auto;padding:9px 12px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--soft)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;display:inline-block}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .hd{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:4px 6px}
+.cell{background:var(--ink);border:1px solid var(--line);min-height:112px;padding:6px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.cell .dn{display:flex;justify-content:space-between;align-items:baseline;font:700 14px var(--cond);letter-spacing:.06em;color:var(--soft)}
+.cell .dn b{font:900 20px/1 var(--display);color:var(--bone)}
+.cell .dn .wd{display:none}
+.cell.today{border-color:var(--bone)}
+.cell.past{opacity:.38}
+.cell.hol{background:var(--hol-bg);border-color:var(--hol)}
+.cell .holtag{font:700 12px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd}
+.cell .nonebox{flex:1;display:grid;place-items:center;color:var(--none);font:900 30px/1 var(--display)}
+.cell .nonebox small{display:block;font:700 11px var(--cond);letter-spacing:.12em;text-transform:uppercase;text-align:center;margin-top:2px}
+.chip{display:block;width:100%;text-align:left;border:0;border-left:4px solid;padding:5px 6px;font:600 13px/1.25 var(--body);color:var(--bone);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip b{font:700 13px var(--cond);letter-spacing:.04em;margin-right:4px}
+.chip.open{background:var(--free-bg);border-color:var(--free)}
+.chip.booked{background:var(--booked-bg);border-color:var(--booked)}
+.chip.blocked{background:repeating-linear-gradient(45deg,#1b1e27 0 6px,#14161d 6px 12px);border-color:var(--none);color:var(--muted)}
+.chip[aria-pressed="true"]{outline:2px solid var(--bone);outline-offset:1px}
+.detail{border-left:4px solid var(--bone);background:var(--ink-3);padding:16px;display:grid;gap:8px}
+.detail b.t{font:900 24px/1 var(--display);text-transform:uppercase}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tile{background:var(--ink-2);border:1px solid var(--line);border-top:4px solid var(--red);color:var(--bone);text-align:left;padding:22px 18px;display:grid;gap:10px;align-content:start;cursor:pointer;min-height:170px}
+.tile:hover{border-color:var(--red)}
+.tile svg{width:38px;height:38px;color:var(--red)}
+.tile b{font:900 28px/.95 var(--display);text-transform:uppercase}
+.tile span{color:var(--muted);font-size:15px}
+.back{background:none;border:0;color:var(--soft);font:700 14px var(--cond);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:6px 0;justify-self:start}
+.back:hover{color:var(--bone)}
+.wk{display:grid;gap:10px}
+.wkrow{display:grid;grid-template-columns:160px 1fr;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.wkrow>b{font:900 22px/1 var(--display);text-transform:uppercase;padding-top:10px}
+.ranges{display:grid;gap:8px}
+.range{display:grid;grid-template-columns:1fr auto 1fr 1fr auto;gap:8px;align-items:center}
+.range span{color:var(--muted)}
+.range .x{background:none;border:1px solid var(--line);color:var(--soft);width:42px;height:44px;cursor:pointer;font-size:18px}
+.addr{background:none;border:1px dashed var(--line);color:var(--soft);padding:10px;font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;justify-self:start}
+.closed{color:var(--muted);padding-top:10px}
+@media (max-width:900px){.tiles{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){
+  .cal{grid-template-columns:1fr}
+  .cal .hd,.cell.past,.cell.pad{display:none}
+  .cell{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center}
+  .cell .dn{width:100%;justify-content:flex-start;gap:8px}
+  .cell .dn .wd{display:inline}
+  .chip{width:auto;flex:1 1 140px}
+  .cell .nonebox{place-items:start;font-size:16px;display:flex;gap:6px;align-items:center}
+  .cell .nonebox small{margin:0}
+  .wkrow{grid-template-columns:1fr}
+  .wkrow>b{padding-top:0}
+  .range{grid-template-columns:1fr auto 1fr;}
+  .range select{grid-column:1/3}
+}
+@media (max-width:420px){.tiles{grid-template-columns:1fr 1fr;gap:8px}.tile{padding:16px 14px;min-height:140px}.tile b{font-size:23px}}
+</style>
 </head>
 <body>
 <header class="top"><div class="wrap">
@@ -28,53 +94,113 @@
     </form>
   </section>
 
-  <!-- dashboard -->
-  <section id="dash" hidden>
-    <span class="kick" id="role">Coach</span>
-    <h1 id="hello">Hi</h1>
-    <p class="note" id="pwnote" hidden>You’re still using the starting password. Change it in <b>Settings</b>.</p>
-    <div class="tabs" role="tablist">
-      <button type="button" role="tab" data-tab="avail" aria-selected="true">Availability</button>
-      <button type="button" role="tab" data-tab="bookings" aria-selected="false">Bookings</button>
-      <button type="button" role="tab" data-tab="uploads" aria-selected="false">Photos &amp; videos</button>
-      <button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button>
+  <section id="dash" hidden class="stack" style="gap:22px">
+    <!-- ===== HOME ===== -->
+    <div data-view="home" class="stack" style="gap:22px">
+      <div class="stack" style="gap:8px">
+        <span class="kick" id="role">Coach</span>
+        <h1 id="hello">Hi</h1>
+        <p class="note" id="pwnote" hidden>You’re still using the starting password. Change it in <b>Settings</b>.</p>
+      </div>
+
+      <div class="panel">
+        <div class="calhead">
+          <h2 id="calTitle">Next 2 weeks</h2>
+          <div class="ctrls">
+            <select id="calWho" hidden aria-label="Whose calendar"></select>
+            <div class="seg" role="group" aria-label="Weeks shown"><button type="button" data-weeks="2" aria-pressed="true">2 weeks</button><button type="button" data-weeks="4" aria-pressed="false">4 weeks</button></div>
+            <button type="button" class="arrow" id="calPrev" aria-label="Earlier">‹</button>
+            <button type="button" class="arrow" id="calNext" aria-label="Later">›</button>
+          </div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--free)"></i>Available to book</span>
+          <span><i style="background:var(--booked)"></i>Booked</span>
+          <span><i style="background:var(--hol)"></i>Holiday / day off</span>
+          <span><i style="background:var(--none)"></i>✕ No availability</span>
+        </div>
+        <div class="cal" id="cal"><p class="empty" style="grid-column:1/-1">Loading…</p></div>
+        <div class="detail" id="detail" hidden></div>
+      </div>
+
+      <div class="tiles">
+        <button type="button" class="tile" data-go="availability">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M3 9h18M8 2v4M16 2v4M8 14l2.5 2.5L16 12"/></svg>
+          <b>My availability</b><span>Weekly hours, holidays and extra times</span>
+        </button>
+        <button type="button" class="tile" data-go="bookings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 11l2 2 4-4"/></svg>
+          <b>Bookings</b><span id="bkCount">Who’s booked in</span>
+        </button>
+        <button type="button" class="tile" data-go="uploads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="1"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 8M12 2v6M9 5l3-3 3 3"/></svg>
+          <b>Photos &amp; videos</b><span>Upload from your phone</span>
+        </button>
+        <button type="button" class="tile" data-go="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          <b>Settings</b><span>Email alerts and password</span>
+        </button>
+      </div>
     </div>
 
-    <!-- availability -->
-    <div data-pane="avail" class="grid2">
-      <form id="addForm" class="panel">
-        <h2>Add PT slots</h2>
-        <p class="muted">Add times you’re free for 1-to-1 sessions. Customers can book these on the website.</p>
-        <div class="row">
-          <label for="ad">Date<input id="ad" type="date" required></label>
-          <label for="at">Start time<input id="at" type="time" step="900" required></label>
-        </div>
-        <div class="row">
-          <label for="am">Length<select id="am"><option value="60">60 minutes</option><option value="75">75 minutes (friend sessions)</option><option value="45">45 minutes</option><option value="30">30 minutes</option><option value="90">90 minutes</option></select></label>
-          <label for="aw">Repeat<select id="aw"><option value="1">Just this date</option><option value="4">Weekly for 4 weeks</option><option value="8">Weekly for 8 weeks</option><option value="12">Weekly for 12 weeks</option></select></label>
-        </div>
-        <label for="ab">Back-to-back slots<select id="ab"><option value="1">1 slot</option><option value="2">2 slots in a row</option><option value="3">3 slots in a row</option><option value="4">4 slots in a row</option></select></label>
-        <p class="err" id="aerr" hidden></p><p class="ok" id="aok" hidden></p>
-        <button class="btn" type="submit">Add slots</button>
+    <!-- ===== AVAILABILITY ===== -->
+    <div data-view="availability" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <div class="calhead"><h1>My availability</h1><label id="avWhoWrap" hidden style="min-width:180px">Editing<select id="avWho"></select></label></div>
+
+      <form class="panel" id="weeklyForm">
+        <h2>Regular weekly hours</h2>
+        <p class="muted">The times you’re normally free for PT. These repeat every week, and customers can book them up to 6 weeks ahead. Holidays below block them out automatically.</p>
+        <div class="wk" id="weekly"></div>
+        <p class="err" id="werr" hidden></p><p class="ok" id="wok" hidden></p>
+        <button class="btn" type="submit" style="justify-self:start">Save weekly hours</button>
       </form>
-      <div class="panel">
-        <div class="row" style="justify-content:space-between;align-items:center"><h2>Your upcoming slots</h2><select id="whoA" hidden style="width:auto"></select></div>
-        <div id="slotList" class="list"><p class="empty">Loading…</p></div>
+
+      <div class="grid2">
+        <form class="panel" id="offForm">
+          <h2>Holidays &amp; days off</h2>
+          <p class="muted">Blocks out every slot on these dates, including your weekly hours.</p>
+          <div class="row">
+            <label for="of">First day<input id="of" type="date" required></label>
+            <label for="ot">Last day<input id="ot" type="date" required></label>
+          </div>
+          <label for="on">Note (optional)<input id="on" maxlength="60" placeholder="e.g. Holiday, Fight trip"></label>
+          <p class="err" id="oerr" hidden></p><p class="ok" id="ook" hidden></p>
+          <button class="btn" type="submit" style="justify-self:start">Add time off</button>
+          <div class="list" id="offList"></div>
+        </form>
+
+        <form class="panel" id="addForm">
+          <h2>Extra one-off times</h2>
+          <p class="muted">Free outside your usual hours? Add a one-off time here.</p>
+          <div class="row">
+            <label for="ad">Date<input id="ad" type="date" required></label>
+            <label for="at">Start time<input id="at" type="time" step="900" required></label>
+          </div>
+          <div class="row">
+            <label for="am">Length<select id="am"><option value="60">60 minutes</option><option value="75">75 min (friend sessions)</option><option value="45">45 minutes</option><option value="30">30 minutes</option><option value="90">90 minutes</option></select></label>
+            <label for="ab">Back-to-back<select id="ab"><option value="1">1 slot</option><option value="2">2 in a row</option><option value="3">3 in a row</option><option value="4">4 in a row</option></select></label>
+          </div>
+          <label for="aw">Repeat<select id="aw"><option value="1">Just this date</option><option value="2">Weekly for 2 weeks</option><option value="4">Weekly for 4 weeks</option></select></label>
+          <p class="err" id="aerr" hidden></p><p class="ok" id="aok" hidden></p>
+          <button class="btn" type="submit" style="justify-self:start">Add times</button>
+          <div class="list" id="extraList"></div>
+        </form>
       </div>
     </div>
 
-    <!-- bookings -->
-    <div data-pane="bookings" hidden>
-      <div class="panel">
-        <div class="row" style="justify-content:space-between;align-items:center"><h2 id="bkTitle">Booked sessions</h2><select id="whoB" hidden style="width:auto"></select></div>
-        <div id="bookList" class="list"><p class="empty">Loading…</p></div>
-      </div>
+    <!-- ===== BOOKINGS ===== -->
+    <div data-view="bookings" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <div class="calhead"><h1 id="bkTitle">Bookings</h1><select id="whoB" hidden style="width:auto" aria-label="Whose bookings"></select></div>
+      <div class="panel"><div id="bookList" class="list"><p class="empty">Loading…</p></div></div>
     </div>
 
-    <!-- uploads -->
-    <div data-pane="uploads" hidden class="stack">
+    <!-- ===== UPLOADS ===== -->
+    <div data-view="uploads" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <h1>Photos &amp; videos</h1>
       <div class="panel">
-        <h2>Send photos &amp; videos</h2>
         <div class="drop">
           <p class="muted">Training, fight nights, the team, the gym. Only upload photos of children if their parents are happy for them to be used.</p>
           <label class="btn" for="files" style="color:#fff">Choose photos or videos<input id="files" type="file" accept="image/*,video/*" multiple hidden></label>
@@ -87,22 +213,26 @@
       </div>
     </div>
 
-    <!-- settings -->
-    <div data-pane="settings" hidden class="grid2">
-      <form id="emailForm" class="panel">
-        <h2>Booking emails</h2>
-        <p class="muted">We email you when someone books or cancels one of your sessions.</p>
-        <label for="se">Your email<input id="se" type="email" autocomplete="email"></label>
-        <p class="ok" id="seok" hidden>Saved.</p><p class="err" id="seerr" hidden></p>
-        <button class="btn" type="submit">Save email</button>
-      </form>
-      <form id="pwForm" class="panel">
-        <h2>Change password</h2>
-        <label for="pc">Current password<input id="pc" type="password" autocomplete="current-password" required></label>
-        <label for="pn">New password<input id="pn" type="password" autocomplete="new-password" minlength="8" required></label>
-        <p class="ok" id="pwok" hidden>Password changed.</p><p class="err" id="pwerr" hidden></p>
-        <button class="btn" type="submit">Change password</button>
-      </form>
+    <!-- ===== SETTINGS ===== -->
+    <div data-view="settings" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <h1>Settings</h1>
+      <div class="grid2">
+        <form id="emailForm" class="panel">
+          <h2>Booking emails</h2>
+          <p class="muted">We email you when someone books or cancels one of your sessions.</p>
+          <label for="se">Your email<input id="se" type="email" autocomplete="email"></label>
+          <p class="ok" id="seok" hidden>Saved.</p><p class="err" id="seerr" hidden></p>
+          <button class="btn" type="submit">Save email</button>
+        </form>
+        <form id="pwForm" class="panel">
+          <h2>Change password</h2>
+          <label for="pc">Current password<input id="pc" type="password" autocomplete="current-password" required></label>
+          <label for="pn">New password<input id="pn" type="password" autocomplete="new-password" minlength="8" required></label>
+          <p class="ok" id="pwok" hidden>Password changed.</p><p class="err" id="pwerr" hidden></p>
+          <button class="btn" type="submit">Change password</button>
+        </form>
+      </div>
     </div>
   </section>
 </main>
@@ -117,10 +247,30 @@ const api = async (url, data) => {
   return j;
 };
 const show = (el, msg) => { el.textContent = msg; el.hidden = !msg; };
-const dayKey = ms => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms));
-const time = ms => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const TZ = 'Europe/London';
+const time = ms => new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
+const ukDate = ms => new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(ms));
+const addDays = (d, n) => { const [y, m, dd] = d.split('-').map(Number); return new Date(Date.UTC(y, m - 1, dd + n)).toISOString().slice(0, 10); };
+const dowOf = d => new Date(d + 'T12:00:00Z').getUTCDay();
+const nice = d => new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(d + 'T12:00:00Z'));
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const ORDER = [1, 2, 3, 4, 5, 6, 0];
 let me = null;
+
+/* ---------- views ---------- */
+function go(view) {
+  if (!me) return;
+  if (!['home', 'availability', 'bookings', 'uploads', 'settings'].includes(view)) view = 'home';
+  document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
+  if (view === 'home') loadCal();
+  if (view === 'availability') loadAvail();
+  if (view === 'bookings') loadBookings();
+  if (view === 'uploads') loadFiles();
+  scrollTo({ top: 0 });
+}
+document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { const v = g.dataset.go; if (location.hash.slice(1) === v || (v === 'home' && !location.hash)) go(v); else location.hash = v === 'home' ? '' : v; } });
+addEventListener('hashchange', () => go(location.hash.slice(1) || 'home'));
 
 async function init() {
   try { me = (await api('/api/auth?action=coach-me')).coach; } catch (err) { me = null; show($('#lerr'), err.message); }
@@ -131,96 +281,200 @@ async function init() {
   $('#pwnote').hidden = me.passwordChanged;
   $('#se').value = me.email || '';
   if (me.admin) {
-    for (const sel of [$('#whoA'), $('#whoB')]) {
-      sel.innerHTML = '<option value="jay">Jay</option><option value="aaron">Aaron</option><option value="kian">Kian</option><option value="all">All coaches</option>';
-      sel.hidden = false;
-    }
-    $('#whoB').value = 'all';
+    const opts = '<option value="jay">Jay</option><option value="aaron">Aaron</option><option value="kian">Kian</option>';
+    $('#calWho').innerHTML = opts + '<option value="all">All coaches</option>'; $('#calWho').value = 'all'; $('#calWho').hidden = false;
+    $('#whoB').innerHTML = opts + '<option value="all">All coaches</option>'; $('#whoB').value = 'all'; $('#whoB').hidden = false;
+    $('#avWho').innerHTML = opts; $('#avWhoWrap').hidden = false;
     $('#galTitle').textContent = 'All coaches’ uploads';
   }
-  const d = new Date(); $('#ad').value = d.toISOString().slice(0, 10); $('#ad').min = $('#ad').value;
-  loadSlots(); loadBookings();
+  const today = ukDate(Date.now());
+  for (const i of ['#ad', '#of', '#ot']) { $(i).min = today; }
+  $('#ad').value = today;
+  countBookings();
+  go(location.hash.slice(1) || 'home');
 }
-
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#lerr'), '');
   try { await api('/api/auth?action=coach-login', { username: $('#lu').value, password: $('#lp').value }); init(); }
   catch (err) { show($('#lerr'), err.message); }
 });
-$('#logout').addEventListener('click', async () => { await api('/api/auth?action=coach-logout', {}); location.reload(); });
+$('#logout').addEventListener('click', async () => { await api('/api/auth?action=coach-logout', {}); location.href = '/coach'; });
+function alertBox(msg) { const p = document.createElement('p'); p.className = 'err'; p.textContent = msg; document.querySelector('[data-view]:not([hidden])').prepend(p); setTimeout(() => p.remove(), 6000); }
 
-document.querySelectorAll('[data-tab]').forEach(t => t.addEventListener('click', () => {
-  document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', x === t ? 'true' : 'false'));
-  document.querySelectorAll('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== t.dataset.tab);
-  if (t.dataset.tab === 'uploads') loadFiles();
-  if (t.dataset.tab === 'bookings') loadBookings();
+/* ---------- calendar ---------- */
+const cal = { weeks: 2, offset: 0, items: [], off: {}, sel: null };
+function monday(d) { const w = dowOf(d); return addDays(d, -((w + 6) % 7)); }
+document.querySelectorAll('[data-weeks]').forEach(b => b.addEventListener('click', () => {
+  cal.weeks = Number(b.dataset.weeks); document.querySelectorAll('[data-weeks]').forEach(x => x.setAttribute('aria-pressed', x === b)); loadCal();
 }));
+$('#calPrev').addEventListener('click', () => { cal.offset -= cal.weeks; loadCal(); });
+$('#calNext').addEventListener('click', () => { cal.offset += cal.weeks; loadCal(); });
+$('#calWho').addEventListener('change', loadCal);
 
-/* availability */
-function localMs(dateStr, timeStr) { const [y, m, d] = dateStr.split('-').map(Number); const [h, mi] = timeStr.split(':').map(Number); return new Date(y, m - 1, d, h, mi).getTime(); }
+async function loadCal() {
+  const start = addDays(monday(ukDate(Date.now())), cal.offset * 7);
+  const who = me.admin ? $('#calWho').value : '';
+  $('#calTitle').textContent = cal.offset === 0 ? `Next ${cal.weeks} weeks` : `${nice(start)} – ${nice(addDays(start, cal.weeks * 7 - 1))}`;
+  $('#calPrev').disabled = cal.offset <= 0;
+  try {
+    const r = await api(`/api/pt?action=calendar&days=${cal.weeks * 7}&from=${start}${who ? '&coach=' + who : ''}`);
+    cal.items = r.items; cal.off = r.off; cal.start = start; cal.who = r.coach;
+    drawCal();
+  } catch (err) { $('#cal').innerHTML = `<p class="err" style="grid-column:1/-1">${esc(err.message)}</p>`; }
+}
+function drawCal() {
+  const today = ukDate(Date.now()), all = cal.who === 'all';
+  let html = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => `<div class="hd">${d}</div>`).join('');
+  for (let i = 0; i < cal.weeks * 7; i++) {
+    const d = addDays(cal.start, i);
+    const items = cal.items.filter(x => ukDate(x.start) === d && (x.status === 'booked' || x.start > Date.now()));
+    const hols = Object.entries(cal.off).flatMap(([c, list]) => list.filter(o => o.from <= d && d <= o.to).map(o => ({ ...o, c })));
+    const isHol = hols.length && (!all || hols.length >= 3);
+    const cls = ['cell', d < today ? 'past' : '', d === today ? 'today' : '', isHol ? 'hol' : ''].join(' ');
+    const [, , dd] = d.split('-');
+    html += `<div class="${cls}"><div class="dn"><b>${Number(dd)}</b><span class="wd">${esc(nice(d))}</span>${d === today ? '<span>Today</span>' : ''}</div>`;
+    if (hols.length) html += hols.map(h => `<div class="holtag">${all ? esc(cap(h.c)) + ': ' : ''}${esc(h.note || 'Day off')}</div>`).join('');
+    for (const x of items) {
+      const label = x.status === 'booked' ? esc(x.booking?.name || 'Booked') : x.status === 'blocked' ? 'Blocked' : 'Free';
+      html += `<button type="button" class="chip ${x.status}" data-item="${esc(x.id)}" aria-pressed="${cal.sel === x.id}"><b>${all ? esc(x.coachName[0]) + ' ' : ''}${time(x.start)}</b>${label}</button>`;
+    }
+    if (!items.length && !isHol) html += `<div class="nonebox">✕<small>No availability</small></div>`;
+    html += '</div>';
+  }
+  $('#cal').innerHTML = html;
+  drawDetail();
+}
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+$('#cal').addEventListener('click', e => { const c = e.target.closest('[data-item]'); if (!c) return; cal.sel = cal.sel === c.dataset.item ? null : c.dataset.item; drawCal(); });
+function drawDetail() {
+  const x = cal.items.find(i => i.id === cal.sel), box = $('#detail');
+  box.hidden = !x; if (!x) return;
+  const span = `${time(x.start)}–${time(x.start + x.mins * 6e4)}`;
+  const day = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(x.start));
+  if (x.status === 'booked' && x.booking) {
+    const bk = x.booking;
+    box.style.borderColor = 'var(--booked)';
+    box.innerHTML = `<b class="t">Booked: ${esc(bk.name)}</b><div>${esc(day)}, ${span} · ${esc(bk.type)} · with ${esc(x.coachName)}</div>
+      <div class="muted">📞 <a href="tel:${esc(bk.mobile)}">${esc(bk.mobile)}</a> · <a href="mailto:${esc(bk.email)}">${esc(bk.email)}</a>${bk.notes ? `<br>Notes: ${esc(bk.notes)}` : ''}</div>
+      <div class="row"><button class="btn small ghost" data-cancel="${esc(bk.id)}">Cancel this booking</button></div>`;
+  } else if (x.status === 'open') {
+    box.style.borderColor = 'var(--free)';
+    box.innerHTML = `<b class="t">Free to book</b><div>${esc(day)}, ${span} · ${esc(x.coachName)} · ${x.source === 'weekly' ? 'from weekly hours' : 'extra one-off time'}</div>
+      <div class="row"><button class="btn small ghost" data-remove="${esc(x.id)}">${x.source === 'weekly' ? 'Block this time' : 'Remove this time'}</button></div>`;
+  } else {
+    box.style.borderColor = 'var(--none)';
+    box.innerHTML = `<b class="t">Blocked</b><div>${esc(day)}, ${span} · ${esc(x.coachName)} · not bookable</div>
+      <div class="row"><button class="btn small ghost" data-restore="${esc(x.id)}">Make bookable again</button></div>`;
+  }
+}
+
+/* shared actions: cancel / remove / restore */
+document.addEventListener('click', async e => {
+  const cn = e.target.closest('[data-cancel]'), rm = e.target.closest('[data-remove]'), rs = e.target.closest('[data-restore]');
+  const btn = cn || rm || rs; if (!btn) return;
+  if (cn && btn.dataset.confirm !== '1') { btn.dataset.confirm = '1'; btn.textContent = 'Tap again to cancel – we’ll email them'; return; }
+  btn.disabled = true;
+  try {
+    if (cn) await api('/api/pt?action=cancel', { bookingId: cn.dataset.cancel });
+    if (rm) await api('/api/pt?action=remove', { slotId: rm.dataset.remove });
+    if (rs) await api('/api/pt?action=restore', { slotId: rs.dataset.restore });
+    cal.sel = null;
+    const v = document.querySelector('[data-view]:not([hidden])').dataset.view;
+    go(v); countBookings();
+  } catch (err) { alertBox(err.message); btn.disabled = false; }
+});
+
+/* ---------- availability ---------- */
+let weekly = [];
+const avWho = () => me.admin ? $('#avWho').value : me.id;
+$('#avWho').addEventListener('change', loadAvail);
+async function loadAvail() {
+  try {
+    const r = await api(`/api/pt?action=rules&coach=${avWho()}`);
+    weekly = r.weekly; drawWeekly(); drawOff(r.off);
+  } catch (err) { alertBox(err.message); }
+  loadExtra();
+}
+function lenSel(v) { return `<select data-f="mins" aria-label="Session length">${[60, 75, 45, 30, 90].map(m => `<option value="${m}" ${Number(v) === m ? 'selected' : ''}>${m} min sessions</option>`).join('')}</select>`; }
+function drawWeekly() {
+  $('#weekly').innerHTML = ORDER.map(d => {
+    const rs = weekly.map((r, i) => ({ ...r, i })).filter(r => r.day === d);
+    return `<div class="wkrow"><b>${DAYS[d]}</b><div class="ranges">${rs.length ? rs.map(r => `<div class="range" data-i="${r.i}">
+        <input type="time" step="900" data-f="start" value="${r.start}" aria-label="${DAYS[d]} start"><span>to</span><input type="time" step="900" data-f="end" value="${r.end}" aria-label="${DAYS[d]} end">
+        ${lenSel(r.mins)}<button type="button" class="x" data-del="${r.i}" aria-label="Remove">×</button></div>`).join('') : '<div class="closed">Not available</div>'}
+        <button type="button" class="addr" data-addday="${d}">+ Add hours</button></div></div>`;
+  }).join('');
+}
+$('#weekly').addEventListener('input', e => { const row = e.target.closest('[data-i]'); if (!row) return; const r = weekly[row.dataset.i]; const f = e.target.dataset.f; r[f] = f === 'mins' ? Number(e.target.value) : e.target.value; });
+$('#weekly').addEventListener('click', e => {
+  const a = e.target.closest('[data-addday]'), x = e.target.closest('[data-del]');
+  if (a) { const d = Number(a.dataset.addday); const last = weekly.filter(r => r.day === d).pop(); weekly.push(last ? { day: d, start: last.end, end: last.end < '21:00' ? addHours(last.end, 2) : '22:00', mins: last.mins } : { day: d, start: '17:00', end: '20:00', mins: 60 }); drawWeekly(); }
+  if (x) { weekly.splice(Number(x.dataset.del), 1); drawWeekly(); }
+});
+const addHours = (t, h) => { const [hh, mm] = t.split(':').map(Number); return `${String(Math.min(hh + h, 23)).padStart(2, '0')}:${String(mm).padStart(2, '0')}`; };
+$('#weeklyForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#werr'), ''); show($('#wok'), '');
+  try { weekly = (await api('/api/pt?action=weekly', { coach: avWho(), weekly })).weekly; drawWeekly(); show($('#wok'), 'Saved. These times now repeat every week.'); }
+  catch (err) { show($('#werr'), err.message); }
+});
+function drawOff(list) {
+  $('#offList').innerHTML = list.length ? list.map(o => `<div class="item" style="border-left-color:var(--hol)"><div><b>${esc(nice(o.from))}${o.to !== o.from ? ' – ' + esc(nice(o.to)) : ''}</b><div class="meta">${esc(o.note || 'Day off')}</div></div>
+    <div class="acts"><button type="button" class="btn small ghost" data-offdel="${esc(o.id)}">Remove</button></div></div>`).join('') : '<p class="empty">No time off booked.</p>';
+}
+$('#of').addEventListener('change', () => { if (!$('#ot').value || $('#ot').value < $('#of').value) $('#ot').value = $('#of').value; $('#ot').min = $('#of').value; });
+$('#offForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#oerr'), ''); show($('#ook'), '');
+  try {
+    const r = await api('/api/pt?action=off-add', { coach: avWho(), from: $('#of').value, to: $('#ot').value, note: $('#on').value });
+    drawOff(r.off.filter(o => o.to >= ukDate(Date.now())));
+    show($('#ook'), r.clashes ? `Added. Heads up: ${r.clashes} session${r.clashes === 1 ? ' is' : 's are'} already booked in those dates. Cancel ${r.clashes === 1 ? 'it' : 'them'} from Bookings if you can’t make it.` : 'Added. Those dates are blocked out.');
+    $('#on').value = '';
+  } catch (err) { show($('#oerr'), err.message); }
+});
+$('#offList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-offdel]'); if (!b) return;
+  try { const r = await api('/api/pt?action=off-remove', { coach: avWho(), id: b.dataset.offdel }); drawOff(r.off.filter(o => o.to >= ukDate(Date.now()))); } catch (err) { alertBox(err.message); }
+});
 $('#addForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#aerr'), ''); show($('#aok'), '');
-  const mins = Number($('#am').value), weeks = Number($('#aw').value), n = Number($('#ab').value);
-  const starts = [];
-  const [y, m, d] = $('#ad').value.split('-').map(Number);
-  for (let w = 0; w < weeks; w++) for (let k = 0; k < n; k++) {
-    const [h, mi] = $('#at').value.split(':').map(Number);
-    starts.push(new Date(y, m - 1, d + w * 7, h, mi + k * mins).getTime());
-  }
   try {
-    const r = await api('/api/pt?action=add', { mins, starts });
-    show($('#aok'), `${r.added} slot${r.added === 1 ? '' : 's'} added.` + (r.skipped ? ` ${r.skipped} skipped because they clash with an existing slot or are in the past.` : ''));
-    loadSlots();
+    const r = await api('/api/pt?action=add', { coach: avWho(), mins: Number($('#am').value), date: $('#ad').value, time: $('#at').value, weeks: Number($('#aw').value), count: Number($('#ab').value) });
+    show($('#aok'), `${r.added} time${r.added === 1 ? '' : 's'} added.` + (r.skipped ? ` ${r.skipped} skipped because they clash with times you already have, or are in the past.` : ''));
+    loadExtra();
   } catch (err) { show($('#aerr'), err.message); }
 });
-$('#whoA').addEventListener('change', loadSlots);
-async function loadSlots() {
-  const who = me.admin ? $('#whoA').value || 'jay' : '';
-  const box = $('#slotList');
+async function loadExtra() {
   try {
-    const { slots } = await api('/api/pt?action=schedule' + (who ? `&coach=${who}` : ''));
-    const up = slots.filter(s => s.start > Date.now() - 3600e3 && s.status !== 'cancelled');
-    if (!up.length) { box.innerHTML = '<p class="empty">No upcoming slots yet. Add some on the left.</p>'; return; }
-    let html = '', last = '';
-    for (const s of up) {
-      const dk = dayKey(s.start);
-      if (dk !== last) { html += `<h3 style="font-size:20px;color:var(--red);margin-top:10px">${esc(dk)}</h3>`; last = dk; }
-      const booked = s.booking;
-      html += `<div class="item ${booked ? 'booked' : 'open'}"><div><b>${time(s.start)}–${time(s.start + s.mins * 60e3)}</b>${who === 'all' ? ` <span class="muted">· ${esc(s.coachName)}</span>` : ''}<span class="pill ${booked ? 'booked' : 'open'}">${booked ? 'Booked' : 'Free'}</span>
-        ${booked ? `<div class="meta">${esc(booked.name)} · ${esc(booked.type)} · ${esc(booked.mobile)}</div>` : ''}</div>
-        <div class="acts">${booked ? `<button class="btn small ghost" data-cancel="${s.booking.id}">Cancel booking</button>` : `<button class="btn small ghost" data-remove="${s.id}">Remove</button>`}</div></div>`;
-    }
-    box.innerHTML = html;
-  } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+    const { slots } = await api(`/api/pt?action=schedule&coach=${avWho()}`);
+    const up = slots.filter(s => s.source !== 'weekly' && s.status === 'open' && s.start > Date.now());
+    $('#extraList').innerHTML = up.length ? up.map(s => `<div class="item open"><div><b>${esc(s.when)}</b><div class="meta">${s.mins} min</div></div><div class="acts"><button type="button" class="btn small ghost" data-remove="${esc(s.id)}">Remove</button></div></div>`).join('') : '';
+  } catch {}
 }
-document.addEventListener('click', async e => {
-  const rm = e.target.closest('[data-remove]'), cn = e.target.closest('[data-cancel]');
-  if (rm) { rm.disabled = true; try { await api('/api/pt?action=remove', { slotId: rm.dataset.remove }); loadSlots(); } catch (err) { alertBox(err.message); rm.disabled = false; } }
-  if (cn) {
-    if (cn.dataset.confirm !== '1') { cn.dataset.confirm = '1'; cn.textContent = 'Tap again to cancel'; return; }
-    cn.disabled = true;
-    try { await api('/api/pt?action=cancel', { bookingId: cn.dataset.cancel }); loadSlots(); loadBookings(); } catch (err) { alertBox(err.message); cn.disabled = false; }
-  }
-});
-function alertBox(msg) { const p = document.createElement('p'); p.className = 'err'; p.textContent = msg; document.querySelector('[data-pane]:not([hidden])').prepend(p); setTimeout(() => p.remove(), 6000); }
 
-/* bookings */
+/* ---------- bookings ---------- */
 $('#whoB').addEventListener('change', loadBookings);
+async function countBookings() {
+  try {
+    const { slots } = await api('/api/pt?action=schedule' + (me.admin ? '&coach=all' : ''));
+    const n = slots.filter(s => s.booking && s.start > Date.now()).length;
+    $('#bkCount').textContent = n ? `${n} upcoming session${n === 1 ? '' : 's'}` : 'No sessions booked yet';
+  } catch {}
+}
 async function loadBookings() {
   const who = me.admin ? $('#whoB').value || 'all' : '';
   const box = $('#bookList');
   try {
     const { slots } = await api('/api/pt?action=schedule' + (who ? `&coach=${who}` : ''));
     const bk = slots.filter(s => s.booking && s.start > Date.now() - 3600e3);
-    $('#bkTitle').textContent = `Booked sessions (${bk.length})`;
+    $('#bkTitle').textContent = `Bookings (${bk.length})`;
     if (!bk.length) { box.innerHTML = '<p class="empty">No upcoming bookings yet.</p>'; return; }
     box.innerHTML = bk.map(s => `<div class="item booked"><div><b>${esc(s.when)}</b> <span class="muted">· ${s.mins} min · ${esc(s.coachName)}</span>
-      <div class="meta"><strong>${esc(s.booking.name)}</strong> · ${esc(s.booking.type)}<br>${esc(s.booking.mobile)} · ${esc(s.booking.email)}${s.booking.notes ? `<br>Notes: ${esc(s.booking.notes)}` : ''}</div></div>
-      <div class="acts"><button class="btn small ghost" data-cancel="${s.booking.id}">Cancel</button></div></div>`).join('');
+      <div class="meta"><strong>${esc(s.booking.name)}</strong> · ${esc(s.booking.type)}<br><a href="tel:${esc(s.booking.mobile)}">${esc(s.booking.mobile)}</a> · <a href="mailto:${esc(s.booking.email)}">${esc(s.booking.email)}</a>${s.booking.notes ? `<br>Notes: ${esc(s.booking.notes)}` : ''}</div></div>
+      <div class="acts"><button class="btn small ghost" data-cancel="${esc(s.booking.id)}">Cancel</button></div></div>`).join('');
   } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
 }
 
-/* uploads */
+/* ---------- uploads ---------- */
 $('#files').addEventListener('change', async e => {
   const files = [...e.target.files]; e.target.value = '';
   for (const f of files) {
@@ -229,9 +483,8 @@ $('#files').addEventListener('change', async e => {
     $('#upProg').prepend(row);
     const bar = row.querySelector('i');
     const safe = f.name.replace(/[^\w.\-]+/g, '_').slice(-80);
-    const stamp = new Date().toISOString().slice(0, 10);
     try {
-      await upload(`uploads/${me.id}/${stamp}-${safe}`, f, { access: 'private', handleUploadUrl: '/api/uploads?action=token', multipart: f.size > 20e6, onUploadProgress: p => { bar.style.width = p.percentage + '%'; } });
+      await upload(`uploads/${me.id}/${ukDate(Date.now())}-${safe}`, f, { access: 'private', handleUploadUrl: '/api/uploads?action=token', multipart: f.size > 20e6, onUploadProgress: p => { bar.style.width = p.percentage + '%'; } });
       bar.style.width = '100%'; bar.style.background = 'var(--ok)';
       row.querySelector('div').textContent = `✓ ${f.name}`;
     } catch (err) { row.querySelector('div').textContent = `✗ ${f.name}: ${err.message}`; row.querySelector('div').className = 'err'; }
@@ -245,20 +498,19 @@ async function loadFiles() {
     if (!files.length) { box.innerHTML = '<p class="empty">Nothing uploaded yet.</p>'; return; }
     box.innerHTML = files.map(f => {
       const isVid = /\.(mp4|mov|m4v|webm|3gp)$/i.test(f.path);
-      const name = f.path.split('/').pop();
       return `<div class="file"><div class="thumb">${isVid ? `<video src="${f.url}" muted preload="metadata"></video>` : `<img src="${f.url}" alt="" loading="lazy">`}</div>
         <div class="fm">${me.admin ? `<strong>${esc(f.by)}</strong> · ` : ''}${new Date(f.uploadedAt).toLocaleDateString('en-GB')} · ${(f.size / 1e6).toFixed(1)} MB</div>
-        <div class="fa"><a href="${f.url}&download=1">Download</a><button type="button" data-del="${esc(f.path)}">Delete</button></div></div>`;
+        <div class="fa"><a href="${f.url}&download=1">Download</a><button type="button" data-delfile="${esc(f.path)}">Delete</button></div></div>`;
     }).join('');
   } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
 }
 document.addEventListener('click', async e => {
-  const d = e.target.closest('[data-del]'); if (!d) return;
+  const d = e.target.closest('[data-delfile]'); if (!d) return;
   if (d.dataset.confirm !== '1') { d.dataset.confirm = '1'; d.textContent = 'Sure?'; return; }
-  try { await api('/api/uploads?action=delete', { path: d.dataset.del }); loadFiles(); } catch (err) { alertBox(err.message); }
+  try { await api('/api/uploads?action=delete', { path: d.dataset.delfile }); loadFiles(); } catch (err) { alertBox(err.message); }
 });
 
-/* settings */
+/* ---------- settings ---------- */
 $('#emailForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#seok'), ''); show($('#seerr'), '');
   try { await api('/api/auth?action=coach-settings', { email: $('#se').value }); show($('#seok'), 'Saved.'); } catch (err) { show($('#seerr'), err.message); }
