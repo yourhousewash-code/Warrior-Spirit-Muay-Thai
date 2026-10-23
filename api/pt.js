@@ -1,10 +1,10 @@
 import {
-  redis, COACHES, TYPES, send, bad, setupProblem, body, clean, id, fmt, mail, coachEmail,
-  coachSession, userSession, SITE, ADDRESS,
+  redis, COACHES, TYPES, FORMATS, DURATIONS, DEFAULT_PRICES, getPrices, priceOf, minsLabel,
+  send, bad, setupProblem, body, clean, id, fmt, mail, coachEmail, coachSession, userSession, SITE, ADDRESS,
 } from './_lib/core.js';
 import {
   DAY, LENGTHS, londonMs, londonDate, addDays, validDate, validTime, getWeekly, getOff, isOff,
-  realSlots, generated, parseVirtual, getClasses, getCover, classInstances,
+  realSlots, generated, parseVirtual, getClasses, getCover, classInstances, freeIntervals, startsIn,
 } from './_lib/avail.js';
 
 const IDS = Object.keys(COACHES);
@@ -18,19 +18,52 @@ export default async function handler(req, res) {
     switch (action) {
       /* ----- public: open slots ----- */
       case 'open': {
+        /* Start times customers can book for a given length, with each coach's prices. */
         const from = Date.now() + 2 * 3600e3, to = Date.now() + 42 * DAY;
         const pick = clean(req.query.coach, 20);
         const which = COACHES[pick] ? [pick] : IDS;
+        const mins = DURATIONS.includes(Number(req.query.mins)) ? Number(req.query.mins) : 60;
+        const format = FORMATS[req.query.format] ? req.query.format : 'one';
         const real = await realSlots('all', from - DAY, to + DAY);
         const classes = await classInstances(from - DAY, to + DAY);
-        let slots = [];
+        const prices = {};
+        for (const c of IDS) prices[c] = await getPrices(c);
+        const starts = [];
         for (const c of which) {
-          const off = await getOff(c);
-          slots.push(...real.filter(s => s.coach === c && s.status === 'open' && s.start >= from && s.start <= to && !isOff(off, londonDate(s.start))));
-          slots.push(...(await generated(c, from, to, real, classes)).open);
+          if (!priceOf(prices[c], format, mins)) continue;
+          for (const t of startsIn(await freeIntervals(c, from, to, real, classes), mins, from)) starts.push({ coach: c, coachName: COACHES[c].name, start: t, mins, when: fmt(t), price: priceOf(prices[c], format, mins) });
         }
-        slots.sort((a, b2) => a.start - b2.start);
-        return send(res, 200, { slots: slots.map(pub), coaches: Object.values(COACHES).map(c => ({ id: c.id, name: c.name, first: c.first })), types: TYPES });
+        starts.sort((a2, b2) => a2.start - b2.start || a2.coach.localeCompare(b2.coach));
+        return send(res, 200, {
+          starts, mins, format, prices,
+          coaches: Object.values(COACHES).map(c => ({ id: c.id, name: c.name, first: c.first })),
+          types: Object.fromEntries(Object.entries(TYPES).filter(([, v]) => !v.hidden)), formats: FORMATS, durations: DURATIONS,
+        });
+      }
+
+      /* ----- coaches: prices ----- */
+      case 'prices': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const who = target(c, req.query.coach);
+        return send(res, 200, { coach: who, prices: await getPrices(who), isDefault: !(await redis.exists(`coach:${who}:prices`)), formats: FORMATS, durations: DURATIONS, defaults: DEFAULT_PRICES });
+      }
+      case 'prices-save': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const who = target(c, b.coach);
+        const out = { groupMax: Math.min(Math.max(Number(b.prices?.groupMax) || 6, 3), 20) };
+        for (const f of Object.keys(FORMATS)) {
+          out[f] = {};
+          for (const m of DURATIONS) {
+            const raw = b.prices?.[f]?.[m];
+            if (raw === null || raw === '' || raw === undefined) { out[f][m] = null; continue; }
+            const v = Math.round(Number(raw) * 100) / 100;
+            if (!(v > 0 && v < 1000)) return bad(res, `Check the price for ${FORMATS[f].name}, ${minsLabel(m)}.`);
+            out[f][m] = v;
+          }
+        }
+        if (!Object.keys(FORMATS).some(f => DURATIONS.some(m => out[f][m]))) return bad(res, 'Offer at least one session.');
+        await redis.set(`coach:${who}:prices`, out);
+        return send(res, 200, { prices: out });
       }
 
       /* ----- coaches: calendar ----- */
@@ -240,41 +273,34 @@ export default async function handler(req, res) {
       case 'book': {
         const email = userSession(req); if (!email) return bad(res, 'Please log in to book.', 401);
         const u = await redis.hgetall(`user:${email}`); if (!u) return bad(res, 'Please log in again.', 401);
-        const type = clean(b.type, 30);
-        if (!TYPES[type]) return bad(res, 'Choose a session type.');
-        const sidIn = clean(b.slotId, 60);
-        let s, v = parseVirtual(sidIn);
-        if (v) {
-          if (!COACHES[v.coach]) return bad(res, 'Slot not found.', 404);
-          const still = (await generated(v.coach, v.start - 1, v.start + 1)).open.find(x => x.id === sidIn);
-          if (!still) return bad(res, 'Sorry, that slot has just gone. Pick another.', 409);
-          s = { ...still, status: 'open' };
-        } else {
-          s = await redis.hgetall(`slot:${sidIn}`);
-          if (s) { s.start = Number(s.start); s.mins = Number(s.mins); }
-          if (s && isOff(await getOff(s.coach), londonDate(s.start))) s = null;
-        }
-        if (!s || s.status !== 'open') return bad(res, 'Sorry, that slot has just gone. Pick another.', 409);
-        if (TYPES[type].mins > s.mins) return bad(res, `${TYPES[type].name} needs a ${TYPES[type].mins}-minute slot. Pick a longer slot.`);
-        if (s.start < Date.now() + 2 * 3600e3) return bad(res, 'That slot is too soon to book online. Message the gym instead.');
-        const bid = id('b');
-        const got = await redis.set(`slotlock:${s.coach}:${s.start}`, bid, { nx: true, ex: 200 * 86400 });
-        if (!got) return bad(res, 'Sorry, someone has just booked that slot. Pick another.', 409);
-        if (v) {
-          const sid = id('s');
-          await redis.hset(`slot:${sid}`, { id: sid, coach: s.coach, start: s.start, mins: s.mins, status: 'open', source: 'weekly', created: Date.now() });
-          await redis.zadd(`slots:coach:${s.coach}`, { score: s.start, member: sid });
-          await redis.zadd('slots:all', { score: s.start, member: sid });
-          s.id = sid;
-        }
-        const bk = { id: bid, slotId: s.id, coach: s.coach, email, name: u.name, mobile: u.mobile, type, start: s.start, mins: s.mins, notes: clean(b.notes, 400), status: 'booked', created: Date.now() };
-        await redis.hset(`booking:${bid}`, bk);
-        await redis.hset(`slot:${s.id}`, { status: 'booked', bookingId: bid });
-        await redis.zadd(`bookings:user:${email}`, { score: bk.start, member: bid });
-        await redis.zadd(`bookings:coach:${s.coach}`, { score: bk.start, member: bid });
-        await redis.zadd('bookings:all', { score: bk.start, member: bid });
-        await notify('booked', bk);
-        return send(res, 200, { booking: view(bk) });
+        const type = clean(b.type, 30), format = clean(b.format, 10), coach = clean(b.coach, 20);
+        const mins = Number(b.mins), start = Number(b.start);
+        if (!TYPES[type] || TYPES[type].hidden) return bad(res, 'Choose what you want to work on.');
+        if (!FORMATS[format]) return bad(res, 'Choose 1-to-1, double or group.');
+        if (!COACHES[coach] || !DURATIONS.includes(mins) || !Number.isFinite(start)) return bad(res, 'Pick a time.');
+        const price = priceOf(await getPrices(coach), format, mins);
+        if (!price) return bad(res, `${COACHES[coach].first} doesn’t offer that session. Pick another option.`);
+        if (start < Date.now() + 2 * 3600e3) return bad(res, 'That time is too soon to book online. Message the gym instead.');
+        /* One booking at a time per coach, so two people can't grab the same time. */
+        const lock = `booklock:${coach}`;
+        if (!(await redis.set(lock, '1', { nx: true, ex: 15 }))) return bad(res, 'Someone is booking with this coach right now. Try again in a few seconds.', 409);
+        try {
+          const real = await realSlots(coach, start - DAY, start + DAY);
+          const ivs = await freeIntervals(coach, start - 1, start + mins * 6e4, real);
+          if (!ivs.some(iv => iv.start <= start && start + mins * 6e4 <= iv.end)) return bad(res, 'Sorry, that time has just gone. Pick another.', 409);
+          for (const x of real.filter(x => x.status === 'open' && x.start < start + mins * 6e4 && x.start + x.mins * 6e4 > start)) await dropSlot(x);
+          const bid = id('b'), sid = id('s');
+          await redis.hset(`slot:${sid}`, { id: sid, coach, start, mins, status: 'booked', source: 'booking', bookingId: bid, created: Date.now() });
+          await redis.zadd(`slots:coach:${coach}`, { score: start, member: sid });
+          await redis.zadd('slots:all', { score: start, member: sid });
+          const bk = { id: bid, slotId: sid, coach, email, name: u.name, mobile: u.mobile, type, format, price, start, mins, notes: clean(b.notes, 400), status: 'booked', created: Date.now() };
+          await redis.hset(`booking:${bid}`, bk);
+          await redis.zadd(`bookings:user:${email}`, { score: start, member: bid });
+          await redis.zadd(`bookings:coach:${coach}`, { score: start, member: bid });
+          await redis.zadd('bookings:all', { score: start, member: bid });
+          await notify('booked', bk);
+          return send(res, 200, { booking: view(bk) });
+        } finally { await redis.del(lock); }
       }
       case 'mine': {
         const email = userSession(req); if (!email) return bad(res, 'Please log in.', 401);
@@ -295,7 +321,7 @@ export default async function handler(req, res) {
         await redis.del(`slotlock:${bk.coach}:${bk.start}`);
         const s = await redis.hgetall(`slot:${bk.slotId}`);
         if (s) {
-          if (s.source === 'weekly') {
+          if (s.source === 'weekly' || s.source === 'booking') {
             await dropSlot(s);
             if (byCoach && b.removeSlot) await redis.sadd(`coach:${s.coach}:skip`, String(s.start));
           } else if (byCoach && b.removeSlot) await dropSlot(s);
@@ -323,22 +349,23 @@ async function dropSlot(s) {
   await redis.zrem(`slots:coach:${s.coach}`, s.id);
   await redis.zrem('slots:all', s.id);
 }
-function bookingInfo(bk) { return { id: bk.id, name: bk.name, email: bk.email, mobile: bk.mobile, type: TYPES[bk.type]?.name || bk.type, notes: bk.notes || '' }; }
+const describe = bk => [TYPES[bk.type]?.name || bk.type, bk.format ? FORMATS[bk.format]?.name : '', bk.price ? `£${bk.price}` : ''].filter(Boolean).join(' · ');
+function bookingInfo(bk) { return { id: bk.id, name: bk.name, email: bk.email, mobile: bk.mobile, type: describe(bk), format: bk.format || '', price: bk.price ? Number(bk.price) : null, notes: bk.notes || '' }; }
 function pub(s) { return { id: s.id, coach: s.coach, coachName: COACHES[s.coach]?.name || s.coach, start: s.start, mins: s.mins, when: fmt(s.start) }; }
 function view(bk) {
   const start = Number(bk.start);
-  return { id: bk.id, coach: bk.coach, coachName: COACHES[bk.coach]?.name || bk.coach, type: TYPES[bk.type]?.name || bk.type, start, mins: Number(bk.mins), when: fmt(start), status: bk.status, canCancel: bk.status === 'booked' && start - Date.now() >= DAY };
+  return { id: bk.id, coach: bk.coach, coachName: COACHES[bk.coach]?.name || bk.coach, type: describe(bk), price: bk.price ? Number(bk.price) : null, start, mins: Number(bk.mins), when: fmt(start), status: bk.status, canCancel: bk.status === 'booked' && start - Date.now() >= DAY };
 }
 
 async function notify(kind, bk) {
   const coach = COACHES[bk.coach];
-  const typeName = TYPES[bk.type]?.name || bk.type;
+  const typeName = [TYPES[bk.type]?.name || bk.type, bk.format ? FORMATS[bk.format]?.name : ''].filter(Boolean).join(', ');
   const when = fmt(bk.start);
   const coachTo = await coachEmail(bk.coach);
   const jayTo = await coachEmail('jay');
   const copy = process.env.BOOKINGS_COPY_EMAIL || '';
   const staff = [coachTo, bk.coach !== 'jay' ? jayTo : '', copy].filter((v, i, a) => v && a.indexOf(v) === i);
-  const details = [`Session: ${typeName}`, `Coach: ${coach.name}`, `When: ${when} (${bk.mins} minutes)`, `Where: ${ADDRESS}`];
+  const details = [`Session: ${typeName}`, `Coach: ${coach.name}`, `When: ${when} (${minsLabel(Number(bk.mins))})`, bk.price ? `Price: £${bk.price}, paid at the gym` : '', `Where: ${ADDRESS}`].filter(Boolean);
   const who = [`Name: ${bk.name}`, `Mobile: ${bk.mobile}`, `Email: ${bk.email}`, bk.notes ? `Notes: ${bk.notes}` : ''];
   if (kind === 'booked') {
     await mail(bk.email, `Booked: ${typeName} with ${coach.first}, ${when}`, [

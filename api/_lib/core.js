@@ -17,13 +17,28 @@ export const COACHES = {
 };
 export const START_PASSWORD = 'Muaythai';
 
+/* What the session focuses on. */
 export const TYPES = {
-  'fundamentals': { name: 'Fundamentals', mins: 60, price: 'from £35' },
-  'fitness-pads': { name: 'Fitness Pads', mins: 60, price: 'from £35' },
-  'technique':    { name: 'Technique & Skills', mins: 60, price: 'from £35' },
-  'fight-camp':   { name: 'Fight Camp', mins: 60, price: 'from £35' },
-  'friend':       { name: 'Train with a friend (2 people)', mins: 75, price: '£50 for two' },
+  'fundamentals': { name: 'Fundamentals' },
+  'fitness-pads': { name: 'Fitness Pads' },
+  'technique':    { name: 'Technique & Skills' },
+  'fight-camp':   { name: 'Fight Camp' },
+  'friend':       { name: 'Train with a friend', hidden: true }, // older bookings only
 };
+/* Who's training, and how long for. Each coach sets their own prices (in £) for every combination. */
+export const FORMATS = {
+  one:    { name: '1-to-1', people: 'Just you' },
+  double: { name: 'Double', people: '2 people' },
+  group:  { name: 'Group', people: '3 or more' },
+};
+export const DURATIONS = [60, 90, 120];
+export const DEFAULT_PRICES = { one: { 60: 40, 90: 55, 120: 70 }, double: { 60: 45, 90: 65, 120: 80 }, group: { 60: 55, 90: 75, 120: 90 }, groupMax: 6 };
+export async function getPrices(c) {
+  const p = await redis.get(`coach:${c}:prices`);
+  return p && typeof p === 'object' ? p : JSON.parse(JSON.stringify(DEFAULT_PRICES));
+}
+export const priceOf = (prices, format, mins) => { const v = prices?.[format]?.[mins]; return typeof v === 'number' && v > 0 ? v : null; };
+export const minsLabel = m => m === 60 ? '1 hour' : m === 90 ? '1½ hours' : m === 120 ? '2 hours' : `${m} minutes`;
 
 /* ---------- passwords ---------- */
 export function hashPassword(pw) {

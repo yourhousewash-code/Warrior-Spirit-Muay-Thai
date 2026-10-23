@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Book PT | Warrior Spirit Muay Thai Potters Bar</title>
-<meta name="description" content="Book a 1-to-1 Muay Thai personal training session with Jay, Aaron or Kian at Warrior Spirit, Potters Bar. Choose your coach and a time that suits you.">
+<meta name="description" content="Book a Muay Thai personal training session with Jay, Aaron or Kian at Warrior Spirit, Potters Bar. 1-to-1, double or group sessions, 1 to 2 hours.">
 <link rel="icon" href="img/logo.webp" type="image/webp">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap">
 <link rel="stylesheet" href="/assets/app.css">
@@ -13,23 +13,28 @@
 .steps{display:grid;gap:18px;margin-top:24px}
 .step h2{font-size:clamp(26px,3.4vw,36px)}
 .step h2 i{font-style:normal;color:var(--red);margin-right:10px}
-.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.types button{border:2px solid var(--line);background:var(--ink-2);color:var(--bone);padding:14px;text-align:left;cursor:pointer;display:grid;gap:4px}
-.types button b{font:900 22px/1 var(--display);text-transform:uppercase}
-.types button small{color:var(--muted);font-size:14px}
-.types button[aria-pressed="true"]{border-color:var(--red);box-shadow:0 0 0 2px var(--red)}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.opts button{border:2px solid var(--line);background:var(--ink-2);color:var(--bone);padding:14px;text-align:left;cursor:pointer;display:grid;gap:4px;font:inherit}
+.opts button b{font:900 22px/1 var(--display);text-transform:uppercase}
+.opts button small{color:var(--muted);font-size:14px}
+.opts button .pr{color:var(--bone);font:700 18px var(--cond);letter-spacing:.04em}
+.opts button[aria-pressed="true"]{border-color:var(--red);box-shadow:0 0 0 2px var(--red)}
+.opts button:disabled{opacity:.35;cursor:default}
+.slot .pr{color:var(--ok)}
+.slot[aria-pressed="true"] .pr{color:#fff}
+.more{background:none;border:1px dashed var(--line);color:var(--soft);padding:12px;font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-top:12px}
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap">
   <a class="brand" href="/"><img src="img/logo.webp" alt=""><b>Warrior Spirit</b></a>
-  <nav class="toplinks"><a href="/#pt">PT sessions</a><a href="/account" id="acctLink">My account</a></nav>
+  <nav class="toplinks"><a href="/#pt">PT sessions</a><a href="/account">My account</a></nav>
 </div></header>
 
 <main class="wrap">
-  <span class="kick">1-to-1 personal training · Potters Bar</span>
+  <span class="kick">Personal training · Potters Bar</span>
   <h1>Book a PT session</h1>
-  <p class="lede" style="margin-top:12px">Pick your coach, the kind of session you want and a time. You pay at the gym on the day.</p>
+  <p class="lede" style="margin-top:12px">Choose your coach, what you want to work on, who’s training and for how long, then pick a time. You pay at the gym on the day.</p>
 
   <div class="steps">
     <section class="panel step">
@@ -43,21 +48,31 @@
     </section>
 
     <section class="panel step">
-      <h2><i>2</i>Choose your session</h2>
-      <div class="types" id="types"></div>
+      <h2><i>2</i>What do you want to work on?</h2>
+      <div class="opts" id="types"></div>
     </section>
 
     <section class="panel step">
-      <h2><i>3</i>Choose a time</h2>
+      <h2><i>3</i>Who’s training?</h2>
+      <div class="opts" id="formats"></div>
+    </section>
+
+    <section class="panel step">
+      <h2><i>4</i>How long?</h2>
+      <div class="opts" id="durations"></div>
+    </section>
+
+    <section class="panel step">
+      <h2><i>5</i>Choose a time</h2>
       <div id="slots"><p class="empty">Loading times…</p></div>
     </section>
 
     <section class="panel step" id="confirmStep" hidden>
-      <h2><i>4</i>Confirm</h2>
+      <h2><i>6</i>Confirm</h2>
       <div class="summary" id="summary"></div>
 
       <div id="authBox" hidden class="stack">
-        <p class="muted">Create a free account so you can see and cancel your bookings. Already have one? <button type="button" class="linkbtn" id="toLogin" style="background:none;border:0;color:var(--bone);text-decoration:underline;cursor:pointer;font:inherit;padding:0">Log in</button></p>
+        <p class="muted">Create a free account so you can see and cancel your bookings. Already have one? <button type="button" id="toLogin" style="background:none;border:0;color:var(--bone);text-decoration:underline;cursor:pointer;font:inherit;padding:0">Log in</button></p>
         <form id="regForm" class="stack">
           <div class="row">
             <label for="rn">Your name<input id="rn" autocomplete="name" required></label>
@@ -82,7 +97,7 @@
 
       <form id="bookForm" class="stack" hidden>
         <p class="muted" id="who"></p>
-        <label for="bn">Anything your coach should know? (optional)<textarea id="bn" maxlength="400" placeholder="Experience, injuries, goals, your friend's name for a friend session…"></textarea></label>
+        <label for="bn" id="bnLabel">Anything your coach should know? (optional)<textarea id="bn" maxlength="400" placeholder="Experience, injuries, goals…"></textarea></label>
         <p class="muted" style="font-size:15px">Payment is taken at the gym. You can cancel from your account up to 24 hours before.</p>
         <p class="err" id="berr" hidden></p>
         <button class="btn" type="submit" id="bookBtn">Confirm booking</button>
@@ -110,70 +125,120 @@ const api = async (url, data) => {
   return j;
 };
 const show = (el, msg) => { el.textContent = msg; el.hidden = !msg; };
-const dayKey = ms => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms));
-const time = ms => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
+const TZ = 'Europe/London';
+const dayKey = ms => new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms));
+const time = ms => new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
+const LEN = { 60: '1 hour', 90: '1½ hours', 120: '2 hours' };
+const money = v => '£' + (Number.isInteger(v) ? v : v.toFixed(2));
 
 const q = new URLSearchParams(location.search);
-const state = { coach: ['jay', 'aaron', 'kian'].includes(q.get('coach')) ? q.get('coach') : '', type: q.get('type') || 'fundamentals', slot: null, user: null, data: null };
+const legacyType = q.get('type') === 'friend';
+const state = {
+  coach: ['jay', 'aaron', 'kian'].includes(q.get('coach')) ? q.get('coach') : '',
+  type: legacyType ? 'fundamentals' : (q.get('type') || 'fundamentals'),
+  format: legacyType ? 'double' : (['one', 'double', 'group'].includes(q.get('format')) ? q.get('format') : 'one'),
+  mins: [60, 90, 120].includes(Number(q.get('mins'))) ? Number(q.get('mins')) : 60,
+  pick: null, user: null, meta: null, starts: [], showDays: 7,
+};
 
-async function load() {
-  try {
-    state.data = await api('/api/pt?action=open');
-  } catch (err) { $('#slots').innerHTML = `<p class="err">${esc(err.message)}</p>`; return; }
-  if (!state.data.types[state.type]) state.type = 'fundamentals';
-  renderCoaches(); renderTypes(); renderSlots();
+/* price helpers across the chosen coach (or every coach) */
+const coachesInPlay = () => state.coach ? [state.coach] : ['jay', 'aaron', 'kian'];
+const priceFor = (c, f, m) => { const v = state.meta.prices[c]?.[f]?.[m]; return typeof v === 'number' && v > 0 ? v : null; };
+function cheapest(f, m) {
+  const vals = coachesInPlay().flatMap(c => m ? [priceFor(c, f, m)] : state.meta.durations.map(d => priceFor(c, f, d))).filter(v => v);
+  return vals.length ? Math.min(...vals) : null;
+}
+function priceText(f, m) {
+  const vals = coachesInPlay().map(c => priceFor(c, f, m)).filter(v => v);
+  if (!vals.length) return 'Not offered';
+  const lo = Math.min(...vals), hi = Math.max(...vals);
+  return lo === hi ? money(lo) : `${money(lo)}–${money(hi)}`;
+}
+
+async function loadMeta() {
+  try { state.meta = await api(`/api/pt?action=open&mins=${state.mins}&format=${state.format}`); }
+  catch (err) { $('#slots').innerHTML = `<p class="err">${esc(err.message)}</p>`; return; }
+  if (!state.meta.types[state.type]) state.type = 'fundamentals';
+  state.starts = state.meta.starts;
+  drawAll();
   try { state.user = (await api('/api/auth?action=me')).user; } catch {}
 }
-
-function renderCoaches() {
-  document.querySelectorAll('[data-coach]').forEach(b => b.setAttribute('aria-pressed', b.dataset.coach === state.coach ? 'true' : 'false'));
+async function loadStarts() {
+  $('#slots').innerHTML = '<p class="empty">Loading times…</p>';
+  try { const r = await api(`/api/pt?action=open&mins=${state.mins}&format=${state.format}${state.coach ? '&coach=' + state.coach : ''}`); state.meta.prices = r.prices; state.starts = r.starts; }
+  catch (err) { $('#slots').innerHTML = `<p class="err">${esc(err.message)}</p>`; return; }
+  drawSlots(); drawConfirm();
 }
+function drawAll() { drawCoaches(); drawTypes(); drawFormats(); drawDurations(); drawSlots(); drawConfirm(); }
+
+function drawCoaches() { document.querySelectorAll('[data-coach]').forEach(b => b.setAttribute('aria-pressed', b.dataset.coach === state.coach ? 'true' : 'false')); }
 $('#coaches').addEventListener('click', e => {
   const b = e.target.closest('[data-coach]'); if (!b) return;
-  state.coach = b.dataset.coach; state.slot = null; renderCoaches(); renderSlots(); renderConfirm();
+  state.coach = b.dataset.coach; state.pick = null; drawCoaches(); fixChoice(); drawFormats(); drawDurations(); loadStarts();
 });
-
-function renderTypes() {
-  const t = state.data.types;
-  $('#types').innerHTML = Object.entries(t).map(([k, v]) => `<button type="button" data-type="${k}" aria-pressed="${k === state.type}"><b>${esc(v.name)}</b><small>${v.mins} min · ${esc(v.price)}</small></button>`).join('');
+function drawTypes() {
+  $('#types').innerHTML = Object.entries(state.meta.types).map(([k, v]) => `<button type="button" data-type="${k}" aria-pressed="${k === state.type}"><b>${esc(v.name)}</b></button>`).join('');
 }
-$('#types').addEventListener('click', e => {
-  const b = e.target.closest('[data-type]'); if (!b) return;
-  state.type = b.dataset.type; state.slot = null; renderTypes(); renderSlots(); renderConfirm();
-});
+$('#types').addEventListener('click', e => { const b = e.target.closest('[data-type]'); if (!b) return; state.type = b.dataset.type; drawTypes(); drawConfirm(); });
 
-function renderSlots() {
-  const need = state.data.types[state.type].mins;
-  const list = state.data.slots.filter(s => (!state.coach || s.coach === state.coach) && s.mins >= need);
+function drawFormats() {
+  $('#formats').innerHTML = Object.entries(state.meta.formats).map(([k, v]) => {
+    const lo = cheapest(k);
+    const people = k === 'group' ? `3 to ${Math.max(...coachesInPlay().map(c => state.meta.prices[c]?.groupMax || 6))} people` : v.people;
+    return `<button type="button" data-format="${k}" aria-pressed="${k === state.format}" ${lo ? '' : 'disabled'}><b>${esc(v.name)}</b><small>${esc(people)}</small><span class="pr">${lo ? 'from ' + money(lo) : 'Not offered'}</span></button>`;
+  }).join('');
+}
+$('#formats').addEventListener('click', e => { const b = e.target.closest('[data-format]'); if (!b || b.disabled) return; state.format = b.dataset.format; state.pick = null; fixChoice(); drawFormats(); drawDurations(); loadStarts(); });
+
+function drawDurations() {
+  $('#durations').innerHTML = state.meta.durations.map(m => {
+    const ok = coachesInPlay().some(c => priceFor(c, state.format, m));
+    return `<button type="button" data-mins="${m}" aria-pressed="${m === state.mins}" ${ok ? '' : 'disabled'}><b>${LEN[m]}</b><span class="pr">${priceText(state.format, m)}</span></button>`;
+  }).join('');
+}
+$('#durations').addEventListener('click', e => { const b = e.target.closest('[data-mins]'); if (!b || b.disabled) return; state.mins = Number(b.dataset.mins); state.pick = null; drawDurations(); loadStarts(); });
+/* if the coach doesn't offer the current choice, move to something they do */
+function fixChoice() {
+  if (!cheapest(state.format)) state.format = Object.keys(state.meta.formats).find(f => cheapest(f)) || 'one';
+  if (!coachesInPlay().some(c => priceFor(c, state.format, state.mins))) state.mins = state.meta.durations.find(m => coachesInPlay().some(c => priceFor(c, state.format, m))) || 60;
+}
+
+function drawSlots() {
   const box = $('#slots');
+  const list = state.starts;
   if (!list.length) {
-    const who = state.coach ? state.data.coaches.find(c => c.id === state.coach).first : 'our coaches';
-    box.innerHTML = `<p class="empty">No ${need > 60 ? need + '-minute ' : ''}times free with ${esc(who)} right now. Try another coach, or <a href="/#contact">send us a message</a> and we’ll find you a time.</p>`;
+    box.innerHTML = `<p class="empty">No ${LEN[state.mins]} times free ${state.coach ? 'with ' + esc(state.meta.coaches.find(c => c.id === state.coach).first) : ''} at the moment. Try a shorter session or another coach, or <a href="/#contact">send us a message</a> and we’ll find you a time.</p>`;
     return;
   }
-  let html = '', last = '';
-  for (const s of list) {
-    const dk = dayKey(s.start);
-    if (dk !== last) { html += (last ? '</div></div>' : '') + `<div class="day"><h3>${esc(dk)}</h3><div class="slots">`; last = dk; }
-    html += `<button type="button" class="slot" data-slot="${s.id}" aria-pressed="${state.slot === s.id}">${time(s.start)}<small>${esc(s.coachName.split(' ')[0])}</small></button>`;
+  const days = [...new Set(list.map(s => dayKey(s.start)))];
+  const shown = days.slice(0, state.showDays);
+  let html = '';
+  for (const dk of shown) {
+    html += `<div class="day"><h3>${esc(dk)}</h3><div class="slots">`;
+    for (const s of list.filter(x => dayKey(x.start) === dk)) {
+      const key = `${s.coach}|${s.start}`;
+      html += `<button type="button" class="slot" data-pick="${key}" aria-pressed="${state.pick === key}">${time(s.start)}<small>${esc(s.coachName.split(' ')[0])} · <span class="pr">${money(s.price)}</span></small></button>`;
+    }
+    html += '</div></div>';
   }
-  box.innerHTML = html + '</div></div>';
+  if (days.length > shown.length) html += `<button type="button" class="more" id="moreDays">Show more days</button>`;
+  box.innerHTML = html;
 }
 $('#slots').addEventListener('click', e => {
-  const b = e.target.closest('[data-slot]'); if (!b) return;
-  state.slot = b.dataset.slot; renderSlots(); renderConfirm();
+  if (e.target.closest('#moreDays')) { state.showDays += 7; drawSlots(); return; }
+  const b = e.target.closest('[data-pick]'); if (!b) return;
+  state.pick = b.dataset.pick; drawSlots(); drawConfirm();
   $('#confirmStep').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-function summaryHtml(s, typeName, mins) {
-  return `<b>${esc(typeName)}</b><span>with ${esc(s.coachName)}</span><span>${esc(s.when)} · ${mins} minutes</span><span class="muted">${esc(state.data.types[state.type]?.price || '')} · pay at the gym</span>`;
-}
-function renderConfirm() {
-  const s = state.data.slots.find(x => x.id === state.slot);
+function picked() { if (!state.pick) return null; const [c, t] = state.pick.split('|'); return state.starts.find(s => s.coach === c && s.start === Number(t)) || null; }
+function drawConfirm() {
+  const s = picked();
   $('#confirmStep').hidden = !s;
   if (!s) return;
-  const t = state.data.types[state.type];
-  $('#summary').innerHTML = summaryHtml(s, t.name, t.mins);
+  const f = state.meta.formats[state.format];
+  $('#summary').innerHTML = `<b>${esc(state.meta.types[state.type].name)}</b><span>${esc(f.name)} · ${LEN[s.mins]} · with ${esc(s.coachName)}</span><span>${esc(s.when)}</span><span><strong>${money(s.price)}</strong> <span class="muted">· pay at the gym</span></span>`;
+  $('#bnLabel').firstChild.textContent = state.format === 'one' ? 'Anything your coach should know? (optional)' : 'Who’s training with you? Names, plus anything your coach should know';
   $('#authBox').hidden = !!state.user;
   $('#bookForm').hidden = !state.user;
   if (state.user) $('#who').textContent = `Booking as ${state.user.name} (${state.user.email}).`;
@@ -182,28 +247,29 @@ function renderConfirm() {
 $('#toLogin').addEventListener('click', () => { $('#regForm').hidden = !$('#regForm').hidden; $('#logForm').hidden = !$('#logForm').hidden; $('#toLogin').textContent = $('#logForm').hidden ? 'Log in' : 'Create an account'; });
 $('#regForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#rerr'), '');
-  try { state.user = (await api('/api/auth?action=register', { name: $('#rn').value, mobile: $('#rm').value, email: $('#re').value, password: $('#rp').value })).user; renderConfirm(); }
+  try { state.user = (await api('/api/auth?action=register', { name: $('#rn').value, mobile: $('#rm').value, email: $('#re').value, password: $('#rp').value })).user; drawConfirm(); }
   catch (err) { show($('#rerr'), err.message); }
 });
 $('#logForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#lerr'), '');
-  try { state.user = (await api('/api/auth?action=login', { email: $('#le').value, password: $('#lp').value })).user; renderConfirm(); }
+  try { state.user = (await api('/api/auth?action=login', { email: $('#le').value, password: $('#lp').value })).user; drawConfirm(); }
   catch (err) { show($('#lerr'), err.message); }
 });
 $('#bookForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#berr'), ''); $('#bookBtn').disabled = true;
+  const s = picked();
   try {
-    const { booking } = await api('/api/pt?action=book', { slotId: state.slot, type: state.type, notes: $('#bn').value });
+    const { booking } = await api('/api/pt?action=book', { coach: s.coach, start: s.start, mins: s.mins, format: state.format, type: state.type, notes: $('#bn').value });
     document.querySelectorAll('.step').forEach(x => x.hidden = true);
-    $('#doneSummary').innerHTML = `<b>${esc(booking.type)}</b><span>with ${esc(booking.coachName)}</span><span>${esc(booking.when)} · ${booking.mins} minutes</span>`;
+    $('#doneSummary').innerHTML = `<b>${esc(booking.type)}</b><span>with ${esc(booking.coachName)}</span><span>${esc(booking.when)} · ${LEN[booking.mins] || booking.mins + ' minutes'}</span>`;
     $('#done').hidden = false; scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     show($('#berr'), err.message); $('#bookBtn').disabled = false;
-    if (/gone|booked that slot/.test(err.message)) { state.slot = null; await load(); renderConfirm(); }
+    if (/gone|right now/.test(err.message)) { state.pick = null; loadStarts(); }
   }
 });
 
-load();
+loadMeta().then(() => { if (state.coach) { fixChoice(); drawFormats(); drawDurations(); loadStarts(); } });
 </script>
 <script>
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});

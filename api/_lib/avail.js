@@ -103,17 +103,18 @@ export async function generated(c, from, to, real, classes) {
     const wd = dow(date);
     for (const r of weekly) {
       if (r.day !== wd) continue;
-      const mins = Number(r.mins) || 60, len = mins * 6e4;
+      const step = Number(r.mins) || 60;
       const stop = londonMs(date, r.end);
       let t = londonMs(date, r.start);
-      while (t + len <= stop) {
+      while (t + 30 * 6e4 <= stop) {
+        const mins = Math.min(step, Math.round((stop - t) / 6e4));
         const hit = (r.overClass ? busy : busyAll).filter(x => overlaps(x, { start: t, mins }));
         if (hit.length) { const e = Math.max(...hit.map(x => x.start + x.mins * 6e4)); t = Math.ceil(e / 9e5) * 9e5; continue; }
         if (t >= from && t <= to) {
           const s = { id: `w:${c}:${t}:${mins}`, coach: c, start: t, mins, source: 'weekly', status: 'open' };
           if (skip.has(String(t))) blocked.push({ ...s, status: 'blocked' }); else open.push(s);
         }
-        t += len;
+        t += mins * 6e4;
       }
     }
   }
@@ -122,4 +123,25 @@ export async function generated(c, from, to, real, classes) {
 export function parseVirtual(id) {
   const m = /^w:([a-z]+):(\d+):(\d+)$/.exec(id || '');
   return m ? { coach: m[1], start: Number(m[2]), mins: Number(m[3]) } : null;
+}
+
+/* Free stretches of time for a coach: their open weekly blocks and one-off times, joined up where they touch. */
+export async function freeIntervals(c, from, to, real, classes) {
+  real = real || await realSlots(c, from - DAY, to + DAY);
+  const off = await getOff(c);
+  const g = await generated(c, from, to, real, classes);
+  const parts = g.open.concat(real.filter(s => s.coach === c && s.status === 'open' && s.start >= from && s.start <= to && !isOff(off, londonDate(s.start))))
+    .map(s => ({ start: s.start, end: s.start + s.mins * 6e4 })).sort((a, b) => a.start - b.start);
+  const out = [];
+  for (const p of parts) {
+    const last = out[out.length - 1];
+    if (last && p.start <= last.end) last.end = Math.max(last.end, p.end); else out.push({ ...p });
+  }
+  return out;
+}
+/* Start times (every 30 minutes) where a session of this length fits. */
+export function startsIn(intervals, mins, from) {
+  const out = [];
+  for (const iv of intervals) for (let t = iv.start; t + mins * 6e4 <= iv.end; t += 30 * 6e4) if (t >= from) out.push(t);
+  return out;
 }

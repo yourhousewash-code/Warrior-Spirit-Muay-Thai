@@ -15,6 +15,11 @@ export default async function handler(req, res) {
         body: req.body,
         request: req,
         onBeforeGenerateToken: async (pathname) => {
+          /* Profile photos: images only, into the coach's own profiles folder (Jay can upload for anyone). */
+          const prof = /^profiles\/([a-z]+)\//.exec(pathname);
+          if (prof && (prof[1] === c.id || (c.admin && COACHES[prof[1]]))) {
+            return { allowedContentTypes: ['image/*'], maximumSizeInBytes: 25 * 1024 * 1024, addRandomSuffix: true };
+          }
           if (!pathname.startsWith(`uploads/${c.id}/`)) throw new Error('Not allowed');
           return {
             allowedContentTypes: ['image/*', 'video/*'],

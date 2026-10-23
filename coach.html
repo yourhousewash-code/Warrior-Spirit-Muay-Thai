@@ -40,7 +40,8 @@
 .chip[aria-pressed="true"]{outline:2px solid var(--bone);outline-offset:1px}
 .detail{border-left:4px solid var(--bone);background:var(--ink-3);padding:16px;display:grid;gap:8px}
 .detail b.t{font:900 24px/1 var(--display);text-transform:uppercase}
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media (max-width:1100px){.tiles{grid-template-columns:1fr 1fr}}
 .tile{background:var(--ink-2);border:1px solid var(--line);border-left:4px solid var(--red);color:var(--bone);text-align:left;padding:18px;display:grid;grid-template-columns:44px 1fr;gap:4px 16px;align-items:start;cursor:pointer;font:inherit}
 .tile svg{grid-row:1/4}
 .tile p{color:var(--soft);font-size:15px;line-height:1.45;margin:0}
@@ -55,11 +56,26 @@
 .wkrow{display:grid;grid-template-columns:160px 1fr;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
 .wkrow>b{font:900 22px/1 var(--display);text-transform:uppercase;padding-top:10px}
 .ranges{display:grid;gap:8px}
-.range{display:grid;grid-template-columns:1fr auto 1fr 1fr auto;gap:8px;align-items:center}
+.range{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:center}
 .range span{color:var(--muted)}
 .range .x{background:none;border:1px solid var(--line);color:var(--soft);width:42px;height:44px;cursor:pointer;font-size:18px}
 .addr{background:none;border:1px dashed var(--line);color:var(--soft);padding:10px;font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;justify-self:start}
 .closed{color:var(--muted);padding-top:10px}
+.ptable{display:grid;grid-template-columns:minmax(120px,1.2fr) repeat(3,minmax(84px,1fr));gap:8px;align-items:center}
+.ptable .h{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.ptable .f b{font:900 22px/1 var(--display);text-transform:uppercase;display:block}.ptable .f small{color:var(--muted)}
+.money{position:relative}.money span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}.money input{padding-left:26px}
+.money input:placeholder-shown{border-style:dashed}
+.pfgrid{display:grid;grid-template-columns:260px 1fr;gap:22px}
+.pfphoto{aspect-ratio:1;background:var(--ink);border:1px solid var(--line);overflow:hidden}
+.pfphoto img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+@media (max-width:760px){.pfgrid{grid-template-columns:1fr}.pfphoto{max-width:240px}.ptable{grid-template-columns:repeat(3,1fr)}.ptable .f{grid-column:1/-1;margin-top:8px}.ptable .corner{display:none}.ptable .h{display:none}.money::before{content:attr(data-l);display:block;font:700 12px var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}.money span{top:auto;bottom:12px;transform:none}}
+.apv{display:grid;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.diff{display:grid;grid-template-columns:110px 1fr 1fr;gap:6px 12px;font-size:14px}
+.diff .k{color:var(--muted);font:700 12px var(--cond);letter-spacing:.12em;text-transform:uppercase}
+.diff .old{color:var(--muted);text-decoration:line-through;white-space:pre-wrap}.diff .new{color:var(--bone);white-space:pre-wrap}
+.diff img{width:90px;height:90px;object-fit:cover}
+@media (max-width:760px){.diff{grid-template-columns:1fr}.diff .old{display:none}}
 .cnote{font-size:14px;color:var(--muted)}.cnote.yes{color:var(--ok)}
 .cnote button{background:none;border:0;color:var(--soft);text-decoration:underline;cursor:pointer;font:inherit;padding:0 0 0 6px}
 .detail.clash{border-left-color:var(--tbc)}
@@ -120,8 +136,7 @@
   .cell .nonebox small{margin:0}
   .wkrow{grid-template-columns:1fr}
   .wkrow>b{padding-top:0}
-  .range{grid-template-columns:1fr auto 1fr;}
-  .range select{grid-column:1/3}
+  .range{grid-template-columns:1fr auto 1fr auto}
 }
 @media (max-width:420px){.tile{padding:14px;grid-template-columns:34px 1fr;gap:4px 12px}.tile svg{width:30px;height:30px}.tile b{font-size:22px}}
 </style>
@@ -154,6 +169,8 @@
         <p class="note" id="pwnote" hidden>You’re still using the starting password. Change it in <b>Settings</b>.</p>
       </div>
 
+      <div class="panel" id="approvals" hidden style="border-top-color:var(--tbc)"></div>
+
       <div class="panel">
         <div class="calhead">
           <h2 id="calTitle">This week</h2>
@@ -184,6 +201,14 @@
         <button type="button" class="tile" data-go="bookings">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 11l2 2 4-4"/></svg>
           <b>Bookings</b><p>See who’s booked in, with their phone number, session type and any notes. You can cancel a session here and the customer is emailed automatically. <span id="bkCount"></span></p><em>Open →</em>
+        </button>
+        <button type="button" class="tile" data-go="prices">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+          <b>Prices &amp; sessions</b><p>Set what you charge for 1-to-1, double and group sessions of 1 hour, 1½ hours or 2 hours. Switch off anything you don’t offer. Changes show on the booking page straight away.</p><em>Open →</em>
+        </button>
+        <button type="button" class="tile" data-go="profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><circle cx="9" cy="10" r="2.5"/><path d="M5 17c.8-2 2.3-3 4-3s3.2 1 4 3M14 9h4M14 13h4"/></svg>
+          <b>My profile</b><p id="profTileText">Edit what the website says about you: your intro, background, specialities, Instagram and photo. Changes go live once Jay approves them.</p><em>Open →</em>
         </button>
         <button type="button" class="tile" data-go="uploads">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="1"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 8M12 2v6M9 5l3-3 3 3"/></svg>
@@ -252,6 +277,49 @@
           <div class="list" id="extraList"></div>
         </form>
       </div>
+    </div>
+
+    <!-- ===== PRICES ===== -->
+    <div data-view="prices" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <div class="calhead"><h1>Prices &amp; sessions</h1><label id="prWhoWrap" hidden style="min-width:180px">Editing<select id="prWho"></select></label></div>
+      <form class="panel" id="priceForm">
+        <h2>Your prices</h2>
+        <p class="muted">What you charge for each kind of session. Leave a box empty to not offer that option. Customers see your price when they book, and pay at the gym.</p>
+        <p class="note" id="prDefault" hidden>These are the suggested starting prices. Change any of them and press Save.</p>
+        <div class="ptable" id="ptable"></div>
+        <label for="gmax" style="max-width:260px">Most people in a group<input id="gmax" type="number" min="3" max="20" step="1"></label>
+        <p class="err" id="prerr" hidden></p><p class="ok" id="prok" hidden></p>
+        <button class="btn" type="submit" style="justify-self:start">Save prices</button>
+      </form>
+    </div>
+
+    <!-- ===== PROFILE ===== -->
+    <div data-view="profile" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <div class="calhead"><h1>My profile</h1><label id="pfWhoWrap" hidden style="min-width:180px">Editing<select id="pfWho"></select></label></div>
+      <div class="note" id="pfStatus"></div>
+      <form class="panel" id="profForm">
+        <h2>On the website</h2>
+        <div class="pfgrid">
+          <div class="stack">
+            <div class="pfphoto"><img id="pfImg" alt=""></div>
+            <label class="btn ghost small" for="pfFile" style="justify-self:start">Choose a new photo<input id="pfFile" type="file" accept="image/*" hidden></label>
+            <div class="prog" id="pfProg" hidden><i></i></div>
+            <p class="muted" style="font-size:14px">A clear photo of you training or coaching works best.</p>
+          </div>
+          <div class="stack">
+            <label for="pfRole">Your role<input id="pfRole" maxlength="40" placeholder="e.g. Trainer"></label>
+            <label for="pfIntro">Short intro<textarea id="pfIntro" maxlength="500" rows="3" placeholder="One or two sentences about how you coach"></textarea></label>
+            <label for="pfBg">Your background<textarea id="pfBg" maxlength="2000" rows="6" placeholder="How long you’ve trained, fights and titles, which classes you take. Leave a blank line between paragraphs."></textarea></label>
+            <label for="pfChips">Specialities (one per line)<textarea id="pfChips" maxlength="400" rows="4"></textarea></label>
+            <label for="pfAsk">Ask me about…<input id="pfAsk" maxlength="160" placeholder="e.g. pad work, your first fight, getting fit"></label>
+            <label for="pfIg">Instagram username<input id="pfIg" maxlength="40" placeholder="without the @"></label>
+          </div>
+        </div>
+        <p class="err" id="pferr" hidden></p><p class="ok" id="pfok" hidden></p>
+        <div class="row"><button class="btn" type="submit" id="pfSubmit">Send to Jay for approval</button><button type="button" class="btn ghost" id="pfDiscard" hidden>Discard my changes</button></div>
+      </form>
     </div>
 
     <!-- ===== BOOKINGS ===== -->
@@ -326,9 +394,11 @@ let me = null;
 /* ---------- views ---------- */
 function go(view) {
   if (!me) return;
-  if (!['home', 'availability', 'bookings', 'uploads', 'settings'].includes(view)) view = 'home';
+  if (!['home', 'availability', 'bookings', 'uploads', 'settings', 'prices', 'profile'].includes(view)) view = 'home';
   document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
-  if (view === 'home') loadCal();
+  if (view === 'home') { loadCal(); loadApprovals(); }
+  if (view === 'prices') loadPrices();
+  if (view === 'profile') loadProfile();
   if (view === 'availability') loadAvail();
   if (view === 'bookings') loadBookings();
   if (view === 'uploads') loadFiles();
@@ -350,6 +420,10 @@ async function init() {
     $('#calWho').innerHTML = opts + '<option value="all">All coaches</option>'; $('#calWho').value = 'all'; $('#calWho').hidden = false;
     $('#whoB').innerHTML = opts + '<option value="all">All coaches</option>'; $('#whoB').value = 'all'; $('#whoB').hidden = false;
     $('#avWho').innerHTML = opts; $('#avWhoWrap').hidden = false;
+    $('#prWho').innerHTML = opts; $('#prWhoWrap').hidden = false;
+    $('#pfWho').innerHTML = opts; $('#pfWhoWrap').hidden = false;
+    $('#pfSubmit').textContent = 'Save & publish';
+    $('#profTileText').textContent = 'Edit what the website says about each coach. Your changes go live straight away. Aaron’s and Kian’s changes come to you for approval first.';
     $('#galTitle').textContent = 'All coaches’ uploads';
   }
   const today = ukDate(Date.now());
@@ -561,7 +635,7 @@ function drawWeekly() {
     const rs = weekly.map((r, i) => ({ ...r, i })).filter(r => r.day === d);
     return `<div class="wkrow"><b>${DAYS[d]}</b><div class="ranges">${rs.length ? rs.map(r => `<div class="range" data-i="${r.i}">
         <input type="time" step="900" data-f="start" value="${r.start}" aria-label="${DAYS[d]} start"><span>to</span><input type="time" step="900" data-f="end" value="${r.end}" aria-label="${DAYS[d]} end">
-        ${lenSel(r.mins)}<button type="button" class="x" data-del="${r.i}" aria-label="Remove">×</button></div>${r.overClass === true ? `<div class="cnote yes">✓ Available for PT during classes in these hours <button type="button" data-oc="${r.i}">Change</button></div>` : r.overClass === false ? `<div class="cnote">Not bookable while classes are on <button type="button" data-oc="${r.i}">Change</button></div>` : ''}`).join('') : '<div class="closed">Not available</div>'}
+        <button type="button" class="x" data-del="${r.i}" aria-label="Remove">×</button></div>${r.overClass === true ? `<div class="cnote yes">✓ Available for PT during classes in these hours <button type="button" data-oc="${r.i}">Change</button></div>` : r.overClass === false ? `<div class="cnote">Not bookable while classes are on <button type="button" data-oc="${r.i}">Change</button></div>` : ''}`).join('') : '<div class="closed">Not available</div>'}
         <button type="button" class="addr" data-addday="${d}">+ Add hours</button></div></div>`;
   }).join('');
 }
@@ -638,6 +712,103 @@ async function loadExtra() {
     $('#extraList').innerHTML = up.length ? up.map(s => `<div class="item open"><div><b>${esc(s.when)}</b><div class="meta">${s.mins} min</div></div><div class="acts"><button type="button" class="btn small ghost" data-remove="${esc(s.id)}">Remove</button></div></div>`).join('') : '';
   } catch {}
 }
+
+/* ---------- prices ---------- */
+const LENS = { 60: '1 hour', 90: '1½ hours', 120: '2 hours' };
+const prWho = () => me.admin ? $('#prWho').value : me.id;
+$('#prWho').addEventListener('change', loadPrices);
+let priceMeta = null;
+async function loadPrices() {
+  try {
+    priceMeta = await api(`/api/pt?action=prices&coach=${prWho()}`);
+    const { prices, formats, durations } = priceMeta;
+    let html = `<div class="corner"></div>` + durations.map(m => `<div class="h">${LENS[m]}</div>`).join('');
+    for (const [f, v] of Object.entries(formats)) {
+      html += `<div class="f"><b>${esc(v.name)}</b><small>${esc(f === 'group' ? '3 or more people' : v.people)}</small></div>`;
+      html += durations.map(m => `<div class="money" data-l="${LENS[m]}"><span>£</span><input type="number" min="1" max="999" step="0.5" inputmode="decimal" data-pf="${f}" data-pm="${m}" value="${prices[f]?.[m] ?? ''}" placeholder="Not offered" aria-label="${esc(v.name)}, ${LENS[m]}"></div>`).join('');
+    }
+    $('#ptable').innerHTML = html;
+    $('#gmax').value = prices.groupMax || 6;
+    $('#prDefault').hidden = !priceMeta.isDefault;
+  } catch (err) { show($('#prerr'), err.message); }
+}
+$('#priceForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#prerr'), ''); show($('#prok'), '');
+  const prices = { groupMax: Number($('#gmax').value) || 6 };
+  document.querySelectorAll('[data-pf]').forEach(i => { (prices[i.dataset.pf] ||= {})[i.dataset.pm] = i.value === '' ? null : Number(i.value); });
+  try { await api('/api/pt?action=prices-save', { coach: prWho(), prices }); $('#prDefault').hidden = true; show($('#prok'), 'Saved. Your prices are now on the booking page.'); }
+  catch (err) { show($('#prerr'), err.message); }
+});
+
+/* ---------- profile ---------- */
+const pfWho = () => me.admin ? $('#pfWho').value : me.id;
+$('#pfWho').addEventListener('change', loadProfile);
+let prof = null;
+const PF = { role: '#pfRole', intro: '#pfIntro', background: '#pfBg', chips: '#pfChips', ask: '#pfAsk', instagram: '#pfIg' };
+const SITE_PHOTO = { jay: 'photos/jay-portrait.webp', aaron: 'photos/aaron.webp', kian: 'photos/kian.webp' };
+async function loadProfile() {
+  show($('#pferr'), ''); show($('#pfok'), '');
+  try {
+    prof = await api(`/api/profile?action=mine&coach=${pfWho()}`);
+    const d = prof.draft, src = d || prof.live;
+    for (const [k, sel] of Object.entries(PF)) $(sel).value = src[k] || '';
+    prof.photo = src.photo || '';
+    $('#pfImg').src = (d && d.photoUrl) || prof.live.photoUrl || SITE_PHOTO[prof.coach];
+    const st = $('#pfStatus');
+    $('#pfDiscard').hidden = !d;
+    if (!d) { st.innerHTML = '✓ This is what’s on the website now.'; st.style.borderColor = 'var(--free)'; }
+    else if (d.status === 'pending') { st.innerHTML = `⏳ Sent to Jay on ${new Date(d.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. It goes on the website once he approves it. You can still make changes and send again.`; st.style.borderColor = 'var(--tbc)'; }
+    else { st.innerHTML = `↩ Jay sent this back${d.note ? `: <b>“${esc(d.note)}”</b>` : '.'} Make your changes and send it again.`; st.style.borderColor = 'var(--booked)'; }
+  } catch (err) { show($('#pferr'), err.message); }
+}
+$('#pfFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  const bar = $('#pfProg'), i = bar.querySelector('i'); bar.hidden = false; i.style.width = '0';
+  try {
+    const r = await upload(`profiles/${pfWho()}/${Date.now()}-${f.name.replace(/[^\w.\-]+/g, '_').slice(-60)}`, f, { access: 'private', handleUploadUrl: '/api/uploads?action=token', onUploadProgress: p => { i.style.width = p.percentage + '%'; } });
+    prof.photo = r.pathname; $('#pfImg').src = URL.createObjectURL(f);
+    show($('#pfok'), me.admin ? 'Photo uploaded. Press Save & publish to put it live.' : 'Photo uploaded. Press “Send to Jay for approval” to send it with your profile.');
+  } catch (err) { show($('#pferr'), err.message); }
+  bar.hidden = true;
+});
+$('#profForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#pferr'), ''); show($('#pfok'), '');
+  const profile = { photo: prof.photo };
+  for (const [k, sel] of Object.entries(PF)) profile[k] = $(sel).value;
+  try {
+    const r = await api('/api/profile?action=save', { coach: pfWho(), profile });
+    await loadProfile();
+    show($('#pfok'), r.status === 'live' ? 'Saved. It’s live on the website.' : 'Sent to Jay. You’ll get an email when he approves it.');
+  } catch (err) { show($('#pferr'), err.message); }
+});
+$('#pfDiscard').addEventListener('click', async () => { try { await api('/api/profile?action=discard', { coach: pfWho() }); loadProfile(); } catch (err) { show($('#pferr'), err.message); } });
+
+/* ---------- approvals (Jay) ---------- */
+const PFL = { photo: 'Photo', role: 'Role', intro: 'Intro', background: 'Background', chips: 'Specialities', ask: 'Ask me about', instagram: 'Instagram' };
+async function loadApprovals() {
+  if (!me.admin) return;
+  const box = $('#approvals');
+  try {
+    const { pending } = await api('/api/profile?action=mine');
+    box.hidden = !pending.length;
+    if (!pending.length) return;
+    box.innerHTML = `<h2>Waiting for your approval</h2><p class="muted">These profile changes won’t show on the website until you approve them.</p>` + pending.map(p => {
+      const rows = Object.entries(PFL).filter(([k]) => (p.live[k] || '') !== (p.draft[k] || '')).map(([k, l]) => k === 'photo'
+        ? `<div class="k">${l}</div><div class="old"><img src="${esc(p.live.photoUrl || SITE_PHOTO[p.coach])}" alt="Old photo"></div><div class="new"><img src="${esc(p.draft.photoUrl)}" alt="New photo"></div>`
+        : `<div class="k">${l}</div><div class="old">${esc(p.live[k] || '—')}</div><div class="new">${esc(p.draft[k] || '—')}</div>`).join('');
+      return `<div class="apv"><b class="t" style="font:900 24px/1 var(--display);text-transform:uppercase">${esc(p.name)}’s profile</b>
+        <div class="diff"><div class="k"></div><div class="k">Now</div><div class="k">New</div>${rows || '<div class="muted" style="grid-column:1/-1">No changes to the text.</div>'}</div>
+        <div class="row"><button class="btn small" data-review="${p.coach}" data-dec="approve">Approve &amp; publish</button>
+        <input data-note="${p.coach}" placeholder="Note if sending back (optional)" style="flex:1 1 220px"><button class="btn small ghost" data-review="${p.coach}" data-dec="reject">Send back</button></div></div>`;
+    }).join('');
+  } catch {}
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-review]'); if (!b) return;
+  b.disabled = true;
+  try { await api('/api/profile?action=review', { coach: b.dataset.review, decision: b.dataset.dec, note: document.querySelector(`[data-note="${b.dataset.review}"]`)?.value || '' }); loadApprovals(); }
+  catch (err) { alertBox(err.message); b.disabled = false; }
+});
 
 /* ---------- bookings ---------- */
 $('#whoB').addEventListener('change', loadBookings);
