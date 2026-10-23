@@ -8,6 +8,36 @@
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+
+/* PT sessions */
+.meter{display:inline-flex;gap:3px;align-items:center}
+.meter i{width:14px;height:8px;background:var(--line);transform:skewX(-18deg)}
+.meter i.on{background:var(--red)}
+.legend2{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px}
+.ptcards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.ptcard{background:var(--ink-2);display:grid;grid-template-rows:auto 1fr;border-bottom:4px solid var(--red);min-width:0}
+.ptcard .photo{aspect-ratio:4/3}
+.pttag{position:absolute;left:12px;top:12px;background:var(--ink);padding:5px 10px;font:700 12px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--tbc)}
+.ptc{padding:18px 18px 20px;display:grid;gap:12px;align-content:start;grid-template-rows:auto auto 1fr auto}
+.pthead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pthead h3{font-size:28px}
+.best{color:var(--soft);font-size:15px}.best b{display:block;font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.ptc .ticks{font-size:15px}
+.ptfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:12px;border-top:1px solid var(--line)}
+.ptprice{font:700 15px var(--cond);letter-spacing:.06em;text-transform:uppercase}
+.ptfoot .btn{padding:11px 16px;font-size:14px}
+@media (max-width:1100px){.ptcards{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.ptcards{grid-template-columns:1fr}}
+.friend{display:grid;grid-template-columns:1fr 1.2fr;margin-top:18px;background:linear-gradient(135deg,rgba(227,20,30,.22),var(--ink-2) 55%);border:2px solid var(--red)}
+.friend .photo{min-height:320px}
+.fr{padding:clamp(22px,4vw,40px);display:grid;gap:14px;align-content:center}
+.fr h3{font-size:clamp(34px,4.5vw,52px)}
+.frsteps{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line)}
+.frsteps div{background:var(--ink);padding:12px 14px;display:grid;gap:2px}
+.frsteps b{font:900 24px/1 var(--display);text-transform:uppercase;color:var(--red)}
+.frsteps span{font-size:14px;color:var(--soft)}
+.fr .btn{justify-self:start}
+@media (max-width:860px){.friend{grid-template-columns:1fr}.friend .photo{min-height:0;aspect-ratio:16/9}}
 </style>
 <title>Warrior Spirit Muay Thai</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -741,7 +771,7 @@ a.tagc{text-decoration:none}
       <div class="prices">
         <article class="price top"><span class="tagc">Adults</span><span class="amt">£75<small>/ month</small></span><p>All inclusive.</p><ul><li>Every class on the timetable</li><li>Open gym 9am–9pm weekdays</li><li>Fight team pathway</li></ul><a class="btn" href="#contact" data-enq="First class">Book a class</a></article>
         <article class="price"><span class="tagc">Kids 7–13</span><span class="amt">£65<small>/ month</small></span><p>Kids Muay Thai.</p><ul><li>Monday to Thursday, 5:30pm</li><li>Confidence and discipline</li><li>Interclubs when they're ready</li></ul><a class="btn ghost" href="#contact" data-enq="Kids class">Ask about kids</a></article>
-        <article class="price"><span class="tagc">1-to-1</span><span class="amt"><small style="margin:0 6px 0 0">from</small>£35<small>/ hour</small></span><p>Personal training with a coach.</p><ul><li>Fast-track your technique</li><li>Fight prep or fitness goals</li><li>Saturday mornings and weekday slots</li></ul><a class="btn ghost" href="#contact" data-enq="Personal training">Book PT</a></article>
+        <article class="price"><span class="tagc">1-to-1</span><span class="amt"><small style="margin:0 6px 0 0">from</small>£35<small>/ hour</small></span><p>Personal training with a coach.</p><ul><li>Fast-track your technique</li><li>Five session types, beginner to fight camp</li><li>Train with a friend: £50 for two, 75 min</li></ul><a class="btn ghost" href="#pt-sessions">See PT sessions</a></article>
       </div>
     </div>
   </section>
@@ -755,7 +785,7 @@ a.tagc{text-decoration:none}
         <details><summary>What do I bring?</summary><p>Shorts, a T-shirt, water and a towel. We train barefoot. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details>
         <details><summary>Is it OK for women?</summary><p>Yes. Classes are mixed, friendly and closely coached, and Muay Thai is one of the most popular martial arts for women.</p></details>
         <details><summary>What age can kids start?</summary><p>Kids Muay Thai is for ages 7 to 13, Monday to Thursday at 5:30pm, £65 a month.</p></details>
-        <details><summary>Is personal training worth it?</summary><p>If you want to progress faster, build confidence before joining a class, or prepare for a fight, yes. Sessions start from £35 an hour.</p></details>
+        <details><summary>Is personal training worth it?</summary><p>If you want to progress faster, build confidence before joining a class, or prepare for a fight, yes. 1-to-1 sessions start from £35 an hour, or train with a friend for £50 (two people, 75 minutes).</p></details>
       </div>
     </div>
   </section>
@@ -768,8 +798,68 @@ a.tagc{text-decoration:none}
     <div class="photo"><img src="photos/pads-kick.webp" alt="Coach holding pads for a one-to-one session" loading="lazy"></div>
     <div class="txt">
       <span class="kick">Personal training</span>
-      <h2 id="pt-h">One coach. One hour. All about you.</h2>
-      <p class="lede">A 1-to-1 session gets you further in an hour than weeks of working it out on your own. It suits nervous beginners, busy people and fighters alike.</p>
+      <h2 id="pt-h">One coach. All about you.</h2>
+      <p class="lede">A 1-to-1 session gets you further in an hour than weeks of working it out on your own. Choose from five session types, from beginner fundamentals to full fight camp, or bring a friend.</p>
+    </div>
+  </section>
+  <section class="band" id="pt-sessions" aria-labelledby="pts-h">
+    <div class="wrap">
+      <div class="stack head"><span class="kick">Choose your session</span><h2 id="pts-h">Five ways to train 1-to-1</h2><p class="lede">From your very first pad session to the last hard round before a fight. Every session is booked outside class times, around you.</p>
+        <p class="legend2"><span class="meter" aria-label="Intensity 1 out of 5"><i class="on"></i><i></i><i></i><i></i><i></i></span> <span>Intensity, from gentle to fight pace</span></p></div>
+      <div class="ptcards">
+        <article class="ptcard" id="pt-fund">
+          <div class="photo"><img src="photos/pads-2.webp" alt="" loading="lazy"><span class="pttag">Start here</span></div>
+          <div class="ptc">
+            <div class="pthead"><h3>Fundamentals</h3><span class="meter" aria-label="Intensity 2 out of 5"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div>
+            <p class="best"><b>Best for</b> Complete beginners, nervous starters and anyone coming back after time off.</p>
+            <ul class="ticks"><li>Stance, guard and footwork</li><li>Punches, kicks, knees and elbows, one at a time</li><li>Basic defence and blocking</li><li>Ready to join group classes with confidence</li></ul>
+            <div class="ptfoot"><span class="ptprice">60 min · from £35</span><a class="btn" href="#contact" data-enq="PT: Fundamentals">Book</a></div>
+          </div>
+        </article>
+        <article class="ptcard" id="pt-fit">
+          <div class="photo"><img src="photos/pads-1.webp" alt="" loading="lazy"><span class="pttag">Sweat, not sparring</span></div>
+          <div class="ptc">
+            <div class="pthead"><h3>Fitness Pads</h3><span class="meter" aria-label="Intensity 3 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+            <p class="best"><b>Best for</b> Getting fit, losing weight, burning off stress. No contact, ever.</p>
+            <ul class="ticks"><li>Warm-up and mobility</li><li>Round after round on the pads and bag</li><li>Combinations at your pace</li><li>Core and conditioning finisher</li></ul>
+            <div class="ptfoot"><span class="ptprice">60 min · from £35</span><a class="btn" href="#contact" data-enq="PT: Fitness Pads">Book</a></div>
+          </div>
+        </article>
+        <article class="ptcard" id="pt-skill">
+          <div class="photo"><img src="photos/sparring.webp" alt="" loading="lazy"><span class="pttag">Level up</span></div>
+          <div class="ptc">
+            <div class="pthead"><h3>Technique & Skills</h3><span class="meter" aria-label="Intensity 4 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+            <p class="best"><b>Best for</b> Members who want to sharpen up, and anyone thinking about an interclub.</p>
+            <ul class="ticks"><li>Combinations, timing and counters</li><li>Clinch work and knees</li><li>Fixing the habits holding you back</li><li>Light technical sparring if you want it</li></ul>
+            <div class="ptfoot"><span class="ptprice">60 min · from £35</span><a class="btn" href="#contact" data-enq="PT: Technique & Skills">Book</a></div>
+          </div>
+        </article>
+        <article class="ptcard" id="pt-camp">
+          <div class="photo"><img src="photos/wraps.webp" alt="" loading="lazy"><span class="pttag">Hardcore</span></div>
+          <div class="ptc">
+            <div class="pthead"><h3>Fight Camp</h3><span class="meter" aria-label="Intensity 5 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+            <p class="best"><b>Best for</b> Fighters with a date booked, from interclubs to semi-pro.</p>
+            <ul class="ticks"><li>Hard pad rounds at fight pace</li><li>Conditioning built for the rounds you’ll fight</li><li>Game plan for your opponent</li><li>Sparring, corner work and fight-week prep</li></ul>
+            <div class="ptfoot"><span class="ptprice">60 min · from £35</span><a class="btn" href="#contact" data-enq="PT: Fight Camp">Book</a></div>
+          </div>
+        </article>
+        </div>
+      <article class="friend" id="pt-friend">
+        <div class="photo"><img src="photos/sparring.webp" alt="Two members training together" loading="lazy"></div>
+        <div class="fr">
+          <span class="kick">Train with a friend</span>
+          <h3>Two people. One coach. £50.</h3>
+          <p class="lede">Bring a mate, your partner or your teenager, split the cost and push each other.</p>
+          <div class="frsteps">
+            <div><b>30 min</b><span>Workout</span></div>
+            <div><b>Drills</b><span>Technical work in pairs</span></div>
+            <div><b>Sparring</b><span>A coached sparring lesson</span></div>
+          </div>
+          <p class="best"><b>Session</b> 1 hour 15 minutes for two people, £50 in total.</p>
+          <div class="pchips"><span>Mates</span><span>Couples</span><span>Parent &amp; teen</span><span>Fight partners</span></div>
+          <a class="btn" href="#contact" data-enq="PT: Train with a friend">Book a friend session</a>
+        </div>
+      </article>
     </div>
   </section>
   <section class="band flush" aria-label="Benefits of personal training">
@@ -783,14 +873,14 @@ a.tagc{text-decoration:none}
         <div class="ptb"><b>Support beyond the gym</b><p>Motivation, check-ins and practical nutrition tips to keep you on track between sessions.</p></div>
       </div>
       <div class="ptbar">
-        <div><span class="tagc">1-to-1 personal training</span><div class="amt"><small style="margin:0 6px 0 0">from</small>£35<small>/ hour</small></div></div>
-        <p style="color:var(--soft)">Saturdays 8am–12pm, plus weekday afternoon and evening slots.</p>
+        <div><span class="tagc">1-to-1 from £35 an hour</span><div class="amt">£50<small>/ two people, 75 min</small></div></div>
+        <p style="color:var(--soft)">All sessions outside class times: Saturdays 8am–12pm, plus weekday afternoon and evening slots.</p>
         <a class="btn" href="#contact" data-enq="Personal training">Enquire about PT</a>
       </div>
     </div>
   </section>
 
-  <section class="nextband"><div class="wrap"><div><span class="kick">1-to-1 · from £35 an hour</span><h2>Book your first session</h2></div><a class="btn" href="#contact" data-enq="Personal training">Enquire about PT →</a></div></section>
+  <section class="nextband"><div class="wrap"><div><span class="kick">1-to-1 from £35 · friend sessions £50</span><h2>Book your first session</h2></div><a class="btn" href="#contact" data-enq="Personal training">Enquire about PT →</a></div></section>
 </div>
 
 <div class="view" data-view="fight" hidden>
@@ -1747,7 +1837,7 @@ a.tagc{text-decoration:none}
   <section class="band">
     <div class="wrap">
       <div class="stack head"><span class="kick">FAQ</span><h2>Your questions, answered</h2><p class="lede">Everything people usually ask before their first class. Can’t see yours? <a href="#contact">Ask us</a>.</p></div>
-      <div class="faqall"><div class="faqg"><h3>Getting started</h3><details><summary>Do I need any experience?</summary><p>No. Thursday’s 7pm beginners class starts from zero.</p></details><details><summary>Do I need to be fit?</summary><p>No. Fitness comes from training. Everyone works at their own pace.</p></details><details><summary>What should I wear?</summary><p>Shorts and a T-shirt. We train barefoot.</p></details><details><summary>What should I bring?</summary><p>Water and a towel. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details><details><summary>Can I borrow kit?</summary><p><span class="tbc">Confirm whether gloves can be borrowed</span></p></details><details><summary>How do I book my first class?</summary><p>Send us a message through the contact form and we’ll point you to the best class.</p></details></div><div class="faqg"><h3>Classes and membership</h3><details><summary>How much is membership?</summary><p>Adults £75 a month, all inclusive. Kids £65 a month.</p></details><details><summary>How much is personal training?</summary><p>1-to-1 sessions start from £35 an hour.</p></details><details><summary>When are classes?</summary><p>Monday to Friday evenings, with kids classes Monday to Thursday at 5:30pm. See the timetable.</p></details><details><summary>Is there open gym?</summary><p>Yes, members can use the gym from 9am to 9pm on weekdays outside class times.</p></details><details><summary>Are you open at weekends?</summary><p>Saturday mornings are for personal training, 8am to 12pm. Sunday is closed.</p></details><details><summary>Do you have a contract?</summary><p><span class="tbc">Confirm contract and notice terms</span></p></details></div><div class="faqg"><h3>Muay Thai and kickboxing</h3><details><summary>What is Muay Thai?</summary><p>The national sport of Thailand, known as the art of eight limbs because it uses fists, elbows, knees and shins.</p></details><details><summary>Is Muay Thai the same as kickboxing?</summary><p>It is a form of kickboxing that adds knees, elbows and the clinch.</p></details><details><summary>Do you do boxing?</summary><p>We don’t run separate boxing classes, but Muay Thai includes plenty of boxing technique.</p></details><details><summary>Is Muay Thai good for fitness?</summary><p>Yes. It’s a demanding full-body workout that builds strength, stamina and coordination.</p></details><details><summary>Do I have to spar?</summary><p>No. Sparring is optional and only once a coach says you’re ready.</p></details></div><div class="faqg"><h3>Kids</h3><details><summary>What age can kids start?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Is it safe for children?</summary><p>Yes. Kids train on pads and drills with no hard sparring, supervised by experienced coaches.</p></details><details><summary>Can kids compete?</summary><p>When they and their parents are ready, we take kids to interclubs.</p></details></div><div class="faqg"><h3>Fighting</h3><details><summary>How do I join the fight team?</summary><p>Train regularly, then talk to the coaches. They’ll tell you when you’re ready for an interclub.</p></details><details><summary>What is an interclub?</summary><p>A friendly, controlled bout between gyms, usually with protective kit.</p></details><details><summary>What do N-Class and C-Class mean?</summary><p>They’re levels for amateur fighters. See our guide to fight levels.</p></details></div><div class="faqg"><h3>Getting here</h3><details><summary>Where are you?</summary><p>Potters Bar, Hertfordshire. <span class="tbc">Full address</span></p></details><details><summary>Is there parking?</summary><p><span class="tbc">Parking details</span></p></details><details><summary>Which areas do members come from?</summary><p>Potters Bar, Barnet, Cuffley, Cheshunt, Hatfield, Enfield, Hoddesdon and more. See areas we cover.</p></details></div></div>
+      <div class="faqall"><div class="faqg"><h3>Getting started</h3><details><summary>Do I need any experience?</summary><p>No. Thursday’s 7pm beginners class starts from zero.</p></details><details><summary>Do I need to be fit?</summary><p>No. Fitness comes from training. Everyone works at their own pace.</p></details><details><summary>What should I wear?</summary><p>Shorts and a T-shirt. We train barefoot.</p></details><details><summary>What should I bring?</summary><p>Water and a towel. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details><details><summary>Can I borrow kit?</summary><p><span class="tbc">Confirm whether gloves can be borrowed</span></p></details><details><summary>How do I book my first class?</summary><p>Send us a message through the contact form and we’ll point you to the best class.</p></details></div><div class="faqg"><h3>Classes and membership</h3><details><summary>How much is membership?</summary><p>Adults £75 a month, all inclusive. Kids £65 a month.</p></details><details><summary>How much is personal training?</summary><p>1-to-1 sessions start from £35 an hour. Train with a friend costs £50 for two people for 75 minutes.</p></details><details><summary>When are classes?</summary><p>Monday to Friday evenings, with kids classes Monday to Thursday at 5:30pm. See the timetable.</p></details><details><summary>Is there open gym?</summary><p>Yes, members can use the gym from 9am to 9pm on weekdays outside class times.</p></details><details><summary>Are you open at weekends?</summary><p>Saturday mornings are for personal training, 8am to 12pm. Sunday is closed.</p></details><details><summary>Do you have a contract?</summary><p><span class="tbc">Confirm contract and notice terms</span></p></details></div><div class="faqg"><h3>Muay Thai and kickboxing</h3><details><summary>What is Muay Thai?</summary><p>The national sport of Thailand, known as the art of eight limbs because it uses fists, elbows, knees and shins.</p></details><details><summary>Is Muay Thai the same as kickboxing?</summary><p>It is a form of kickboxing that adds knees, elbows and the clinch.</p></details><details><summary>Do you do boxing?</summary><p>We don’t run separate boxing classes, but Muay Thai includes plenty of boxing technique.</p></details><details><summary>Is Muay Thai good for fitness?</summary><p>Yes. It’s a demanding full-body workout that builds strength, stamina and coordination.</p></details><details><summary>Do I have to spar?</summary><p>No. Sparring is optional and only once a coach says you’re ready.</p></details></div><div class="faqg"><h3>Kids</h3><details><summary>What age can kids start?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Is it safe for children?</summary><p>Yes. Kids train on pads and drills with no hard sparring, supervised by experienced coaches.</p></details><details><summary>Can kids compete?</summary><p>When they and their parents are ready, we take kids to interclubs.</p></details></div><div class="faqg"><h3>Fighting</h3><details><summary>How do I join the fight team?</summary><p>Train regularly, then talk to the coaches. They’ll tell you when you’re ready for an interclub.</p></details><details><summary>What is an interclub?</summary><p>A friendly, controlled bout between gyms, usually with protective kit.</p></details><details><summary>What do N-Class and C-Class mean?</summary><p>They’re levels for amateur fighters. See our guide to fight levels.</p></details></div><div class="faqg"><h3>Getting here</h3><details><summary>Where are you?</summary><p>Potters Bar, Hertfordshire. <span class="tbc">Full address</span></p></details><details><summary>Is there parking?</summary><p><span class="tbc">Parking details</span></p></details><details><summary>Which areas do members come from?</summary><p>Potters Bar, Barnet, Cuffley, Cheshunt, Hatfield, Enfield, Hoddesdon and more. See areas we cover.</p></details></div></div>
     </div>
   </section>
   <section class="nextband"><div class="wrap"><div><span class="kick">Still unsure?</span><h2>Just come and try it</h2></div><a class="btn" href="#contact" data-enq="First class">Book a class →</a></div></section>
@@ -1772,7 +1862,7 @@ a.tagc{text-decoration:none}
       </div>
       <form id="enquiry" novalidate>
         <h3>Send us a message</h3>
-        <label class="full" for="enq">What's it about?<select id="enq"><option>First class</option><option>Kids class</option><option>Personal training</option><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
+        <label class="full" for="enq">What's it about?<select id="enq"><option>First class</option><option>Kids class</option><option>Personal training</option><optgroup label="Personal training sessions"><option>PT: Fundamentals</option><option>PT: Fitness Pads</option><option>PT: Technique &amp; Skills</option><option>PT: Fight Camp</option><option>PT: Train with a friend</option></optgroup><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
         <label for="name">Name<input id="name" autocomplete="name" required></label>
         <label for="phone">Mobile<input id="phone" type="tel" autocomplete="tel"></label>
         <label for="email">Email<input id="email" type="email" autocomplete="email"></label>
@@ -1878,7 +1968,7 @@ a.tagc{text-decoration:none}
   items.push({label:'New here?',html:'<strong>Beginners class</strong> every Thursday at 7pm. No experience needed.',href:'#contact'});
   items.push({label:'Kids',html:'<strong>Kids Muay Thai</strong> Monday to Thursday, 5:30pm, ages 7 to 13.',href:'#classes'});
   items.push({label:'Gym',html:dow===0?'Gym closed today. Back Monday at 9am.':dow===6?'Saturday is personal training only, 8am–12pm.':'Open gym for members until <strong>9pm</strong> today.'});
-  items.push({label:'PT',html:'<strong>1-to-1 personal training</strong> from £35 an hour. Saturday mornings and weekday slots.',href:'#pt'});
+  items.push({label:'PT',html:'<strong>Personal training</strong> from £35 an hour, or <strong>train with a friend</strong>: two people, 75 minutes, £50.',href:'#pt'});
   items.push({label:'Membership',html:'Adults <strong>£75 a month</strong>, all inclusive. Kids £65.',href:'#classes'});
   items.push({label:'Watch',html:'<strong>Fight night highlights</strong> are up on the Videos page. Sound on.',href:'#videos'});
   items.push({label:'Blog',html:'<strong>Medals and big smiles on show day</strong>. Read the latest from the gym.',href:'#blog'});
@@ -1918,7 +2008,7 @@ a.tagc{text-decoration:none}
   restart();
   window.__hero={stop:function(){clearInterval(t)},go:restart};
   var sel=document.getElementById('enq');
-  document.querySelectorAll('[data-enq]').forEach(function(a){a.addEventListener('click',function(){sel.value=a.getAttribute('data-enq')})});
+  document.querySelectorAll('[data-enq]').forEach(function(a){a.addEventListener('click',function(){var v=a.getAttribute('data-enq').replace('&amp;','&');[].some.call(sel.options,function(o){if(o.text===v){sel.value=o.value;return true}})})});
   document.querySelectorAll('.chip').forEach(function(c){c.addEventListener('click',function(){
     var f=c.getAttribute('data-f');
     document.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',x===c?'true':'false')});
