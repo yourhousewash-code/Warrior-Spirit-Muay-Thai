@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Book PT | Warrior Spirit Muay Thai Potters Bar</title>
+<meta name="description" content="Book a 1-to-1 Muay Thai personal training session with Jay, Aaron or Kian at Warrior Spirit, Potters Bar. Choose your coach and a time that suits you.">
+<link rel="icon" href="img/logo.webp" type="image/webp">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap">
+<link rel="stylesheet" href="/assets/app.css">
+<style>
+.steps{display:grid;gap:18px;margin-top:24px}
+.step h2{font-size:clamp(26px,3.4vw,36px)}
+.step h2 i{font-style:normal;color:var(--red);margin-right:10px}
+.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.types button{border:2px solid var(--line);background:var(--ink-2);color:var(--bone);padding:14px;text-align:left;cursor:pointer;display:grid;gap:4px}
+.types button b{font:900 22px/1 var(--display);text-transform:uppercase}
+.types button small{color:var(--muted);font-size:14px}
+.types button[aria-pressed="true"]{border-color:var(--red);box-shadow:0 0 0 2px var(--red)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/"><img src="img/logo.webp" alt=""><b>Warrior Spirit</b></a>
+  <nav class="toplinks"><a href="/#pt">PT sessions</a><a href="/account" id="acctLink">My account</a></nav>
+</div></header>
+
+<main class="wrap">
+  <span class="kick">1-to-1 personal training · Potters Bar</span>
+  <h1>Book a PT session</h1>
+  <p class="lede" style="margin-top:12px">Pick your coach, the kind of session you want and a time. You pay at the gym on the day.</p>
+
+  <div class="steps">
+    <section class="panel step">
+      <h2><i>1</i>Choose your coach</h2>
+      <div class="coachpick" id="coaches">
+        <button type="button" data-coach="" aria-pressed="true"><div class="any">Any</div><span>Any coach</span></button>
+        <button type="button" data-coach="jay" aria-pressed="false"><img src="photos/jay-portrait.webp" alt=""><span>Jay</span></button>
+        <button type="button" data-coach="aaron" aria-pressed="false"><img src="photos/aaron.webp" alt=""><span>Aaron</span></button>
+        <button type="button" data-coach="kian" aria-pressed="false"><img src="photos/kian.webp" alt=""><span>Kian</span></button>
+      </div>
+    </section>
+
+    <section class="panel step">
+      <h2><i>2</i>Choose your session</h2>
+      <div class="types" id="types"></div>
+    </section>
+
+    <section class="panel step">
+      <h2><i>3</i>Choose a time</h2>
+      <div id="slots"><p class="empty">Loading times…</p></div>
+    </section>
+
+    <section class="panel step" id="confirmStep" hidden>
+      <h2><i>4</i>Confirm</h2>
+      <div class="summary" id="summary"></div>
+
+      <div id="authBox" hidden class="stack">
+        <p class="muted">Create a free account so you can see and cancel your bookings. Already have one? <button type="button" class="linkbtn" id="toLogin" style="background:none;border:0;color:var(--bone);text-decoration:underline;cursor:pointer;font:inherit;padding:0">Log in</button></p>
+        <form id="regForm" class="stack">
+          <div class="row">
+            <label for="rn">Your name<input id="rn" autocomplete="name" required></label>
+            <label for="rm">Mobile<input id="rm" type="tel" autocomplete="tel" required></label>
+          </div>
+          <div class="row">
+            <label for="re">Email<input id="re" type="email" autocomplete="email" required></label>
+            <label for="rp">Choose a password<input id="rp" type="password" autocomplete="new-password" minlength="8" required></label>
+          </div>
+          <p class="err" id="rerr" hidden></p>
+          <button class="btn" type="submit">Create account &amp; continue</button>
+        </form>
+        <form id="logForm" class="stack" hidden>
+          <div class="row">
+            <label for="le">Email<input id="le" type="email" autocomplete="email" required></label>
+            <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
+          </div>
+          <p class="err" id="lerr" hidden></p>
+          <div class="row"><button class="btn" type="submit">Log in &amp; continue</button><a class="muted" href="/account?forgot=1">Forgotten password?</a></div>
+        </form>
+      </div>
+
+      <form id="bookForm" class="stack" hidden>
+        <p class="muted" id="who"></p>
+        <label for="bn">Anything your coach should know? (optional)<textarea id="bn" maxlength="400" placeholder="Experience, injuries, goals, your friend's name for a friend session…"></textarea></label>
+        <p class="muted" style="font-size:15px">Payment is taken at the gym. You can cancel from your account up to 24 hours before.</p>
+        <p class="err" id="berr" hidden></p>
+        <button class="btn" type="submit" id="bookBtn">Confirm booking</button>
+      </form>
+    </section>
+
+    <section class="panel" id="done" hidden>
+      <span class="kick">You’re booked</span>
+      <h2>See you at the gym</h2>
+      <div class="summary" id="doneSummary"></div>
+      <p class="muted">We’ve emailed you the details. Bring water, a towel, and your wraps and gloves if you have them.</p>
+      <p class="muted">Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</p>
+      <div class="row"><a class="btn" href="/account">My bookings</a><a class="btn ghost" href="/book">Book another</a></div>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const api = async (url, data) => {
+  const r = await fetch(url, data === undefined ? { credentials: 'same-origin' } : { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  let j = {}; try { j = await r.json(); } catch {}
+  if (!r.ok) throw new Error(j.error || 'Something went wrong. Please try again.');
+  return j;
+};
+const show = (el, msg) => { el.textContent = msg; el.hidden = !msg; };
+const dayKey = ms => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms));
+const time = ms => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
+
+const q = new URLSearchParams(location.search);
+const state = { coach: ['jay', 'aaron', 'kian'].includes(q.get('coach')) ? q.get('coach') : '', type: q.get('type') || 'fundamentals', slot: null, user: null, data: null };
+
+async function load() {
+  try {
+    state.data = await api('/api/pt?action=open');
+  } catch (err) { $('#slots').innerHTML = `<p class="err">${esc(err.message)}</p>`; return; }
+  if (!state.data.types[state.type]) state.type = 'fundamentals';
+  renderCoaches(); renderTypes(); renderSlots();
+  try { state.user = (await api('/api/auth?action=me')).user; } catch {}
+}
+
+function renderCoaches() {
+  document.querySelectorAll('[data-coach]').forEach(b => b.setAttribute('aria-pressed', b.dataset.coach === state.coach ? 'true' : 'false'));
+}
+$('#coaches').addEventListener('click', e => {
+  const b = e.target.closest('[data-coach]'); if (!b) return;
+  state.coach = b.dataset.coach; state.slot = null; renderCoaches(); renderSlots(); renderConfirm();
+});
+
+function renderTypes() {
+  const t = state.data.types;
+  $('#types').innerHTML = Object.entries(t).map(([k, v]) => `<button type="button" data-type="${k}" aria-pressed="${k === state.type}"><b>${esc(v.name)}</b><small>${v.mins} min · ${esc(v.price)}</small></button>`).join('');
+}
+$('#types').addEventListener('click', e => {
+  const b = e.target.closest('[data-type]'); if (!b) return;
+  state.type = b.dataset.type; state.slot = null; renderTypes(); renderSlots(); renderConfirm();
+});
+
+function renderSlots() {
+  const need = state.data.types[state.type].mins;
+  const list = state.data.slots.filter(s => (!state.coach || s.coach === state.coach) && s.mins >= need);
+  const box = $('#slots');
+  if (!list.length) {
+    const who = state.coach ? state.data.coaches.find(c => c.id === state.coach).first : 'our coaches';
+    box.innerHTML = `<p class="empty">No ${need > 60 ? need + '-minute ' : ''}times free with ${esc(who)} right now. Try another coach, or <a href="/#contact">send us a message</a> and we’ll find you a time.</p>`;
+    return;
+  }
+  let html = '', last = '';
+  for (const s of list) {
+    const dk = dayKey(s.start);
+    if (dk !== last) { html += (last ? '</div></div>' : '') + `<div class="day"><h3>${esc(dk)}</h3><div class="slots">`; last = dk; }
+    html += `<button type="button" class="slot" data-slot="${s.id}" aria-pressed="${state.slot === s.id}">${time(s.start)}<small>${esc(s.coachName.split(' ')[0])}</small></button>`;
+  }
+  box.innerHTML = html + '</div></div>';
+}
+$('#slots').addEventListener('click', e => {
+  const b = e.target.closest('[data-slot]'); if (!b) return;
+  state.slot = b.dataset.slot; renderSlots(); renderConfirm();
+  $('#confirmStep').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+function summaryHtml(s, typeName, mins) {
+  return `<b>${esc(typeName)}</b><span>with ${esc(s.coachName)}</span><span>${esc(s.when)} · ${mins} minutes</span><span class="muted">${esc(state.data.types[state.type]?.price || '')} · pay at the gym</span>`;
+}
+function renderConfirm() {
+  const s = state.data.slots.find(x => x.id === state.slot);
+  $('#confirmStep').hidden = !s;
+  if (!s) return;
+  const t = state.data.types[state.type];
+  $('#summary').innerHTML = summaryHtml(s, t.name, t.mins);
+  $('#authBox').hidden = !!state.user;
+  $('#bookForm').hidden = !state.user;
+  if (state.user) $('#who').textContent = `Booking as ${state.user.name} (${state.user.email}).`;
+}
+
+$('#toLogin').addEventListener('click', () => { $('#regForm').hidden = !$('#regForm').hidden; $('#logForm').hidden = !$('#logForm').hidden; $('#toLogin').textContent = $('#logForm').hidden ? 'Log in' : 'Create an account'; });
+$('#regForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#rerr'), '');
+  try { state.user = (await api('/api/auth?action=register', { name: $('#rn').value, mobile: $('#rm').value, email: $('#re').value, password: $('#rp').value })).user; renderConfirm(); }
+  catch (err) { show($('#rerr'), err.message); }
+});
+$('#logForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#lerr'), '');
+  try { state.user = (await api('/api/auth?action=login', { email: $('#le').value, password: $('#lp').value })).user; renderConfirm(); }
+  catch (err) { show($('#lerr'), err.message); }
+});
+$('#bookForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#berr'), ''); $('#bookBtn').disabled = true;
+  try {
+    const { booking } = await api('/api/pt?action=book', { slotId: state.slot, type: state.type, notes: $('#bn').value });
+    document.querySelectorAll('.step').forEach(x => x.hidden = true);
+    $('#doneSummary').innerHTML = `<b>${esc(booking.type)}</b><span>with ${esc(booking.coachName)}</span><span>${esc(booking.when)} · ${booking.mins} minutes</span>`;
+    $('#done').hidden = false; scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    show($('#berr'), err.message); $('#bookBtn').disabled = false;
+    if (/gone|booked that slot/.test(err.message)) { state.slot = null; await load(); renderConfirm(); }
+  }
+});
+
+load();
+</script>
+</body>
+</html>

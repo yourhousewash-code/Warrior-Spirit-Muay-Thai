@@ -1,0 +1,11 @@
+{
+  "name": "warrior-spirit-website",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@upstash/redis": "1.39.0",
+    "@vercel/blob": "2.8.0",
+    "nodemailer": "10.0.16"
+  }
+}

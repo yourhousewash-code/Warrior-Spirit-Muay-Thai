@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>My Account | Warrior Spirit</title>
+<link rel="icon" href="img/logo.webp" type="image/webp">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/"><img src="img/logo.webp" alt=""><b>Warrior Spirit</b></a>
+  <nav class="toplinks"><a href="/book">Book PT</a><button type="button" id="logout" hidden>Log out</button></nav>
+</div></header>
+
+<main class="wrap">
+  <!-- signed out -->
+  <section id="out" hidden style="max-width:520px;margin:0 auto" class="stack">
+    <span class="kick">Your account</span>
+    <h1 id="outH">Log in</h1>
+    <form id="logForm" class="panel">
+      <label for="le">Email<input id="le" type="email" autocomplete="email" required></label>
+      <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
+      <p class="err" id="lerr" hidden></p>
+      <button class="btn full" type="submit">Log in</button>
+      <p class="muted" style="font-size:15px"><a href="?forgot=1">Forgotten password?</a> · New here? <a href="?new=1">Create an account</a></p>
+    </form>
+    <form id="regForm" class="panel" hidden>
+      <label for="rn">Your name<input id="rn" autocomplete="name" required></label>
+      <label for="rm">Mobile<input id="rm" type="tel" autocomplete="tel" required></label>
+      <label for="re">Email<input id="re" type="email" autocomplete="email" required></label>
+      <label for="rp">Choose a password<input id="rp" type="password" autocomplete="new-password" minlength="8" required></label>
+      <p class="err" id="rerr" hidden></p>
+      <button class="btn full" type="submit">Create account</button>
+      <p class="muted" style="font-size:15px">Already have an account? <a href="/account">Log in</a></p>
+    </form>
+    <form id="forgotForm" class="panel" hidden>
+      <p class="muted">Enter your email and we’ll send you a link to choose a new password.</p>
+      <label for="fe">Email<input id="fe" type="email" autocomplete="email" required></label>
+      <p class="ok" id="fok" hidden></p>
+      <button class="btn full" type="submit">Send reset link</button>
+      <p class="muted" style="font-size:15px"><a href="/account">Back to log in</a></p>
+    </form>
+    <form id="resetForm" class="panel" hidden>
+      <label for="np">New password<input id="np" type="password" autocomplete="new-password" minlength="8" required></label>
+      <p class="err" id="nerr" hidden></p>
+      <button class="btn full" type="submit">Save new password</button>
+    </form>
+  </section>
+
+  <!-- signed in -->
+  <section id="in" hidden class="stack">
+    <span class="kick">Your account</span>
+    <h1 id="hello">Hi</h1>
+    <div class="row"><a class="btn" href="/book">Book a PT session</a></div>
+    <div class="panel">
+      <h2>Upcoming sessions</h2>
+      <div id="upcoming" class="list"><p class="empty">Loading…</p></div>
+      <p class="muted" style="font-size:15px">You can cancel online up to 24 hours before. Closer to the time, please message the gym.</p>
+    </div>
+    <div class="panel" id="pastPanel" hidden>
+      <h2>Past &amp; cancelled</h2>
+      <div id="past" class="list"></div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const api = async (url, data) => {
+  const r = await fetch(url, data === undefined ? { credentials: 'same-origin' } : { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  let j = {}; try { j = await r.json(); } catch {}
+  if (!r.ok) throw new Error(j.error || 'Something went wrong. Please try again.');
+  return j;
+};
+const show = (el, msg) => { el.textContent = msg; el.hidden = !msg; };
+const q = new URLSearchParams(location.search);
+
+async function init() {
+  let user = null;
+  try { user = (await api('/api/auth?action=me')).user; } catch {}
+  $('#out').hidden = !!user; $('#in').hidden = !user; $('#logout').hidden = !user;
+  if (!user) {
+    const mode = q.get('reset') ? 'reset' : q.get('forgot') ? 'forgot' : q.get('new') ? 'reg' : 'log';
+    $('#logForm').hidden = mode !== 'log'; $('#regForm').hidden = mode !== 'reg';
+    $('#forgotForm').hidden = mode !== 'forgot'; $('#resetForm').hidden = mode !== 'reset';
+    $('#outH').textContent = { log: 'Log in', reg: 'Create an account', forgot: 'Reset password', reset: 'New password' }[mode];
+    return;
+  }
+  $('#hello').textContent = `Hi ${user.name.split(' ')[0]}`;
+  loadBookings();
+}
+
+async function loadBookings() {
+  try {
+    const { bookings } = await api('/api/pt?action=mine');
+    const now = Date.now();
+    const up = bookings.filter(b => b.status === 'booked' && b.start > now);
+    const past = bookings.filter(b => !(b.status === 'booked' && b.start > now)).reverse();
+    $('#upcoming').innerHTML = up.length ? up.map(b => `<div class="item booked"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)} · ${b.mins} min</div></div>
+      <div class="acts">${b.canCancel ? `<button class="btn small ghost" data-cancel="${b.id}">Cancel</button>` : '<span class="muted" style="font-size:14px">Within 24h</span>'}</div></div>`).join('')
+      : '<p class="empty">No sessions booked. <a href="/book">Book one now</a>.</p>';
+    $('#pastPanel').hidden = !past.length;
+    $('#past').innerHTML = past.map(b => `<div class="item ${b.status === 'cancelled' ? 'cancelled' : ''}"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)}${b.status === 'cancelled' ? ' · cancelled' : ''}</div></div></div>`).join('');
+  } catch (err) { $('#upcoming').innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+}
+document.addEventListener('click', async e => {
+  const c = e.target.closest('[data-cancel]'); if (!c) return;
+  if (c.dataset.confirm !== '1') { c.dataset.confirm = '1'; c.textContent = 'Tap again to cancel'; return; }
+  c.disabled = true;
+  try { await api('/api/pt?action=cancel', { bookingId: c.dataset.cancel }); loadBookings(); }
+  catch (err) { c.disabled = false; c.textContent = 'Cancel'; c.dataset.confirm = ''; const p = document.createElement('p'); p.className = 'err'; p.textContent = err.message; $('#upcoming').prepend(p); }
+});
+
+$('#logForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#lerr'), '');
+  try { await api('/api/auth?action=login', { email: $('#le').value, password: $('#lp').value }); init(); } catch (err) { show($('#lerr'), err.message); }
+});
+$('#regForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#rerr'), '');
+  try { await api('/api/auth?action=register', { name: $('#rn').value, mobile: $('#rm').value, email: $('#re').value, password: $('#rp').value }); history.replaceState(null, '', '/account'); init(); }
+  catch (err) { show($('#rerr'), err.message); }
+});
+$('#forgotForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  try { await api('/api/auth?action=forgot', { email: $('#fe').value }); } catch {}
+  show($('#fok'), 'If there’s an account with that email, a reset link is on its way. Check your junk folder too.');
+});
+$('#resetForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#nerr'), '');
+  try { await api('/api/auth?action=reset', { token: q.get('reset'), password: $('#np').value }); history.replaceState(null, '', '/account'); location.reload(); }
+  catch (err) { show($('#nerr'), err.message); }
+});
+$('#logout').addEventListener('click', async () => { await api('/api/auth?action=logout', {}); location.href = '/account'; });
+
+init();
+</script>
+</body>
+</html>

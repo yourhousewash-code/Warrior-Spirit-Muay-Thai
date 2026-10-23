@@ -4,81 +4,272 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Coach Login | Warrior Spirit</title>
+<title>Coach Area | Warrior Spirit</title>
 <link rel="icon" href="img/logo.webp" type="image/webp">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap">
-<style>
-:root{--ink:#0b0c10;--ink-2:#14161d;--red:#e3141e;--bone:#f3f0ea;--muted:#a3a8b6;--line:#262a35;--ok:#7be3a6;
---display:"Big Shoulders Display",Impact,sans-serif;--cond:"Barlow Condensed","Arial Narrow",sans-serif;--body:"Barlow",system-ui,sans-serif;color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(800px 500px at 50% -100px,rgba(227,20,30,.25),transparent 70%),var(--ink);color:var(--bone);font:17px/1.55 var(--body);display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
-.card{width:min(460px,100%);background:var(--ink-2);border-top:4px solid var(--red);padding:28px 24px 30px;display:grid;gap:18px;text-align:center}
-.card img.logo{width:96px;margin:0 auto}
-h1{font:900 40px/.95 var(--display);text-transform:uppercase;margin:0}
-p{margin:0;color:#cfd2da}
-label{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:grid;gap:6px;text-align:left}
-input{font:18px var(--body);padding:14px;background:var(--ink);border:1px solid var(--line);color:var(--bone);width:100%}
-.btn{display:block;width:100%;padding:18px;border:0;background:var(--red);color:#fff;font:700 18px var(--cond);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;cursor:pointer}
-.btn[aria-disabled="true"]{opacity:.45;pointer-events:none}
-.err{color:#ffb3b6;font-size:15px}
-.tips{text-align:left;display:grid;gap:8px;font-size:15px;color:var(--muted);padding:14px;border:1px solid var(--line)}
-.tips b{color:var(--bone)}
-.out{background:none;border:0;color:var(--muted);font:600 14px var(--body);text-decoration:underline;cursor:pointer}
-:focus-visible{outline:3px solid #f5c542;outline-offset:3px}
-[hidden]{display:none!important}
-</style>
+<link rel="stylesheet" href="/assets/app.css">
 </head>
 <body>
-<main class="card">
-  <img class="logo" src="img/logo.webp" alt="Warrior Spirit Muay Thai">
+<header class="top"><div class="wrap">
+  <a class="brand" href="/"><img src="img/logo.webp" alt=""><b>Coach area</b></a>
+  <nav class="toplinks"><a href="/">Website</a><button type="button" id="logout" hidden>Log out</button></nav>
+</div></header>
 
-  <section id="gate">
-    <div style="display:grid;gap:16px">
-      <h1>Coach login</h1>
-      <p>For Warrior Spirit coaches only.</p>
-      <form id="login" style="display:grid;gap:14px">
-        <label for="user">Username<input id="user" autocomplete="username" autocapitalize="none" required></label>
-        <label for="pin">Password<input id="pin" type="password" autocomplete="current-password" required></label>
-        <p class="err" id="err" hidden>That username or password isn’t right. Try again or ask Steve.</p>
-        <button class="btn" type="submit">Log in</button>
+<main class="wrap">
+  <!-- login -->
+  <section id="loginView" class="panel" style="max-width:440px;margin:0 auto" hidden>
+    <span class="kick">Coaches only</span>
+    <h1>Coach login</h1>
+    <form id="loginForm" class="stack">
+      <label for="lu">Username<input id="lu" autocomplete="username" autocapitalize="none" required></label>
+      <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
+      <p class="err" id="lerr" hidden></p>
+      <button class="btn full" type="submit">Log in</button>
+    </form>
+  </section>
+
+  <!-- dashboard -->
+  <section id="dash" hidden>
+    <span class="kick" id="role">Coach</span>
+    <h1 id="hello">Hi</h1>
+    <p class="note" id="pwnote" hidden>You’re still using the starting password. Change it in <b>Settings</b>.</p>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="avail" aria-selected="true">Availability</button>
+      <button type="button" role="tab" data-tab="bookings" aria-selected="false">Bookings</button>
+      <button type="button" role="tab" data-tab="uploads" aria-selected="false">Photos &amp; videos</button>
+      <button type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button>
+    </div>
+
+    <!-- availability -->
+    <div data-pane="avail" class="grid2">
+      <form id="addForm" class="panel">
+        <h2>Add PT slots</h2>
+        <p class="muted">Add times you’re free for 1-to-1 sessions. Customers can book these on the website.</p>
+        <div class="row">
+          <label for="ad">Date<input id="ad" type="date" required></label>
+          <label for="at">Start time<input id="at" type="time" step="900" required></label>
+        </div>
+        <div class="row">
+          <label for="am">Length<select id="am"><option value="60">60 minutes</option><option value="75">75 minutes (friend sessions)</option><option value="45">45 minutes</option><option value="30">30 minutes</option><option value="90">90 minutes</option></select></label>
+          <label for="aw">Repeat<select id="aw"><option value="1">Just this date</option><option value="4">Weekly for 4 weeks</option><option value="8">Weekly for 8 weeks</option><option value="12">Weekly for 12 weeks</option></select></label>
+        </div>
+        <label for="ab">Back-to-back slots<select id="ab"><option value="1">1 slot</option><option value="2">2 slots in a row</option><option value="3">3 slots in a row</option><option value="4">4 slots in a row</option></select></label>
+        <p class="err" id="aerr" hidden></p><p class="ok" id="aok" hidden></p>
+        <button class="btn" type="submit">Add slots</button>
+      </form>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;align-items:center"><h2>Your upcoming slots</h2><select id="whoA" hidden style="width:auto"></select></div>
+        <div id="slotList" class="list"><p class="empty">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- bookings -->
+    <div data-pane="bookings" hidden>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;align-items:center"><h2 id="bkTitle">Booked sessions</h2><select id="whoB" hidden style="width:auto"></select></div>
+        <div id="bookList" class="list"><p class="empty">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- uploads -->
+    <div data-pane="uploads" hidden class="stack">
+      <div class="panel">
+        <h2>Send photos &amp; videos</h2>
+        <div class="drop">
+          <p class="muted">Training, fight nights, the team, the gym. Only upload photos of children if their parents are happy for them to be used.</p>
+          <label class="btn" for="files" style="color:#fff">Choose photos or videos<input id="files" type="file" accept="image/*,video/*" multiple hidden></label>
+        </div>
+        <div id="upProg" class="stack"></div>
+      </div>
+      <div class="panel">
+        <h2 id="galTitle">Your uploads</h2>
+        <div id="gallery" class="files"><p class="empty">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- settings -->
+    <div data-pane="settings" hidden class="grid2">
+      <form id="emailForm" class="panel">
+        <h2>Booking emails</h2>
+        <p class="muted">We email you when someone books or cancels one of your sessions.</p>
+        <label for="se">Your email<input id="se" type="email" autocomplete="email"></label>
+        <p class="ok" id="seok" hidden>Saved.</p><p class="err" id="seerr" hidden></p>
+        <button class="btn" type="submit">Save email</button>
+      </form>
+      <form id="pwForm" class="panel">
+        <h2>Change password</h2>
+        <label for="pc">Current password<input id="pc" type="password" autocomplete="current-password" required></label>
+        <label for="pn">New password<input id="pn" type="password" autocomplete="new-password" minlength="8" required></label>
+        <p class="ok" id="pwok" hidden>Password changed.</p><p class="err" id="pwerr" hidden></p>
+        <button class="btn" type="submit">Change password</button>
       </form>
     </div>
   </section>
-
-  <section id="area" hidden>
-    <div style="display:grid;gap:16px">
-      <h1 id="hi">Send photos &amp; videos</h1>
-      <p>Training, fight nights, the team, the gym. Everything you send goes straight into the Warrior Spirit photo folder for the website and socials.</p>
-      <a class="btn" id="go" href="#" target="_blank" rel="noopener" aria-disabled="true">Upload photos &amp; videos</a>
-      <p class="err" id="notset" hidden>The upload link hasn’t been connected yet.</p>
-      <div class="tips">
-        <div><b>1.</b> Tap the button and enter your name.</div>
-        <div><b>2.</b> Choose photos or videos from your phone. You can pick lots at once.</div>
-        <div><b>3.</b> Wait for the tick before closing the page.</div>
-        <div>Only send photos of children if their parents are happy for them to be used.</div>
-      </div>
-      <button class="out" type="button" id="logout">Log out</button>
-    </div>
-  </section>
 </main>
-<script>
-(function(){
-  /* Set these two values:
-     UPLOAD_URL: the OneDrive "Request files" link
-     PIN_HASH: SHA-256 of "username:password" (username lower case) */
-  var UPLOAD_URL='';
-  var PIN_HASH='afc1efc3493927c2531a18076cb9fad6e36d89893198685a8fd2807fb6e5536d';
-  var KEY='ws-coach-ok';
-  function show(on){document.getElementById('gate').hidden=on;document.getElementById('area').hidden=!on;
-    var go=document.getElementById('go');
-    if(UPLOAD_URL){go.href=UPLOAD_URL;go.removeAttribute('aria-disabled')}else{document.getElementById('notset').hidden=false}}
-  function hash(t){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
-  try{if(sessionStorage.getItem(KEY)===PIN_HASH)show(true)}catch(e){}
-  document.getElementById('login').addEventListener('submit',function(e){e.preventDefault();
-    var v=document.getElementById('user').value.trim().toLowerCase()+':'+document.getElementById('pin').value;
-    hash(v).then(function(h){if(h===PIN_HASH){try{sessionStorage.setItem(KEY,h)}catch(e){}document.getElementById('err').hidden=true;show(true)}else{document.getElementById('err').hidden=false;document.getElementById('pin').select()}})});
-  document.getElementById('logout').addEventListener('click',function(){try{sessionStorage.removeItem(KEY)}catch(e){}location.reload()});
-})();
+
+<script type="module">
+import { upload } from '/assets/blob-client.js';
+const $ = s => document.querySelector(s);
+const api = async (url, data) => {
+  const r = await fetch(url, data === undefined ? { credentials: 'same-origin' } : { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  let j = {}; try { j = await r.json(); } catch {}
+  if (!r.ok) throw new Error(j.error || 'Something went wrong. Please try again.');
+  return j;
+};
+const show = (el, msg) => { el.textContent = msg; el.hidden = !msg; };
+const dayKey = ms => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ms));
+const time = ms => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let me = null;
+
+async function init() {
+  try { me = (await api('/api/auth?action=coach-me')).coach; } catch { me = null; }
+  $('#loginView').hidden = !!me; $('#dash').hidden = !me; $('#logout').hidden = !me;
+  if (!me) return;
+  $('#hello').textContent = `Hi ${me.first}`;
+  $('#role').textContent = me.admin ? 'Head coach · you can see every coach' : 'Coach';
+  $('#pwnote').hidden = me.passwordChanged;
+  $('#se').value = me.email || '';
+  if (me.admin) {
+    for (const sel of [$('#whoA'), $('#whoB')]) {
+      sel.innerHTML = '<option value="jay">Jay</option><option value="aaron">Aaron</option><option value="kian">Kian</option><option value="all">All coaches</option>';
+      sel.hidden = false;
+    }
+    $('#whoB').value = 'all';
+    $('#galTitle').textContent = 'All coaches’ uploads';
+  }
+  const d = new Date(); $('#ad').value = d.toISOString().slice(0, 10); $('#ad').min = $('#ad').value;
+  loadSlots(); loadBookings();
+}
+
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#lerr'), '');
+  try { await api('/api/auth?action=coach-login', { username: $('#lu').value, password: $('#lp').value }); init(); }
+  catch (err) { show($('#lerr'), err.message); }
+});
+$('#logout').addEventListener('click', async () => { await api('/api/auth?action=coach-logout', {}); location.reload(); });
+
+document.querySelectorAll('[data-tab]').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', x === t ? 'true' : 'false'));
+  document.querySelectorAll('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== t.dataset.tab);
+  if (t.dataset.tab === 'uploads') loadFiles();
+  if (t.dataset.tab === 'bookings') loadBookings();
+}));
+
+/* availability */
+function localMs(dateStr, timeStr) { const [y, m, d] = dateStr.split('-').map(Number); const [h, mi] = timeStr.split(':').map(Number); return new Date(y, m - 1, d, h, mi).getTime(); }
+$('#addForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#aerr'), ''); show($('#aok'), '');
+  const mins = Number($('#am').value), weeks = Number($('#aw').value), n = Number($('#ab').value);
+  const starts = [];
+  const [y, m, d] = $('#ad').value.split('-').map(Number);
+  for (let w = 0; w < weeks; w++) for (let k = 0; k < n; k++) {
+    const [h, mi] = $('#at').value.split(':').map(Number);
+    starts.push(new Date(y, m - 1, d + w * 7, h, mi + k * mins).getTime());
+  }
+  try {
+    const r = await api('/api/pt?action=add', { mins, starts });
+    show($('#aok'), `${r.added} slot${r.added === 1 ? '' : 's'} added.` + (r.skipped ? ` ${r.skipped} skipped because they clash with an existing slot or are in the past.` : ''));
+    loadSlots();
+  } catch (err) { show($('#aerr'), err.message); }
+});
+$('#whoA').addEventListener('change', loadSlots);
+async function loadSlots() {
+  const who = me.admin ? $('#whoA').value || 'jay' : '';
+  const box = $('#slotList');
+  try {
+    const { slots } = await api('/api/pt?action=schedule' + (who ? `&coach=${who}` : ''));
+    const up = slots.filter(s => s.start > Date.now() - 3600e3 && s.status !== 'cancelled');
+    if (!up.length) { box.innerHTML = '<p class="empty">No upcoming slots yet. Add some on the left.</p>'; return; }
+    let html = '', last = '';
+    for (const s of up) {
+      const dk = dayKey(s.start);
+      if (dk !== last) { html += `<h3 style="font-size:20px;color:var(--red);margin-top:10px">${esc(dk)}</h3>`; last = dk; }
+      const booked = s.booking;
+      html += `<div class="item ${booked ? 'booked' : 'open'}"><div><b>${time(s.start)}–${time(s.start + s.mins * 60e3)}</b>${who === 'all' ? ` <span class="muted">· ${esc(s.coachName)}</span>` : ''}<span class="pill ${booked ? 'booked' : 'open'}">${booked ? 'Booked' : 'Free'}</span>
+        ${booked ? `<div class="meta">${esc(booked.name)} · ${esc(booked.type)} · ${esc(booked.mobile)}</div>` : ''}</div>
+        <div class="acts">${booked ? `<button class="btn small ghost" data-cancel="${s.booking.id}">Cancel booking</button>` : `<button class="btn small ghost" data-remove="${s.id}">Remove</button>`}</div></div>`;
+    }
+    box.innerHTML = html;
+  } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+}
+document.addEventListener('click', async e => {
+  const rm = e.target.closest('[data-remove]'), cn = e.target.closest('[data-cancel]');
+  if (rm) { rm.disabled = true; try { await api('/api/pt?action=remove', { slotId: rm.dataset.remove }); loadSlots(); } catch (err) { alertBox(err.message); rm.disabled = false; } }
+  if (cn) {
+    if (cn.dataset.confirm !== '1') { cn.dataset.confirm = '1'; cn.textContent = 'Tap again to cancel'; return; }
+    cn.disabled = true;
+    try { await api('/api/pt?action=cancel', { bookingId: cn.dataset.cancel }); loadSlots(); loadBookings(); } catch (err) { alertBox(err.message); cn.disabled = false; }
+  }
+});
+function alertBox(msg) { const p = document.createElement('p'); p.className = 'err'; p.textContent = msg; document.querySelector('[data-pane]:not([hidden])').prepend(p); setTimeout(() => p.remove(), 6000); }
+
+/* bookings */
+$('#whoB').addEventListener('change', loadBookings);
+async function loadBookings() {
+  const who = me.admin ? $('#whoB').value || 'all' : '';
+  const box = $('#bookList');
+  try {
+    const { slots } = await api('/api/pt?action=schedule' + (who ? `&coach=${who}` : ''));
+    const bk = slots.filter(s => s.booking && s.start > Date.now() - 3600e3);
+    $('#bkTitle').textContent = `Booked sessions (${bk.length})`;
+    if (!bk.length) { box.innerHTML = '<p class="empty">No upcoming bookings yet.</p>'; return; }
+    box.innerHTML = bk.map(s => `<div class="item booked"><div><b>${esc(s.when)}</b> <span class="muted">· ${s.mins} min · ${esc(s.coachName)}</span>
+      <div class="meta"><strong>${esc(s.booking.name)}</strong> · ${esc(s.booking.type)}<br>${esc(s.booking.mobile)} · ${esc(s.booking.email)}${s.booking.notes ? `<br>Notes: ${esc(s.booking.notes)}` : ''}</div></div>
+      <div class="acts"><button class="btn small ghost" data-cancel="${s.booking.id}">Cancel</button></div></div>`).join('');
+  } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+}
+
+/* uploads */
+$('#files').addEventListener('change', async e => {
+  const files = [...e.target.files]; e.target.value = '';
+  for (const f of files) {
+    const row = document.createElement('div'); row.className = 'stack';
+    row.innerHTML = `<div class="muted" style="font-size:14px">${esc(f.name)}</div><div class="prog"><i></i></div>`;
+    $('#upProg').prepend(row);
+    const bar = row.querySelector('i');
+    const safe = f.name.replace(/[^\w.\-]+/g, '_').slice(-80);
+    const stamp = new Date().toISOString().slice(0, 10);
+    try {
+      await upload(`uploads/${me.id}/${stamp}-${safe}`, f, { access: 'private', handleUploadUrl: '/api/uploads?action=token', multipart: f.size > 20e6, onUploadProgress: p => { bar.style.width = p.percentage + '%'; } });
+      bar.style.width = '100%'; bar.style.background = 'var(--ok)';
+      row.querySelector('div').textContent = `✓ ${f.name}`;
+    } catch (err) { row.querySelector('div').textContent = `✗ ${f.name}: ${err.message}`; row.querySelector('div').className = 'err'; }
+  }
+  loadFiles();
+});
+async function loadFiles() {
+  const box = $('#gallery');
+  try {
+    const { files } = await api('/api/uploads?action=list');
+    if (!files.length) { box.innerHTML = '<p class="empty">Nothing uploaded yet.</p>'; return; }
+    box.innerHTML = files.map(f => {
+      const isVid = /\.(mp4|mov|m4v|webm|3gp)$/i.test(f.path);
+      const name = f.path.split('/').pop();
+      return `<div class="file"><div class="thumb">${isVid ? `<video src="${f.url}" muted preload="metadata"></video>` : `<img src="${f.url}" alt="" loading="lazy">`}</div>
+        <div class="fm">${me.admin ? `<strong>${esc(f.by)}</strong> · ` : ''}${new Date(f.uploadedAt).toLocaleDateString('en-GB')} · ${(f.size / 1e6).toFixed(1)} MB</div>
+        <div class="fa"><a href="${f.url}&download=1">Download</a><button type="button" data-del="${esc(f.path)}">Delete</button></div></div>`;
+    }).join('');
+  } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+}
+document.addEventListener('click', async e => {
+  const d = e.target.closest('[data-del]'); if (!d) return;
+  if (d.dataset.confirm !== '1') { d.dataset.confirm = '1'; d.textContent = 'Sure?'; return; }
+  try { await api('/api/uploads?action=delete', { path: d.dataset.del }); loadFiles(); } catch (err) { alertBox(err.message); }
+});
+
+/* settings */
+$('#emailForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#seok'), ''); show($('#seerr'), '');
+  try { await api('/api/auth?action=coach-settings', { email: $('#se').value }); show($('#seok'), 'Saved.'); } catch (err) { show($('#seerr'), err.message); }
+});
+$('#pwForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#pwok'), ''); show($('#pwerr'), '');
+  try { await api('/api/auth?action=coach-settings', { currentPassword: $('#pc').value, newPassword: $('#pn').value }); show($('#pwok'), 'Password changed.'); $('#pwnote').hidden = true; e.target.reset(); }
+  catch (err) { show($('#pwerr'), err.message); }
+});
+
+init();
 </script>
 </body>
 </html>
