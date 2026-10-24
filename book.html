@@ -22,6 +22,21 @@
 .opts button:disabled{opacity:.35;cursor:default}
 .slot .pr{color:var(--ok)}
 .slot[aria-pressed="true"] .pr{color:#fff}
+.coachpick span{display:grid;gap:3px}
+.coachpick small{font:600 13px var(--body);text-transform:none;letter-spacing:0}
+.coachpick .cr{color:var(--muted)}
+.coachpick .cf{color:var(--ok);font:700 14px var(--cond);letter-spacing:.04em}
+.coachinfo{border-left:4px solid var(--red);background:var(--ink-3);padding:16px 18px}
+.ci{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:20px;align-items:start}
+.ci h3{font-size:32px;margin:4px 0 8px}
+.ci p{color:var(--soft);margin-bottom:8px}
+.ci .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ci .chips span{border:1px solid var(--line);padding:5px 9px;font:700 12px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.ci-p{display:grid;gap:10px}
+.ci-prices{display:grid;gap:4px;font-size:15px;color:var(--soft)}
+.ci-prices b{color:var(--bone);font:700 15px var(--cond);letter-spacing:.06em;text-transform:uppercase;margin-right:4px}
+.ci .ig{font-size:14px}
+@media (max-width:700px){.ci{grid-template-columns:1fr}}
 .more{background:none;border:1px dashed var(--line);color:var(--soft);padding:12px;font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-top:12px}
 </style>
 </head>
@@ -42,6 +57,7 @@
       <div class="coachpick" id="coaches">
         <button type="button" data-coach="" aria-pressed="true"><div class="any">Any</div><span>Any coach</span></button>
       </div>
+      <div id="coachInfo" class="coachinfo"></div>
     </section>
 
     <section class="panel step">
@@ -158,8 +174,8 @@ async function loadMeta() {
   catch (err) { $('#slots').innerHTML = `<p class="err">${esc(err.message)}</p>`; return; }
   if (!state.meta.types[state.type]) state.type = 'fundamentals';
   if (state.coach && !state.meta.coaches.some(c => c.id === state.coach)) state.coach = '';
-  $('#coaches').innerHTML = `<button type="button" data-coach="" aria-pressed="true"><div class="any">Any</div><span>Any coach</span></button>` +
-    state.meta.coaches.map(c => `<button type="button" data-coach="${esc(c.id)}" aria-pressed="false">${c.photo ? `<img src="${esc(c.photo)}" alt="">` : `<div class="any">${esc(c.first[0])}</div>`}<span>${esc(c.first)}</span></button>`).join('');
+  $('#coaches').innerHTML = `<button type="button" data-coach="" aria-pressed="true"><div class="any">Any</div><span>Any coach<small class="cr">Whoever’s free</small><small class="cf">from ${money(Math.min(...state.meta.coaches.map(c => c.from || 999)))}</small></span></button>` +
+    state.meta.coaches.map(c => `<button type="button" data-coach="${esc(c.id)}" aria-pressed="false">${c.photo ? `<img src="${esc(c.photo)}" alt="">` : `<div class="any">${esc(c.first[0])}</div>`}<span>${esc(c.first)}<small class="cr">${esc(c.role)}</small>${c.from ? `<small class="cf">from ${money(c.from)}</small>` : ''}</span></button>`).join('');
   state.starts = state.meta.starts;
   drawAll();
   try { state.user = (await api('/api/auth?action=me')).user; } catch {}
@@ -174,7 +190,20 @@ async function loadStarts() {
 }
 function drawAll() { drawCoaches(); drawTypes(); drawFormats(); drawDurations(); drawSlots(); drawConfirm(); }
 
-function drawCoaches() { document.querySelectorAll('[data-coach]').forEach(b => b.setAttribute('aria-pressed', b.dataset.coach === state.coach ? 'true' : 'false')); }
+function drawCoaches() {
+  document.querySelectorAll('[data-coach]').forEach(b => b.setAttribute('aria-pressed', b.dataset.coach === state.coach ? 'true' : 'false'));
+  const c = state.meta.coaches.find(x => x.id === state.coach), box = $('#coachInfo');
+  if (!c) { box.innerHTML = `<p class="muted">Not sure who to pick? Choose <b>Any coach</b> to see every free time, or tap a coach to see what they specialise in.</p>`; return; }
+  const prices = state.meta.prices[c.id] || {};
+  const row = (f, label) => { const vals = state.meta.durations.map(m => prices[f]?.[m]).filter(v => typeof v === 'number' && v > 0); return vals.length ? `<span><b>${label}</b> from ${money(Math.min(...vals))}</span>` : ''; };
+  box.innerHTML = `<div class="ci">
+    <div class="ci-t"><span class="kick">${esc(c.role)}</span><h3>${esc(c.name)}</h3>${c.intro ? `<p>${esc(c.intro)}</p>` : ''}
+      ${c.chips.length ? `<div class="chips">${c.chips.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
+      ${c.ask ? `<p class="muted"><b>Ask ${esc(c.first)} about</b> ${esc(c.ask)}</p>` : ''}</div>
+    <div class="ci-p"><div class="ci-prices">${row('one', '1-to-1')}${row('double', 'Double')}${row('group', 'Group')}</div>
+      <a class="btn ghost small" href="/team/${esc(c.id)}" target="_blank" rel="noopener">${esc(c.first)}’s full profile →</a>
+      ${c.instagram ? `<a class="muted ig" href="https://www.instagram.com/${esc(c.instagram)}/" target="_blank" rel="noopener">@${esc(c.instagram)}</a>` : ''}</div></div>`;
+}
 $('#coaches').addEventListener('click', e => {
   const b = e.target.closest('[data-coach]'); if (!b) return;
   state.coach = b.dataset.coach; state.pick = null; drawCoaches(); fixChoice(); drawFormats(); drawDurations(); loadStarts();

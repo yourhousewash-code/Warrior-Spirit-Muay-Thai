@@ -6,6 +6,7 @@ import {
   DAY, LENGTHS, londonMs, londonDate, addDays, validDate, validTime, getWeekly, getOff, isOff,
   realSlots, generated, parseVirtual, getClasses, getCover, classInstances, freeIntervals, startsIn,
 } from './_lib/avail.js';
+import { liveProfile } from './_lib/profiles.js';
 
 
 export default async function handler(req, res) {
@@ -36,7 +37,11 @@ export default async function handler(req, res) {
         starts.sort((a2, b2) => a2.start - b2.start || a2.coach.localeCompare(b2.coach));
         return send(res, 200, {
           starts, mins, format, prices,
-          coaches: publicIds().map(k => coachPub(k)),
+          coaches: await Promise.all(publicIds().map(async k => {
+            const p = await liveProfile(k);
+            const lo = Math.min(...Object.keys(FORMATS).flatMap(f => DURATIONS.map(m => priceOf(prices[k], f, m))).filter(Boolean));
+            return { ...coachPub(k), role: p.role || 'Coach', intro: p.intro || '', chips: String(p.chips || '').split('\n').map(t => t.trim()).filter(Boolean).slice(0, 6), ask: p.ask || '', instagram: p.instagram || '', from: Number.isFinite(lo) ? lo : null };
+          })),
           types: Object.fromEntries(Object.entries(TYPES).filter(([, v]) => !v.hidden)), formats: FORMATS, durations: DURATIONS,
         });
       }

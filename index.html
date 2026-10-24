@@ -456,6 +456,14 @@ a.tk-item:hover{color:var(--bone)}
 .vm-in{width:min(1100px,100%);display:grid;gap:10px}
 .vm-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .vm-top b{font:900 26px var(--display);text-transform:uppercase}
+.vm-acts{display:flex;gap:8px}
+.vm-fs{height:48px;display:inline-flex;align-items:center;gap:8px;padding:0 14px;border:1px solid var(--line);background:var(--ink-2);color:#fff;font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.vm-fs svg{width:20px;height:20px}
+@media (max-width:480px){.vm-fs span{display:none}}
+.xpand{position:absolute;z-index:4;top:10px;right:10px;width:40px;height:40px;display:grid;place-items:center;border:1px solid rgba(243,240,234,.5);background:rgba(11,12,16,.7);color:#fff;cursor:pointer;opacity:.85;transition:opacity .15s,background .15s}
+.xpand svg{width:20px;height:20px}
+.xpand:hover{opacity:1;background:var(--red);border-color:var(--red)}
+.loop video{cursor:zoom-in}
 .vm-close{width:48px;height:48px;border:1px solid var(--line);background:var(--ink-2);color:#fff;font-size:20px;cursor:pointer}
 #vmVideo{width:100%;max-height:78vh;background:#000}
 .fnhead{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:end;justify-content:space-between;margin-bottom:28px}
@@ -1157,7 +1165,7 @@ a.tagc{text-decoration:none}
 
 <div class="vmodal" id="vmodal" hidden role="dialog" aria-modal="true" aria-label="Video player">
   <div class="vm-in">
-    <div class="vm-top"><b id="vmTitle"></b><button type="button" class="vm-close" id="vmClose" aria-label="Close video">✕</button></div>
+    <div class="vm-top"><b id="vmTitle"></b><div class="vm-acts"><button type="button" class="vm-fs" id="vmFs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Full screen</span></button><button type="button" class="vm-close" id="vmClose" aria-label="Close video">✕</button></div></div>
     <video id="vmVideo" controls playsinline></video>
   </div>
 </div>
@@ -2097,6 +2105,19 @@ a.tagc{text-decoration:none}
   function closeV(){mv.pause();mv.removeAttribute('src');mv.load();modal.hidden=true;if(last)last.focus()}
   document.querySelectorAll('.vcard').forEach(function(b){b.addEventListener('click',function(){openV(b.getAttribute('data-src'),b.getAttribute('data-title'),b)})});
   document.getElementById('vmClose').addEventListener('click',closeV);
+  /* Full screen: proper full screen where the browser allows it (iPhone uses its own video player) */
+  document.getElementById('vmFs').addEventListener('click',function(){
+    var el=mv;if(el.requestFullscreen)el.requestFullscreen().catch(function(){});else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();else if(el.webkitEnterFullscreen)el.webkitEnterFullscreen()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden&&!document.fullscreenElement)closeV()});
+  /* expand any of the looping fight clips into the player, with sound */
+  var XP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+  document.querySelectorAll('.loop video').forEach(function(v){
+    var host=v.closest('.loop');if(!host||host.querySelector('.xpand'))return;
+    var title=(host.querySelector('figcaption')||{}).textContent||v.getAttribute('aria-label')||'Fight clip';
+    var b=document.createElement('button');b.type='button';b.className='xpand';b.innerHTML=XP;b.setAttribute('aria-label','Watch '+title+' full size');b.title='Watch full size';host.appendChild(b);
+    function open(){document.querySelectorAll('video').forEach(function(o){if(o!==mv&&!o.muted){o.muted=true;o.dispatchEvent(new Event('pause'))}});openV(v.currentSrc||v.getAttribute('src'),title,b);mv.muted=false;try{mv.currentTime=0}catch(e){}}
+    b.addEventListener('click',open);v.addEventListener('click',open);
+  });
   modal.addEventListener('click',function(e){if(e.target===modal)closeV()});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)closeV()});
   window.addEventListener('hashchange',function(){if(!modal.hidden)closeV();var f=document.getElementById('featured');if(f)f.pause()});
