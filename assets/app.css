@@ -89,3 +89,11 @@ textarea{min-height:80px;resize:vertical}
 .pw{position:relative;display:block}
 .pw input{padding-right:78px}
 .pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--soft);font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:8px}
+
+/* sign-in options */
+.gwrap{display:flex;justify-content:center;min-height:44px}
+.gor{display:flex;align-items:center;gap:12px;color:var(--muted,#9aa0ad);font-size:14px;margin:14px 0 4px}
+.gor:before,.gor:after{content:"";flex:1;height:1px;background:var(--line,#262a35)}
+.vnote{border:1px solid #f5c542;background:rgba(245,197,66,.08);padding:12px 14px;font-size:15px}
+.vnote button{background:none;border:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit;padding:0}
+.vok{border:1px solid #2e9d5b;background:rgba(46,157,91,.1);padding:12px 14px;font-size:15px}

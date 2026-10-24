@@ -1,6 +1,6 @@
 import {
   redis, COACHES, loadCoaches, activeIds, publicIds, TYPES, FORMATS, DURATIONS, DEFAULT_PRICES, getPrices, priceOf, minsLabel,
-  send, bad, setupProblem, body, clean, id, fmt, mail, coachEmail, coachSession, userSession, SITE, ADDRESS,
+  send, bad, setupProblem, body, clean, id, fmt, mail, mailReady, coachEmail, coachSession, userSession, SITE, ADDRESS,
 } from './_lib/core.js';
 import {
   DAY, LENGTHS, londonMs, londonDate, addDays, validDate, validTime, getWeekly, getOff, isOff,
@@ -278,6 +278,8 @@ export default async function handler(req, res) {
       case 'book': {
         const email = userSession(req); if (!email) return bad(res, 'Please log in to book.', 401);
         const u = await redis.hgetall(`user:${email}`); if (!u) return bad(res, 'Please log in again.', 401);
+        if (u.verified === 'no' && mailReady()) return bad(res, 'Please confirm your email first. We’ve sent you a link (check your junk folder), then press Confirm again.', 403);
+        if (!String(u.mobile || '').replace(/\D/g, '').length) return bad(res, 'Add your mobile number so your coach can reach you.', 400);
         const type = clean(b.type, 30), format = clean(b.format, 10), coach = clean(b.coach, 20);
         const mins = Number(b.mins), start = Number(b.start);
         if (!TYPES[type] || TYPES[type].hidden) return bad(res, 'Choose what you want to work on.');

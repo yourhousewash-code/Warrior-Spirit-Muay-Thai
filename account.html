@@ -20,6 +20,7 @@
   <section id="out" hidden style="max-width:520px;margin:0 auto" class="stack">
     <span class="kick">Your account</span>
     <h1 id="outH">Log in</h1>
+    <div id="gBox" hidden></div>
     <form id="logForm" class="panel">
       <label for="le">Email<input id="le" type="email" autocomplete="email" required></label>
       <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
@@ -54,6 +55,8 @@
   <section id="in" hidden class="stack">
     <span class="kick">Your account</span>
     <h1 id="hello">Hi</h1>
+    <div class="vok" id="vok" hidden>Thanks, your email is confirmed. You’re all set to book.</div>
+    <div class="vnote" id="vnote" hidden>Please confirm your email: we’ve sent you a link (check your junk folder). You’ll need it before you can book. <button type="button" id="resendV">Send it again</button></div>
     <div class="row"><a class="btn" href="/book">Book a PT session</a></div>
     <div class="panel">
       <h2>Upcoming sessions</h2>
@@ -88,10 +91,14 @@ async function init() {
     const mode = q.get('reset') ? 'reset' : q.get('forgot') ? 'forgot' : q.get('new') ? 'reg' : 'log';
     $('#logForm').hidden = mode !== 'log'; $('#regForm').hidden = mode !== 'reg';
     $('#forgotForm').hidden = mode !== 'forgot'; $('#resetForm').hidden = mode !== 'reset';
+    if (q.get('verified') === 'expired') { show($('#lerr'), 'That confirmation link has expired. Log in and we’ll send a new one.'); }
+    $('#gBox').style.display = (mode === 'log' || mode === 'reg') ? '' : 'none';
     $('#outH').textContent = { log: 'Log in', reg: 'Create an account', forgot: 'Reset password', reset: 'New password' }[mode];
     return;
   }
   $('#hello').textContent = `Hi ${user.name.split(' ')[0]}`;
+  $('#vnote').hidden = user.verified !== false;
+  $('#vok').hidden = q.get('verified') !== '1' || user.verified === false;
   loadBookings();
 }
 
@@ -135,6 +142,8 @@ $('#resetForm').addEventListener('submit', async e => {
   try { await api('/api/auth?action=reset', { token: q.get('reset'), password: $('#np').value }); history.replaceState(null, '', '/account'); location.reload(); }
   catch (err) { show($('#nerr'), err.message); }
 });
+$('#resendV').addEventListener('click', async e => { e.target.textContent = 'Sent. Check your inbox'; try { await api('/api/auth?action=resend', {}); } catch (err) { e.target.textContent = err.message; } });
+WSSignIn.google($('#gBox'), () => { history.replaceState(null, '', '/account'); init(); }, m => show($('#lerr'), m));
 $('#logout').addEventListener('click', async () => { await api('/api/auth?action=logout', {}); location.href = '/account'; });
 
 init();
@@ -143,5 +152,6 @@ init();
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});
 </script>
 <script src="/assets/fighterbase.js" defer></script>
+<script src="/assets/signin.js"></script>
 </body>
 </html>

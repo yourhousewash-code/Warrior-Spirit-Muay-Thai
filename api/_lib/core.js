@@ -186,6 +186,7 @@ function mailer() {
   });
   return transport;
 }
+export const mailReady = () => !!mailer();
 export async function mail(to, subject, lines) {
   const t = mailer();
   const list = [].concat(to).filter(Boolean);

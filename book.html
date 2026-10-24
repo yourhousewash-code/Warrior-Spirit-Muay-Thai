@@ -86,6 +86,7 @@
       <div class="summary" id="summary"></div>
 
       <div id="authBox" hidden class="stack">
+        <div id="gBox" hidden></div>
         <p class="muted">Create a free account so you can see and cancel your bookings. Already have one? <button type="button" id="toLogin" style="background:none;border:0;color:var(--bone);text-decoration:underline;cursor:pointer;font:inherit;padding:0">Log in</button></p>
         <form id="regForm" class="stack">
           <div class="row">
@@ -111,6 +112,8 @@
 
       <form id="bookForm" class="stack" hidden>
         <p class="muted" id="who"></p>
+        <div class="vnote" id="vnote" hidden>Check your email for a confirmation link. You need to confirm your email before your booking goes through. <button type="button" id="resendV">Send it again</button></div>
+        <label for="bm" id="bmLabel" hidden>Your mobile, so your coach can reach you<input id="bm" type="tel" autocomplete="tel"></label>
         <label for="bn" id="bnLabel">Anything your coach should know? (optional)<textarea id="bn" maxlength="400" placeholder="Experience, injuries, goals…"></textarea></label>
         <p class="muted" style="font-size:15px">Payment is taken at the gym. You can cancel from your account up to 24 hours before. Paying online is <span data-fb="soon"></span></p>
         <p class="err" id="berr" hidden></p>
@@ -275,7 +278,11 @@ function drawConfirm() {
   $('#authBox').hidden = !!state.user;
   $('#bookForm').hidden = !state.user;
   if (state.user) $('#who').textContent = `Booking as ${state.user.name} (${state.user.email}).`;
+  $('#vnote').hidden = !state.user || state.user.verified !== false;
+  $('#bmLabel').hidden = !state.user || !state.user.needsMobile;
 }
+WSSignIn.google($('#gBox'), u => { state.user = u; drawConfirm(); }, m => show($('#rerr'), m));
+$('#resendV').addEventListener('click', async e => { e.target.textContent = 'Sent. Check your inbox'; try { await api('/api/auth?action=resend', {}); } catch (err) { e.target.textContent = err.message; } });
 
 $('#toLogin').addEventListener('click', () => { $('#regForm').hidden = !$('#regForm').hidden; $('#logForm').hidden = !$('#logForm').hidden; $('#toLogin').textContent = $('#logForm').hidden ? 'Log in' : 'Create an account'; });
 $('#regForm').addEventListener('submit', async e => {
@@ -292,6 +299,7 @@ $('#bookForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#berr'), ''); $('#bookBtn').disabled = true;
   const s = picked();
   try {
+    if (state.user && state.user.needsMobile) { state.user = (await api('/api/auth?action=profile', { mobile: $('#bm').value })).user; }
     const { booking } = await api('/api/pt?action=book', { coach: s.coach, start: s.start, mins: s.mins, format: state.format, type: state.type, notes: $('#bn').value });
     document.querySelectorAll('.step').forEach(x => x.hidden = true);
     $('#doneSummary').innerHTML = `<b>${esc(booking.type)}</b><span>with ${esc(booking.coachName)}</span><span>${esc(booking.when)} · ${LEN[booking.mins] || booking.mins + ' minutes'}</span>`;
@@ -308,5 +316,6 @@ loadMeta().then(() => { if (state.coach || state.wantStart) { fixChoice(); drawF
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});
 </script>
 <script src="/assets/fighterbase.js" defer></script>
+<script src="/assets/signin.js"></script>
 </body>
 </html>
