@@ -47,6 +47,7 @@
 </div></header>
 
 <main class="wrap">
+  <span data-fb="powered" data-fb-block></span>
   <span class="kick">Personal training · Potters Bar</span>
   <h1>Book a PT session</h1>
   <p class="lede" style="margin-top:12px">Choose your coach, what you want to work on, who’s training and for how long, then pick a time. You pay at the gym on the day.</p>
@@ -111,7 +112,7 @@
       <form id="bookForm" class="stack" hidden>
         <p class="muted" id="who"></p>
         <label for="bn" id="bnLabel">Anything your coach should know? (optional)<textarea id="bn" maxlength="400" placeholder="Experience, injuries, goals…"></textarea></label>
-        <p class="muted" style="font-size:15px">Payment is taken at the gym. You can cancel from your account up to 24 hours before.</p>
+        <p class="muted" style="font-size:15px">Payment is taken at the gym. You can cancel from your account up to 24 hours before. Paying online is <span data-fb="soon"></span></p>
         <p class="err" id="berr" hidden></p>
         <button class="btn" type="submit" id="bookBtn">Confirm booking</button>
       </form>
@@ -306,5 +307,6 @@ loadMeta().then(() => { if (state.coach || state.wantStart) { fixChoice(); drawF
 <script>
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});
 </script>
+<script src="/assets/fighterbase.js" defer></script>
 </body>
 </html>
