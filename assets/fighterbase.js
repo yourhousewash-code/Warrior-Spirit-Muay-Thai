@@ -3,13 +3,13 @@
    When FighterBase is live, set FB_URL (and FB_LOGO for the logo image) here and every badge updates. */
 (function () {
   var FB_URL = '';   // e.g. 'https://fighterbase.vercel.app'
-  var FB_LOGO = '';  // e.g. '/img/fighterbase.svg' (a version that works on dark backgrounds)
+  var FB_LOGO = '/img/fighterbase.png';
 
   var css = '' +
     '.fbadge{display:inline-flex;align-items:center;gap:7px;font:700 12px/1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a3a8b6;text-decoration:none;border:1px solid #262a35;background:rgba(20,22,29,.85);padding:5px 9px 5px 6px;vertical-align:middle;white-space:nowrap}' +
     '.fbadge b{color:#f3f0ea;font-weight:700;letter-spacing:.1em}' +
     '.fbadge .fbi{width:16px;height:16px;display:grid;place-items:center;background:linear-gradient(135deg,#e3141e,#7a0a10);color:#fff;font:900 10px/1 "Big Shoulders Display",Impact,sans-serif;letter-spacing:0;clip-path:polygon(50% 0,100% 18%,100% 62%,50% 100%,0 62%,0 18%)}' +
-    '.fbadge img{height:16px;width:auto;display:block}' +
+    '.fbadge img{height:20px;width:auto;display:block}' +
     'a.fbadge:hover{color:#f3f0ea;border-color:#e3141e}' +
     '.fbadge.soon{border-style:dashed}' +
     '.fbadge.soon .tag{background:#f5c542;color:#0b0c10;padding:2px 5px;letter-spacing:.1em}' +
