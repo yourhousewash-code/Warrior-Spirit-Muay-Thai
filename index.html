@@ -593,6 +593,7 @@ a.tk-item:hover{color:var(--bone)}
 .faqg h3{font-size:28px;color:var(--red);margin-bottom:6px}
 @media (max-width:860px){.faqall{grid-template-columns:1fr}}
 a.tagc{text-decoration:none}
+.hp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
 </style>
 </head>
 <body>
@@ -864,7 +865,7 @@ a.tagc{text-decoration:none}
       <div class="prices">
         <article class="price top"><span class="tagc">Adults</span><span class="amt">£75<small>/ month</small></span><p>All inclusive. First class free.</p><ul><li>Every class on the timetable</li><li>Open gym 9am–9pm weekdays</li><li>Fight team pathway</li></ul><a class="btn" href="#contact" data-enq="Free first class">Book a free class</a></article>
         <article class="price"><span class="tagc">Kids 7–13</span><span class="amt">£65<small>/ month</small></span><p>Kids Muay Thai.</p><ul><li>Monday to Thursday, 5:30pm</li><li>Confidence and discipline</li><li>Interclubs when they're ready</li></ul><a class="btn ghost" href="#contact" data-enq="Kids class">Ask about kids</a></article>
-        <article class="price"><span class="tagc">1-to-1</span><span class="amt"><small style="margin:0 6px 0 0">from</small>£40<small>/ hour</small></span><p>Personal training with a coach.</p><ul><li>Fast-track your technique</li><li>Five session types, beginner to fight camp</li><li>Doubles from £45, groups from £55</li></ul><a class="btn ghost" href="#pt-sessions">See PT sessions</a></article>
+        <article class="price"><span class="tagc">1-to-1</span><span class="amt"><small style="margin:0 6px 0 0">from</small>£40<small>/ hour</small></span><p>Personal training with a coach.</p><ul><li>Fast-track your technique</li><li>Beginner to fight camp, 1 to 2 hours</li><li>Doubles from £45, groups from £55</li></ul><a class="btn ghost" href="#pt-sessions">See PT sessions</a></article>
       </div>
     </div>
   </section>
@@ -892,12 +893,12 @@ a.tagc{text-decoration:none}
     <div class="txt">
       <span class="kick">Personal training</span>
       <h2 id="pt-h">One coach. All about you.</h2>
-      <p class="lede">A 1-to-1 session gets you further in an hour than weeks of working it out on your own. Choose from five session types, from beginner fundamentals to full fight camp, or bring a friend.</p>
+      <p class="lede">A 1-to-1 session gets you further in an hour than weeks of working it out on your own. Pick your focus, from beginner fundamentals to full fight camp, and train 1-to-1, with a friend or in a small group, for 1 to 2 hours.</p>
     </div>
   </section>
   <section class="band" id="pt-sessions" aria-labelledby="pts-h">
     <div class="wrap">
-      <div class="stack head"><span class="kick">Choose your session</span><h2 id="pts-h">Five ways to train 1-to-1</h2><p class="lede">From your very first pad session to the last hard round before a fight. Every session is booked outside class times, around you. <a href="#pt-coaches">Choose your coach</a>.</p>
+      <div class="stack head"><span class="kick">Choose your session</span><h2 id="pts-h">Choose your focus</h2><p class="lede">From your very first pad session to the last hard round before a fight. Every session is booked outside class times, around you. <a href="#pt-coaches">Choose your coach</a>.</p>
         <p class="legend2"><span class="meter" aria-label="Intensity 1 out of 5"><i class="on"></i><i></i><i></i><i></i><i></i></span> <span>Intensity, from gentle to fight pace</span></p></div>
       <div class="ptcards">
         <article class="ptcard" id="pt-fund">
@@ -2038,7 +2039,7 @@ a.tagc{text-decoration:none}
       </div>
       <form id="enquiry" novalidate>
         <h3>Book your free class or send a message</h3>
-        <label class="full" for="enq">What's it about?<select id="enq"><option>Free first class</option><option>Kids class</option><option>Personal training</option><optgroup label="Personal training sessions"><option>PT: Fundamentals</option><option>PT: Fitness Pads</option><option>PT: Technique &amp; Skills</option><option>PT: Fight Camp</option><option>PT: Train with a friend</option><option>PT with Jay</option><option>PT with Aaron</option><option>PT with Kian</option></optgroup><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
+        <label class="full" for="enq">What's it about?<select id="enq"><option>Free first class</option><option>Kids class</option><option>Personal training</option><optgroup label="Personal training sessions"><option>PT: Fundamentals</option><option>PT: Fitness Pads</option><option>PT: Technique &amp; Skills</option><option>PT: Fight Camp</option><option>PT: Doubles (2 people)</option><option>PT: Group session</option><option>PT with Jay</option><option>PT with Aaron</option><option>PT with Kian</option></optgroup><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
         <label for="name">Name<input id="name" autocomplete="name" required></label>
         <label for="phone">Mobile<input id="phone" type="tel" autocomplete="tel"></label>
         <label for="email">Email<input id="email" type="email" autocomplete="email"></label>
@@ -2046,10 +2047,11 @@ a.tagc{text-decoration:none}
         <label for="exp">Experience<select id="exp"><option>None at all</option><option>Under a year</option><option>1 year or more</option><option>Have fought</option></select></label>
         <label for="when">Best days to train<input id="when" placeholder="e.g. Tue and Thu evenings"></label>
         <label class="full" for="msg">Message<textarea id="msg" placeholder="Goals, injuries, your child's age, questions"></textarea></label>
+        <label class="hp" aria-hidden="true">Leave this empty<input id="hpw" tabindex="-1" autocomplete="off"></label>
         <label class="full consent" for="okc"><input type="checkbox" id="okc"> I'm happy for Warrior Spirit to contact me about this enquiry.</label>
         <div class="err" id="err" hidden></div>
         <div class="full"><button class="btn" type="submit">Send enquiry</button></div>
-        <div class="ok" id="ok" hidden>Thanks. Your message is ready. On the live site it goes straight to the gym, and we'll reply the way you asked.</div>
+        <div class="ok" id="ok" hidden>Thanks, your message has gone to the gym. We'll get back to you the way you asked, usually within a day. Want PT? You can <a href="/book">book a session online</a> now.</div>
       </form>
     </div>
   </section>
@@ -2230,7 +2232,12 @@ a.tagc{text-decoration:none}
     if(!n.value.trim()){err.textContent='Add your name so we know who to reply to.';err.hidden=false;n.focus();return}
     if(!p.value.trim()&&!em.value.trim()){err.textContent='Add a mobile number or email so we can get back to you.';err.hidden=false;p.focus();return}
     if(!document.getElementById('okc').checked){err.textContent='Tick the box so we can contact you about your enquiry.';err.hidden=false;return}
-    document.getElementById('ok').hidden=false;
+    var f=e.target,btn=f.querySelector('button[type=submit]'),v=function(i){return (document.getElementById(i)||{}).value||''};
+    btn.disabled=true;btn.textContent='Sending…';
+    fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({about:v('enq'),name:v('name'),phone:v('phone'),email:v('email'),reply:v('reply'),experience:v('exp'),when:v('when'),message:v('msg'),consent:true,website:v('hpw'),page:location.hash.slice(1)})})
+      .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Something went wrong.');return j})})
+      .then(function(){f.reset();document.getElementById('ok').hidden=false;btn.textContent='Sent ✓';setTimeout(function(){btn.disabled=false;btn.textContent='Send enquiry'},4000)})
+      .catch(function(x){err.textContent=x.message+' You can also call us on 07904 032142.';err.hidden=false;btn.disabled=false;btn.textContent='Send enquiry'});
   });
 })();
 </script>

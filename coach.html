@@ -61,6 +61,10 @@
 .range .x{background:none;border:1px solid var(--line);color:var(--soft);width:42px;height:44px;cursor:pointer;font-size:18px}
 .addr{background:none;border:1px dashed var(--line);color:var(--soft);padding:10px;font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;justify-self:start}
 .closed{color:var(--muted);padding-top:10px}
+.badge{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 7px;background:var(--red);color:#fff;font:700 15px var(--cond);vertical-align:4px;margin-left:6px}
+.enq .meta a{color:var(--bone)}
+.enq.done{opacity:.55}
+.enq .msg{white-space:pre-wrap;color:var(--soft);margin-top:6px}
 .ptable{display:grid;grid-template-columns:minmax(120px,1.2fr) repeat(3,minmax(84px,1fr));gap:8px;align-items:center}
 .ptable .h{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .ptable .f b{font:900 22px/1 var(--display);text-transform:uppercase;display:block}.ptable .f small{color:var(--muted)}
@@ -210,6 +214,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><circle cx="9" cy="10" r="2.5"/><path d="M5 17c.8-2 2.3-3 4-3s3.2 1 4 3M14 9h4M14 13h4"/></svg>
           <b>My profile</b><p id="profTileText">Edit what the website says about you: your intro, background, specialities, Instagram and photo. Changes go live once Jay approves them.</p><em>Open →</em>
         </button>
+        <button type="button" class="tile" data-go="enquiries" data-admin-only hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16v12H7l-3 3z"/><path d="M8 9h8M8 12h5"/></svg>
+          <b>Enquiries <span class="badge" id="enqBadge" hidden></span></b><p>Messages from the website’s contact and free-class form: who they are, what they want and how they’d like a reply. Tick them off once you’ve replied.</p><em>Open →</em>
+        </button>
         <button type="button" class="tile" data-go="team" data-admin-only hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5M19 8v6M16 11h6"/></svg>
           <b>Manage coaches</b><p>Add a new coach, give them a login, reset a forgotten password, or hide a coach who’s left. Only you can see this.</p><em>Open →</em>
@@ -326,6 +334,13 @@
       </form>
     </div>
 
+    <!-- ===== ENQUIRIES (Jay) ===== -->
+    <div data-view="enquiries" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <div class="calhead"><h1>Enquiries</h1><div class="seg" role="group" aria-label="Show"><button type="button" data-ef="new" aria-pressed="true">To reply</button><button type="button" data-ef="all" aria-pressed="false">All</button></div></div>
+      <div class="panel"><div class="list" id="enqList"><p class="empty">Loading…</p></div></div>
+    </div>
+
     <!-- ===== TEAM (Jay) ===== -->
     <div data-view="team" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
@@ -423,12 +438,14 @@ let me = null;
 /* ---------- views ---------- */
 function go(view) {
   if (!me) return;
-  if (!['home', 'availability', 'bookings', 'uploads', 'settings', 'prices', 'profile', 'team'].includes(view) || (view === 'team' && !me.admin)) view = 'home';
+  if (!['home', 'availability', 'bookings', 'uploads', 'settings', 'prices', 'profile', 'team', 'enquiries'].includes(view) || (['team', 'enquiries'].includes(view) && !me.admin)) view = 'home';
   document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
   if (view === 'home') { loadCal(); loadApprovals(); }
   if (view === 'prices') loadPrices();
   if (view === 'profile') loadProfile();
   if (view === 'team') loadTeam();
+  if (view === 'enquiries') loadEnquiries();
+  if (view === 'home' && me.admin) countEnquiries();
   if (view === 'availability') loadAvail();
   if (view === 'bookings') loadBookings();
   if (view === 'uploads') loadFiles();
@@ -437,6 +454,16 @@ function go(view) {
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { const v = g.dataset.go; if (location.hash.slice(1) === v || (v === 'home' && !location.hash)) go(v); else location.hash = v === 'home' ? '' : v; } });
 addEventListener('hashchange', () => go(location.hash.slice(1) || 'home'));
 
+function fillCoachSelects() {
+  const opts = me.team.map(t => `<option value="${esc(t.id)}">${esc(t.first)}</option>`).join('');
+  const keep = sel => { const v = $(sel).value; return v; };
+  const set = (sel, html, def) => { const v = keep(sel); $(sel).innerHTML = html; $(sel).value = [...$(sel).options].some(o => o.value === v) && v ? v : def; };
+  set('#calWho', opts + '<option value="all">All coaches</option>', 'all'); $('#calWho').hidden = false;
+  set('#whoB', opts + '<option value="all">All coaches</option>', 'all'); $('#whoB').hidden = false;
+  for (const [sel, wrap] of [['#avWho', '#avWhoWrap'], ['#prWho', '#prWhoWrap'], ['#pfWho', '#pfWhoWrap']]) { set(sel, opts, me.id); $(wrap).hidden = false; }
+  for (const k of Object.keys(COLS)) delete COLS[k];
+  for (const t of me.team) COLS[t.id] = t.first;
+}
 async function init() {
   try { me = (await api('/api/auth?action=coach-me')).coach; } catch (err) { me = null; show($('#lerr'), err.message); }
   $('#loginView').hidden = !!me; $('#dash').hidden = !me; $('#logout').hidden = !me;
@@ -450,12 +477,7 @@ async function init() {
   $('#pwnote').hidden = me.passwordChanged;
   $('#se').value = me.email || '';
   if (me.admin) {
-    const opts = me.team.map(t => `<option value="${esc(t.id)}">${esc(t.first)}</option>`).join('');
-    $('#calWho').innerHTML = opts + '<option value="all">All coaches</option>'; $('#calWho').value = 'all'; $('#calWho').hidden = false;
-    $('#whoB').innerHTML = opts + '<option value="all">All coaches</option>'; $('#whoB').value = 'all'; $('#whoB').hidden = false;
-    $('#avWho').innerHTML = opts; $('#avWhoWrap').hidden = false;
-    $('#prWho').innerHTML = opts; $('#prWhoWrap').hidden = false;
-    $('#pfWho').innerHTML = opts; $('#pfWhoWrap').hidden = false;
+    fillCoachSelects();
     $('#pfSubmit').textContent = 'Save & publish';
     $('#profTileText').textContent = 'Edit what the website says about each coach. Your changes go live straight away. Aaron’s and Kian’s changes come to you for approval first.';
     $('#galTitle').textContent = 'All coaches’ uploads';
@@ -845,7 +867,7 @@ document.addEventListener('click', async e => {
 });
 
 /* ---------- manage coaches (Jay) ---------- */
-async function refreshMe() { try { me = (await api('/api/auth?action=coach-me')).coach; } catch {} }
+async function refreshMe() { try { me = (await api('/api/auth?action=coach-me')).coach; if (me.admin) fillCoachSelects(); } catch {} }
 async function loadTeam() {
   const box = $('#teamList');
   try {
@@ -886,6 +908,35 @@ $('#addCoach').addEventListener('submit', async e => {
     e.target.reset(); $('#ncPw').value = 'Muaythai'; delete $('#ncUser').dataset.touched;
     await refreshMe(); loadTeam();
   } catch (err) { show($('#ncerr'), err.message); }
+});
+
+/* ---------- enquiries (Jay) ---------- */
+let enqFilter = 'new';
+document.querySelectorAll('[data-ef]').forEach(b => b.addEventListener('click', () => { enqFilter = b.dataset.ef; document.querySelectorAll('[data-ef]').forEach(x => x.setAttribute('aria-pressed', x === b)); loadEnquiries(); }));
+async function countEnquiries() {
+  try { const { unread } = await api('/api/enquiry?action=list'); $('#enqBadge').textContent = unread; $('#enqBadge').hidden = !unread; } catch {}
+}
+async function loadEnquiries() {
+  const box = $('#enqList');
+  try {
+    const { enquiries, unread } = await api('/api/enquiry?action=list');
+    $('#enqBadge').textContent = unread; $('#enqBadge').hidden = !unread;
+    const list = enquiries.filter(e => enqFilter === 'all' || e.status === 'new');
+    if (!list.length) { box.innerHTML = `<p class="empty">${enqFilter === 'new' ? 'All caught up. No enquiries waiting for a reply.' : 'No enquiries yet.'}</p>`; return; }
+    box.innerHTML = list.map(e => {
+      const wa = e.phone ? e.phone.replace(/\D/g, '').replace(/^0/, '44') : '';
+      return `<div class="item enq ${e.status === 'new' ? 'booked' : 'done'}"><div><b>${esc(e.name)}</b> <span class="pill">${esc(e.about || 'Enquiry')}</span>
+        <div class="meta">${esc(e.when_)} · wants a reply by <strong>${esc(e.reply || 'any')}</strong>${e.experience ? ' · ' + esc(e.experience) : ''}${e.when ? ' · best days: ' + esc(e.when) : ''}<br>
+        ${e.phone ? `<a href="tel:${esc(e.phone)}">${esc(e.phone)}</a> · <a href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}${e.phone && e.email ? ' · ' : ''}${e.email ? `<a href="mailto:${esc(e.email)}">${esc(e.email)}</a>` : ''}</div>
+        ${e.message ? `<div class="msg">${esc(e.message)}</div>` : ''}</div>
+        <div class="acts"><button type="button" class="btn small ${e.status === 'new' ? '' : 'ghost'}" data-enqst="${esc(e.id)}" data-to="${e.status === 'new' ? 'done' : 'new'}">${e.status === 'new' ? 'Mark replied' : 'Move back to reply'}</button></div></div>`;
+    }).join('');
+  } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+}
+$('#enqList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-enqst]'); if (!b) return;
+  b.disabled = true;
+  try { await api('/api/enquiry?action=status', { id: b.dataset.enqst, status: b.dataset.to }); loadEnquiries(); } catch (err) { alertBox(err.message); b.disabled = false; }
 });
 
 /* ---------- bookings ---------- */
