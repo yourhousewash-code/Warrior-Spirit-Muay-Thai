@@ -66,6 +66,7 @@ body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 .policy p,.policy li{color:var(--soft)}
 .policy ul{display:grid;gap:6px;padding-left:20px}
 .draftnote{border:1px dashed var(--tbc);color:var(--tbc);padding:12px 16px;margin-bottom:12px}
+
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SportsActivityLocation", "name": "Warrior Spirit Muay Thai & Kickboxing", "alternateName": ["Warrior Spirit Muay Thai", "Hoddesdon Muay Thai & K1 Kickboxing", "WMT Muay Thai"], "telephone": "+447904032142", "address": {"@type": "PostalAddress", "streetAddress": "Next Gen Fitness, Mount Grace Road", "addressLocality": "Potters Bar", "postalCode": "EN6 1RB", "addressCountry": "GB"}, "areaServed": ["Potters Bar", "Barnet", "Cuffley", "Brookmans Park", "Hatfield", "Cheshunt", "Enfield", "Hoddesdon", "Borehamwood", "St Albans", "Welwyn Garden City"], "sameAs": ["https://www.instagram.com/warriorspirit_muaythai/", "https://www.tiktok.com/@warriorspirit32"], "priceRange": "\u00a3\u00a3"}</script>
 <title>Warrior Spirit Muay Thai</title>
@@ -613,6 +614,66 @@ a.tagc{text-decoration:none}
 .paytab{width:100%;border-collapse:collapse}.paytab th,.paytab td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left}.paytab th{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}.paytab td b{font:900 22px var(--display);text-transform:uppercase}.paytab td.p{font:700 20px var(--cond);white-space:nowrap}
 .soonlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;list-style:none;margin:0;padding:0}.soonlist li{border:1px dashed var(--line);padding:16px;background:var(--ink-2)}.soonlist b{display:block;font:900 22px/1 var(--display);text-transform:uppercase;margin-bottom:6px}.soonlist span{color:var(--soft);font-size:15px}
 .hp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* ---- compact home: hero fits the screen, fight news beside it, fewer long scrolls ---- */
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:end}
+.hero-news{display:none}
+.hero-news{background:rgba(11,12,16,.82);border:1px solid var(--line);border-top:4px solid var(--red);padding:14px;backdrop-filter:blur(6px);gap:12px}
+.hn-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase}
+.hn-head span{color:var(--red)}.hn-head a{color:var(--soft);text-decoration:none}.hn-head a:hover{color:#fff}
+.hn-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hn-card{display:grid;gap:3px;text-decoration:none;color:var(--bone);min-width:0}
+.hn-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#000}
+.hn-card b{font:900 18px/1.05 var(--display);text-transform:uppercase;margin-top:6px}
+.hn-card small{font:700 12px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.hn-card:hover img{outline:2px solid var(--red)}
+.hn-foot{font-size:13px;color:var(--soft);margin:0}
+.duo-grid{display:grid;grid-template-columns:1fr;gap:40px}
+.duo .fnhead{margin-bottom:18px}
+.duo .fnhead h2{font-size:clamp(30px,3.4vw,46px)}
+@media (min-width:1000px){
+  .hero{min-height:clamp(470px,calc(100svh - 215px),680px)}
+  .hero .wrap{padding-block:40px 44px}
+  .hero-grid{grid-template-columns:minmax(0,1fr) minmax(300px,380px);gap:40px}
+  .hero-badge{display:none}
+  .hero h1{font-size:clamp(46px,5.4vw,92px);white-space:nowrap}
+  .hero-in{gap:14px;max-width:none}
+  .hero-in .lede{max-width:560px;font-size:18px}
+  .hero-news{display:grid;margin-bottom:78px}
+  .hn-card b{font-size:16px}
+  .band,.view>section.flush:first-child{padding-block:clamp(48px,5vw,68px)}
+  .head{margin-bottom:28px}
+  .duo-grid{grid-template-columns:1.25fr 1fr;gap:36px;align-items:start}
+  .duo .explore{grid-template-columns:1fr 1fr;gap:10px}
+  .duo .ex{aspect-ratio:4/3}
+  .duo .ex b{font-size:24px}
+  .view[data-view=home] .band h2,.view[data-view=home] .split h2{font-size:clamp(34px,3.8vw,54px)}
+  .view[data-view=home] .head .lede{max-width:760px}
+  .newshead{margin-bottom:20px}
+  .ncard{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+  .nbody{padding:16px 18px 18px;gap:8px}.nbody h3{font-size:30px}.nbody p{font-size:15px}
+  .pathc{min-height:440px}
+  .split{min-height:0;height:430px}.split>.photo{min-height:0;position:relative}.split>.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .split .txt{padding-block:44px}
+  .gallery{grid-auto-rows:170px}
+  .benefit .photo{min-height:190px}
+}
+@media (min-width:1000px) and (max-height:820px){.hero .rating{display:none}.hero .wrap{padding-block:28px 28px}.hn-foot{display:none}.hero-news{margin-bottom:70px}}
+@media (max-width:999px){
+  .hero{min-height:0}
+  .hero .wrap{padding-block:56px 28px}
+  .hero-badge{display:none}
+  .hero h1{font-size:clamp(46px,13vw,72px)}
+  .hero-in{gap:14px}
+  .hero-news{display:none}
+  .band,.view>section.flush:first-child{padding-block:40px}
+  .head{margin-bottom:22px}
+  .pathc{min-height:340px}
+  .split{min-height:0}.split>.photo{min-height:0;height:240px;position:relative}.split>.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.split .txt{padding-block:32px}
+  .gallery{grid-auto-rows:120px}
+  .benefit{grid-template-columns:110px 1fr}.benefit .photo{min-height:140px}.benefit .t{padding:16px}
+  .reel{grid-template-columns:repeat(3,1fr)}.reel .photo:nth-child(n+4){display:none}
+  .explore{grid-template-columns:1fr 1fr}.ex{aspect-ratio:4/3}
+}
 </style>
 </head>
 <body>
@@ -680,6 +741,7 @@ a.tagc{text-decoration:none}
     </div>
     <div class="dots" id="dots" role="group" aria-label="Choose photo"></div>
     <div class="wrap">
+     <div class="hero-grid">
       <div class="hero-in">
         <img class="hero-badge" src="img/logo.webp" alt="">
         <h1>Find your<br><em>warrior</em> spirit</h1>
@@ -690,6 +752,15 @@ a.tagc{text-decoration:none}
         </div>
         <a class="rating" href="#team"><span class="stars" aria-hidden="true">★★★★★</span><b>4.9</b><span>from 100 Google reviews across our Potters Bar and Hoddesdon listings</span></a>
       </div>
+      <aside class="hero-news" id="heroNews" aria-label="Fight night">
+        <div class="hn-head"><span>Fight night · Sat 24 Oct</span><a href="#news">Details ↓</a></div>
+        <div class="hn-cards">
+          <a class="hn-card" href="#news"><img src="photos/poster-dino.webp" alt="Dino Leonida poster, Warriors of Hope 2" loading="lazy"><b>Dino Leonida</b><small>N-Class debut</small></a>
+          <a class="hn-card" href="#news"><img src="photos/poster-leo.webp" alt="Leo Prodromou-Beckwith poster, Warriors of Hope 2" loading="lazy"><b>Leo Prodromou-Beckwith</b><small>N-Class debut</small></a>
+        </div>
+        <p class="hn-foot">Warriors of Hope 2 · Bedford. Tickets from our fighters.</p>
+      </aside>
+     </div>
     </div>
   </section>
 
@@ -786,26 +857,24 @@ a.tagc{text-decoration:none}
     </div>
   </section>
 
-  <section class="band flush" aria-labelledby="fn-h">
-    <div class="wrap">
-      <div class="fnhead"><div class="stack"><span class="kick">Fight night</span><h2 id="fn-h">This is what we train for</h2></div><a class="btn" href="#videos">Watch with sound →</a></div>
+  <section class="band flush duo" aria-labelledby="fn-h">
+    <div class="wrap duo-grid">
+      <div class="duo-l">
+        <div class="fnhead"><div class="stack"><span class="kick">Fight night</span><h2 id="fn-h">This is what we train for</h2></div><a class="btn" href="#videos">Watch with sound →</a></div>
       <div class="loops">
         <figure class="loop big"><video data-loop src="video/loop-action.mp4" poster="video/loop-action.jpg" muted loop playsinline preload="none" aria-label="Warrior Spirit fighters exchanging in the ring"></video><figcaption>In the ring</figcaption></figure>
         <figure class="loop"><video data-loop src="video/loop-win.mp4" poster="video/loop-win.jpg" muted loop playsinline preload="none" aria-label="Clinch then hands raised"></video><figcaption>Hands raised</figcaption></figure>
         <figure class="loop"><video data-loop src="video/loop-decision.mp4" poster="video/loop-decision.jpg" muted loop playsinline preload="none" aria-label="Decision and the crowd"></video><figcaption>The decision</figcaption></figure>
       </div>
-    </div>
-  </section>
-
-
-
-  <section class="band flush" aria-label="Explore">
-    <div class="wrap">
-      <div class="explore">
+      </div>
+      <div class="duo-r">
+        <div class="fnhead"><div class="stack"><span class="kick">Explore</span><h2>Find what you need</h2></div></div>
+        <div class="explore">
         <a class="ex" href="#classes"><img src="photos/pads-2.webp" alt="" loading="lazy"><span><small>Classes &amp; prices</small><b>Timetable</b></span></a>
         <a class="ex" href="#pt"><img src="photos/pads-kick.webp" alt="" loading="lazy"><span><small>1-to-1</small><b>Personal training</b></span></a>
         <a class="ex" href="#fight"><img src="photos/corner-crowd.webp" alt="" loading="lazy"><span><small>Compete</small><b>Fight team</b></span></a>
         <a class="ex" href="#team"><img src="photos/jay-portrait.webp" alt="" loading="lazy"><span><small>Coaches</small><b>Meet the team</b></span></a>
+      </div>
       </div>
     </div>
   </section>
@@ -2219,7 +2288,7 @@ a.tagc{text-decoration:none}
   function toMin(t){var p=t.split(':');return +p[0]*60+ +p[1].slice(0,2)}
   function daysUntil(d){var a=new Date(todayKey+'T00:00:00'),b=new Date(d+'T00:00:00');return Math.round((b-a)/86400000)}
   var items=[];
-  (function(){var c=document.getElementById('fnCount');if(!c)return;var n=daysUntil('2026-10-24');c.textContent=n>1?n+' days to go · Sat 24 Oct':n===1?'Tomorrow night':n===0?'Tonight':'Results coming soon';if(n<0)c.classList.add('done')})();
+  (function(){var hn=document.getElementById('heroNews');if(hn&&new Date()>new Date('2026-10-25T06:00:00+01:00'))hn.remove();var c=document.getElementById('fnCount');if(!c)return;var n=daysUntil('2026-10-24');c.textContent=n>1?n+' days to go · Sat 24 Oct':n===1?'Tomorrow night':n===0?'Tonight':'Results coming soon';if(n<0)c.classList.add('done')})();
   EVENTS.forEach(function(ev){var n=daysUntil(ev.date);if(n<0)return;var when=n===0?'Tonight':n===1?'Tomorrow':'Fight night';items.push({cls:'hot',label:when,html:ev.text,href:ev.href})});
   var left=(TT[dow]||[]).filter(function(c){return toMin(c[1])+60>mins});
   if(left.length){items.push({label:'Today',html:left.map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
