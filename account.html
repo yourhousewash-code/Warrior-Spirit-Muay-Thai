@@ -63,6 +63,12 @@
       <div id="upcoming" class="list"><p class="empty">Loading…</p></div>
       <p class="muted" style="font-size:15px">You can cancel online up to 24 hours before. Closer to the time, please message the gym.</p>
     </div>
+    <div class="panel" id="clubPanel">
+      <h2>Club class timetable</h2>
+      <p class="muted" style="font-size:15px">Classes run all week at Next Gen Fitness, Potters Bar. Come along any time, and your first class is free.</p>
+      <div id="club" class="clubtt"></div>
+      <div class="row"><a class="btn small" href="/#contact" id="freeCls">Book a free class</a><a class="btn small ghost" href="/#classes">Full timetable &amp; prices</a></div>
+    </div>
     <div class="panel" id="pastPanel" hidden>
       <h2>Past &amp; cancelled</h2>
       <div id="past" class="list"></div>
@@ -115,6 +121,17 @@ async function loadBookings() {
     $('#past').innerHTML = past.map(b => `<div class="item ${b.status === 'cancelled' ? 'cancelled' : ''}"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)}${b.status === 'cancelled' ? ' · cancelled' : ''}</div></div></div>`).join('');
   } catch (err) { $('#upcoming').innerHTML = `<p class="err">${esc(err.message)}</p>`; }
 }
+(async function club() {
+  try {
+    const { classes } = await api('/api/pt?action=timetable');
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const order = [1, 2, 3, 4, 5, 6, 0];
+    $('#club').innerHTML = order.map(d => {
+      const cs = classes.filter(k => k.day === d).sort((a, b) => a.start.localeCompare(b.start));
+      return cs.length ? `<div class="cday"><b>${days[d]}</b>${cs.map(k => `<span><i>${esc(k.start)}–${esc(k.end)}</i> ${esc(k.name)} <small>${esc(k.coach)}</small></span>`).join('')}</div>` : '';
+    }).join('') || '<p class="empty">Timetable coming soon.</p>';
+  } catch { $('#clubPanel').hidden = true; }
+})();
 document.addEventListener('click', async e => {
   const c = e.target.closest('[data-cancel]'); if (!c) return;
   if (c.dataset.confirm !== '1') { c.dataset.confirm = '1'; c.textContent = 'Tap again to cancel'; return; }

@@ -108,6 +108,10 @@ export default async function handler(req, res) {
       }
 
       /* ----- class timetable ----- */
+      case 'timetable': { // public: the club class timetable (used on the account page)
+        const list = (await getClasses()).filter(k => COACHES[k.coach]).map(k => ({ day: k.day, start: k.start, end: k.end, name: k.name, coach: COACHES[k.coach].first }));
+        return send(res, 200, { classes: list });
+      }
       case 'classes': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
         return send(res, 200, { classes: await getClasses() });
