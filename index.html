@@ -674,6 +674,33 @@ a.tagc{text-decoration:none}
   .reel{grid-template-columns:repeat(3,1fr)}.reel .photo:nth-child(n+4){display:none}
   .explore{grid-template-columns:1fr 1fr}.ex{aspect-ratio:4/3}
 }
+
+/* ---- phones: photo on top, text underneath, so words never cover faces ---- */
+@media (max-width:700px){
+  .hero{display:block}
+  .hero::after{display:none}
+  .slides{position:relative;height:min(62vw,280px)}
+  .dots{top:calc(min(62vw,280px) - 22px);bottom:auto;right:12px}
+  .hero .snd{top:12px;bottom:auto}
+  .hero .wrap{padding-block:22px 26px;background:var(--ink)}
+  .teamhero,.townhero{display:block;min-height:0;background:var(--ink)}
+  .teamhero::after,.townhero::after{display:none}
+  .teamhero>.cover,.townhero>.cover{position:static;display:block;width:100%;height:min(62vw,260px)}
+  .teamhero .wrap,.townhero .wrap{padding-block:24px 34px}
+  .pathc{display:block;min-height:0;background:var(--ink-2)}
+  .pathc::after{display:none}
+  .pathc>.cover{position:static;display:block;width:100%;height:min(62vw,250px)}
+  .pathc .in{padding:22px 18px 28px}
+  .fight>.cover,.fight>video.cover{position:relative;display:block;width:100%;height:min(62vw,250px)}
+  .fight::after{display:none}
+  .fight{background:var(--ink)}
+  .fight .wrap{padding-top:22px}
+  .ex{aspect-ratio:1/1}
+  .ex b{font-size:22px}
+  .ex small{color:#fff;opacity:.85;font-size:12px}
+  .ex::after{background:linear-gradient(0deg,rgba(11,12,16,.95),rgba(11,12,16,.1) 70%)}
+  .tcard b,.progs b{font-size:22px}
+}
 </style>
 </head>
 <body>
