@@ -788,7 +788,6 @@ a.tagc{text-decoration:none}
       <video src="video/strike-1.mp4" poster="video/strike-1.jpg" muted loop playsinline preload="none" aria-label="Fighters exchanging strikes"></video>
       <img src="photos/wh2-dino-punch-round.webp" alt="Dino lands a punch in round 2 at Warriors of Hope 2" loading="lazy" style="object-position:70% 40%">
       <img src="photos/wh2-dino-aaron-pads-knee-jay-watching.webp" alt="Aaron holding pads for a fighter's knee while Jay watches" loading="lazy" style="object-position:55% 45%">
-      <img src="photos/hero-corner.webp" alt="Jay in the corner on fight night" loading="lazy" style="object-position:50% 35%">
       <img src="photos/pads-2.webp" alt="Jay taking a knee on the pads" loading="lazy" style="object-position:40% 40%">
     </div>
     <script>
@@ -2307,7 +2306,7 @@ a.tagc{text-decoration:none}
   var all=[];
   function upd(v){var b=v._snd;b.classList.toggle('on',!v.muted);b.innerHTML=(v.muted?OFF:ON)+'<span>'+(v.muted?'Sound on':'Sound off')+'</span>';b.setAttribute('aria-label',v.muted?'Turn sound on':'Turn sound off')}
   function hero(v){return !!v.closest('#slides')}
-  document.querySelectorAll('.loop video, .fight > video.cover, .walkout video, #slides video').forEach(function(v){
+  document.querySelectorAll('.loop video, .fight > video.cover, .walkout video').forEach(function(v){
     var host=v.closest('.loop, .walkout, .fight, .hero');if(!host)return;
     var b=document.createElement('button');b.type='button';b.className='snd';v._snd=b;host.appendChild(b);all.push(v);v.muted=true;upd(v);
     b.addEventListener('click',function(){

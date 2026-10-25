@@ -21,10 +21,6 @@ export const PHOTOLIB = [
   "name": "Fight ring"
  },
  {
-  "src": "photos/hero-corner.webp",
-  "name": "Hero corner"
- },
- {
   "src": "photos/interview.webp",
   "name": "Interview"
  },

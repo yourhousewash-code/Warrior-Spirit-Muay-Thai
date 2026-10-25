@@ -67,13 +67,6 @@ export const DEFAULT_HERO = [
  },
  {
   "type": "photo",
-  "src": "photos/hero-corner.webp",
-  "alt": "Jay in the corner on fight night",
-  "pos": "50% 35%",
-  "id": "h10"
- },
- {
-  "type": "photo",
   "src": "photos/pads-2.webp",
   "alt": "Jay taking a knee on the pads",
   "pos": "40% 40%",
