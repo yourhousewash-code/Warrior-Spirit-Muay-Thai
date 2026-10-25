@@ -2,6 +2,7 @@ import { Readable } from 'node:stream';
 import { get } from '@vercel/blob';
 import { redis, COACHES, loadCoaches, send, bad, setupProblem, body, clean, coachSession, coachEmail, mail, SITE } from './_lib/core.js';
 import { DEFAULT_HERO, DEFAULT_VIDEOS } from './_lib/sitedefaults.js';
+import { PHOTOLIB } from './_lib/photolib.js';
 
 /* Website photos and videos that coaches can change.
    LISTS: the hero carousel and the video gallery. Until someone edits a list, the website keeps its built-in version.
@@ -33,6 +34,30 @@ function cleanItems(list, input) {
     return { id: idv, src: x.src, poster: x.poster, title, caption: clean(x.caption, 200), date: clean(x.date, 30), cat, dur: clean(x.dur, 8) };
   });
 }
+/* ---- page text and photo swaps ---- */
+const KEY = /^[\w\-]{1,40}\.[\w\-]{1,60}$/;
+const safeHtml = h => String(h).slice(0, 4000).replace(/<(\/?)(\w+)[^>]*>/g, (m, s, t) => /^(br|strong|em|b|i)$/i.test(t) ? `<${s}${t.toLowerCase()}>` : '').slice(0, 3000);
+async function library() { return [...PHOTOLIB, ...((await redis.get('site:library')) || [])]; }
+async function cleanEdits(d) {
+  const lib = new Set((await library()).map(x => x.src));
+  const out = { text: {}, images: {} };
+  const t = d?.text || {}, im = d?.images || {};
+  if (Object.keys(t).length + Object.keys(im).length > 300) throw new Error('Too many changes at once.');
+  for (const [k, v] of Object.entries(t)) {
+    if (!KEY.test(k)) continue;
+    if (v === null) { out.text[k] = null; continue; }
+    const html = safeHtml(v?.html ?? ''); if (!html.replace(/<[^>]+>/g, '').trim()) throw new Error('A text box can’t be left empty. Use “Put back the original” instead.');
+    out.text[k] = { html, orig: safeHtml(v?.orig ?? '').slice(0, 600) };
+  }
+  for (const [k, v] of Object.entries(im)) {
+    if (!KEY.test(k)) continue;
+    if (v === null) { out.images[k] = null; continue; }
+    if (!lib.has(v?.src) && !FILE.test(v?.src || '')) throw new Error('That photo isn’t in the photo library.');
+    out.images[k] = { src: v.src, alt: clean(v.alt, 200), orig: clean(v.orig, 200) };
+  }
+  return out;
+}
+function merge(live, delta) { const o = { ...(live || {}) }; for (const [k, v] of Object.entries(delta || {})) { if (v === null) delete o[k]; else o[k] = v; } return o; }
 const nameOf = c => COACHES[c]?.first || c;
 
 export default async function handler(req, res) {
@@ -42,9 +67,9 @@ export default async function handler(req, res) {
   try {
     /* ---- public ---- */
     if (action === 'public') {
-      const [hero, videos] = await Promise.all([redis.get('site:hero'), redis.get('site:videos')]);
+      const [hero, videos, text, images] = await Promise.all([redis.get('site:hero'), redis.get('site:videos'), redis.get('site:text'), redis.get('site:images')]);
       res.setHeader('Cache-Control', 'public, max-age=20, s-maxage=30, stale-while-revalidate=300');
-      return res.status(200).json({ hero: hero?.items || null, videos: videos?.items || null });
+      return res.status(200).json({ hero: hero?.items || null, videos: videos?.items || null, text: text || null, images: images || null });
     }
     if (action === 'file') {
       const path = clean(req.query.path, 300);
@@ -62,6 +87,29 @@ export default async function handler(req, res) {
     if (!me) return bad(res, 'Please log in.', 401);
     const b = body(req);
     const list = clean(req.query.list || b.list, 10);
+
+    if (action === 'library') return send(res, 200, { photos: await library(), canAdd: !!me.admin });
+    if (action === 'edits-get') {
+      const [text, images, mine] = await Promise.all([redis.get('site:text'), redis.get('site:images'), redis.get(`site:pending:edits:${me.id}`)]);
+      return send(res, 200, { text: text || {}, images: images || {}, pending: mine || null, admin: !!me.admin, me: me.id });
+    }
+    if (action === 'edits-save' && req.method === 'POST') {
+      let d; try { d = await cleanEdits(b); } catch (e) { return bad(res, e.message); }
+      if (me.admin) {
+        const [t, i] = await Promise.all([redis.get('site:text'), redis.get('site:images')]);
+        await redis.set('site:text', merge(t, Object.fromEntries(Object.entries(d.text).map(([k, v]) => [k, v && { html: v.html, orig: v.orig }]))));
+        await redis.set('site:images', merge(i, Object.fromEntries(Object.entries(d.images).map(([k, v]) => [k, v && { src: v.src, alt: v.alt, orig: v.orig }]))));
+        await redis.del(`site:pending:edits:${me.id}`);
+        return send(res, 200, { status: 'live' });
+      }
+      const prev = (await redis.get(`site:pending:edits:${me.id}`)) || { text: {}, images: {} };
+      const next = { text: { ...prev.text, ...d.text }, images: { ...prev.images, ...d.images }, by: me.id, at: Date.now(), note: clean(b.note, 300) };
+      await redis.set(`site:pending:edits:${me.id}`, next);
+      const to = await Promise.all(['jay', 'steve'].map(coachEmail));
+      await mail(to.filter(Boolean), `${nameOf(me.id)} has edited the website`, [`${COACHES[me.id].name} has changed some wording or photos on the website.`, 'They won’t show until you approve them.', `Review them here: ${SITE}/coach#media`]);
+      return send(res, 200, { status: 'pending' });
+    }
+    if (action === 'edits-discard' && req.method === 'POST') { await redis.del(`site:pending:edits:${me.id}`); return send(res, 200, { ok: true }); }
 
     if (action === 'get') {
       if (!LISTS[list]) return bad(res, 'Unknown list.', 404);
@@ -96,8 +144,19 @@ export default async function handler(req, res) {
     /* ---- owners ---- */
     if (!me.admin) return bad(res, 'Only the owners can do that.', 403);
 
+    if (action === 'library-add' && req.method === 'POST') {
+      const src = clean(b.src, 300); if (!FILE.test(src)) return bad(res, 'Not a valid photo.');
+      const cur = (await redis.get('site:library')) || [];
+      if (!cur.some(x => x.src === src)) await redis.set('site:library', [...cur, { src, name: clean(b.name, 60) || 'Added photo' }].slice(-200));
+      return send(res, 200, { ok: true });
+    }
+
     if (action === 'pending') {
       const out = [];
+      for (const c of Object.keys(COACHES)) {
+        const p = await redis.get(`site:pending:edits:${c}`);
+        if (p) out.push({ list: 'edits', label: 'Page text and photos', coach: c, name: COACHES[c].first, at: p.at, note: p.note || '', text: p.text, images: p.images });
+      }
       for (const l of Object.keys(LISTS)) {
         const live = (await redis.get(`site:${l}`))?.items || LISTS[l].def;
         for (const c of Object.keys(COACHES)) {
@@ -110,6 +169,21 @@ export default async function handler(req, res) {
 
     if (action === 'review' && req.method === 'POST') {
       const c = clean(b.coach, 20);
+      if (list === 'edits' && COACHES[c]) {
+        const key = `site:pending:edits:${c}`, p = await redis.get(key);
+        if (!p) return bad(res, 'Nothing waiting for approval.', 404);
+        const to = await coachEmail(c);
+        if (b.decision === 'approve') {
+          const [t, i] = await Promise.all([redis.get('site:text'), redis.get('site:images')]);
+          await redis.set('site:text', merge(t, p.text)); await redis.set('site:images', merge(i, p.images)); await redis.del(key);
+          if (to) await mail(to, 'Your website edits are live', ['Your wording and photo changes were approved and are now on the website.', SITE]);
+          return send(res, 200, { status: 'live' });
+        }
+        await redis.del(key);
+        const note = clean(b.note, 300);
+        if (to) await mail(to, 'Website edits not approved', ['Your wording and photo changes weren’t approved this time.', note ? `Note: ${note}` : ''].filter(Boolean));
+        return send(res, 200, { status: 'rejected' });
+      }
       if (!LISTS[list] || !COACHES[c]) return bad(res, 'Unknown request.', 404);
       const key = `site:pending:${list}:${c}`;
       const p = await redis.get(key);

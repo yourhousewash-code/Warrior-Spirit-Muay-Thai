@@ -300,6 +300,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <b>Club details</b><p>Gym opening hours and the basic details of the club. Updates the website.</p><em>Open →</em>
         </button>
+        <button type="button" class="tile" onclick="location.href='/?edit=1'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+          <b>Edit the website</b><p>Open the real website and tap any wording or photo to change it. Photos are picked from the club photo library. Layout stays the same.</p><em>Open →</em>
+        </button>
         <button type="button" class="tile" data-go="media">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="1"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 15l-5-5L7 18M8 21h8"/></svg>
           <b>Website photos &amp; videos</b><p>Add, replace, remove and reorder the photos in the homepage carousel and the videos in the video gallery.</p><em>Open →</em>
@@ -1378,7 +1382,17 @@ async function loadMediaApprovals() {
   try {
     const { pending } = await api('/api/site?action=pending');
     box.hidden = !pending.length; if (!pending.length) return;
-    box.innerHTML = '<h2>Waiting for your approval</h2><p class="muted">These changes aren’t on the website until you approve them. Approving replaces the current list with theirs.</p>' + pending.map(p => {
+    const strip = h => esc(String(h || '').replace(/<br\s*\/?>/gi, ' ⏎ ').replace(/<[^>]+>/g, ''));
+    const editCard = p => {
+      const T = Object.entries(p.text || {}), I = Object.entries(p.images || {});
+      return `<div class="apv"><b style="font:900 22px/1 var(--display);text-transform:uppercase">${esc(p.name)} · ${esc(p.label)}</b>
+        <p class="muted" style="margin:0">${T.length} wording change${T.length === 1 ? '' : 's'}, ${I.length} photo change${I.length === 1 ? '' : 's'}.${p.note ? ' Note: ' + esc(p.note) : ''}</p>
+        ${T.length ? `<div class="diff"><div class="k"></div><div class="k">Was</div><div class="k">Now</div>${T.map(([k, v]) => `<div class="k">Text</div><div class="old">${v ? strip(v.orig) : '—'}</div><div class="new">${v ? strip(v.html) : '<i>Put back to the original</i>'}</div>`).join('')}</div>` : ''}
+        ${I.length ? `<div class="mgrid">${I.map(([k, v]) => `<div class="mcard isnew"><div class="mth"><img src="${esc(mUrl(v ? v.src : ''))}" alt=""><span class="tag new">${v ? 'New photo' : 'Original'}</span></div><div class="mb"><b>${v ? esc(v.alt || 'No description') : 'Put back to the original'}</b></div></div>`).join('')}</div>` : ''}
+        <div class="row"><button class="btn small" data-mrev="edits|${p.coach}|approve">Approve &amp; publish</button>
+        <input data-mnote="edits|${p.coach}" placeholder="Note if saying no (optional)" style="flex:1 1 220px"><button class="btn small ghost" data-mrev="edits|${p.coach}|reject">Don’t publish</button></div></div>`;
+    };
+    box.innerHTML = '<h2>Waiting for your approval</h2><p class="muted">These changes aren’t on the website until you approve them. Photo and video lists are replaced with the coach’s version.</p>' + pending.map(p => { if (p.list === 'edits') return editCard(p);
       const old = new Set(p.live.map(x => x.src)), now = new Set(p.items.map(x => x.src));
       const removed = p.live.filter(x => !now.has(x.src)).length, added = p.items.filter(x => !old.has(x.src)).length;
       const th = x => (p.list === 'hero' && x.type === 'photo' ? x.src : x.poster);

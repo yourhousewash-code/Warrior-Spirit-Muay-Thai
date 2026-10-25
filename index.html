@@ -2564,6 +2564,7 @@ a.tagc{text-decoration:none}
 })();
 </script>
 <script src="/assets/fighterbase.js" defer></script>
+<script src="assets/editable.js" defer></script>
 <script src="/assets/share.js" defer></script>
 <script src="/assets/confetti.js" defer></script>
 <script>
@@ -2595,15 +2596,21 @@ a.tagc{text-decoration:none}
       g.appendChild(b);if(window.__vbind)window.__vbind(b)});
     var on=document.querySelector('[data-vf][aria-pressed="true"]');if(on&&on.getAttribute('data-vf')!=='all')on.click();
   }
-  function apply(d){if(!d)return;applyHero(d.hero);applyVideos(d.videos)}
+  var editing=false;try{editing=sessionStorage.getItem('ws_edit')==='1'||/[?&]edit=1/.test(location.search)}catch(e){}
+  function apply(d){if(!d)return;applyHero(d.hero);applyVideos(d.videos);if(!editing&&window.WSEdit&&(d.text||d.images))WSEdit.apply(d.text,d.images)}
   function run(){
     fetch('/api/site?action=public').then(function(r){return r.ok?r.json():null}).then(function(d){
-      if(!d||(!d.hero&&!d.videos))return;
+      if(!d||(!d.hero&&!d.videos&&!d.text&&!d.images))return;
       apply(d);
     }).catch(function(){});
   }
   if(document.readyState==='complete')run();else window.addEventListener('load',run);
 })();
+</script>
+<script>
+/* Coach edit mode: opened from the coach area (?edit=1). Visitors never load the editor. */
+(function(){try{if(/[?&]edit=1/.test(location.search))sessionStorage.setItem('ws_edit','1');
+if(sessionStorage.getItem('ws_edit')==='1'){var s=document.createElement('script');s.src='/assets/editor.js';document.body.appendChild(s)}}catch(e){}})();
 </script>
 </body>
 </html>
