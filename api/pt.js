@@ -9,6 +9,13 @@ import {
 import { liveProfile } from './_lib/profiles.js';
 
 
+const DEFAULT_HOURS = [
+  { day: 1, open: '09:00', close: '21:00' }, { day: 2, open: '09:00', close: '21:00' }, { day: 3, open: '09:00', close: '21:00' },
+  { day: 4, open: '09:00', close: '21:00' }, { day: 5, open: '09:00', close: '21:00' },
+  { day: 6, open: '08:00', close: '12:00', note: 'Personal training only' }, { day: 0, closed: true },
+];
+async function getHours() { const h = await redis.get('gymhours'); return Array.isArray(h) && h.length === 7 ? h : DEFAULT_HOURS.map(x => ({ ...x })); }
+
 const DEFAULT_TYPES = [
   { id: 't-kids', name: 'Kids Muay Thai', desc: 'Fun, safe, properly coached Muay Thai for ages 7 to 13. Confidence, discipline and fitness.', by: 'jay' },
   { id: 't-beg', name: 'Beginners', desc: 'Never trained before? Start here. Learn the basics at your own pace, no sparring.', by: 'jay' },
@@ -125,6 +132,23 @@ export default async function handler(req, res) {
       case 'classes': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
         return send(res, 200, { classes: await getClasses() });
+      }
+      case 'hours': return send(res, 200, { hours: await getHours() }); // public: general opening hours
+      case 'hours-save': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        if (!c.admin) return bad(res, 'Only Jay and Steve can change the opening hours.', 403);
+        const src = Array.isArray(b.hours) ? b.hours : [];
+        const out = [];
+        for (const d of [1, 2, 3, 4, 5, 6, 0]) {
+          const r = src.find(x => Number(x.day) === d) || { day: d, closed: true };
+          if (r.closed) { out.push({ day: d, closed: true }); continue; }
+          if (!validTime(String(r.open)) || !validTime(String(r.close)) || String(r.close) <= String(r.open)) return bad(res, 'Check the opening and closing times.');
+          const row = { day: d, open: String(r.open), close: String(r.close) };
+          if (clean(r.note, 60)) row.note = clean(r.note, 60);
+          out.push(row);
+        }
+        await redis.set('gymhours', out);
+        return send(res, 200, { hours: out });
       }
       case 'classtypes': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
