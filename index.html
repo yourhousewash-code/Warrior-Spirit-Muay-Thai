@@ -556,6 +556,16 @@ a.cdi:hover svg{color:#25d366}
 .nevent small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
 .nevent b{font:900 22px/1.1 var(--display);text-transform:uppercase}
 .nevent span{color:var(--soft);font-size:15px;overflow-wrap:anywhere}
+
+.fngal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:6px;margin-top:28px}
+.fngal figure{margin:0;position:relative;overflow:hidden;background:#000;min-width:0}
+.fngal img{width:100%;height:100%;object-fit:cover;display:block}
+.fngal .big{grid-column:span 2;grid-row:span 2}
+.fngal figcaption{position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.8));font:700 14px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--bone)}
+.campgal{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:18px}
+.campgal figure{margin:0;overflow:hidden;background:#000;aspect-ratio:4/3}
+.campgal img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:760px){.fngal{grid-template-columns:repeat(2,1fr);grid-auto-rows:150px}.campgal{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:1000px){.ngrid{grid-template-columns:1fr}}
 @media (max-width:560px){.ncard{grid-template-columns:1fr}.nevent{grid-template-columns:1fr}}
 
@@ -831,6 +841,16 @@ a.tagc{text-decoration:none}
         <div><small>When</small><b>Saturday 24 October 2026</b></div>
         <div><small>Where</small><b>John Bunyan Sports &amp; Fitness</b><span>Mile Road, Bedford MK42 9TS</span></div>
         <div><small>Tickets</small><b>From our fighters</b><span>or ask at the gym: <a href="tel:07904032142">07904 032142</a></span></div>
+      </div>
+      <div class="fngal" aria-label="Warriors of Hope 2 in pictures">
+        <figure class="big"><img src="photos/wh2-dino-hand-raised-winner.webp" alt="Dino Leonida with his hand raised after winning by stoppage" loading="lazy"><figcaption>Dino's hand goes up</figcaption></figure>
+        <figure><img src="photos/wh2-dino-hug-after-fight.webp" alt="Dino and his opponent embrace after the fight" loading="lazy"><figcaption>Respect</figcaption></figure>
+        <figure><img src="photos/wh2-dino-punch-round.webp" alt="Dino lands a punch in round 2" loading="lazy"><figcaption>Round 2</figcaption></figure>
+        <figure><img src="photos/wh2-dino-corner-between-rounds.webp" alt="Dino in the corner between rounds" loading="lazy"><figcaption>In the corner</figcaption></figure>
+        <figure><img src="photos/wh2-leo-walkout-with-jay.webp" alt="Leo walking to the ring with Jay" loading="lazy"><figcaption>Leo's walk-out</figcaption></figure>
+        <figure><img src="photos/wh2-dino-jay-pads-knee.webp" alt="Dino driving a knee on the pads with Jay" loading="lazy"><figcaption>Warming up with Jay</figcaption></figure>
+        <figure><img src="photos/wh2-dino-handwrap-closeup.webp" alt="Hands being wrapped before the fight" loading="lazy"><figcaption>Hands wrapped</figcaption></figure>
+        <figure style="grid-column:span 2"><img src="photos/wh2-leo-handwraps-ready.webp" alt="Leo with his hands wrapped, ready to go" loading="lazy"><figcaption>Leo is ready</figcaption></figure>
       </div>
     </div>
   </section>
@@ -1174,6 +1194,12 @@ a.tagc{text-decoration:none}
         <article class="campi"><h3>Weight &amp; recovery</h3><p>Practical advice on making weight safely, fuelling sessions and recovering properly, so you arrive strong rather than drained.</p></article>
         <article class="campi"><h3>Fight night</h3><p>Hands wrapped, warm-up on the pads, a game plan and an experienced corner. You will never walk out alone.</p></article>
       </div>
+      <div class="campgal">
+        <figure><img src="photos/wh2-dino-jay-pads-guard.webp" alt="Jay holding the pads in fight camp" loading="lazy"></figure>
+        <figure><img src="photos/wh2-dino-aaron-pads-knee-jay-watching.webp" alt="Aaron on the pads, Jay watching" loading="lazy"></figure>
+        <figure><img src="photos/wh2-dino-aaron-pads-jay-watching.webp" alt="Switch kick on the pads in the warm-up room" loading="lazy"></figure>
+        <figure><img src="photos/wh2-leo-jay-pads.webp" alt="Jay working the pads with Leo" loading="lazy"></figure>
+      </div>
     </div>
   </section>
 
@@ -1232,6 +1258,14 @@ a.tagc{text-decoration:none}
         <button class="chip" type="button" data-vf="training" aria-pressed="false">Training</button>
       </div>
       <div class="vgrid">
+        <button class="vcard" type="button" data-cat="fight win" data-src="video/dino-fight-wh2.mp4" data-title="Dino's winning fight">
+          <span class="vthumb"><img src="video/dino-fight-wh2.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:41</span></span>
+          <span class="vmeta"><small>October 2026</small><b>Dino's winning fight</b><span>Warriors of Hope 2: stoppage in round 2.</span></span>
+        </button>
+        <button class="vcard" type="button" data-cat="training" data-src="video/leo-clinch-drill.mp4" data-title="Leo's clinch drill">
+          <span class="vthumb"><img src="video/leo-clinch-drill.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:08</span></span>
+          <span class="vmeta"><small>October 2026</small><b>Leo's clinch drill</b><span>Jay and Leo warming up before Warriors of Hope 2.</span></span>
+        </button>
         <button class="vcard" type="button" data-cat="fight" data-src="video/strikes-reel.mp4" data-title="Kicks and punches">
           <span class="vthumb"><img src="video/strikes-reel.jpg" alt="" loading="lazy"><span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span><span class="vdur">0:34</span></span>
           <span class="vmeta"><small>Fight reel</small><b>Kicks and punches</b><span>Eight of the best exchanges from our fight nights.</span></span>
