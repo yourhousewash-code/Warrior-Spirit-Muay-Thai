@@ -160,6 +160,27 @@
 .sc-tabs button{border:1px solid var(--line);background:var(--ink-2);color:var(--muted);padding:9px 12px;font:700 14px var(--cond);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
 .sc-tabs button[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
 @media (max-width:760px){.sc-tabs{display:flex}.sc{grid-template-columns:44px minmax(0,1fr)}.sc .hd,.sc .col{display:none}.sc .hd.on,.sc .col.on,.sc .hd.corner{display:block}}
+
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.mcard{background:var(--ink-2);border:1px solid var(--line);display:grid;grid-template-rows:auto 1fr;min-width:0}
+.mcard.isnew{border-color:var(--free)}
+.mth{position:relative;aspect-ratio:16/10;background:#000;overflow:hidden}
+.mth img{width:100%;height:100%;object-fit:cover;display:block}
+.mth .tag{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.75);color:#fff;font:700 11px var(--cond);letter-spacing:.1em;text-transform:uppercase;padding:3px 7px}
+.mth .tag.new{background:var(--free);color:#000;left:auto;right:6px}
+.mb{padding:10px;display:grid;gap:8px;align-content:start}
+.mb b{font:700 14px/1.25 var(--body);overflow-wrap:anywhere}
+.mb .mbt{display:flex;gap:6px;flex-wrap:wrap}
+.mb .mbt button{border:1px solid var(--line);background:transparent;color:var(--bone);padding:7px 10px;font:700 12px var(--cond);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;min-height:34px}
+.mb .mbt button[data-mdel]{color:var(--bad)}
+.mb .mbt button:disabled{opacity:.3;cursor:default}
+.mtabs{display:flex;gap:6px;flex-wrap:wrap}
+.mtabs button{border:1px solid var(--line);background:var(--ink-2);color:var(--muted);padding:10px 14px;font:700 14px var(--cond);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.mtabs button[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.mfocus{position:relative;cursor:crosshair;aspect-ratio:16/10;overflow:hidden;background:#000;border:1px solid var(--line)}
+.mfocus img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.mfocus i{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border:3px solid var(--red);border-radius:50%;box-shadow:0 0 0 2px #fff;pointer-events:none}
+.mchecks{display:flex;gap:14px;flex-wrap:wrap}.mchecks label{display:flex;gap:6px;align-items:center;grid-template-columns:none}
 .dlg{background:var(--ink-2);color:var(--bone);border:0;border-top:4px solid var(--red);padding:22px;width:min(520px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto}
 .dlg::backdrop{background:rgba(0,0,0,.65)}
 .trow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:12px;background:var(--ink);border-left:4px solid var(--c,var(--line));align-items:start}
@@ -218,6 +239,7 @@
       </div>
 
       <div class="panel" id="approvals" hidden style="border-top-color:var(--tbc)"></div>
+      <div class="panel" id="mediaNotice" hidden style="border-top-color:var(--tbc)"></div>
 
       <div class="panel">
         <div class="calhead">
@@ -277,6 +299,10 @@
         <button type="button" class="tile" data-go="club" data-admin-only hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <b>Club details</b><p>Gym opening hours and the basic details of the club. Updates the website.</p><em>Open →</em>
+        </button>
+        <button type="button" class="tile" data-go="media">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="1"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 15l-5-5L7 18M8 21h8"/></svg>
+          <b>Website photos &amp; videos</b><p>Add, replace, remove and reorder the photos in the homepage carousel and the videos in the video gallery.</p><em>Open →</em>
         </button>
         <button type="button" class="tile" data-go="share">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
@@ -493,6 +519,50 @@
       </section>
     </div>
 
+    <!-- ===== WEBSITE PHOTOS & VIDEOS ===== -->
+    <div data-view="media" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <div class="calhead"><h1>Website photos &amp; videos</h1></div>
+      <p class="muted" id="mHelp"></p>
+      <div class="panel" id="mApprovals" hidden style="border-top-color:var(--tbc)"></div>
+      <div class="mtabs" role="tablist" aria-label="What to edit">
+        <button type="button" role="tab" data-mtab="hero" aria-selected="true">Homepage carousel</button>
+        <button type="button" role="tab" data-mtab="videos" aria-selected="false">Video gallery</button>
+      </div>
+      <div class="panel stack" style="gap:14px">
+        <div id="mStatus" class="note" hidden></div>
+        <div class="row">
+          <label class="btn" for="mAdd" style="color:#fff" id="mAddLbl">+ Add photos or videos<input id="mAdd" type="file" accept="image/*,video/*" multiple hidden></label>
+          <button type="button" class="btn ghost" id="mReset" hidden>Put back the original</button>
+        </div>
+        <p class="muted" style="margin:0;font-size:14px">Photos are shrunk automatically. For videos, MP4 works on every phone and computer. Only use photos of children if their parents are happy for them to be on the website.</p>
+        <p class="err" id="mErr" hidden></p><p class="ok" id="mProg" hidden></p>
+        <div class="mgrid" id="mGrid"></div>
+        <div class="row" style="position:sticky;bottom:0;background:var(--ink);padding:10px 0">
+          <button type="button" class="btn" id="mSave" disabled>Save changes</button>
+          <button type="button" class="btn ghost" id="mDiscard" disabled>Undo my changes</button>
+        </div>
+      </div>
+      <dialog id="mDlg" class="dlg">
+        <form method="dialog" id="mForm" class="stack" style="gap:12px">
+          <h2 id="mdTitle">Edit</h2>
+          <div class="mfocus" id="mdFocus" hidden><img id="mdImg" alt=""><i id="mdDot"></i></div>
+          <p class="muted" id="mdFocusHelp" style="margin:0;font-size:13px" hidden>Tap the picture on the part that matters most (a face, say). That part stays in view on phones and wide screens.</p>
+          <label class="btn ghost" for="mdFile" id="mdFileLbl" style="justify-self:start">Replace the file<input id="mdFile" type="file" accept="image/*,video/*" hidden></label>
+          <div id="mdHeroF" class="stack" style="gap:12px"><label for="mdAlt">Describe the picture (for people who can’t see it)<input id="mdAlt" maxlength="200" placeholder="e.g. Jay holding pads for a fighter"></label></div>
+          <div id="mdVidF" class="stack" style="gap:12px" hidden>
+            <label for="mdVTitle">Title<input id="mdVTitle" maxlength="80" placeholder="e.g. Dino's winning fight"></label>
+            <label for="mdVCap">One-line description<input id="mdVCap" maxlength="200"></label>
+            <label for="mdVDate">Date shown<input id="mdVDate" maxlength="30" placeholder="e.g. October 2026"></label>
+            <div class="mchecks"><span class="muted">Shows under:</span><label><input type="checkbox" id="mdCFight"> Fights</label><label><input type="checkbox" id="mdCWin"> Wins</label><label><input type="checkbox" id="mdCTrain"> Training</label></div>
+            <label class="btn ghost" for="mdPoster" style="justify-self:start">Change the thumbnail picture<input id="mdPoster" type="file" accept="image/*" hidden></label>
+          </div>
+          <p class="err" id="mdErr" hidden></p><p class="ok" id="mdProg" hidden></p>
+          <div class="row"><button class="btn" type="submit" id="mdOk">Done</button></div>
+        </form>
+      </dialog>
+    </div>
+
     <!-- ===== SHARE ===== -->
     <div data-view="share" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
@@ -574,9 +644,9 @@ function loadShare() {
 /* ---------- views ---------- */
 function go(view) {
   if (!me) return;
-  if (!['home', 'availability', 'bookings', 'uploads', 'share', 'schedule', 'settings', 'prices', 'profile', 'team', 'enquiries', 'club'].includes(view) || (['team', 'enquiries', 'club'].includes(view) && !me.admin)) view = 'home';
+  if (!['home', 'availability', 'bookings', 'uploads', 'share', 'schedule', 'media', 'settings', 'prices', 'profile', 'team', 'enquiries', 'club'].includes(view) || (['team', 'enquiries', 'club'].includes(view) && !me.admin)) view = 'home';
   document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
-  if (view === 'home') { loadCal(); loadApprovals(); }
+  if (view === 'home') { loadCal(); loadApprovals(); loadMediaNotice(); }
   if (view === 'prices') loadPrices();
   if (view === 'profile') loadProfile();
   if (view === 'team') loadTeam();
@@ -588,6 +658,7 @@ function go(view) {
   if (view === 'share') loadShare();
   if (view === 'schedule') loadClasses();
   if (view === 'club') loadHours();
+  if (view === 'media') loadMedia();
   scrollTo({ top: 0 });
 }
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { const v = g.dataset.go; if (location.hash.slice(1) === v || (v === 'home' && !location.hash)) go(v); else location.hash = v === 'home' ? '' : v; } });
@@ -1128,6 +1199,211 @@ document.addEventListener('click', async e => {
   try { await api('/api/profile?action=review', { coach: b.dataset.review, decision: b.dataset.dec, note: document.querySelector(`[data-note="${b.dataset.review}"]`)?.value || '' }); loadApprovals(); }
   catch (err) { alertBox(err.message); b.disabled = false; }
 });
+
+/* ---------- website photos & videos ---------- */
+const ML = { hero: 'Homepage carousel', videos: 'Video gallery' };
+const mUrl = u => !u ? '' : (u.startsWith('/') ? u : '/' + u);
+let mList = 'hero', mItems = [], mLive = [], mCustom = false, mPend = null, mDirty = false, mIdx = -1, mBusy = false;
+const mSet = d => { mDirty = d; $('#mSave').disabled = !d || mBusy; $('#mDiscard').disabled = !d || mBusy; drawMediaStatus(); };
+const mLabel = it => mList === 'hero' ? (it.alt || (it.type === 'video' ? 'Video' : 'Photo')) : it.title;
+async function loadMedia() {
+  show($('#mErr'), ''); show($('#mProg'), '');
+  $('#mSave').textContent = me.admin ? 'Save & publish' : 'Send for approval';
+  $('#mHelp').textContent = me.admin ? 'What you save goes live on the website straight away.' : 'Your changes are sent to Jay or Steve to approve before they go on the website.';
+  document.querySelectorAll('[data-mtab]').forEach(b => b.setAttribute('aria-selected', b.dataset.mtab === mList));
+  $('#mAdd').accept = mList === 'hero' ? 'image/*,video/*' : 'video/*';
+  $('#mAddLbl').firstChild.textContent = mList === 'hero' ? '+ Add photos or videos' : '+ Add videos';
+  try {
+    const r = await api(`/api/site?action=get&list=${mList}`);
+    mLive = r.items; mCustom = r.custom; mPend = r.pending;
+    mItems = JSON.parse(JSON.stringify(r.pending ? r.pending.items : r.items));
+    $('#mReset').hidden = !(me.admin && r.custom);
+    mSet(false); drawMedia();
+  } catch (err) { show($('#mErr'), err.message); }
+  loadMediaApprovals();
+}
+function drawMediaStatus() {
+  const s = $('#mStatus');
+  if (mDirty) { s.hidden = false; s.textContent = me.admin ? 'You have changes that aren’t saved yet.' : 'You have changes that aren’t sent yet.'; }
+  else if (mPend && !me.admin) { s.hidden = false; s.textContent = `⏳ Your earlier changes are waiting for approval (sent ${new Date(mPend.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}). You can keep changing them and send again.`; }
+  else s.hidden = true;
+}
+function drawMedia() {
+  const live = new Set(mLive.map(x => x.src));
+  $('#mGrid').innerHTML = mItems.map((it, i) => {
+    const th = mList === 'hero' && it.type === 'photo' ? it.src : it.poster;
+    const pos = it.pos ? `style="object-position:${esc(it.pos)}"` : '';
+    return `<div class="mcard${live.has(it.src) ? '' : ' isnew'}"><div class="mth"><img src="${esc(mUrl(th))}" ${pos} alt="">${mList === 'videos' || it.type === 'video' ? '<span class="tag">▶ Video</span>' : ''}${live.has(it.src) ? '' : '<span class="tag new">New</span>'}</div>
+      <div class="mb"><b>${i + 1}. ${esc(mLabel(it)) || '<span class="muted">No description</span>'}</b>
+      <div class="mbt"><button type="button" data-mup="${i}" ${i ? '' : 'disabled'} aria-label="Move earlier">↑</button><button type="button" data-mdn="${i}" ${i < mItems.length - 1 ? '' : 'disabled'} aria-label="Move later">↓</button><button type="button" data-medit="${i}">Edit</button><button type="button" data-mdel="${i}">Remove</button></div></div></div>`;
+  }).join('') || '<p class="empty">Nothing here yet. Add something to start.</p>';
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-mtab]');
+  if (t) { if (mDirty && !confirm('Leave this list? Your unsaved changes will be lost.')) return; mList = t.dataset.mtab; loadMedia(); return; }
+  const g = k => { const b = e.target.closest(`[data-${k}]`); return b ? +b.dataset[k.replace(/^m/, 'm')] : null; };
+  const up = g('mup'), dn = g('mdn'), ed = g('medit'), dl = g('mdel');
+  if (up !== null) { [mItems[up - 1], mItems[up]] = [mItems[up], mItems[up - 1]]; mSet(true); drawMedia(); }
+  else if (dn !== null) { [mItems[dn + 1], mItems[dn]] = [mItems[dn], mItems[dn + 1]]; mSet(true); drawMedia(); }
+  else if (ed !== null) openMedia(ed);
+  else if (dl !== null) { if (mItems.length < 2) return show($('#mErr'), 'Keep at least one item in the list.'); if (confirm(`Remove “${mLabel(mItems[dl]) || 'this item'}” from the website?`)) { mItems.splice(dl, 1); mSet(true); drawMedia(); } }
+});
+async function mUploadBlob(blob, name) {
+  const safe = name.replace(/[^\w.\-]+/g, '_').slice(-60);
+  const r = await upload(`site/${me.id}/${Date.now()}-${safe}`, blob, { access: 'private', handleUploadUrl: '/api/uploads?action=token', multipart: blob.size > 20e6, contentType: blob.type || undefined });
+  return `/api/site?action=file&path=${r.pathname}`;
+}
+async function mShrink(file, max = 2200) {
+  if (!/^image\//.test(file.type) && !/\.(heic|heif|jpe?g|png|webp)$/i.test(file.name)) throw new Error('That isn’t a picture.');
+  let bmp;
+  try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch { throw new Error('This browser can’t read that picture (iPhone “HEIC” photos can be a problem on some computers). Try a JPG or PNG.'); }
+  const k = Math.min(1, max / Math.max(bmp.width, bmp.height)), w = Math.round(bmp.width * k), h = Math.round(bmp.height * k);
+  const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(bmp, 0, 0, w, h);
+  const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .86));
+  if (!blob) throw new Error('Couldn’t prepare that picture.');
+  return new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' });
+}
+function mVideoInfo(file) {
+  return new Promise((ok, no) => {
+    const v = document.createElement('video'), url = URL.createObjectURL(file); let done = false;
+    const end = (fn, x) => { if (done) return; done = true; clearTimeout(tm); URL.revokeObjectURL(url); fn(x); };
+    const tm = setTimeout(() => end(no, new Error('Couldn’t read that video. An MP4 usually works best.')), 20000);
+    v.muted = true; v.playsInline = true; v.preload = 'metadata'; v.src = url;
+    v.onerror = () => end(no, new Error('Couldn’t read that video. An MP4 usually works best.'));
+    v.onloadedmetadata = () => { v.currentTime = Math.min(1, (v.duration || 2) / 2); };
+    v.onseeked = () => {
+      const w = Math.min(1280, v.videoWidth || 1280), h = Math.round(w * (v.videoHeight || 720) / (v.videoWidth || 1280));
+      const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(v, 0, 0, w, h);
+      const d = Math.round(v.duration || 0);
+      c.toBlob(b => b ? end(ok, { poster: new File([b], 'thumb.jpg', { type: 'image/jpeg' }), dur: `${Math.floor(d / 60)}:${String(d % 60).padStart(2, '0')}` }) : end(no, new Error('Couldn’t make a thumbnail for that video.')), 'image/jpeg', .8);
+    };
+  });
+}
+/* upload one picked file and return the fields for a list item */
+async function mProcess(file, say) {
+  if (/^video\//.test(file.type) || /\.(mp4|mov|m4v|webm)$/i.test(file.name)) {
+    say(`Reading ${file.name}…`); const info = await mVideoInfo(file);
+    say('Uploading the thumbnail…'); const poster = await mUploadBlob(info.poster, info.poster.name);
+    say(`Uploading ${file.name} (this can take a while for a big video)…`); const src = await mUploadBlob(file, file.name);
+    return { type: 'video', src, poster, dur: info.dur };
+  }
+  say(`Preparing ${file.name}…`); const small = await mShrink(file);
+  say(`Uploading ${file.name}…`); const src = await mUploadBlob(small, small.name);
+  return { type: 'photo', src };
+}
+const mBusySet = b => { mBusy = b; $('#mSave').disabled = b || !mDirty; $('#mDiscard').disabled = b || !mDirty; $('#mAdd').disabled = b; };
+$('#mAdd').addEventListener('change', async e => {
+  const files = [...e.target.files]; e.target.value = ''; if (!files.length) return;
+  show($('#mErr'), ''); mBusySet(true);
+  let added = 0;
+  for (const [n, f] of files.entries()) {
+    try {
+      const r = await mProcess(f, m => show($('#mProg'), `${files.length > 1 ? `(${n + 1} of ${files.length}) ` : ''}${m}`));
+      if (mList === 'videos') {
+        if (r.type !== 'video') throw new Error('The video gallery only takes videos.');
+        mItems.push({ id: 'n' + Date.now().toString(36) + n, src: r.src, poster: r.poster, title: f.name.replace(/\.\w+$/, '').replace(/[_\-]+/g, ' ').slice(0, 80), caption: '', date: new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }), cat: 'fight', dur: r.dur });
+      } else mItems.push({ id: 'n' + Date.now().toString(36) + n, type: r.type, src: r.src, ...(r.type === 'video' ? { poster: r.poster } : {}), alt: '', pos: '60% 35%' });
+      added++;
+    } catch (err) { show($('#mErr'), `${f.name}: ${err.message}`); }
+  }
+  mBusySet(false); show($('#mProg'), '');
+  if (added) { mSet(true); drawMedia(); openMedia(mItems.length - 1); }
+});
+/* edit dialog */
+function openMedia(i) {
+  mIdx = i; const it = mItems[i], hero = mList === 'hero';
+  $('#mdTitle').textContent = hero ? (it.type === 'video' ? 'Edit carousel video' : 'Edit carousel photo') : 'Edit video';
+  $('#mdHeroF').hidden = !hero; $('#mdVidF').hidden = hero;
+  const th = hero && it.type === 'photo' ? it.src : it.poster;
+  $('#mdFocus').hidden = !hero; $('#mdFocusHelp').hidden = !hero;
+  $('#mdImg').src = mUrl(th); mFocusDraw(it.pos || '60% 35%');
+  $('#mdFile').accept = hero ? 'image/*,video/*' : 'video/*';
+  if (hero) $('#mdAlt').value = it.alt || '';
+  else {
+    $('#mdVTitle').value = it.title || ''; $('#mdVCap').value = it.caption || ''; $('#mdVDate').value = it.date || '';
+    const c = (it.cat || '').split(' '); $('#mdCFight').checked = c.includes('fight'); $('#mdCWin').checked = c.includes('win'); $('#mdCTrain').checked = c.includes('training');
+  }
+  show($('#mdErr'), ''); show($('#mdProg'), ''); $('#mDlg').showModal();
+}
+function mFocusDraw(pos) { const [x, y] = pos.split(' '); $('#mdDot').style.left = x; $('#mdDot').style.top = y; $('#mdImg').style.objectPosition = pos; $('#mdFocus').dataset.pos = pos; }
+$('#mdFocus').addEventListener('click', e => {
+  const r = $('#mdFocus').getBoundingClientRect();
+  mFocusDraw(`${Math.round((e.clientX - r.left) / r.width * 100)}% ${Math.round((e.clientY - r.top) / r.height * 100)}%`);
+});
+$('#mdFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return; const it = mItems[mIdx];
+  show($('#mdErr'), ''); $('#mdOk').disabled = true;
+  try {
+    const r = await mProcess(f, m => show($('#mdProg'), m));
+    if (mList === 'videos' && r.type !== 'video') throw new Error('The video gallery only takes videos.');
+    Object.assign(it, { src: r.src, type: r.type }); if (r.type === 'video') { it.poster = r.poster; if (mList === 'videos') it.dur = r.dur; } else delete it.poster;
+    $('#mdImg').src = mUrl(r.type === 'photo' ? r.src : r.poster);
+  } catch (err) { show($('#mdErr'), err.message); }
+  show($('#mdProg'), ''); $('#mdOk').disabled = false;
+});
+$('#mdPoster').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  show($('#mdErr'), ''); $('#mdOk').disabled = true;
+  try { const small = await mShrink(f, 1280); show($('#mdProg'), 'Uploading…'); mItems[mIdx].poster = await mUploadBlob(small, small.name); } catch (err) { show($('#mdErr'), err.message); }
+  show($('#mdProg'), ''); $('#mdOk').disabled = false;
+});
+$('#mForm').addEventListener('submit', () => {
+  const it = mItems[mIdx]; if (!it) return;
+  if (mList === 'hero') { it.alt = $('#mdAlt').value.trim(); it.pos = $('#mdFocus').dataset.pos || it.pos; }
+  else {
+    it.title = $('#mdVTitle').value.trim() || it.title || 'Video'; it.caption = $('#mdVCap').value.trim(); it.date = $('#mdVDate').value.trim();
+    const c = [$('#mdCFight').checked && 'fight', $('#mdCWin').checked && 'win', $('#mdCTrain').checked && 'training'].filter(Boolean);
+    it.cat = c.join(' ') || 'fight';
+  }
+  mSet(true); drawMedia();
+});
+$('#mSave').addEventListener('click', async () => {
+  show($('#mErr'), ''); mBusySet(true);
+  try {
+    const r = await api('/api/site?action=save', { list: mList, items: mItems });
+    await loadMedia();
+    show($('#mProg'), r.status === 'live' ? 'Saved. It’s live on the website now (it can take up to a minute to show).' : 'Sent. Jay or Steve will approve it before it goes on the website.');
+  } catch (err) { show($('#mErr'), err.message); mBusySet(false); }
+  mBusySet(false);
+});
+$('#mDiscard').addEventListener('click', () => { if (confirm('Undo all your unsaved changes?')) loadMedia(); });
+$('#mReset').addEventListener('click', async () => {
+  if (!confirm(`Put the ${ML[mList].toLowerCase()} back to how it was originally? Your changes to it will be removed.`)) return;
+  try { await api('/api/site?action=reset', { list: mList }); await loadMedia(); show($('#mProg'), 'Put back to the original.'); } catch (err) { show($('#mErr'), err.message); }
+});
+/* owners: review coach changes */
+async function loadMediaApprovals() {
+  const box = $('#mApprovals'); if (!me.admin) { box.hidden = true; return; }
+  try {
+    const { pending } = await api('/api/site?action=pending');
+    box.hidden = !pending.length; if (!pending.length) return;
+    box.innerHTML = '<h2>Waiting for your approval</h2><p class="muted">These changes aren’t on the website until you approve them. Approving replaces the current list with theirs.</p>' + pending.map(p => {
+      const old = new Set(p.live.map(x => x.src)), now = new Set(p.items.map(x => x.src));
+      const removed = p.live.filter(x => !now.has(x.src)).length, added = p.items.filter(x => !old.has(x.src)).length;
+      const th = x => (p.list === 'hero' && x.type === 'photo' ? x.src : x.poster);
+      return `<div class="apv"><b style="font:900 22px/1 var(--display);text-transform:uppercase">${esc(p.name)} · ${esc(p.label)}</b>
+        <p class="muted" style="margin:0">${added} added, ${removed} removed, ${p.items.length} in total.${p.note ? ' Note: ' + esc(p.note) : ''}</p>
+        <div class="mgrid">${p.items.map(x => `<div class="mcard${old.has(x.src) ? '' : ' isnew'}"><div class="mth"><img src="${esc(mUrl(th(x)))}" alt="" style="object-position:${esc(x.pos || '50% 50%')}">${old.has(x.src) ? '' : '<span class="tag new">New</span>'}</div><div class="mb"><b>${esc(p.list === 'hero' ? (x.alt || (x.type === 'video' ? 'Video' : 'Photo')) : x.title)}</b></div></div>`).join('')}</div>
+        ${removed ? `<p class="muted" style="margin:0">Taken out: ${p.live.filter(x => !now.has(x.src)).map(x => esc(p.list === 'hero' ? (x.alt || 'a slide') : x.title)).join(', ')}</p>` : ''}
+        <div class="row"><button class="btn small" data-mrev="${p.list}|${p.coach}|approve">Approve &amp; publish</button>
+        <input data-mnote="${p.list}|${p.coach}" placeholder="Note if saying no (optional)" style="flex:1 1 220px"><button class="btn small ghost" data-mrev="${p.list}|${p.coach}|reject">Don’t publish</button></div></div>`;
+    }).join('');
+  } catch {}
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-mrev]'); if (!b) return;
+  const [list, coach, decision] = b.dataset.mrev.split('|'); b.disabled = true;
+  try { await api('/api/site?action=review', { list, coach, decision, note: document.querySelector(`[data-mnote="${list}|${coach}"]`)?.value || '' }); loadMediaApprovals(); loadMedia(); }
+  catch (err) { alertBox(err.message); b.disabled = false; }
+});
+async function loadMediaNotice() {
+  const box = $('#mediaNotice'); if (!me.admin) { box.hidden = true; return; }
+  try {
+    const { pending } = await api('/api/site?action=pending'); box.hidden = !pending.length; if (!pending.length) return;
+    box.innerHTML = `<h2>Website photos &amp; videos</h2><p class="muted">${pending.map(p => `${esc(p.name)} changed the ${esc(p.label.toLowerCase())}`).join('; ')}. They’re waiting for you.</p><a class="btn small" href="#media">Review →</a>`;
+  } catch {}
+}
 
 /* ---------- manage coaches (Jay) ---------- */
 async function refreshMe() { try { me = (await api('/api/auth?action=coach-me')).coach; if (me.admin) fillCoachSelects(); } catch {} }

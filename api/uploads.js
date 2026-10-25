@@ -21,6 +21,10 @@ export default async function handler(req, res) {
           if (prof && (prof[1] === c.id || (c.admin && COACHES[prof[1]]))) {
             return { allowedContentTypes: ['image/*'], maximumSizeInBytes: 25 * 1024 * 1024, addRandomSuffix: true };
           }
+          /* Website photos and videos (carousel, video gallery): any coach, served publicly through /api/site once used. */
+          if (pathname.startsWith(`site/${c.id}/`)) {
+            return { allowedContentTypes: ['image/*', 'video/*'], maximumSizeInBytes: 500 * 1024 * 1024, addRandomSuffix: true };
+          }
           if (!pathname.startsWith(`uploads/${c.id}/`)) throw new Error('Not allowed');
           return {
             allowedContentTypes: ['image/*', 'video/*'],

@@ -2325,7 +2325,8 @@ a.tagc{text-decoration:none}
   var modal=document.getElementById('vmodal'),mv=document.getElementById('vmVideo'),last=null;
   function openV(src,title,btn){last=btn;document.getElementById('vmTitle').textContent=title;mv.src=src;modal.hidden=false;var f=document.getElementById('featured');if(f)f.pause();var pr=mv.play();if(pr)pr.catch(function(){});document.getElementById('vmClose').focus()}
   function closeV(){mv.pause();mv.removeAttribute('src');mv.load();modal.hidden=true;if(last)last.focus()}
-  document.querySelectorAll('.vcard').forEach(function(b){b.addEventListener('click',function(){openV(b.getAttribute('data-src'),b.getAttribute('data-title'),b)})});
+  window.__vbind=function(b){b.addEventListener('click',function(){openV(b.getAttribute('data-src'),b.getAttribute('data-title'),b)})};
+  document.querySelectorAll('.vcard').forEach(window.__vbind);
   document.getElementById('vmClose').addEventListener('click',closeV);
   /* Full screen: proper full screen where the browser allows it (iPhone uses its own video player) */
   document.getElementById('vmFs').addEventListener('click',function(){
@@ -2490,13 +2491,15 @@ a.tagc{text-decoration:none}
   route();
 })();
 (function(){
-  var imgs=[].slice.call(document.querySelectorAll('#slides>*')),dots=document.getElementById('dots'),i=0,t;
+  var imgs=[],dots=document.getElementById('dots'),i=0,t;
   function show(n){imgs[i].classList.remove('on');dots.children[i].setAttribute('aria-pressed','false');i=(n+imgs.length)%imgs.length;imgs[i].classList.add('on');imgs.forEach(function(x,k){if(x.tagName==='VIDEO'){if(k===i){x.currentTime=0;var pr=x.play();if(pr)pr.catch(function(){})}else x.pause()}});dots.children[i].setAttribute('aria-pressed','true')}
-  imgs.forEach(function(im,k){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Photo '+(k+1));b.setAttribute('aria-pressed',k?'false':'true');b.addEventListener('click',function(){show(k);restart()});dots.appendChild(b)});
+  function build(){imgs=[].slice.call(document.querySelectorAll('#slides>*'));dots.innerHTML='';i=0;
+  imgs.forEach(function(im,k){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Photo '+(k+1));b.setAttribute('aria-pressed',k?'false':'true');b.addEventListener('click',function(){show(k);restart()});dots.appendChild(b)})}
+  build();
   var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function restart(){clearInterval(t);if(!still)t=setInterval(function(){show(i+1)},6000)}
   restart();
-  window.__hero={stop:function(){clearInterval(t)},go:restart};
+  window.__hero={stop:function(){clearInterval(t)},go:restart,rebuild:function(){clearInterval(t);build();restart()}};
   var sel=document.getElementById('enq');
   document.querySelectorAll('[data-enq]').forEach(function(a){a.addEventListener('click',function(){var v=a.getAttribute('data-enq').replace('&amp;','&');[].some.call(sel.options,function(o){if(o.text===v){sel.value=o.value;return true}})})});
   document.querySelectorAll('.chip').forEach(function(c){c.addEventListener('click',function(){
@@ -2563,5 +2566,44 @@ a.tagc{text-decoration:none}
 <script src="/assets/fighterbase.js" defer></script>
 <script src="/assets/share.js" defer></script>
 <script src="/assets/confetti.js" defer></script>
+<script>
+/* Photos and videos that the coaches have changed in their area replace the built-in ones. If nothing was changed (or the request fails) the page stays as it is. */
+(function(){
+  function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function u(x){return x}
+  function applyHero(items){
+    var s=document.getElementById('slides');if(!s||!items||!items.length)return;
+    var k=items.map(function(it,n){var e;
+      if(it.type==='video'){e=document.createElement('video');e.src=u(it.src);e.poster=u(it.poster);e.muted=true;e.loop=true;e.playsInline=true;e.setAttribute('playsinline','');e.preload='none';e.setAttribute('aria-label',it.alt||'Warrior Spirit video')}
+      else{e=document.createElement('img');e.src=u(it.src);e.alt=it.alt||'';e.decoding='async'}
+      e.style.objectPosition=it.pos||'60% 35%';return e});
+    for(var j=k.length-1;j>0;j--){var t=Math.floor(Math.random()*(j+1)),x=k[j];k[j]=k[t];k[t]=x}
+    var f=k.findIndex(function(e){return e.tagName==='IMG'});if(f>0){var y=k[0];k[0]=k[f];k[f]=y}
+    s.querySelectorAll('video').forEach(function(v){v.pause()});
+    [].forEach.call(document.querySelectorAll('.hero .snd'),function(b){b.remove()});
+    s.innerHTML='';
+    k.forEach(function(e,n){if(n)e.loading='lazy';s.appendChild(e)});
+    k[0].classList.add('on');
+    if(window.__hero&&window.__hero.rebuild)window.__hero.rebuild();
+  }
+  function applyVideos(items){
+    var g=document.querySelector('.vgrid');if(!g||!items||!items.length)return;
+    var PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+    g.innerHTML='';
+    items.forEach(function(v){var b=document.createElement('button');b.className='vcard';b.type='button';b.setAttribute('data-cat',v.cat||'fight');b.setAttribute('data-src',v.src);b.setAttribute('data-title',v.title);
+      b.innerHTML='<span class="vthumb"><img src="'+esc(v.poster)+'" alt="" loading="lazy"><span class="vplay" aria-hidden="true">'+PLAY+'</span>'+(v.dur?'<span class="vdur">'+esc(v.dur)+'</span>':'')+'</span><span class="vmeta"><small>'+esc(v.date)+'</small><b>'+esc(v.title)+'</b><span>'+esc(v.caption)+'</span></span>';
+      g.appendChild(b);if(window.__vbind)window.__vbind(b)});
+    var on=document.querySelector('[data-vf][aria-pressed="true"]');if(on&&on.getAttribute('data-vf')!=='all')on.click();
+  }
+  function apply(d){if(!d)return;applyHero(d.hero);applyVideos(d.videos)}
+  function run(){
+    fetch('/api/site?action=public').then(function(r){return r.ok?r.json():null}).then(function(d){
+      if(!d||(!d.hero&&!d.videos))return;
+      apply(d);
+    }).catch(function(){});
+  }
+  if(document.readyState==='complete')run();else window.addEventListener('load',run);
+})();
+</script>
 </body>
 </html>
