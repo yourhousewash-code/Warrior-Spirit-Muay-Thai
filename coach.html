@@ -228,6 +228,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="1"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 8M12 2v6M9 5l3-3 3 3"/></svg>
           <b>Photos &amp; videos</b><p>Send training and fight-night photos and videos straight from your phone. They’re stored privately so Steve can use them on the website and socials.</p><em>Open →</em>
         </button>
+        <button type="button" class="tile" data-go="share">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+          <b>Share</b><p>Ready-made posts for your own socials: classes, personal training, fight news. Pick one, tweak the words and share it from your phone.</p><em>Open →</em>
+        </button>
         <button type="button" class="tile" data-go="settings">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
           <b>Settings</b><p>Choose the email address that gets your booking alerts, and change your password.</p><em>Open →</em>
@@ -393,6 +397,14 @@
       </div>
     </div>
 
+    <!-- ===== SHARE ===== -->
+    <div data-view="share" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <h1>Share</h1>
+      <p class="muted">Pick a post, change the words if you like, then share it to your own Facebook, Instagram, WhatsApp or anywhere else. The links carry your name, and “Book personal training with me” opens your own booking page. Nothing is posted for you.</p>
+      <div class="sharegrid" id="shareGrid"></div>
+    </div>
+
     <!-- ===== SETTINGS ===== -->
     <div data-view="settings" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
@@ -438,10 +450,35 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 const ORDER = [1, 2, 3, 4, 5, 6, 0];
 let me = null;
 
+
+/* ---------- share ---------- */
+function loadShare() {
+  const first = me.first, id = me.id;
+  const posts = [
+    { t: 'Book personal training with me', img: me.photo || '/photos/pads-1.webp', path: '/book?coach=' + id, text: `Want to get fitter, stronger or fight-ready? Book a 1-to-1 personal training session with me at Warrior Spirit Muay Thai, Potters Bar. From £40 an hour.` },
+    { t: 'Free first class', img: '/photos/pads-2.webp', path: '#contact', text: `New to Muay Thai? Your first class at Warrior Spirit in Potters Bar is free. Beginners class is Thursday 7pm. Come and try it.` },
+    { t: 'Classes I teach', img: '/photos/pads-1.webp', path: '#timetable', text: `Come and train with me at Warrior Spirit Muay Thai, Potters Bar. Pads, drills, sparring and beginners classes all week. Full timetable here.` },
+    { t: 'Kids Muay Thai', img: '/photos/kids-coach.webp', path: '#kids-muay-thai', text: `Kids Muay Thai at Warrior Spirit, Potters Bar. Ages 7 to 13, Monday to Thursday 5:30pm. Confidence, discipline and fun. £65 a month.` },
+    { t: 'Dino wins on debut', img: '/photos/poster-dino.webp', path: '#news', text: `Dino Leonida won by stoppage in round 2 on his debut at Warriors of Hope 2. He trained, he dieted, he listened. Proud of the whole team.` },
+    { t: 'Leo shows heart', img: '/photos/poster-leo.webp', path: '#news', text: `Leo showed real heart in his first fight at Warriors of Hope 2, carrying on through adversity. That is Warrior Spirit. Proud of him.` },
+    { t: 'Join the fight team', img: '/photos/fight-ring.webp', path: '#fight', text: `Fancy fighting? Our fight team takes you from interclubs to amateur shows with a proper camp behind you. Warrior Spirit Muay Thai, Potters Bar.` },
+  ];
+  $('#shareGrid').innerHTML = posts.map((p, i) => `<article class="sharecard" data-i="${i}">
+    <img src="${esc(p.img)}" alt="" loading="lazy"><h3>${esc(p.t)}</h3>
+    <textarea aria-label="Caption">${esc(p.text)}</textarea>
+    <div class="row"><button class="btn" type="button" data-act="share">Share</button><button class="btn ghost" type="button" data-act="copy">Copy link</button></div></article>`).join('');
+  $('#shareGrid').onclick = e => {
+    const b = e.target.closest('[data-act]'); if (!b) return;
+    const c = b.closest('.sharecard'), p = posts[+c.dataset.i], text = c.querySelector('textarea').value.trim();
+    if (b.dataset.act === 'copy') return WSShare.copy(WSShare.link(p.path, id)).then(() => WSShare.toast('Link copied'), () => WSShare.toast('Couldn’t copy'));
+    WSShare.share({ title: p.t, text, path: p.path, image: p.img, ref: id });
+  };
+}
+
 /* ---------- views ---------- */
 function go(view) {
   if (!me) return;
-  if (!['home', 'availability', 'bookings', 'uploads', 'settings', 'prices', 'profile', 'team', 'enquiries'].includes(view) || (['team', 'enquiries'].includes(view) && !me.admin)) view = 'home';
+  if (!['home', 'availability', 'bookings', 'uploads', 'share', 'settings', 'prices', 'profile', 'team', 'enquiries'].includes(view) || (['team', 'enquiries'].includes(view) && !me.admin)) view = 'home';
   document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
   if (view === 'home') { loadCal(); loadApprovals(); }
   if (view === 'prices') loadPrices();
@@ -452,6 +489,7 @@ function go(view) {
   if (view === 'availability') loadAvail();
   if (view === 'bookings') loadBookings();
   if (view === 'uploads') { loadFiles(); loadDrive(); }
+  if (view === 'share') loadShare();
   scrollTo({ top: 0 });
 }
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { const v = g.dataset.go; if (location.hash.slice(1) === v || (v === 'home' && !location.hash)) go(v); else location.hash = v === 'home' ? '' : v; } });
@@ -1046,5 +1084,6 @@ init();
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});
 </script>
 <script src="/assets/fighterbase.js" defer></script>
+<script src="/assets/share.js"></script>
 </body>
 </html>
