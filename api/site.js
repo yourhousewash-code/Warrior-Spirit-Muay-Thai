@@ -87,6 +87,8 @@ export default async function handler(req, res) {
     if (!me) return bad(res, 'Please log in.', 401);
     const b = body(req);
     const list = clean(req.query.list || b.list, 10);
+    /* Changing the website itself is for the owners only. Other coaches can still read the photo library for their own profile gallery. */
+    if (!me.admin && ['get', 'save', 'discard', 'edits-get', 'edits-save', 'edits-discard'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
 
     if (action === 'library') return send(res, 200, { photos: await library(), canAdd: !!me.admin });
     if (action === 'edits-get') {

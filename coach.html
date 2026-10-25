@@ -300,13 +300,13 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <b>Club details</b><p>Gym opening hours and the basic details of the club. Updates the website.</p><em>Open →</em>
         </button>
-        <button type="button" class="tile" onclick="location.href='/?edit=1'">
+        <button type="button" class="tile" data-admin-only hidden onclick="location.href='/?edit=1'">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
-          <b>Edit the website</b><p>Open the real website and tap any wording or photo to change it. Photos are picked from the club photo library. Layout stays the same.</p><em>Open →</em>
+          <b>Edit the website</b><p>Owners only. Open the real website and tap any wording or photo to change it. Photos are picked from the club photo library. Layout stays the same.</p><em>Open →</em>
         </button>
-        <button type="button" class="tile" data-go="media">
+        <button type="button" class="tile" data-go="media" data-admin-only hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="1"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 15l-5-5L7 18M8 21h8"/></svg>
-          <b>Website photos &amp; videos</b><p>Add, replace, remove and reorder the photos in the homepage carousel and the videos in the video gallery.</p><em>Open →</em>
+          <b>Website photos &amp; videos</b><p>Owners only. Add, replace, remove and reorder the photos in the homepage carousel and the videos in the video gallery.</p><em>Open →</em>
         </button>
         <button type="button" class="tile" data-go="share">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
@@ -405,6 +405,12 @@
             <label for="pfChips">Specialities (one per line)<textarea id="pfChips" maxlength="400" rows="4"></textarea></label>
             <label for="pfAsk">Ask me about…<input id="pfAsk" maxlength="160" placeholder="e.g. pad work, your first fight, getting fit"></label>
             <label for="pfIg">Instagram username<input id="pfIg" maxlength="40" placeholder="without the @"></label>
+            <div class="stack" style="gap:8px">
+              <b>Photos on your page</b>
+              <p class="muted" style="margin:0;font-size:14px">Pick up to 8 photos from the club library for the gallery on your coach page. If you pick none, the standard photos are shown. <span id="pfGalCount"></span></p>
+              <input type="hidden" id="pfGal">
+              <div class="mgrid" id="pfGalGrid" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))"></div>
+            </div>
           </div>
         </div>
         <p class="err" id="pferr" hidden></p><p class="ok" id="pfok" hidden></p>
@@ -648,7 +654,7 @@ function loadShare() {
 /* ---------- views ---------- */
 function go(view) {
   if (!me) return;
-  if (!['home', 'availability', 'bookings', 'uploads', 'share', 'schedule', 'media', 'settings', 'prices', 'profile', 'team', 'enquiries', 'club'].includes(view) || (['team', 'enquiries', 'club'].includes(view) && !me.admin)) view = 'home';
+  if (!['home', 'availability', 'bookings', 'uploads', 'share', 'schedule', 'media', 'settings', 'prices', 'profile', 'team', 'enquiries', 'club'].includes(view) || (['team', 'enquiries', 'club', 'media'].includes(view) && !me.admin)) view = 'home';
   document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
   if (view === 'home') { loadCal(); loadApprovals(); loadMediaNotice(); }
   if (view === 'prices') loadPrices();
@@ -1138,7 +1144,7 @@ $('#priceForm').addEventListener('submit', async e => {
 const pfWho = () => me.admin ? $('#pfWho').value : me.id;
 $('#pfWho').addEventListener('change', loadProfile);
 let prof = null;
-const PF = { role: '#pfRole', intro: '#pfIntro', background: '#pfBg', chips: '#pfChips', ask: '#pfAsk', instagram: '#pfIg' };
+const PF = { role: '#pfRole', intro: '#pfIntro', background: '#pfBg', chips: '#pfChips', ask: '#pfAsk', instagram: '#pfIg', gallery: '#pfGal' };
 const SITE_PHOTO = new Proxy({ jay: 'photos/jay-portrait.webp', aaron: 'photos/aaron.webp', kian: 'photos/kian.webp' }, { get: (o, k) => o[k] || 'img/logo.webp' });
 async function loadProfile() {
   show($('#pferr'), ''); show($('#pfok'), '');
@@ -1147,6 +1153,7 @@ async function loadProfile() {
     const d = prof.draft, src = d || prof.live;
     for (const [k, sel] of Object.entries(PF)) $(sel).value = src[k] || '';
     prof.photo = src.photo || '';
+    drawGal();
     $('#pfImg').src = (d && d.photoUrl) || prof.live.photoUrl || SITE_PHOTO[prof.coach];
     const st = $('#pfStatus');
     $('#pfDiscard').hidden = !d;
@@ -1154,6 +1161,23 @@ async function loadProfile() {
     else if (d.status === 'pending') { st.innerHTML = `⏳ Sent to Jay on ${new Date(d.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. It goes on the website once he approves it. You can still make changes and send again.`; st.style.borderColor = 'var(--tbc)'; }
     else { st.innerHTML = `↩ Jay sent this back${d.note ? `: <b>“${esc(d.note)}”</b>` : '.'} Make your changes and send it again.`; st.style.borderColor = 'var(--booked)'; }
   } catch (err) { show($('#pferr'), err.message); }
+}
+/* coach page gallery: choose from the club photo library */
+let galLib = null;
+async function drawGal() {
+  const box = $('#pfGalGrid'); if (!box) return;
+  try { if (!galLib) galLib = (await api('/api/site?action=library')).photos; } catch { box.textContent = 'Couldn’t load the photo library.'; return; }
+  const sel = () => $('#pfGal').value.split('|').filter(Boolean);
+  const paint = () => {
+    const on = sel(); $('#pfGalCount').textContent = on.length ? `(${on.length} picked)` : '';
+    box.innerHTML = galLib.map(p => `<button type="button" class="mcard" data-gal="${esc(p.src)}" aria-pressed="${on.includes(p.src)}" title="${esc(p.name)}" style="padding:0;cursor:pointer;border:2px solid ${on.includes(p.src) ? 'var(--red)' : 'var(--line)'}"><div class="mth" style="aspect-ratio:4/3"><img src="${esc(mUrl(p.src))}" alt="${esc(p.name)}" loading="lazy">${on.includes(p.src) ? `<span class="tag new">${on.indexOf(p.src) + 1}</span>` : ''}</div></button>`).join('');
+  };
+  box.onclick = e => {
+    const b = e.target.closest('[data-gal]'); if (!b) return; const on = sel(), i = on.indexOf(b.dataset.gal);
+    if (i >= 0) on.splice(i, 1); else if (on.length < 8) on.push(b.dataset.gal); else return;
+    $('#pfGal').value = on.join('|'); paint();
+  };
+  paint();
 }
 $('#pfFile').addEventListener('change', async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
@@ -1178,7 +1202,7 @@ $('#profForm').addEventListener('submit', async e => {
 $('#pfDiscard').addEventListener('click', async () => { try { await api('/api/profile?action=discard', { coach: pfWho() }); loadProfile(); } catch (err) { show($('#pferr'), err.message); } });
 
 /* ---------- approvals (Jay) ---------- */
-const PFL = { photo: 'Photo', role: 'Role', intro: 'Intro', background: 'Background', chips: 'Specialities', ask: 'Ask me about', instagram: 'Instagram' };
+const PFL = { photo: 'Photo', gallery: 'Gallery photos', role: 'Role', intro: 'Intro', background: 'Background', chips: 'Specialities', ask: 'Ask me about', instagram: 'Instagram' };
 async function loadApprovals() {
   if (!me.admin) return;
   const box = $('#approvals');

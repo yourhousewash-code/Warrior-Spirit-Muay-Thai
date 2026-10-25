@@ -2,8 +2,13 @@ import { Readable } from 'node:stream';
 import { get } from '@vercel/blob';
 import { redis, COACHES, loadCoaches, activeIds, publicIds, send, bad, setupProblem, body, clean, coachSession, coachEmail, mail, SITE } from './_lib/core.js';
 import { liveProfile, profilePhotoUrl } from './_lib/profiles.js';
+import { PHOTOLIB } from './_lib/photolib.js';
 
-const FIELDS = { role: 40, intro: 500, background: 2000, chips: 400, ask: 160, instagram: 40, photo: 300 };
+const FIELDS = { role: 40, intro: 500, background: 2000, chips: 400, ask: 160, instagram: 40, photo: 300, gallery: 1200 };
+async function cleanGallery(g) {
+  const ok = new Set([...PHOTOLIB, ...((await redis.get('site:library')) || [])].map(x => x.src));
+  return String(g || '').split('|').map(s => s.trim()).filter(s => ok.has(s)).filter((s, i, a) => a.indexOf(s) === i).slice(0, 8).join('|');
+}
 
 const live = liveProfile;
 async function draft(c) { return await redis.get(`profile:${c}:draft`); }
@@ -74,6 +79,7 @@ export default async function handler(req, res) {
     if (action === 'save' && req.method === 'POST') {
       const c = me.admin && COACHES[b.coach] ? b.coach : me.id;
       const p = cleanProfile(c, b.profile);
+      p.gallery = await cleanGallery(p.gallery);
       if (!p.intro) return bad(res, 'Add a short intro about yourself.');
       if (me.admin) {
         /* Jay's changes (to his own or anyone's profile) go live straight away. */

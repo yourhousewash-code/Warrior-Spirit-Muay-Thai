@@ -113,12 +113,13 @@
   }
   api('/api/auth?action=coach-me').then(function (r) {
     me = r.coach.id; window.__wsAdmin = !!r.coach.admin;
+    if (!r.coach.admin) throw new Error('owners only');
     return api('/api/site?action=edits-get');
   }).then(function (r) {
     E.apply(Object.assign({}, r.text, r.pending ? r.pending.text : {}), Object.assign({}, r.images, r.pending ? r.pending.images : {}));
     start();
   }).catch(function () {
     try { sessionStorage.removeItem('ws_edit'); } catch (e) { }
-    var b = document.createElement('div'); b.className = 'wse-bar'; b.innerHTML = '<span>Please log in to edit.</span><button class="p" onclick="location.href=\'/coach\'">Coach login</button>'; css.parentNode && document.body.appendChild(b);
+    var b = document.createElement('div'); b.className = 'wse-bar'; b.innerHTML = '<span>Only Jay and Steve can edit the website. Please log in as an owner.</span><button class="p" onclick="location.href=\'/coach\'">Coach login</button>'; css.parentNode && document.body.appendChild(b);
   });
 })();

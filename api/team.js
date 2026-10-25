@@ -1,8 +1,9 @@
 /* Coach pages: /team/jay, /team/aaron, … built on the server so search engines can read them. */
 import {
-  COACHES, loadCoaches, publicIds, setupProblem, getPrices, priceOf, FORMATS, DURATIONS, minsLabel, SITE, ADDRESS, TZ,
+  redis, COACHES, loadCoaches, publicIds, setupProblem, getPrices, priceOf, FORMATS, DURATIONS, minsLabel, SITE, ADDRESS, TZ,
 } from './_lib/core.js';
 import { liveProfile, profilePhotoUrl } from './_lib/profiles.js';
+import { PHOTOLIB } from './_lib/photolib.js';
 import { getClasses, freeIntervals, startsIn, DAY } from './_lib/avail.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -56,7 +57,9 @@ export default async function handler(req, res) {
       worksFor: { '@type': 'SportsActivityLocation', name: 'Warrior Spirit Muay Thai & Kickboxing', address: ADDRESS, url: SITE },
       makesOffer: Number.isFinite(lowest) ? { '@type': 'Offer', name: 'Personal training', priceCurrency: 'GBP', price: lowest } : undefined,
     };
-    const gallery = (GALLERY[id] || []).map(([src, alt]) => `<div class="g"><img src="/${src}" alt="${esc(alt)}" loading="lazy"></div>`).join('');
+    const libNames = new Map([...PHOTOLIB, ...((await redis.get('site:library')) || [])].map(x => [x.src, x.name]));
+    const mine = String(p.gallery || '').split('|').filter(s => libNames.has(s)).map(s => [s.replace(/^\//, ''), `${c.first} at Warrior Spirit`]);
+    const gallery = (mine.length ? mine : (GALLERY[id] || [])).map(([src, alt]) => `<div class="g"><img src="/${src}" alt="${esc(alt)}" loading="lazy"></div>`).join('');
 
     const body = `
 <section class="hero">
