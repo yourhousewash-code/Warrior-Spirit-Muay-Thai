@@ -23,6 +23,35 @@ export default async function handler(req, res) {
         setSession(res, 'ws_coach', { id: cid }, 30);
         return send(res, 200, { coach: await coachInfo(cid) });
       }
+      case 'coach-forgot': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const cid = clean(b.username, 30).toLowerCase();
+        const same = { ok: true, message: 'If that username has an email address saved, we’ve sent a reset link. It works for one hour.' };
+        if (!(await rateLimit(`forgot:${ip}`, 6, 3600)) || !(await rateLimit(`forgot:${cid}`, 3, 3600))) return send(res, 200, same);
+        const to = COACHES[cid]?.active ? await coachEmail(cid) : '';
+        if (to) {
+          const token = crypto.randomBytes(24).toString('base64url');
+          await redis.set(`coach:reset:${crypto.createHash('sha256').update(token).digest('hex')}`, cid, { ex: 3600 });
+          await mail(to, 'Reset your Warrior Spirit coach password', [
+            `Hi ${COACHES[cid].first},`, 'Someone asked to reset your coach area password. Use this link within the hour to choose a new one:',
+            `${SITE}/coach?reset=${token}`, 'If it wasn’t you, ignore this email and your password stays the same.',
+          ]);
+        }
+        return send(res, 200, same);
+      }
+      case 'coach-reset': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        if (!(await rateLimit(`reset:${ip}`, 10, 3600))) return bad(res, 'Too many attempts. Try again later.', 429);
+        const pw = String(b.password || '');
+        if (pw.length < 8) return bad(res, 'Choose a password of at least 8 characters.');
+        const key = `coach:reset:${crypto.createHash('sha256').update(String(b.token || '')).digest('hex')}`;
+        const cid = await redis.get(key);
+        if (!cid || !COACHES[cid]?.active) return bad(res, 'That reset link has expired. Ask for a new one.', 400);
+        await redis.set(`coach:${cid}:hash`, hashPassword(pw));
+        await redis.del(key);
+        setSession(res, 'ws_coach', { id: cid }, 30);
+        return send(res, 200, { coach: await coachInfo(cid) });
+      }
       case 'coach-me': {
         const c = coachSession(req);
         if (!c) return send(res, 200, { coach: null });

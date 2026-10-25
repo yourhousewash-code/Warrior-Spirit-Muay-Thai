@@ -162,6 +162,20 @@
       <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
       <p class="err" id="lerr" hidden></p>
       <button class="btn full" type="submit">Log in</button>
+      <p class="muted" style="margin:0"><a href="#" id="forgotLink">Forgot your password?</a></p>
+    </form>
+    <form id="forgotForm" class="stack" hidden>
+      <p class="muted">Enter your username and we’ll email a reset link to the address saved on your account.</p>
+      <label for="fu">Username<input id="fu" autocomplete="username" autocapitalize="none" required></label>
+      <p class="ok" id="fok" hidden></p><p class="err" id="ferr" hidden></p>
+      <button class="btn full" type="submit">Email me a reset link</button>
+      <p class="muted" style="margin:0"><a href="#" id="backLogin">Back to log in</a></p>
+    </form>
+    <form id="resetForm" class="stack" hidden>
+      <p class="muted">Choose a new password (at least 8 characters).</p>
+      <label for="rp">New password<input id="rp" type="password" autocomplete="new-password" minlength="8" required></label>
+      <p class="err" id="rerr" hidden></p>
+      <button class="btn full" type="submit">Save and log in</button>
     </form>
   </section>
 
@@ -529,6 +543,18 @@ async function init() {
   countBookings();
   go(location.hash.slice(1) || 'home');
 }
+const RESET = new URLSearchParams(location.search).get('reset') || '';
+if (RESET) { $('#loginForm').hidden = true; $('#resetForm').hidden = false; }
+$('#forgotLink').onclick = e => { e.preventDefault(); $('#loginForm').hidden = true; $('#forgotForm').hidden = false; $('#fu').value = $('#lu').value; };
+$('#backLogin').onclick = e => { e.preventDefault(); $('#forgotForm').hidden = true; $('#loginForm').hidden = false; };
+$('#forgotForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#ferr'), ''); show($('#fok'), '');
+  try { const j = await api('/api/auth?action=coach-forgot', { username: $('#fu').value }); show($('#fok'), j.message); } catch (err) { show($('#ferr'), err.message); }
+});
+$('#resetForm').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#rerr'), '');
+  try { await api('/api/auth?action=coach-reset', { token: RESET, password: $('#rp').value }); history.replaceState(null, '', '/coach'); location.reload(); } catch (err) { show($('#rerr'), err.message); }
+});
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#lerr'), '');
   try { await api('/api/auth?action=coach-login', { username: $('#lu').value, password: $('#lp').value }); init(); }
