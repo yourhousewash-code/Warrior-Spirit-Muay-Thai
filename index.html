@@ -557,6 +557,12 @@ a.cdi:hover svg{color:#25d366}
 .nevent b{font:900 22px/1.1 var(--display);text-transform:uppercase}
 .nevent span{color:var(--soft);font-size:15px;overflow-wrap:anywhere}
 
+
+/* winner stamp: add class "winpic" (and optional data-result) to any photo wrapper */
+.winpic{position:relative;overflow:hidden}
+.winpic::after{content:"Winner" attr(data-result);position:absolute;top:14px;left:-44px;width:190px;transform:rotate(-35deg);background:var(--tbc);color:#1a1405;text-align:center;padding:6px 0;font:900 15px var(--cond);letter-spacing:.2em;text-transform:uppercase;box-shadow:0 4px 14px rgba(0,0,0,.5);pointer-events:none;z-index:2}
+.winpic[data-result]::after{content:"Winner · " attr(data-result);font-size:12px;letter-spacing:.1em;width:250px;left:-66px;top:38px;padding:5px 0}
+.fngal .winpic figcaption{z-index:3}
 .fngal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:6px;margin-top:28px}
 .fngal figure{margin:0;position:relative;overflow:hidden;background:#000;min-width:0}
 .fngal img{width:100%;height:100%;object-fit:cover;display:block}
@@ -830,7 +836,7 @@ a.tagc{text-decoration:none}
       </div>
       <div class="ngrid">
         <article class="ncard">
-          <div class="nposter"><img src="photos/poster-dino.webp" alt="Warriors of Hope 2 poster: White v Leonida, Muay Thai" loading="lazy"></div>
+          <div class="nposter winpic" data-result="Round 2"><img src="photos/poster-dino.webp" alt="Warriors of Hope 2 poster: White v Leonida, Muay Thai" loading="lazy"></div>
           <div class="nbody">
             <a class="tagc" href="#fight-levels">Won by stoppage, round 2</a>
             <h3>Dino Leonida wins on his debut</h3>
@@ -854,7 +860,7 @@ a.tagc{text-decoration:none}
         <div><small>Tickets</small><b>From our fighters</b><span>or ask at the gym: <a href="tel:07904032142">07904 032142</a></span></div>
       </div>
       <div class="fngal" aria-label="Warriors of Hope 2 in pictures">
-        <figure class="big"><img src="photos/wh2-dino-hand-raised-winner.webp" alt="Dino Leonida with his hand raised after winning by stoppage" loading="lazy"><figcaption>Dino's hand goes up</figcaption></figure>
+        <figure class="big winpic" data-result="Round 2"><img src="photos/wh2-dino-hand-raised-winner.webp" alt="Dino Leonida with his hand raised after winning by stoppage" loading="lazy"><figcaption>Dino's hand goes up</figcaption></figure>
         <figure><img src="photos/wh2-dino-hug-after-fight.webp" alt="Dino and his opponent embrace after the fight" loading="lazy"><figcaption>Respect</figcaption></figure>
         <figure><img src="photos/wh2-dino-punch-round.webp" alt="Dino lands a punch in round 2" loading="lazy"><figcaption>Round 2</figcaption></figure>
         <figure><img src="photos/wh2-dino-corner-between-rounds.webp" alt="Dino in the corner between rounds" loading="lazy"><figcaption>In the corner</figcaption></figure>
