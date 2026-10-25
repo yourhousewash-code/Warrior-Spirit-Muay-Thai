@@ -383,6 +383,7 @@
         <div class="drop">
           <p class="muted">Training, fight nights, the team, the gym. Only upload photos of children if their parents are happy for them to be used.</p>
           <label class="btn" for="files" style="color:#fff">Choose photos or videos<input id="files" type="file" accept="image/*,video/*" multiple hidden></label>
+          <div id="driveBox" class="muted" style="font-size:14px"></div>
         </div>
         <div id="upProg" class="stack"></div>
       </div>
@@ -450,7 +451,7 @@ function go(view) {
   if (view === 'home' && me.admin) countEnquiries();
   if (view === 'availability') loadAvail();
   if (view === 'bookings') loadBookings();
-  if (view === 'uploads') loadFiles();
+  if (view === 'uploads') { loadFiles(); loadDrive(); }
   scrollTo({ top: 0 });
 }
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { const v = g.dataset.go; if (location.hash.slice(1) === v || (v === 'home' && !location.hash)) go(v); else location.hash = v === 'home' ? '' : v; } });
@@ -965,6 +966,33 @@ async function loadBookings() {
 }
 
 /* ---------- uploads ---------- */
+let drive = { configured: false, connected: false };
+async function loadDrive() {
+  const box = $('#driveBox');
+  try { drive = await api('/api/gdrive?action=status'); } catch { drive = { configured: false, connected: false }; }
+  const q = new URLSearchParams(location.search).get('drive');
+  let h = '';
+  if (q === 'connected') h += '<p class="ok">Google Drive is connected. New uploads now save to your Drive.</p>';
+  if (q === 'failed') h += '<p class="err">Google Drive didn’t connect. Please try again.</p>';
+  if (drive.connected) h += `<p>New uploads save to Google Drive in the folder “Warrior Spirit Uploads”.${drive.folderUrl ? ` <a href="${esc(drive.folderUrl)}" target="_blank" rel="noopener">Open folder</a>` : ''}</p>`;
+  else if (drive.configured && drive.admin) h += '<p>Save uploads straight to Google Drive instead of the site’s own storage. <a class="btn small" href="/api/gdrive?action=connect" style="color:#fff">Connect Google Drive</a></p>';
+  else if (drive.configured) h += '<p>Uploads currently go to the site’s own storage. Google Drive will be switched on soon.</p>';
+  box.innerHTML = h;
+}
+function driveUpload(f, bar) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { url } = await api('/api/gdrive?action=session', { name: f.name, type: f.type || 'application/octet-stream', size: f.size });
+      const x = new XMLHttpRequest();
+      x.open('PUT', url);
+      x.setRequestHeader('Content-Type', f.type || 'application/octet-stream');
+      x.upload.onprogress = ev => { if (ev.lengthComputable) bar.style.width = (ev.loaded / ev.total * 100) + '%'; };
+      x.onload = () => (x.status >= 200 && x.status < 300 ? resolve() : reject(new Error('Google rejected the upload (' + x.status + ').')));
+      x.onerror = () => reject(new Error('The upload was interrupted. Please try again.'));
+      x.send(f);
+    } catch (e) { reject(e); }
+  });
+}
 $('#files').addEventListener('change', async e => {
   const files = [...e.target.files]; e.target.value = '';
   for (const f of files) {
@@ -974,7 +1002,8 @@ $('#files').addEventListener('change', async e => {
     const bar = row.querySelector('i');
     const safe = f.name.replace(/[^\w.\-]+/g, '_').slice(-80);
     try {
-      await upload(`uploads/${me.id}/${ukDate(Date.now())}-${safe}`, f, { access: 'private', handleUploadUrl: '/api/uploads?action=token', multipart: f.size > 20e6, onUploadProgress: p => { bar.style.width = p.percentage + '%'; } });
+      if (drive.connected) await driveUpload(f, bar);
+      else await upload(`uploads/${me.id}/${ukDate(Date.now())}-${safe}`, f, { access: 'private', handleUploadUrl: '/api/uploads?action=token', multipart: f.size > 20e6, onUploadProgress: p => { bar.style.width = p.percentage + '%'; } });
       bar.style.width = '100%'; bar.style.background = 'var(--ok)';
       row.querySelector('div').textContent = `✓ ${f.name}`;
     } catch (err) { row.querySelector('div').textContent = `✗ ${f.name}: ${err.message}`; row.querySelector('div').className = 'err'; }

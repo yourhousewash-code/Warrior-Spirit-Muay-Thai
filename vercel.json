@@ -49,7 +49,7 @@
       ]
     },
     {
-      "source": "/api/(auth|pt|uploads|enquiry)(.*)",
+      "source": "/api/(auth|pt|uploads|enquiry|gdrive)(.*)",
       "headers": [
         {
           "key": "Cache-Control",
