@@ -118,7 +118,7 @@ export default async function handler(req, res) {
       }
       case 'classes-save': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
-        if (!c.admin) return bad(res, 'Only Jay can change the class timetable.', 403);
+        if (!c.admin) return bad(res, 'Only Jay and Steve can change the class schedule.', 403);
         const list = (Array.isArray(b.classes) ? b.classes : []).slice(0, 60).map(k => ({
           id: clean(k.id, 30) || id('k'), day: Number(k.day), start: String(k.start), end: String(k.end), name: clean(k.name, 40), coach: String(k.coach),
         }));

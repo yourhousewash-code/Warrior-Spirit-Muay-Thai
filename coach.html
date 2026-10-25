@@ -242,6 +242,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="1"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 8M12 2v6M9 5l3-3 3 3"/></svg>
           <b>Photos &amp; videos</b><p>Send training and fight-night photos and videos straight from your phone. They’re stored privately so Steve can use them on the website and socials.</p><em>Open →</em>
         </button>
+        <button type="button" class="tile" data-go="schedule" data-admin-only hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M3 9h18M8 2v4M16 2v4M7 14h4M7 17h8"/></svg>
+          <b>Class schedule</b><p>Add classes, change times and class types, and choose who teaches. Updates the website timetable. Jay and Steve only.</p><em>Open →</em>
+        </button>
         <button type="button" class="tile" data-go="share">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
           <b>Share</b><p>Ready-made posts for your own socials: classes, personal training, fight news. Pick one, tweak the words and share it from your phone.</p><em>Open →</em>
@@ -268,14 +272,6 @@
         <button class="btn" type="submit" style="justify-self:start">Save weekly hours</button>
       </form>
 
-      <form class="panel" id="classForm" hidden>
-        <h2>Class timetable</h2>
-        <p class="muted">Who teaches each class every week. Only you (Jay) can change this. To swap a coach for just one date, tap the class on the calendar instead.</p>
-        <div class="list" id="classList"></div>
-        <button type="button" class="addr" id="classAdd">+ Add a class</button>
-        <p class="err" id="cerr" hidden></p><p class="ok" id="cok" hidden></p>
-        <button class="btn" type="submit" style="justify-self:start">Save class timetable</button>
-      </form>
 
       <div class="grid2">
         <form class="panel" id="offForm">
@@ -411,6 +407,21 @@
       </div>
     </div>
 
+    <!-- ===== CLASS SCHEDULE ===== -->
+    <div data-view="schedule" class="stack" style="gap:18px" hidden>
+      <button type="button" class="back" data-go="home">← Back to dashboard</button>
+      <h1>Class schedule</h1>
+      <form class="panel" id="classForm" hidden>
+        <h2>Classes</h2>
+        <p class="muted">Add a class, change a time, rename it or choose who teaches it. Saving updates the timetable on the website, the “what’s on” ticker, the calendar and everyone’s free personal-training times. To swap the coach for just one date, tap the class on the calendar instead.</p>
+        <datalist id="classTypes"><option value="Kids Muay Thai"><option value="Beginners"><option value="Pads"><option value="Fitness pads"><option value="Drills &amp; sparring"><option value="Sparring"><option value="Technique"><option value="Fight camp"><option value="Women’s class"><option value="Open mat"></datalist>
+        <div class="list" id="classList"></div>
+        <button type="button" class="addr" id="classAdd">+ Add a class</button>
+        <p class="err" id="cerr" hidden></p><p class="ok" id="cok" hidden></p>
+        <button class="btn" type="submit" style="justify-self:start">Save class schedule</button>
+      </form>
+    </div>
+
     <!-- ===== SHARE ===== -->
     <div data-view="share" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
@@ -492,7 +503,7 @@ function loadShare() {
 /* ---------- views ---------- */
 function go(view) {
   if (!me) return;
-  if (!['home', 'availability', 'bookings', 'uploads', 'share', 'settings', 'prices', 'profile', 'team', 'enquiries'].includes(view) || (['team', 'enquiries'].includes(view) && !me.admin)) view = 'home';
+  if (!['home', 'availability', 'bookings', 'uploads', 'share', 'schedule', 'settings', 'prices', 'profile', 'team', 'enquiries'].includes(view) || (['team', 'enquiries', 'schedule'].includes(view) && !me.admin)) view = 'home';
   document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
   if (view === 'home') { loadCal(); loadApprovals(); }
   if (view === 'prices') loadPrices();
@@ -504,6 +515,7 @@ function go(view) {
   if (view === 'bookings') loadBookings();
   if (view === 'uploads') { loadFiles(); loadDrive(); }
   if (view === 'share') loadShare();
+  if (view === 'schedule') loadClasses();
   scrollTo({ top: 0 });
 }
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { const v = g.dataset.go; if (location.hash.slice(1) === v || (v === 'home' && !location.hash)) go(v); else location.hash = v === 'home' ? '' : v; } });
@@ -679,7 +691,7 @@ function drawDetail() {
       ${x.needsCover ? `<div class="err">${esc(COLS[x.coach])} is on holiday that day. Choose someone to cover.</div>` : ''}
       ${me.admin ? `<div class="row"><label style="flex:0 1 260px">Who’s teaching on this date<select id="coverSel">${opts}</select></label><button class="btn small" data-cover="${esc(x.classId)}|${esc(x.date)}">Save</button>
         ${x.cover || x.cancelled ? `<button class="btn small ghost" data-cover="${esc(x.classId)}|${esc(x.date)}" data-reset="1">Back to usual (${esc(COLS[x.usual])})</button>` : ''}</div>
-        <p class="muted" style="font-size:14px">To change who teaches this class every week, use <b>Class timetable</b> in My availability.</p>` : ''}`;
+        <p class="muted" style="font-size:14px">To change who teaches this class every week, use <b>Class schedule</b> on your dashboard.</p>` : ''}`;
   } else if (x.status === 'booked' && x.booking) {
     const bk = x.booking;
     box.style.borderColor = 'var(--booked)';
@@ -730,7 +742,6 @@ async function loadAvail() {
     weekly = r.weekly; drawWeekly(); drawOff(r.off); $('#wdefault').hidden = !r.isDefault;
   } catch (err) { alertBox(err.message); }
   loadExtra();
-  if (me.admin) loadClasses();
 }
 /* class timetable (Jay) */
 let classes = [];
@@ -741,7 +752,7 @@ async function loadClasses() {
 function drawClasses() {
   const daySel = v => `<select data-cf="day" aria-label="Day">${ORDER.map(d => `<option value="${d}" ${Number(v) === d ? 'selected' : ''}>${DAYS[d]}</option>`).join('')}</select>`;
   const coachSel = v => `<select data-cf="coach" aria-label="Coach">${me.team.map(t => `<option value="${esc(t.id)}" ${v === t.id ? 'selected' : ''}>${esc(t.first)}</option>`).join('')}</select>`;
-  $('#classList').innerHTML = classes.map((k, i) => `<div class="crow" data-ci="${i}">${daySel(k.day)}<input data-cf="name" value="${esc(k.name)}" aria-label="Class name" maxlength="40">
+  $('#classList').innerHTML = classes.map((k, i) => `<div class="crow" data-ci="${i}">${daySel(k.day)}<input data-cf="name" list="classTypes" value="${esc(k.name)}" aria-label="Class type" maxlength="40">
     <input type="time" step="300" data-cf="start" value="${k.start}" aria-label="Start"><input type="time" step="300" data-cf="end" value="${k.end}" aria-label="End">${coachSel(k.coach)}<button type="button" class="x" data-cdel="${i}" aria-label="Remove class">×</button></div>`).join('');
 }
 $('#classList').addEventListener('input', e => { const row = e.target.closest('[data-ci]'); if (!row) return; const k = classes[row.dataset.ci], f = e.target.dataset.cf; k[f] = f === 'day' ? Number(e.target.value) : e.target.value; });

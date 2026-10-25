@@ -2384,9 +2384,13 @@ a.tagc{text-decoration:none}
   var items=[];
   (function(){var hn=document.getElementById('heroNews');if(hn&&new Date()>new Date('2026-10-25T06:00:00+01:00'))hn.remove();var c=document.getElementById('fnCount');if(!c)return;var n=daysUntil('2026-10-24');c.textContent=n>1?n+' days to go · Sat 24 Oct':n===1?'Tomorrow night':n===0?'Tonight':'Saturday 24 October · Bedford';if(n<0)c.classList.add('done')})();
   EVENTS.forEach(function(ev){var n=daysUntil(ev.date);if(n<0)return;var when=ev.label||(n===0?'Tonight':n===1?'Tomorrow':'Fight night');items.push({cls:'hot',label:when,html:ev.text,href:ev.href})});
-  var left=(TT[dow]||[]).filter(function(c){return toMin(c[1])+60>mins});
-  if(left.length){items.push({label:'Today',html:left.map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
-  else{var nd=(dow+1)%7;while(!TT[nd].length)nd=(nd+1)%7;items.push({label:nd===(dow+1)%7?'Tomorrow':DAYS[nd],html:TT[nd].map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
+  function ttItem(){
+    var left=(TT[dow]||[]).filter(function(c){return toMin(c[1])+60>mins});
+    if(left.length)return {label:'Today',html:left.map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'};
+    var nd=(dow+1)%7,g=0;while(!(TT[nd]||[]).length&&g++<7)nd=(nd+1)%7;
+    return {label:nd===(dow+1)%7?'Tomorrow':DAYS[nd],html:(TT[nd]||[]).map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'};
+  }
+  var ttIdx=items.length;items.push(ttItem());
   items.push({label:'New here?',html:'<strong>Your first class is free.</strong> Beginners every Thursday at 7pm, no experience needed.',href:'#contact'});
   items.push({label:'Kids',html:'<strong>Kids Muay Thai</strong> Monday to Thursday, 5:30pm, ages 7 to 13.',href:'#classes'});
   items.push({label:'Gym',html:dow===0?'Gym closed today. Back Monday at 9am.':dow===6?'Saturday is personal training only, 8am–12pm.':'Open gym for members until <strong>9pm</strong> today.'});
@@ -2399,6 +2403,30 @@ a.tagc{text-decoration:none}
   var tr=document.getElementById('tkTrack');tr.innerHTML=render()+'<div aria-hidden="true" style="display:flex">'+render()+'</div>';
   [].forEach.call(tr.lastChild.querySelectorAll('a'),function(a){a.tabIndex=-1});
   tr.style.setProperty('--tk-dur',Math.max(40,items.length*7)+'s');
+  window.__tkRefresh=function(t){TT=t;items[ttIdx]=ttItem();tr.innerHTML=render()+'<div aria-hidden="true" style="display:flex">'+render()+'</div>';[].forEach.call(tr.lastChild.querySelectorAll('a'),function(a){a.tabIndex=-1})};
+})();
+(function(){
+  /* The timetable and the "what's on" ticker follow the schedule Jay and Steve keep in the coach area. */
+  var grid=document.querySelector('#timetable .tt');if(!grid||!window.fetch)return;
+  var NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  fetch('/api/pt?action=timetable',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
+    if(!j||!j.classes||!j.classes.length)return;
+    var by={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+    j.classes.forEach(function(k){if(by[k.day])by[k.day].push(k)});
+    var html='',tt={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+    [1,2,3,4,5,6,0].forEach(function(d){
+      var list=by[d].sort(function(a,b){return a.start<b.start?-1:1});
+      if(d===6&&!list.length){html+='<div class="day sat"><h3>Sat</h3><div class="sess"><b>Personal training</b><span>08:00–12:00</span></div></div>';tt[6]=[['Personal training','08:00–12:00']];return}
+      if(d===0&&!list.length)return;
+      html+='<div class="day'+(d===6?' sat':'')+'"><h3>'+NAMES[d]+'</h3>'+list.map(function(k){
+        var cls=/kid/i.test(k.name)?' k':/beginner/i.test(k.name)?' beg':'';
+        tt[d].push([/^kids$/i.test(k.name)?'Kids Muay Thai':k.name,k.start]);
+        return '<div class="sess'+cls+'"><b>'+esc(k.name)+'</b><span>'+k.start+'–'+k.end+'</span></div>'}).join('')+'</div>';
+    });
+    grid.innerHTML=html;
+    if(window.__tkRefresh)window.__tkRefresh(tt);
+  }).catch(function(){});
 })();
 (function(){
   var views=[].slice.call(document.querySelectorAll('.view')),menu=document.getElementById('menu'),burger=document.getElementById('burger');
