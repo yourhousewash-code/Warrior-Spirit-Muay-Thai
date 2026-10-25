@@ -122,3 +122,5 @@ textarea{min-height:80px;resize:vertical}
 .sharecard h3{font:700 20px var(--cond);letter-spacing:.06em;text-transform:uppercase}
 .sharecard textarea{min-height:110px}
 .sharecard .row{display:flex;gap:8px;flex-wrap:wrap}
+
+@media (max-width:560px){#clsList .item{flex-wrap:wrap}#clsList .item>div:first-child{flex:1 1 100%}#clsList .acts{width:100%;display:flex;gap:8px;align-items:center}#clsList .acts select{flex:1}}
