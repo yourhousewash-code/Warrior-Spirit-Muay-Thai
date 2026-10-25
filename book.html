@@ -115,6 +115,7 @@
         <div class="vnote" id="vnote" hidden>Check your email for a confirmation link. You need to confirm your email before your booking goes through. <button type="button" id="resendV">Send it again</button></div>
         <label for="bm" id="bmLabel" hidden>Your mobile, so your coach can reach you<input id="bm" type="tel" autocomplete="tel"></label>
         <label for="bn" id="bnLabel">Anything your coach should know? (optional)<textarea id="bn" maxlength="400" placeholder="Experience, injuries, goals…"></textarea></label>
+        <label for="brem">Reminder (optional)<select id="brem"><option value="none">No reminder</option><option value="morning">Email me on the morning of the session</option><option value="evening">Email me the evening before</option></select></label>
         <p class="muted" style="font-size:15px">Payment is taken at the gym. You can cancel from your account up to 24 hours before. Paying online is <span data-fb="soon"></span></p>
         <p class="err" id="berr" hidden></p>
         <button class="btn" type="submit" id="bookBtn">Confirm booking</button>
@@ -300,9 +301,9 @@ $('#bookForm').addEventListener('submit', async e => {
   const s = picked();
   try {
     if (state.user && state.user.needsMobile) { state.user = (await api('/api/auth?action=profile', { mobile: $('#bm').value })).user; }
-    const { booking } = await api('/api/pt?action=book', { coach: s.coach, start: s.start, mins: s.mins, format: state.format, type: state.type, notes: $('#bn').value });
+    const { booking } = await api('/api/pt?action=book', { coach: s.coach, start: s.start, mins: s.mins, format: state.format, type: state.type, notes: $('#bn').value, remind: $('#brem').value });
     document.querySelectorAll('.step').forEach(x => x.hidden = true);
-    $('#doneSummary').innerHTML = `<b>${esc(booking.type)}</b><span>with ${esc(booking.coachName)}</span><span>${esc(booking.when)} · ${LEN[booking.mins] || booking.mins + ' minutes'}</span>`;
+    $('#doneSummary').innerHTML = `<b>${esc(booking.type)}</b><span>with ${esc(booking.coachName)}</span><span>${esc(booking.when)} · ${LEN[booking.mins] || booking.mins + ' minutes'}</span><a href="/api/cal?one=${encodeURIComponent(booking.id)}">Add to your calendar</a>`;
     $('#done').hidden = false; scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     show($('#berr'), err.message); $('#bookBtn').disabled = false;

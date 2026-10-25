@@ -60,8 +60,26 @@
     <div class="row"><a class="btn" href="/book">Book a PT session</a></div>
     <div class="panel">
       <h2>Upcoming sessions</h2>
+      <div id="upClasses" class="list"></div>
       <div id="upcoming" class="list"><p class="empty">Loading…</p></div>
       <p class="muted" style="font-size:15px">You can cancel online up to 24 hours before. Closer to the time, please message the gym.</p>
+    </div>
+    <div class="panel" id="clsPanel" hidden>
+      <h2>Book a place in a class</h2>
+      <p class="muted" style="font-size:15px">These classes have a limited number of places. Pick one and, if you like, ask for a reminder.</p>
+      <div id="clsList" class="list"></div>
+      <p class="err" id="clsErr" hidden></p>
+    </div>
+    <div class="panel" id="calPanel">
+      <h2>Put it in your phone calendar</h2>
+      <p class="muted" style="font-size:15px">Subscribe once and your sessions and classes appear in your calendar and stay up to date by themselves. You can also add a single session with its “Add to calendar” link above.</p>
+      <div class="row"><a class="btn small" id="calMe" href="#">My sessions &amp; classes</a><a class="btn small ghost" id="calClub" href="#">Club timetable</a></div>
+      <details class="muted" style="font-size:14px"><summary>Android or Google Calendar?</summary>
+        <p>Copy the link, then in Google Calendar on a computer choose <b>Other calendars → From URL</b> and paste it. It then shows on your phone too.</p>
+        <div class="row"><button class="btn small ghost" type="button" data-copy="calMe">Copy my link</button><button class="btn small ghost" type="button" data-copy="calClub">Copy club link</button><button class="btn small ghost" type="button" id="calReset">Make my link new</button></div>
+        <p class="ok" id="calOk" hidden></p>
+      </details>
+      <label style="display:flex;gap:10px;align-items:center;font-size:15px;margin-top:6px"><input type="checkbox" id="prefTT" style="width:auto"> Email me when the club timetable changes</label>
     </div>
     <div class="panel" id="clubPanel">
       <h2>Club class timetable</h2>
@@ -105,7 +123,7 @@ async function init() {
   $('#hello').textContent = `Hi ${user.name.split(' ')[0]}`;
   $('#vnote').hidden = user.verified !== false;
   $('#vok').hidden = q.get('verified') !== '1' || user.verified === false;
-  loadBookings();
+  loadBookings(); loadClassBookings(); loadClassDates(); loadCal();
 }
 
 async function loadBookings() {
@@ -114,13 +132,64 @@ async function loadBookings() {
     const now = Date.now();
     const up = bookings.filter(b => b.status === 'booked' && b.start > now);
     const past = bookings.filter(b => !(b.status === 'booked' && b.start > now)).reverse();
-    $('#upcoming').innerHTML = up.length ? up.map(b => `<div class="item booked"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)} · ${b.mins} min</div></div>
+    $('#upcoming').innerHTML = up.length ? up.map(b => `<div class="item booked"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)} · ${b.mins} min${RT[b.remind] ? ' · ' + RT[b.remind] : ''}</div><div class="meta"><a href="${calLink(b.id)}">Add to calendar</a></div></div>
       <div class="acts">${b.canCancel ? `<button class="btn small ghost" data-cancel="${b.id}">Cancel</button>` : '<span class="muted" style="font-size:14px">Within 24h</span>'}</div></div>`).join('')
       : '<p class="empty">No sessions booked. <a href="/book">Book one now</a>.</p>';
     $('#pastPanel').hidden = !past.length;
     $('#past').innerHTML = past.map(b => `<div class="item ${b.status === 'cancelled' ? 'cancelled' : ''}"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)}${b.status === 'cancelled' ? ' · cancelled' : ''}</div></div></div>`).join('');
   } catch (err) { $('#upcoming').innerHTML = `<p class="err">${esc(err.message)}</p>`; }
 }
+
+function calLink(id) { return `/api/cal?one=${encodeURIComponent(id)}`; }
+const RT = { none: '', morning: 'Reminder: morning of', evening: 'Reminder: evening before' };
+async function loadClassBookings() {
+  try {
+    const { bookings } = await api('/api/pt?action=class-mine');
+    const up = bookings.filter(b => b.status === 'booked' && b.start > Date.now());
+    $('#upClasses').innerHTML = up.map(b => `<div class="item booked"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.className)} class with ${esc(b.coachName)} · ${b.mins} min${RT[b.remind] ? ' · ' + RT[b.remind] : ''}</div><div class="meta"><a href="${calLink(b.id)}">Add to calendar</a></div></div>
+      <div class="acts">${b.canCancel ? `<button class="btn small ghost" data-ccancel="${b.id}">Cancel place</button>` : '<span class="muted" style="font-size:14px">Within 2h</span>'}</div></div>`).join('');
+  } catch {}
+}
+async function loadClassDates() {
+  try {
+    const { classes } = await api('/api/pt?action=class-dates');
+    $('#clsPanel').hidden = !classes.length; if (!classes.length) return;
+    $('#clsList').innerHTML = classes.map(k => `<div class="item"><div><b>${esc(k.when)}</b><div class="meta">${esc(k.name)} with ${esc(k.coach)} · ${k.mins} min · ${k.mine ? '<b>You’re booked in</b>' : k.left ? k.left + ' of ' + k.max + ' places left' : 'Full'}</div></div>
+      <div class="acts">${k.mine ? '' : k.left ? `<select data-rem aria-label="Reminder"><option value="none">No reminder</option><option value="morning">Remind me that morning</option><option value="evening">Remind me the evening before</option></select> <button class="btn small" data-cbook="${esc(k.classId)}|${k.date}">Book</button>` : '<span class="muted" style="font-size:14px">Full</span>'}</div></div>`).join('');
+  } catch { $('#clsPanel').hidden = true; }
+}
+let calUrls = null;
+async function loadCal() {
+  try {
+    calUrls = await api('/api/cal?action=link');
+    $('#calMe').href = calUrls.me; $('#calClub').href = calUrls.club;
+    $('#prefTT').checked = (await api('/api/pt?action=prefs')).timetable;
+  } catch { $('#calPanel').hidden = true; }
+}
+document.addEventListener('click', async e => {
+  const bk = e.target.closest('[data-cbook]');
+  if (bk) {
+    const [classId, date] = bk.dataset.cbook.split('|'); bk.disabled = true; show($('#clsErr'), '');
+    try { await api('/api/pt?action=class-book', { classId, date, remind: bk.parentElement.querySelector('[data-rem]').value }); await Promise.all([loadClassDates(), loadClassBookings()]); }
+    catch (err) { show($('#clsErr'), err.message); bk.disabled = false; }
+    return;
+  }
+  const cc = e.target.closest('[data-ccancel]');
+  if (cc) {
+    if (cc.dataset.confirm !== '1') { cc.dataset.confirm = '1'; cc.textContent = 'Tap again to cancel'; return; }
+    cc.disabled = true;
+    try { await api('/api/pt?action=class-cancel', { id: cc.dataset.ccancel }); await Promise.all([loadClassDates(), loadClassBookings()]); }
+    catch (err) { cc.disabled = false; cc.textContent = 'Cancel place'; cc.dataset.confirm = ''; show($('#clsErr'), err.message); $('#clsPanel').hidden = false; }
+    return;
+  }
+  const cp = e.target.closest('[data-copy]');
+  if (cp && calUrls) { const u = cp.dataset.copy === 'calMe' ? calUrls.meHttps : calUrls.clubHttps; try { await navigator.clipboard.writeText(u); show($('#calOk'), 'Link copied.'); } catch { prompt('Copy this link', u); } return; }
+  if (e.target.id === 'calReset') {
+    if (!confirm('Make a new link? Calendars using your old link will stop updating until you subscribe again.')) return;
+    try { calUrls = await (await fetch('/api/cal?action=link&reset=1', { method: 'POST' })).json(); $('#calMe').href = calUrls.me; show($('#calOk'), 'Done. Subscribe again with the new link.'); } catch {}
+  }
+});
+document.addEventListener('change', async e => { if (e.target.id === 'prefTT') { try { await api('/api/pt?action=prefs', { timetable: e.target.checked }); } catch {} } });
 (async function club() {
   try {
     const { classes } = await api('/api/pt?action=timetable');

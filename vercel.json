@@ -4,6 +4,14 @@
     {
       "source": "/team/:id",
       "destination": "/api/team?id=:id"
+    },
+    {
+      "source": "/calendar/club.ics",
+      "destination": "/api/cal?feed=club"
+    },
+    {
+      "source": "/calendar/me/:t",
+      "destination": "/api/cal?feed=me&t=:t"
     }
   ],
   "redirects": [
@@ -56,6 +64,16 @@
           "value": "no-store"
         }
       ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron?run=morning",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron?run=evening",
+      "schedule": "0 17 * * *"
     }
   ]
 }

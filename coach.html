@@ -485,6 +485,21 @@
       <p class="err" id="scErr" hidden></p>
 
 
+      <section class="panel" id="rosterPanel" hidden>
+        <h2>Who’s booked in</h2>
+        <p class="muted">Classes with a limit on places, over the next two weeks.</p>
+        <div id="rosterList" class="list"></div>
+      </section>
+
+      <section class="panel" id="notifyPanel" data-admin-only hidden>
+        <h2>Tell members about changes</h2>
+        <p class="note" id="ntHint" hidden>You’ve changed the timetable. Members’ subscribed calendars update by themselves. Do you also want to email everyone?</p>
+        <p class="muted">Sends an email with the current timetable to every member with an account (they can turn these emails off). Add a short note if you like.</p>
+        <label for="ntNote">Note (optional)<input id="ntNote" maxlength="400" placeholder="e.g. Thursday beginners now start at 7:30pm from next week"></label>
+        <p class="err" id="ntErr" hidden></p><p class="ok" id="ntOk" hidden></p>
+        <button class="btn" type="button" id="ntSend" style="justify-self:start">Email members the timetable</button>
+      </section>
+
       <section class="panel" id="typesPanel">
         <h2>Class types</h2>
         <p class="muted">The kinds of class we run, with a short description. Add your own if you teach something different. Everyone can add a type and change the ones they added.</p>
@@ -509,6 +524,8 @@
             <label for="cfStart">Starts<select id="cfStart"></select></label>
             <label for="cfEnd">Ends<select id="cfEnd"></select></label>
           </div>
+          <label for="cfMax">Places (optional)<input id="cfMax" type="number" min="1" max="60" inputmode="numeric" placeholder="e.g. 20. Leave empty for no limit"></label>
+          <p class="muted" style="margin:0;font-size:13px">Set a number and members can book a place from their account, up to that many. Leave it empty and people just turn up.</p>
           <p class="err" id="cfErr" hidden></p>
           <div class="row"><button class="btn" type="submit" id="cfSave">Save class</button><button class="btn ghost" type="button" id="cfCancel">Cancel</button><button class="btn ghost" type="button" id="cfDel" hidden style="margin-left:auto;color:var(--bad)">Remove class</button></div>
         </form>
@@ -908,7 +925,7 @@ const coachName = id => (me.team.find(t => t.id === id) || {}).first || id;
 async function loadClasses() {
   try {
     const [c, t] = await Promise.all([api('/api/pt?action=classes'), api('/api/pt?action=classtypes')]);
-    classes = c.classes; types = t.types; drawSchedule(); drawTypes();
+    classes = c.classes; types = t.types; drawSchedule(); drawTypes(); loadRoster();
   } catch (err) { show($('#scErr'), err.message); }
 }
 function drawSchedule() {
@@ -957,7 +974,7 @@ function openClass(k) {
   $('#cfDay').innerHTML = SC_ORDER.map(d => `<option value="${d}" ${d === k.day ? 'selected' : ''}>${DAYS[d]}</option>`).join('');
   $('#cfCoach').innerHTML = me.team.map(t => `<option value="${esc(t.id)}" ${t.id === k.coach ? 'selected' : ''}>${esc(t.first)}</option>`).join('');
   timeOpts($('#cfStart'), k.start, SC_START, 21 * 60 + 45); timeOpts($('#cfEnd'), k.end, SC_START + 15, 22 * 60);
-  $('#cfCoach').disabled = !me.admin;
+  $('#cfCoach').disabled = !me.admin; $('#cfMax').value = k.max || ''; $('#cfMax').disabled = !!ro;
   descOf(); show($('#cfErr'), '');
   $('#clsForm').querySelectorAll('select').forEach(s => { if (ro) s.disabled = true; else if (s.id !== 'cfCoach') s.disabled = false; });
   $('#cfSave').hidden = ro; $('#cfDel').hidden = !k.id || ro; $('#cfCancel').textContent = ro ? 'Close' : 'Cancel';
@@ -972,15 +989,38 @@ $('#cfStart').addEventListener('change', () => { if (mm($('#cfEnd').value) <= mm
 $('#cfCancel').addEventListener('click', () => $('#clsDlg').close());
 $('#clsForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#cfErr'), '');
-  const k = { id: editing.id, name: $('#cfType').value, day: Number($('#cfDay').value), start: $('#cfStart').value, end: $('#cfEnd').value, coach: $('#cfCoach').value };
+  const k = { id: editing.id, name: $('#cfType').value, day: Number($('#cfDay').value), start: $('#cfStart').value, end: $('#cfEnd').value, coach: $('#cfCoach').value, max: $('#cfMax').value };
   if (k.name === '__new') return show($('#cfErr'), 'Choose a class type, or add a new one below the calendar.');
-  try { classes = (await api('/api/pt?action=class-save', { class: k })).classes; $('#clsDlg').close(); drawSchedule(); }
+  try { classes = (await api('/api/pt?action=class-save', { class: k })).classes; $('#clsDlg').close(); drawSchedule(); ttChanged(); loadRoster(); }
   catch (err) { show($('#cfErr'), err.message); }
 });
 $('#cfDel').addEventListener('click', async () => {
   if (!confirm('Remove this class from the schedule?')) return;
-  try { classes = (await api('/api/pt?action=class-del', { id: editing.id })).classes; $('#clsDlg').close(); drawSchedule(); }
+  try { classes = (await api('/api/pt?action=class-del', { id: editing.id })).classes; $('#clsDlg').close(); drawSchedule(); ttChanged(); loadRoster(); }
   catch (err) { show($('#cfErr'), err.message); }
+});
+
+/* who has booked into classes with limited places, and telling members about timetable changes */
+async function loadRoster() {
+  try {
+    const { classes: r } = await api('/api/pt?action=class-roster');
+    $('#rosterPanel').hidden = !r.length; if (!r.length) return;
+    $('#rosterList').innerHTML = r.map(k => `<div class="item"><div><b>${esc(k.when)} · ${esc(k.name)}</b><div class="meta">${k.people.length} of ${k.max} places taken</div>
+      ${k.people.map(p => `<div class="meta">${esc(p.name)} · ${esc(p.mobile)} <button type="button" class="btn small ghost" data-rm="${esc(p.id)}">Remove</button></div>`).join('') || '<div class="meta">Nobody yet</div>'}</div></div>`).join('');
+  } catch { $('#rosterPanel').hidden = true; }
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-rm]'); if (!b) return;
+  if (!confirm('Remove this person from the class? They’ll get an email.')) return;
+  try { await api('/api/pt?action=class-cancel', { id: b.dataset.rm }); loadRoster(); } catch (err) { alertBox(err.message); }
+});
+function ttChanged() { if (me.admin) { $('#ntHint').hidden = false; $('#notifyPanel').hidden = false; } }
+$('#ntSend').addEventListener('click', async () => {
+  if (!confirm('Email every member the new timetable?')) return;
+  show($('#ntErr'), ''); show($('#ntOk'), ''); $('#ntSend').disabled = true;
+  try { const r = await api('/api/pt?action=schedule-notify', { note: $('#ntNote').value }); show($('#ntOk'), `Sent to ${r.sent} member${r.sent === 1 ? '' : 's'}.`); $('#ntNote').value = ''; $('#ntHint').hidden = true; }
+  catch (err) { show($('#ntErr'), err.message); }
+  $('#ntSend').disabled = false;
 });
 
 /* gym opening hours (owners only) */

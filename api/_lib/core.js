@@ -193,14 +193,16 @@ function mailer() {
   return transport;
 }
 export const mailReady = () => !!mailer();
-export async function mail(to, subject, lines) {
+export async function mail(to, subject, lines, opts = {}) {
   const t = mailer();
   const list = [].concat(to).filter(Boolean);
   if (!t || !list.length) { console.log('[mail skipped]', subject, list); return false; }
   const text = lines.join('\n');
   const html = `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111">${lines.map(l => l ? `<p style="margin:0 0 10px">${escapeHtml(l)}</p>` : '').join('')}<p style="margin:16px 0 0;color:#666;font-size:13px">${GYM}<br>${ADDRESS}</p></div>`;
   try {
-    await t.sendMail({ from: process.env.MAIL_FROM || `"Warrior Spirit Muay Thai" <${process.env.SMTP_USER}>`, to: list.join(', '), subject, text, html });
+    const from = process.env.MAIL_FROM || `"Warrior Spirit Muay Thai" <${process.env.SMTP_USER}>`;
+    /* bcc: one message to many people without showing anyone else's address */
+    await t.sendMail({ from, ...(opts.bcc ? { to: process.env.SMTP_USER.trim(), bcc: list.join(', ') } : { to: list.join(', ') }), subject, text, html, ...(opts.attachments ? { attachments: opts.attachments } : {}) });
     return true;
   } catch (e) { console.error('[mail failed]', e.message); return false; }
 }

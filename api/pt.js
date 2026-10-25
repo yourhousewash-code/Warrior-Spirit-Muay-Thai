@@ -1,9 +1,11 @@
 import {
   redis, COACHES, loadCoaches, activeIds, publicIds, TYPES, FORMATS, DURATIONS, DEFAULT_PRICES, getPrices, priceOf, minsLabel,
-  send, bad, setupProblem, body, clean, id, fmt, mail, mailReady, coachEmail, coachSession, userSession, SITE, ADDRESS,
+  send, bad, setupProblem, body, clean, id, fmt, mail, mailReady, coachEmail, coachSession, userSession, SITE, ADDRESS, rateLimit,
 } from './_lib/core.js';
+import { vcal } from './_lib/ics.js';
+import { ptEvent, classBookingEvent } from './_lib/calevents.js';
 import {
-  DAY, LENGTHS, londonMs, londonDate, addDays, validDate, validTime, getWeekly, getOff, isOff,
+  DAY, LENGTHS, londonMs, londonDate, addDays, dow, validDate, validTime, getWeekly, getOff, isOff,
   realSlots, generated, parseVirtual, getClasses, getCover, classInstances, freeIntervals, startsIn,
 } from './_lib/avail.js';
 import { liveProfile } from './_lib/profiles.js';
@@ -24,6 +26,20 @@ const DEFAULT_TYPES = [
   { id: 't-spar', name: 'Sparring', desc: 'Technical sparring, coached and controlled.', by: 'jay' },
 ];
 async function getTypes() { const t = await redis.get('classtypes'); return Array.isArray(t) ? t : DEFAULT_TYPES.map(x => ({ ...x })); }
+
+
+const REMIND = ['none', 'morning', 'evening'];
+const remindText = r => r === 'morning' ? 'on the morning of the class' : r === 'evening' ? 'the evening before' : '';
+/* A class with a limit on places, on one date. null if it doesn't exist or isn't bookable. */
+async function classOn(classId, date) {
+  if (!validDate(date)) return null;
+  const k = (await getClasses()).find(x => x.id === classId);
+  if (!k || !k.max || dow(date) !== k.day || !COACHES[k.coach]) return null;
+  const ov = (await getCover())[`${k.id}|${date}`];
+  const start = londonMs(date, k.start), mins = Math.round((londonMs(date, k.end) - start) / 6e4);
+  return { k, date, start, mins, cancelled: ov === 'none', coach: ov && ov !== 'none' ? ov : k.coach };
+}
+const cbView = cb => { const start = Number(cb.start); return { id: cb.id, className: cb.className, coachName: COACHES[cb.coach]?.name || cb.coach, start, mins: Number(cb.mins), when: fmt(start), status: cb.status, remind: cb.remind || 'none', canCancel: cb.status === 'booked' && start - Date.now() >= 2 * 3600e3 }; };
 
 export default async function handler(req, res) {
   const problem = setupProblem();
@@ -126,7 +142,7 @@ export default async function handler(req, res) {
       /* ----- class timetable ----- */
       case 'timetable': { // public: the club class timetable (used on the account page)
         const types = await getTypes();
-        const list = (await getClasses()).filter(k => COACHES[k.coach]).map(k => ({ day: k.day, start: k.start, end: k.end, name: k.name, coach: COACHES[k.coach].first, desc: k.desc || (types.find(t => t.name.toLowerCase() === k.name.toLowerCase()) || {}).desc || '' }));
+        const list = (await getClasses()).filter(k => COACHES[k.coach]).map(k => ({ id: k.id, max: k.max || 0, day: k.day, start: k.start, end: k.end, name: k.name, coach: COACHES[k.coach].first, desc: k.desc || (types.find(t => t.name.toLowerCase() === k.name.toLowerCase()) || {}).desc || '' }));
         return send(res, 200, { classes: list });
       }
       case 'classes': {
@@ -186,6 +202,7 @@ export default async function handler(req, res) {
         const old = k.id ? list.find(x => x.id === k.id) : null;
         const next = { id: old ? old.id : id('k'), day: Number(k.day), start: String(k.start), end: String(k.end), name: clean(k.name, 40), coach: String(k.coach || c.id) };
         if (clean(k.desc, 300)) next.desc = clean(k.desc, 300);
+        const mx = Math.max(0, Math.min(60, parseInt(k.max) || 0)); if (mx) next.max = mx;
         if (!next.name) return bad(res, 'Choose a class type.');
         if (!(next.day >= 0 && next.day <= 6) || !validTime(next.start) || !validTime(next.end) || next.end <= next.start) return bad(res, 'Check the start and end times.');
         if (!COACHES[next.coach]) return bad(res, 'Choose who teaches this class.');
@@ -210,7 +227,7 @@ export default async function handler(req, res) {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
         if (!c.admin) return bad(res, 'Only Jay and Steve can change the class schedule.', 403);
         const list = (Array.isArray(b.classes) ? b.classes : []).slice(0, 60).map(k => ({
-          id: clean(k.id, 30) || id('k'), day: Number(k.day), start: String(k.start), end: String(k.end), name: clean(k.name, 40), coach: String(k.coach), ...(k.desc ? { desc: clean(k.desc, 300) } : {}),
+          id: clean(k.id, 30) || id('k'), day: Number(k.day), start: String(k.start), end: String(k.end), name: clean(k.name, 40), coach: String(k.coach), ...(k.desc ? { desc: clean(k.desc, 300) } : {}), ...(parseInt(k.max) > 0 ? { max: Math.min(60, parseInt(k.max)) } : {}),
         }));
         for (const k of list) {
           if (!k.name) return bad(res, 'Every class needs a name.');
@@ -394,7 +411,7 @@ export default async function handler(req, res) {
           await redis.hset(`slot:${sid}`, { id: sid, coach, start, mins, status: 'booked', source: 'booking', bookingId: bid, created: Date.now() });
           await redis.zadd(`slots:coach:${coach}`, { score: start, member: sid });
           await redis.zadd('slots:all', { score: start, member: sid });
-          const bk = { id: bid, slotId: sid, coach, email, name: u.name, mobile: u.mobile, type, format, price, start, mins, notes: clean(b.notes, 400), status: 'booked', created: Date.now() };
+          const bk = { id: bid, slotId: sid, coach, email, name: u.name, mobile: u.mobile, type, format, price, start, mins, notes: clean(b.notes, 400), remind: REMIND.includes(b.remind) ? b.remind : 'none', status: 'booked', created: Date.now() };
           await redis.hset(`booking:${bid}`, bk);
           await redis.zadd(`bookings:user:${email}`, { score: start, member: bid });
           await redis.zadd(`bookings:coach:${coach}`, { score: start, member: bid });
@@ -431,6 +448,113 @@ export default async function handler(req, res) {
         await notify(byCoach ? 'cancelled-by-coach' : 'cancelled-by-customer', { ...bk, start: Number(bk.start), mins: Number(bk.mins) });
         return send(res, 200, { ok: true });
       }
+
+      /* ----- booking a place in a class that has a limit ----- */
+      case 'class-dates': { // public: bookable classes over the next two weeks, with places left
+        const email = userSession(req);
+        const classes = (await getClasses()).filter(k => k.max && COACHES[k.coach]), cover = await getCover();
+        const out = [];
+        for (let d = londonDate(Date.now()), n = 0; n < 15; d = addDays(d, 1), n++) {
+          for (const k of classes) {
+            if (dow(d) !== k.day) continue;
+            const start = londonMs(d, k.start); if (start < Date.now() + 30 * 60e3) continue;
+            const ov = cover[`${k.id}|${d}`]; if (ov === 'none') continue;
+            const taken = await redis.hgetall(`classbook:${k.id}:${d}`) || {};
+            out.push({ classId: k.id, date: d, name: k.name, coach: COACHES[ov && ov !== 'none' ? ov : k.coach]?.first || '', start, mins: Math.round((londonMs(d, k.end) - start) / 6e4), when: fmt(start), max: k.max, left: Math.max(0, k.max - Object.keys(taken).length), mine: !!(email && taken[email]) });
+          }
+        }
+        out.sort((a, b2) => a.start - b2.start);
+        return send(res, 200, { classes: out });
+      }
+      case 'class-book': {
+        const email = userSession(req); if (!email) return bad(res, 'Please log in to book a place.', 401);
+        const u = await redis.hgetall(`user:${email}`); if (!u) return bad(res, 'Please log in again.', 401);
+        if (u.verified === 'no' && mailReady()) return bad(res, 'Please confirm your email first. We’ve sent you a link (check your junk folder), then try again.', 403);
+        if (!String(u.mobile || '').replace(/\D/g, '').length) return bad(res, 'Add your mobile number so your coach can reach you.', 400);
+        const inst = await classOn(clean(b.classId, 40), clean(b.date, 12));
+        if (!inst || inst.cancelled) return bad(res, 'That class isn’t running on that date.', 404);
+        if (inst.start < Date.now() + 30 * 60e3) return bad(res, 'Booking for that class has closed.', 409);
+        if (inst.start > Date.now() + 15 * DAY) return bad(res, 'You can book up to two weeks ahead.', 409);
+        const lock = `classlock:${inst.k.id}:${inst.date}`;
+        if (!(await redis.set(lock, '1', { nx: true, ex: 15 }))) return bad(res, 'Someone is booking this class right now. Try again in a few seconds.', 409);
+        try {
+          const key = `classbook:${inst.k.id}:${inst.date}`, taken = await redis.hgetall(key) || {};
+          if (taken[email]) return bad(res, 'You already have a place in this class.', 409);
+          if (Object.keys(taken).length >= inst.k.max) return bad(res, 'Sorry, this class is full. Message the gym to join the list.', 409);
+          const cid = id('cb');
+          const cb = { id: cid, classId: inst.k.id, date: inst.date, email, name: u.name, mobile: u.mobile, className: inst.k.name, coach: inst.coach, start: inst.start, mins: inst.mins, remind: REMIND.includes(b.remind) ? b.remind : 'none', status: 'booked', created: Date.now() };
+          await redis.hset(`cbk:${cid}`, cb);
+          await redis.hset(key, { [email]: cid });
+          await redis.zadd(`cbookings:user:${email}`, { score: inst.start, member: cid });
+          await redis.zadd('cbookings:all', { score: inst.start, member: cid });
+          await mail(email, `Booked: ${cb.className}, ${fmt(inst.start)}`, [
+            `Hi ${u.name.split(' ')[0]},`, `Your place in ${cb.className} is booked.`, `When: ${fmt(inst.start)} (${inst.mins} minutes)`, `Coach: ${COACHES[inst.coach].name}`, `Where: ${ADDRESS}`,
+            remindText(cb.remind) ? `We’ll email you a reminder ${remindText(cb.remind)}.` : '',
+            `Can’t make it? Please cancel from your account so someone else can have your place (up to 2 hours before): ${SITE}/account`,
+            'The attached calendar file adds this class to your phone calendar.',
+          ].filter(Boolean), { attachments: [{ filename: 'warrior-spirit-class.ics', content: vcal('Warrior Spirit', [classBookingEvent(cb)]), contentType: 'text/calendar; charset=utf-8; method=PUBLISH' }] });
+          return send(res, 200, { booking: cbView(cb) });
+        } finally { await redis.del(lock); }
+      }
+      case 'class-mine': {
+        const email = userSession(req); if (!email) return bad(res, 'Please log in.', 401);
+        const ids = await redis.zrange(`cbookings:user:${email}`, Date.now() - 60 * DAY, Date.now() + 60 * DAY, { byScore: true });
+        const list = [];
+        for (const i of ids) { const cb = await redis.hgetall(`cbk:${i}`); if (cb) list.push(cbView(cb)); }
+        return send(res, 200, { bookings: list });
+      }
+      case 'class-cancel': {
+        const cb = await redis.hgetall(`cbk:${clean(b.id, 40)}`);
+        if (!cb || cb.status !== 'booked') return bad(res, 'Booking not found.', 404);
+        const email = userSession(req), c = coachSession(req);
+        const byMember = email && email === cb.email, byCoach = c && (c.admin || c.id === cb.coach);
+        if (!byMember && !byCoach) return bad(res, 'You can’t cancel this booking.', 403);
+        if (byMember && !byCoach && Number(cb.start) - Date.now() < 2 * 3600e3) return bad(res, 'Places can only be cancelled online up to 2 hours before. Please message the gym.', 409);
+        await redis.hset(`cbk:${cb.id}`, { status: 'cancelled', cancelledBy: byCoach ? 'coach' : 'member', cancelledAt: Date.now() });
+        await redis.hdel(`classbook:${cb.classId}:${cb.date}`, cb.email);
+        if (byCoach && !byMember) await mail(cb.email, `Your place in ${cb.className} was cancelled`, [`Hi ${cb.name.split(' ')[0]},`, `The gym has had to cancel your place in ${cb.className} on ${fmt(Number(cb.start))}. Sorry about that.`, `See what else is on: ${SITE}/account`]);
+        return send(res, 200, { ok: true });
+      }
+      case 'class-roster': { // coaches: who has booked into their limited classes over the next two weeks
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const classes = (await getClasses()).filter(k => k.max && (c.admin || k.coach === c.id)), cover = await getCover(), out = [];
+        for (let d = londonDate(Date.now()), n = 0; n < 15; d = addDays(d, 1), n++) {
+          for (const k of classes) {
+            if (dow(d) !== k.day) continue;
+            const start = londonMs(d, k.start); if (start < Date.now() - 3 * 3600e3) continue;
+            const ov = cover[`${k.id}|${d}`]; if (ov === 'none') continue;
+            const taken = await redis.hgetall(`classbook:${k.id}:${d}`) || {}, people = [];
+            for (const cid of Object.values(taken)) { const cb = await redis.hgetall(`cbk:${cid}`); if (cb) people.push({ id: cb.id, name: cb.name, mobile: cb.mobile }); }
+            out.push({ classId: k.id, date: d, name: k.name, when: fmt(start), start, max: k.max, people });
+          }
+        }
+        out.sort((a, b2) => a.start - b2.start);
+        return send(res, 200, { classes: out });
+      }
+      case 'prefs': { // member email preferences
+        const email = userSession(req); if (!email) return bad(res, 'Please log in.', 401);
+        if (req.method === 'POST') await redis.hset(`user:${email}`, { noTT: b.timetable === false ? '1' : '0' });
+        const u = await redis.hgetall(`user:${email}`);
+        return send(res, 200, { timetable: u?.noTT !== '1' });
+      }
+      case 'schedule-notify': { // owners: tell members the timetable has changed
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        if (!c.admin) return bad(res, 'Only Jay and Steve can notify members.', 403);
+        if (!(await rateLimit('ttnotify', 1, 600))) return bad(res, 'You sent one a moment ago. Wait a few minutes before sending another.', 429);
+        const note = clean(b.note, 400);
+        const DN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const lines = (await getClasses()).filter(k => COACHES[k.coach]).sort((a, b2) => ((a.day + 6) % 7) - ((b2.day + 6) % 7) || a.start.localeCompare(b2.start)).map(k => `${DN[k.day]} ${k.start}–${k.end}  ${k.name} (${COACHES[k.coach].first})`);
+        const emails = []; let cursor = '0';
+        do {
+          const [next, keys] = await redis.scan(cursor, { match: 'user:*@*', count: 300 });
+          cursor = String(next);
+          if (keys.length) { const pl = redis.pipeline(); keys.forEach(k => pl.hget(k, 'noTT')); const flags = await pl.exec(); keys.forEach((k, i) => { if (flags[i] !== '1' && flags[i] !== 1) emails.push(k.slice(5)); }); }
+        } while (cursor !== '0' && emails.length < 3000);
+        for (let i = 0; i < emails.length; i += 40) {
+          await mail(emails.slice(i, i + 40), 'The Warrior Spirit class timetable has changed', ['Hi,', 'We’ve updated the class timetable.', note, '', 'The timetable now:', ...lines, '', `Your calendar updates by itself if you subscribe to the club timetable in your account: ${SITE}/account`, 'You can turn these emails off in your account.'].filter((x, j) => x !== '' || j > 3), { bcc: true });
+        }
+        return send(res, 200, { sent: emails.length });
+      }
       default: return bad(res, 'Unknown action', 404);
     }
   } catch (e) {
@@ -459,7 +583,7 @@ function coachPub(k) {
 function pub(s) { return { id: s.id, coach: s.coach, coachName: COACHES[s.coach]?.name || s.coach, start: s.start, mins: s.mins, when: fmt(s.start) }; }
 function view(bk) {
   const start = Number(bk.start);
-  return { id: bk.id, coach: bk.coach, coachName: COACHES[bk.coach]?.name || bk.coach, type: describe(bk), price: bk.price ? Number(bk.price) : null, start, mins: Number(bk.mins), when: fmt(start), status: bk.status, canCancel: bk.status === 'booked' && start - Date.now() >= DAY };
+  return { id: bk.id, coach: bk.coach, coachName: COACHES[bk.coach]?.name || bk.coach, type: describe(bk), price: bk.price ? Number(bk.price) : null, start, mins: Number(bk.mins), when: fmt(start), status: bk.status, remind: bk.remind || 'none', canCancel: bk.status === 'booked' && start - Date.now() >= DAY };
 }
 
 async function notify(kind, bk) {
@@ -477,7 +601,9 @@ async function notify(kind, bk) {
       `Hi ${bk.name.split(' ')[0]},`, 'Your personal training session is booked.', ...details,
       'Payment is taken at the gym. Bring water, a towel and your wraps and gloves if you have them.',
       `Need to cancel? You can do it from your account up to 24 hours before: ${SITE}/account`,
-    ]);
+      bk.remind && bk.remind !== 'none' ? `We’ll email you a reminder ${bk.remind === 'morning' ? 'on the morning of your session' : 'the evening before'}.` : '',
+      'The attached calendar file adds this session to your phone calendar.',
+    ], { attachments: [{ filename: 'warrior-spirit-session.ics', content: vcal('Warrior Spirit', [ptEvent(bk)]), contentType: 'text/calendar; charset=utf-8; method=PUBLISH' }] });
     await mail(staff, `New PT booking: ${bk.name}, ${when}`, ['A new PT session has been booked.', ...details, '', ...who, `See all bookings: ${SITE}/coach`]);
   } else {
     const by = kind === 'cancelled-by-coach' ? 'the gym' : 'the customer';
