@@ -9,6 +9,15 @@ import {
 import { liveProfile } from './_lib/profiles.js';
 
 
+const DEFAULT_TYPES = [
+  { id: 't-kids', name: 'Kids Muay Thai', desc: 'Fun, safe, properly coached Muay Thai for ages 7 to 13. Confidence, discipline and fitness.', by: 'jay' },
+  { id: 't-beg', name: 'Beginners', desc: 'Never trained before? Start here. Learn the basics at your own pace, no sparring.', by: 'jay' },
+  { id: 't-pads', name: 'Pads', desc: 'Rounds of pad work with a coach: technique, power and fitness.', by: 'jay' },
+  { id: 't-drills', name: 'Drills & sparring', desc: 'Partner drills and controlled sparring for members ready to test their skills.', by: 'jay' },
+  { id: 't-spar', name: 'Sparring', desc: 'Technical sparring, coached and controlled.', by: 'jay' },
+];
+async function getTypes() { const t = await redis.get('classtypes'); return Array.isArray(t) ? t : DEFAULT_TYPES.map(x => ({ ...x })); }
+
 export default async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
@@ -109,18 +118,75 @@ export default async function handler(req, res) {
 
       /* ----- class timetable ----- */
       case 'timetable': { // public: the club class timetable (used on the account page)
-        const list = (await getClasses()).filter(k => COACHES[k.coach]).map(k => ({ day: k.day, start: k.start, end: k.end, name: k.name, coach: COACHES[k.coach].first }));
+        const types = await getTypes();
+        const list = (await getClasses()).filter(k => COACHES[k.coach]).map(k => ({ day: k.day, start: k.start, end: k.end, name: k.name, coach: COACHES[k.coach].first, desc: k.desc || (types.find(t => t.name.toLowerCase() === k.name.toLowerCase()) || {}).desc || '' }));
         return send(res, 200, { classes: list });
       }
       case 'classes': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
         return send(res, 200, { classes: await getClasses() });
       }
+      case 'classtypes': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        return send(res, 200, { types: await getTypes() });
+      }
+      case 'classtype-save': { // any coach can add a class type; you can change your own, owners can change any
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const name = clean(b.name, 40).replace(/\s+/g, ' '), desc = clean(b.desc, 400);
+        if (!name) return bad(res, 'Give the class type a name.');
+        const types = await getTypes();
+        const dupe = types.find(t => t.name.toLowerCase() === name.toLowerCase() && t.id !== b.id);
+        if (dupe) return bad(res, `There is already a class type called “${dupe.name}”.`);
+        let t = b.id ? types.find(x => x.id === b.id) : null;
+        if (t) {
+          if (!c.admin && t.by !== c.id) return bad(res, 'You can only change class types you added.', 403);
+          if (t.name !== name) { const cl = await getClasses(); let hit = false; for (const k of cl) if (k.name === t.name) { k.name = name; hit = true; } if (hit) await redis.set('classes', cl); }
+          t.name = name; t.desc = desc;
+        } else { t = { id: id('t'), name, desc, by: c.id }; types.push(t); }
+        await redis.set('classtypes', types);
+        return send(res, 200, { types, type: t });
+      }
+      case 'classtype-del': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const types = await getTypes(), t = types.find(x => x.id === b.id);
+        if (!t) return bad(res, 'Class type not found.', 404);
+        if (!c.admin && t.by !== c.id) return bad(res, 'You can only remove class types you added.', 403);
+        if ((await getClasses()).some(k => k.name === t.name)) return bad(res, `“${t.name}” is still on the schedule. Remove or rename those classes first.`);
+        const left = types.filter(x => x.id !== t.id); await redis.set('classtypes', left);
+        return send(res, 200, { types: left });
+      }
+      case 'class-save': { // add or change one class. Owners can do any class; other coaches only their own.
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const k = b.class || {};
+        const list = await getClasses();
+        const old = k.id ? list.find(x => x.id === k.id) : null;
+        const next = { id: old ? old.id : id('k'), day: Number(k.day), start: String(k.start), end: String(k.end), name: clean(k.name, 40), coach: String(k.coach || c.id) };
+        if (clean(k.desc, 300)) next.desc = clean(k.desc, 300);
+        if (!next.name) return bad(res, 'Choose a class type.');
+        if (!(next.day >= 0 && next.day <= 6) || !validTime(next.start) || !validTime(next.end) || next.end <= next.start) return bad(res, 'Check the start and end times.');
+        if (!COACHES[next.coach]) return bad(res, 'Choose who teaches this class.');
+        if (!c.admin) {
+          if (next.coach !== c.id) return bad(res, 'You can add classes for yourself. Ask Jay or Steve to set up classes for someone else.', 403);
+          if (old && old.coach !== c.id) return bad(res, 'That class is taught by someone else. Ask Jay or Steve to change it.', 403);
+        }
+        const out = old ? list.map(x => x.id === old.id ? next : x) : list.concat(next);
+        out.sort((a, b2) => a.day - b2.day || a.start.localeCompare(b2.start));
+        await redis.set('classes', out.slice(0, 80));
+        return send(res, 200, { classes: out });
+      }
+      case 'class-del': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const list = await getClasses(), old = list.find(x => x.id === b.id);
+        if (!old) return bad(res, 'Class not found.', 404);
+        if (!c.admin && old.coach !== c.id) return bad(res, 'That class is taught by someone else. Ask Jay or Steve to remove it.', 403);
+        const out = list.filter(x => x.id !== old.id); await redis.set('classes', out);
+        return send(res, 200, { classes: out });
+      }
       case 'classes-save': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
         if (!c.admin) return bad(res, 'Only Jay and Steve can change the class schedule.', 403);
         const list = (Array.isArray(b.classes) ? b.classes : []).slice(0, 60).map(k => ({
-          id: clean(k.id, 30) || id('k'), day: Number(k.day), start: String(k.start), end: String(k.end), name: clean(k.name, 40), coach: String(k.coach),
+          id: clean(k.id, 30) || id('k'), day: Number(k.day), start: String(k.start), end: String(k.end), name: clean(k.name, 40), coach: String(k.coach), ...(k.desc ? { desc: clean(k.desc, 300) } : {}),
         }));
         for (const k of list) {
           if (!k.name) return bad(res, 'Every class needs a name.');
