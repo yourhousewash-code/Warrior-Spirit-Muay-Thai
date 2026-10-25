@@ -58,8 +58,12 @@ export default async function handler(req, res) {
       const state = clean(req.query.state, 80);
       const okState = state && (await redis.get(`gdrive:state:${state}`)) === 'ok';
       if (okState) await redis.del(`gdrive:state:${state}`);
+      let why = '';
       let dest = '/coach?drive=failed#uploads';
-      if (okState && req.query.code && configured()) {
+      if (req.query.error) why = 'google_' + clean(req.query.error, 40);
+      else if (!okState) why = 'expired_or_bad_state';
+      else if (!configured()) why = 'not_configured';
+      else if (req.query.code) {
         const r = await fetch('https://oauth2.googleapis.com/token', {
           method: 'POST',
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -67,7 +71,9 @@ export default async function handler(req, res) {
         });
         const j = await r.json().catch(() => ({}));
         if (r.ok && j.refresh_token) { await redis.set(KEY_REFRESH, j.refresh_token); await redis.del(KEY_FOLDER); dest = '/coach?drive=connected#uploads'; }
+        else why = clean(j.error || (r.ok ? 'no_refresh_token' : 'token_' + r.status), 40) + (j.error_description ? ':' + clean(j.error_description, 60) : '');
       }
+      if (why) { console.error('[gdrive connect]', why); dest = dest.replace('#uploads', '') + '&why=' + encodeURIComponent(why) + '#uploads'; }
       res.statusCode = 302; res.setHeader('Location', dest); return res.end();
     }
 

@@ -973,7 +973,7 @@ async function loadDrive() {
   const q = new URLSearchParams(location.search).get('drive');
   let h = '';
   if (q === 'connected') h += '<p class="ok">Google Drive is connected. New uploads now save to your Drive.</p>';
-  if (q === 'failed') h += '<p class="err">Google Drive didn’t connect. Please try again.</p>';
+  if (q === 'failed') h += `<p class="err">Google Drive didn’t connect. Please try again. ${esc(new URLSearchParams(location.search).get('why') || '')}</p>`;
   if (drive.connected) h += `<p>New uploads save to Google Drive in the folder “Warrior Spirit Uploads”.${drive.folderUrl ? ` <a href="${esc(drive.folderUrl)}" target="_blank" rel="noopener">Open folder</a>` : ''}</p>`;
   else if (drive.configured && drive.admin) h += '<p>Save uploads straight to Google Drive instead of the site’s own storage. <a class="btn small" href="/api/gdrive?action=connect" style="color:#fff">Connect Google Drive</a></p>';
   else if (drive.configured) h += '<p>Uploads currently go to the site’s own storage. Google Drive will be switched on soon.</p>';
