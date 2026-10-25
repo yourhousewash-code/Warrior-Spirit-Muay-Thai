@@ -1,10 +1,9 @@
 /* Gold, red and white confetti that bursts over any .winpic photo when it scrolls into view.
-   Tap or click the photo to fire it again. Off for visitors who prefer reduced motion. */
+   Three bursts each time it scrolls into view (and on tap or click). Off for visitors who prefer reduced motion. */
 (function () {
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var COLORS = ['#f5c542', '#fff3b0', '#e3141e', '#ffffff', '#c99a1d'];
   function burst(host) {
-    if (host.__confetti) return; host.__confetti = true;
     var c = document.createElement('canvas'), r = host.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
     c.width = r.width * dpr; c.height = r.height * dpr;
     c.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none';
@@ -25,17 +24,24 @@
         x.save(); x.globalAlpha = Math.max(0, 1 - el / 3200); x.translate(p.x, p.y); x.rotate(p.rot);
         x.fillStyle = p.col; x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); x.restore();
       });
-      if (el < 3200) requestAnimationFrame(frame); else { c.remove(); host.__confetti = false; }
+      if (el < 3200) requestAnimationFrame(frame); else c.remove();
     })(start);
+  }
+  /* Three bursts in a row, about a second apart. */
+  function fire3(host) {
+    if (host.__run) return; host.__run = true;
+    burst(host); setTimeout(function () { burst(host); }, 1100);
+    setTimeout(function () { burst(host); }, 2200);
+    setTimeout(function () { host.__run = false; }, 5600);
   }
   function init() {
     var hosts = [].slice.call(document.querySelectorAll('.winpic'));
     if (!hosts.length) return;
-    hosts.forEach(function (h) { h.addEventListener('click', function () { burst(h); }); });
+    hosts.forEach(function (h) { h.addEventListener('click', function () { fire3(h); }); });
     if (!('IntersectionObserver' in window)) return;
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting && e.intersectionRatio > .5) { burst(e.target); io.unobserve(e.target); } });
-    }, { threshold: [.5] });
+      es.forEach(function (e) { if (e.isIntersecting && e.intersectionRatio > .5) fire3(e.target); });
+    }, { threshold: [0, .5] });
     hosts.forEach(function (h) { io.observe(h); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
