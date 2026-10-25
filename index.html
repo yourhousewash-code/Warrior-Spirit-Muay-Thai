@@ -780,6 +780,14 @@ a.tagc{text-decoration:none}
       <img src="photos/hero-corner.webp" alt="Jay in the corner on fight night" loading="lazy" style="object-position:50% 35%">
       <img src="photos/pads-2.webp" alt="Jay taking a knee on the pads" loading="lazy" style="object-position:40% 40%">
     </div>
+    <script>
+    /* Shuffle the hero slides on every visit. Always start on a photo (not a video). */
+    (function(){var s=document.getElementById('slides');if(!s)return;var k=[].slice.call(s.children),n=k.length,j,t;
+      for(j=n-1;j>0;j--){t=Math.floor(Math.random()*(j+1));var x=k[j];k[j]=k[t];k[t]=x}
+      var f=k.findIndex(function(e){return e.tagName==='IMG'});if(f>0){var y=k[0];k[0]=k[f];k[f]=y}
+      k.forEach(function(e){e.classList.remove('on');s.appendChild(e)});
+      k[0].classList.add('on');k[0].removeAttribute('loading');k[0].setAttribute('fetchpriority','high')})();
+    </script>
     <div class="dots" id="dots" role="group" aria-label="Choose photo"></div>
     <div class="wrap">
      <div class="hero-grid">
