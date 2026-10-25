@@ -14,6 +14,8 @@ export const ADDRESS = 'Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB'
 export const BASE_COACHES = {
   jay:   { id: 'jay',   name: 'Jay Shepherd', first: 'Jay',   admin: true,  active: true, base: true, photo: 'photos/jay-portrait.webp', envEmail: 'COACH_EMAIL_JAY' },
   aaron: { id: 'aaron', name: 'Aaron Bekir',  first: 'Aaron', admin: false, active: true, base: true, photo: 'photos/aaron.webp', envEmail: 'COACH_EMAIL_AARON' },
+  /* Site owner: always exists, never shown on the public site, and can only log in with a password that has been set (no starting password). */
+  steve: { id: 'steve', name: 'Steve Saunders', first: 'Steve', admin: true, active: true, base: true, owner: true, hidden: true, photo: '', envEmail: 'COACH_EMAIL_STEVE' },
   kian:  { id: 'kian',  name: 'Kian Hughes',  first: 'Kian',  admin: false, active: true, base: true, photo: 'photos/kian.webp', envEmail: 'COACH_EMAIL_KIAN' },
 };
 /* Site owners with full control: Jay (head coach) and Steve (site owner). */
@@ -23,6 +25,7 @@ export async function loadCoaches() {
   const saved = await redis.get('coaches');
   const list = Array.isArray(saved) && saved.length ? saved : Object.values(BASE_COACHES);
   for (const k of Object.keys(COACHES)) delete COACHES[k];
+  for (const b of Object.values(BASE_COACHES)) if (b.owner && !list.some(x => x.id === b.id)) list.push(b);
   for (const c of list) {
     const base = BASE_COACHES[c.id];
     COACHES[c.id] = { ...(base || {}), ...c, admin: ADMIN_IDS.includes(c.id), active: c.active !== false };
@@ -30,7 +33,7 @@ export async function loadCoaches() {
   /* A new coach shows on the website and booking page once Jay has published their profile. */
   for (const c of Object.values(COACHES)) {
     const live = await redis.get(`profile:${c.id}:live`);
-    c.listed = c.active && (!!c.base || !!live);
+    c.listed = c.active && !c.hidden && (!!c.base || !!live);
     c.photoUrl = live?.photo ? `/api/profile?action=photo&coach=${c.id}&v=${encodeURIComponent(live.photo.split('/').pop())}` : (c.photo || '');
   }
   return COACHES;
@@ -86,6 +89,7 @@ export async function coachHash(id) {
 export async function checkCoachPassword(id, pw) {
   const h = await coachHash(id);
   if (h) return checkPassword(pw, h);
+  if (BASE_COACHES[id]?.owner) return false;
   return pw === START_PASSWORD;
 }
 
