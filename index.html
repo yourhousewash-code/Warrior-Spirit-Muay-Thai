@@ -560,8 +560,13 @@ a.cdi:hover svg{color:#25d366}
 
 /* winner stamp: add class "winpic" (and optional data-result) to any photo wrapper */
 .winpic{position:relative;overflow:hidden}
-.winpic::after{content:"Winner" attr(data-result);position:absolute;top:14px;left:-44px;width:190px;transform:rotate(-35deg);background:var(--tbc);color:#1a1405;text-align:center;padding:6px 0;font:900 15px var(--cond);letter-spacing:.2em;text-transform:uppercase;box-shadow:0 4px 14px rgba(0,0,0,.5);pointer-events:none;z-index:2}
-.winpic[data-result]::after{content:"Winner · " attr(data-result);font-size:12px;letter-spacing:.1em;width:250px;left:-66px;top:38px;padding:5px 0}
+.winpic::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 0 4px #f5c542,inset 0 0 34px 6px rgba(245,197,66,.55);animation:winglow 2.4s ease-in-out infinite}
+.winpic::after{content:"\2605  Winner \2605  " attr(data-result);position:absolute;z-index:3;top:46px;left:-92px;width:380px;transform:rotate(-35deg);background:linear-gradient(100deg,#b8860b 0%,#f5c542 22%,#fff3b0 38%,#f5c542 52%,#c99a1d 100%);background-size:220% 100%;color:#1a1405;text-align:center;padding:11px 0;font:900 20px/1.1 var(--cond);letter-spacing:.14em;text-transform:uppercase;box-shadow:0 6px 20px rgba(0,0,0,.6);border-block:2px solid #fff3b0;animation:winshine 3.2s linear infinite;pointer-events:none}
+.nposter.winpic::after{content:"\2605  Winner \2605";top:44px;left:-96px;width:360px}
+.fngal .big.winpic::after{top:58px;left:auto;right:-96px;width:430px;font-size:22px;letter-spacing:.1em;padding:13px 0;transform:rotate(35deg)}
+@keyframes winshine{to{background-position:-220% 0}}
+@keyframes winglow{50%{box-shadow:inset 0 0 0 4px #f5c542,inset 0 0 60px 14px rgba(245,197,66,.8)}}
+@media (prefers-reduced-motion:reduce){.winpic::before,.winpic::after{animation:none}}
 .fngal .winpic figcaption{z-index:3}
 .fngal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:6px;margin-top:28px}
 .fngal figure{margin:0;position:relative;overflow:hidden;background:#000;min-width:0}
