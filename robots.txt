@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /coach
+Disallow: /account
+Disallow: /api/
+Sitemap: https://www.warriorspiritmuaythai.co.uk/sitemap.xml
