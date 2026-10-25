@@ -82,7 +82,7 @@ export default async function handler(req, res) {
     if (action === 'status') {
       const connected = configured() && !!(await redis.get(KEY_REFRESH));
       const fid = connected ? await redis.get(KEY_FOLDER) : null;
-      return send(res, 200, { configured: configured(), connected, admin: !!c.admin, folderUrl: fid ? `https://drive.google.com/drive/folders/${fid}` : '' });
+      return send(res, 200, { configured: configured(), connected, admin: !!c.admin, folderUrl: fid ? `https://drive.google.com/drive/folders/${fid}` : '', ...(c.admin && req.query.debug ? { secretLength: CLIENT_SECRET().length, secretStart: CLIENT_SECRET().slice(0, 7), secretHasSpace: /\s/.test(CLIENT_SECRET()), idEnd: CLIENT_ID().slice(-30) } : {}) });
     }
 
     if (action === 'connect') {
