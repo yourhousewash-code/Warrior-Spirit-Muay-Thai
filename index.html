@@ -804,17 +804,16 @@ a.tagc{text-decoration:none}
   <section class="band news" id="news" aria-labelledby="news-h">
     <div class="wrap">
       <div class="newshead">
-        <div class="stack"><span data-fb="powered" data-fb-block></span><span class="kick">Fight news</span><h2 id="news-h">Two debuts at Warriors of Hope 2</h2></div>
+        <div class="stack"><span data-fb="powered" data-fb-block></span><span class="kick">Fight news</span><h2 id="news-h">Warriors of Hope 2: the results</h2></div>
         <span class="countdown" id="fnCount">Saturday 24 October</span>
       </div>
       <div class="ngrid">
         <article class="ncard">
           <div class="nposter"><img src="photos/poster-dino.webp" alt="Warriors of Hope 2 poster: White v Leonida, Muay Thai" loading="lazy"></div>
           <div class="nbody">
-            <a class="tagc" href="#fight-levels">N-Class debut</a>
-            <h3>Dino Leonida steps up</h3>
-            <p>Dino Leonida makes his N-Class debut against White on the Warriors of Hope 2 card. Months of camp come down to this one. Come and make some noise for him.</p>
-            <p class="ntix"><b>Tickets</b> Get yours from Dino.</p>
+            <a class="tagc" href="#fight-levels">Won by stoppage, round 2</a>
+            <h3>Dino Leonida wins on his debut</h3>
+            <p>Dino prepared the right way. He trained, he dieted and he listened, and it paid off with a stoppage win in round 2 of his N-Class debut against White. An amazing result and a proud night for the whole gym.</p>
             <p class="nfp"><span data-fb-fighter="dino" data-name="Dino"></span></p>
           </div>
         </article>
@@ -822,9 +821,8 @@ a.tagc{text-decoration:none}
           <div class="nposter"><img src="photos/poster-leo.webp" alt="Warriors of Hope 2 poster: Leo Prodromou-Beckwith, Muay Thai" loading="lazy"></div>
           <div class="nbody">
             <a class="tagc" href="#fight-levels">N-Class debut</a>
-            <h3>Leo's first big night</h3>
-            <p>Young warrior Leo Prodromou-Beckwith makes his N-Class debut on the same show. Please get behind him and show him what Warrior Spirit support sounds like.</p>
-            <p class="ntix"><b>Tickets</b> Ask Leo or the gym.</p>
+            <h3>Leo shows real heart</h3>
+            <p>Leo Prodromou-Beckwith's first fight ended in a round 2 TKO defeat, but he showed heart and carried on through adversity. That is what Warrior Spirit is about, and we are proud of him.</p>
             <p class="nfp"><span data-fb-fighter="leo" data-name="Leo"></span></p>
           </div>
         </article>
@@ -2308,7 +2306,7 @@ a.tagc{text-decoration:none}
   var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   /* Events: shown until the day after the date */
   var EVENTS=[
-    {date:'2026-10-24',text:'<strong>Warriors of Hope 2</strong>: Dino Leonida and Leo Prodromou-Beckwith make their N-Class debuts, Saturday 24 October in Bedford. Tickets from the fighters.',href:'#news'}
+    {date:'2026-10-31',label:'Results',text:'<strong>Warriors of Hope 2</strong>: Dino Leonida won by stoppage in round 2 on his debut. Leo Prodromou-Beckwith showed real heart in his first fight.',href:'#news'}
   ];
   var now=new Date(),uk;
   try{uk=new Date(now.toLocaleString('en-US',{timeZone:'Europe/London'}))}catch(e){uk=now}
@@ -2316,8 +2314,8 @@ a.tagc{text-decoration:none}
   function toMin(t){var p=t.split(':');return +p[0]*60+ +p[1].slice(0,2)}
   function daysUntil(d){var a=new Date(todayKey+'T00:00:00'),b=new Date(d+'T00:00:00');return Math.round((b-a)/86400000)}
   var items=[];
-  (function(){var hn=document.getElementById('heroNews');if(hn&&new Date()>new Date('2026-10-25T06:00:00+01:00'))hn.remove();var c=document.getElementById('fnCount');if(!c)return;var n=daysUntil('2026-10-24');c.textContent=n>1?n+' days to go · Sat 24 Oct':n===1?'Tomorrow night':n===0?'Tonight':'Results coming soon';if(n<0)c.classList.add('done')})();
-  EVENTS.forEach(function(ev){var n=daysUntil(ev.date);if(n<0)return;var when=n===0?'Tonight':n===1?'Tomorrow':'Fight night';items.push({cls:'hot',label:when,html:ev.text,href:ev.href})});
+  (function(){var hn=document.getElementById('heroNews');if(hn&&new Date()>new Date('2026-10-25T06:00:00+01:00'))hn.remove();var c=document.getElementById('fnCount');if(!c)return;var n=daysUntil('2026-10-24');c.textContent=n>1?n+' days to go · Sat 24 Oct':n===1?'Tomorrow night':n===0?'Tonight':'Saturday 24 October · Bedford';if(n<0)c.classList.add('done')})();
+  EVENTS.forEach(function(ev){var n=daysUntil(ev.date);if(n<0)return;var when=ev.label||(n===0?'Tonight':n===1?'Tomorrow':'Fight night');items.push({cls:'hot',label:when,html:ev.text,href:ev.href})});
   var left=(TT[dow]||[]).filter(function(c){return toMin(c[1])+60>mins});
   if(left.length){items.push({label:'Today',html:left.map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
   else{var nd=(dow+1)%7;while(!TT[nd].length)nd=(nd+1)%7;items.push({label:nd===(dow+1)%7?'Tomorrow':DAYS[nd],html:TT[nd].map(function(c){return '<strong>'+c[0]+'</strong> '+c[1]}).join(' · '),href:'#timetable'})}
