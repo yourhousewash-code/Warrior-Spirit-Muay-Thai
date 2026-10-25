@@ -878,8 +878,8 @@ async function loadTeam() {
       const state = !c.active ? ['Hidden', 'cancelled'] : c.listed ? ['On the website', 'open'] : ['Waiting for their profile', ''];
       return `<div class="item ${state[1]}"><div><b>${esc(c.name)}</b> <span class="pill ${state[1] === 'open' ? 'open' : ''}">${state[0]}</span>
         <div class="meta">Username: <strong>${esc(c.id)}</strong>${c.email ? ' · ' + esc(c.email) : ''}${c.passwordChanged ? '' : ' · still on starting password'}${c.listed ? ` · <a href="/team/${esc(c.id)}" target="_blank" rel="noopener">View page</a>` : ''}</div>
-        ${c.id === 'jay' ? '' : `<div class="row" data-tm="${esc(c.id)}" hidden style="margin-top:8px"><input type="text" placeholder="New password (8+ characters)" data-npw style="flex:1 1 200px"><button type="button" class="btn small" data-setpw="${esc(c.id)}">Set password</button></div>`}</div>
-        <div class="acts">${c.id === 'jay' ? '' : `<button type="button" class="btn small ghost" data-showpw="${esc(c.id)}">Reset password</button><button type="button" class="btn small ghost" data-active="${esc(c.id)}" data-to="${!c.active}">${c.active ? 'Hide' : 'Bring back'}</button>`}</div></div>`;
+        ${['jay','steve'].includes(c.id) ? '' : `<div class="row" data-tm="${esc(c.id)}" hidden style="margin-top:8px"><input type="text" placeholder="New password (8+ characters)" data-npw style="flex:1 1 200px"><button type="button" class="btn small" data-setpw="${esc(c.id)}">Set password</button></div>`}</div>
+        <div class="acts">${['jay','steve'].includes(c.id) ? '' : `<button type="button" class="btn small ghost" data-showpw="${esc(c.id)}">Reset password</button><button type="button" class="btn small ghost" data-active="${esc(c.id)}" data-to="${!c.active}">${c.active ? 'Hide' : 'Bring back'}</button>`}</div></div>`;
     }).join('');
   } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
 }

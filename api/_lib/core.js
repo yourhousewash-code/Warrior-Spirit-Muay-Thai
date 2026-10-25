@@ -16,6 +16,8 @@ export const BASE_COACHES = {
   aaron: { id: 'aaron', name: 'Aaron Bekir',  first: 'Aaron', admin: false, active: true, base: true, photo: 'photos/aaron.webp', envEmail: 'COACH_EMAIL_AARON' },
   kian:  { id: 'kian',  name: 'Kian Hughes',  first: 'Kian',  admin: false, active: true, base: true, photo: 'photos/kian.webp', envEmail: 'COACH_EMAIL_KIAN' },
 };
+/* Site owners with full control: Jay (head coach) and Steve (site owner). */
+export const ADMIN_IDS = ['jay', 'steve'];
 export const COACHES = {};
 export async function loadCoaches() {
   const saved = await redis.get('coaches');
@@ -23,7 +25,7 @@ export async function loadCoaches() {
   for (const k of Object.keys(COACHES)) delete COACHES[k];
   for (const c of list) {
     const base = BASE_COACHES[c.id];
-    COACHES[c.id] = { ...(base || {}), ...c, admin: c.id === 'jay', active: c.active !== false };
+    COACHES[c.id] = { ...(base || {}), ...c, admin: ADMIN_IDS.includes(c.id), active: c.active !== false };
   }
   /* A new coach shows on the website and booking page once Jay has published their profile. */
   for (const c of Object.values(COACHES)) {

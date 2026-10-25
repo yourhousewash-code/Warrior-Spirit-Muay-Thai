@@ -68,7 +68,7 @@ export default async function handler(req, res) {
         if (!c.admin) return bad(res, 'Only Jay can change coaches.', 403);
         const cid = clean(b.id, 20);
         if (!COACHES[cid]) return bad(res, 'Coach not found.', 404);
-        if (cid === 'jay') return bad(res, 'Jay’s own account can’t be changed here.');
+        if (COACHES[cid].admin) return bad(res, 'An owner account can’t be changed here.');
         if (typeof b.active === 'boolean') COACHES[cid].active = b.active;
         if (b.name) { const n = clean(b.name, 60).replace(/\s+/g, ' '); if (n.includes(' ')) { COACHES[cid].name = n; COACHES[cid].first = n.split(' ')[0]; } }
         await saveCoaches();
