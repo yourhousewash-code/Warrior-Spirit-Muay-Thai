@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       if (!b.consent) return bad(res, 'Tick the box so we can contact you about your enquiry.');
       await redis.hset(`enquiry:${e.id}`, e);
       await redis.zadd('enquiries', { score: e.created, member: e.id });
-      const to = [await coachEmail('jay'), process.env.BOOKINGS_COPY_EMAIL || ''].filter((v, i, a) => v && a.indexOf(v) === i);
+      const to = [await coachEmail('jay'), process.env.BOOKINGS_COPY_EMAIL || '', 'warriorspirit@gmail.com'].filter((v, i, a) => v && a.indexOf(v) === i);
       await mail(to, `New enquiry: ${e.about || 'Website'}, ${e.name}`, [
         `New enquiry from the website (${fmt(e.created)}).`, '',
         `About: ${e.about}`, `Name: ${e.name}`, e.phone ? `Mobile: ${e.phone}` : '', e.email ? `Email: ${e.email}` : '',
