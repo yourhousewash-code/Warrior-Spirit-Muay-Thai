@@ -1,5 +1,6 @@
 import { Readable } from 'node:stream';
-import { get } from '@vercel/blob';
+import { get, del } from '@vercel/blob';
+import { accessToken, driveTrash } from './_lib/drive.js';
 import { redis, COACHES, loadCoaches, send, bad, setupProblem, body, clean, coachSession, coachEmail, mail, SITE } from './_lib/core.js';
 import { DEFAULT_HERO, DEFAULT_VIDEOS } from './_lib/sitedefaults.js';
 import { PHOTOLIB } from './_lib/photolib.js';
@@ -37,7 +38,22 @@ function cleanItems(list, input) {
 /* ---- page text and photo swaps ---- */
 const KEY = /^[\w\-]{1,40}\.[\w\-]{1,60}$/;
 const safeHtml = h => String(h).slice(0, 4000).replace(/<(\/?)(\w+)[^>]*>/g, (m, s, t) => /^(br|strong|em|b|i)$/i.test(t) ? `<${s}${t.toLowerCase()}>` : '').slice(0, 3000);
-async function library() { return [...PHOTOLIB, ...((await redis.get('site:library')) || [])]; }
+async function library() {
+  const hid = new Set(((await redis.smembers('site:libhide')) || []).map(String));
+  return [...PHOTOLIB.map(p => ({ ...p, builtin: true })), ...((await redis.get('site:library')) || [])].filter(p => !hid.has(p.src));
+}
+/* Where is a photo currently used on the site? */
+async function usedBy(src) {
+  const [hero, imgs] = await Promise.all([redis.get('site:hero'), redis.get('site:images')]);
+  const where = [];
+  if ((hero?.items || DEFAULT_HERO).some(h => h.src === src)) where.push('the home page carousel');
+  if (Object.values(imgs || {}).some(v => v?.src === src)) where.push('a photo on the site');
+  for (const c of Object.keys(COACHES)) {
+    const p = await redis.get(`profile:${c}:live`);
+    if (p && (p.photo === src || String(p.gallery || '').split('|').includes(src))) where.push(`${COACHES[c].first}’s page`);
+  }
+  return where;
+}
 async function cleanEdits(d) {
   const lib = new Set((await library()).map(x => x.src));
   const out = { text: {}, images: {} };
@@ -90,7 +106,29 @@ export default async function handler(req, res) {
     /* Changing the website itself is for the owners only. Other coaches can still read the photo library for their own profile gallery. */
     if (!me.admin && ['get', 'save', 'discard', 'edits-get', 'edits-save', 'edits-discard'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
 
-    if (action === 'library') return send(res, 200, { photos: await library(), canAdd: !!me.admin });
+    if (action === 'library') return send(res, 200, { photos: await library(), canAdd: true, admin: !!me.admin, me: me.id });
+    if (action === 'library-add' && req.method === 'POST') {
+      const src = clean(b.src, 300); if (!FILE.test(src)) return bad(res, 'Not a valid photo.');
+      if (!me.admin && !src.includes(`path=site/${me.id}/`)) return bad(res, 'You can only add your own photos.', 403);
+      const cur = (await redis.get('site:library')) || [];
+      if (!cur.some(x => x.src === src)) await redis.set('site:library', [...cur, { src, name: clean(b.name, 60) || 'Added photo', by: me.id, at: Date.now() }].slice(-400));
+      return send(res, 200, { ok: true });
+    }
+    if (action === 'library-del' && req.method === 'POST') {
+      const src = clean(b.src, 300);
+      const cur = (await redis.get('site:library')) || [];
+      const item = cur.find(x => x.src === src), builtin = PHOTOLIB.some(p => p.src === src);
+      if (!item && !builtin) return bad(res, 'That photo isn’t in the library.', 404);
+      if (!me.admin && (builtin || item.by !== me.id)) return bad(res, 'You can only delete photos you added.', 403);
+      const used = await usedBy(src);
+      if (used.length) return bad(res, `That photo is still used on ${used.join(' and ')}. Swap it out there first.`, 409);
+      if (builtin) { await redis.sadd('site:libhide', src); return send(res, 200, { ok: true, hidden: true }); }
+      await redis.set('site:library', cur.filter(x => x.src !== src));
+      const path = /path=(.+)$/.exec(src)?.[1];
+      try { if (path) await del(path); } catch {}
+      if (item.driveId) { try { await driveTrash(await accessToken(), item.driveId); } catch {} }
+      return send(res, 200, { ok: true });
+    }
     if (action === 'edits-get') {
       const [text, images, mine] = await Promise.all([redis.get('site:text'), redis.get('site:images'), redis.get(`site:pending:edits:${me.id}`)]);
       return send(res, 200, { text: text || {}, images: images || {}, pending: mine || null, admin: !!me.admin, me: me.id });
@@ -145,13 +183,6 @@ export default async function handler(req, res) {
 
     /* ---- owners ---- */
     if (!me.admin) return bad(res, 'Only the owners can do that.', 403);
-
-    if (action === 'library-add' && req.method === 'POST') {
-      const src = clean(b.src, 300); if (!FILE.test(src)) return bad(res, 'Not a valid photo.');
-      const cur = (await redis.get('site:library')) || [];
-      if (!cur.some(x => x.src === src)) await redis.set('site:library', [...cur, { src, name: clean(b.name, 60) || 'Added photo' }].slice(-200));
-      return send(res, 200, { ok: true });
-    }
 
     if (action === 'pending') {
       const out = [];

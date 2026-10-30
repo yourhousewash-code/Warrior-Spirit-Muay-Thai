@@ -1,50 +1,35 @@
 import crypto from 'node:crypto';
 import sharp from 'sharp';
 import { put } from '@vercel/blob';
-import { redis, coachSession, loadCoaches, send, bad, body, clean, setupProblem } from './_lib/core.js';
+import { redis, COACHES, coachSession, loadCoaches, send, bad, body, clean, setupProblem } from './_lib/core.js';
+import { CLIENT_ID, CLIENT_SECRET, KEY_REFRESH, KEY_FOLDER, configured, origin, redirectUri, accessToken, folderId } from './_lib/drive.js';
 
 /* Coach uploads go to a "Warrior Spirit Uploads" folder in the owner's Google Drive.
    One admin approves the connection once; the site then keeps a refresh token in the database
    and mints short-lived access tokens when a coach uploads. The browser sends the file straight to Google. */
 
-const CLIENT_ID = () => process.env.GOOGLE_CLIENT_ID || '';
-const CLIENT_SECRET = () => process.env.GOOGLE_CLIENT_SECRET || '';
-const FOLDER_NAME = 'Warrior Spirit Uploads';
-const KEY_REFRESH = 'gdrive:refresh';
-const KEY_FOLDER = 'gdrive:folder';
-const configured = () => !!(CLIENT_ID() && CLIENT_SECRET());
-const origin = req => `https://${(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim()}`;
-const redirectUri = req => `${origin(req)}/api/gdrive`;
 
-async function accessToken() {
-  const refresh = await redis.get(KEY_REFRESH);
-  if (!refresh) throw new Error('Google Drive isn’t connected yet.');
-  const r = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ client_id: CLIENT_ID(), client_secret: CLIENT_SECRET(), refresh_token: String(refresh), grant_type: 'refresh_token' }),
-  });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok || !j.access_token) throw new Error('Google Drive needs reconnecting.');
-  return j.access_token;
-}
-
-async function folderId(token) {
-  const saved = await redis.get(KEY_FOLDER);
-  if (saved) {
-    const chk = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(String(saved))}?fields=id,trashed`, { headers: { authorization: `Bearer ${token}` } });
-    const cj = await chk.json().catch(() => ({}));
-    if (chk.ok && cj.id && !cj.trashed) return String(saved);
-  }
-  const r = await fetch('https://www.googleapis.com/drive/v3/files?fields=id', {
-    method: 'POST',
-    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ name: FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder' }),
-  });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok || !j.id) throw new Error('Couldn’t create the Drive folder.');
-  await redis.set(KEY_FOLDER, j.id);
-  return j.id;
+/* Download one Drive photo, shrink it, store it privately and add it to the photo library. */
+async function importFile(token, m, uploaderId) {
+  if (!/^image\//.test(m.mimeType)) throw new Error('That isn’t a photo.');
+  if (/hei[cf]/i.test(m.mimeType)) throw new Error('That photo is in iPhone “HEIC” format, which the site can’t read. Ask for it to be sent again as a JPG.');
+  if (Number(m.size) > 40 * 1024 * 1024) throw new Error('That photo is too big (40 MB max).');
+  const dl = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(m.id)}?alt=media`, { headers: { authorization: `Bearer ${token}` } });
+  if (!dl.ok) throw new Error('Couldn’t download that photo from Google Drive.');
+  let out;
+  try { out = await sharp(Buffer.from(await dl.arrayBuffer())).rotate().resize({ width: 2200, height: 2200, fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 86 }).toBuffer(); }
+  catch { throw new Error('The site couldn’t read that photo. Try sending it again as a JPG.'); }
+  /* Drive names look like "2026-10-28 Jay - IMG_1.jpg": work out who uploaded it */
+  const nm = /^\d{4}-\d{2}-\d{2} (\S+) - (.+)$/.exec(m.name);
+  const by = uploaderId || (nm && Object.keys(COACHES).find(k => COACHES[k].first.toLowerCase() === nm[1].toLowerCase())) || 'club';
+  const label = (nm ? nm[2] : m.name).replace(/\.\w+$/, '').slice(0, 60);
+  const safe = label.replace(/[^\w\-]+/g, '_').slice(-50) || 'photo';
+  const blob = await put(`site/${by === 'club' ? 'club' : by}/${Date.now()}-${safe}.jpg`, out, { access: 'private', contentType: 'image/jpeg', addRandomSuffix: true });
+  const src = `/api/site?action=file&path=${blob.pathname}`;
+  const lib = (await redis.get('site:library')) || [];
+  await redis.set('site:library', [...lib, { src, name: label, by, at: Date.now(), driveId: m.id }].slice(-400));
+  await redis.sadd('site:driveseen', m.id);
+  return { src, name: label };
 }
 
 export default async function handler(req, res) {
@@ -79,7 +64,8 @@ export default async function handler(req, res) {
       res.statusCode = 302; res.setHeader('Location', dest); return res.end();
     }
 
-    if (!c) return bad(res, 'Please log in.', 401);
+    const cronOk = action === 'sync' && /vercel-cron/.test(req.headers['user-agent'] || '') && (!process.env.CRON_SECRET || req.headers.authorization === `Bearer ${process.env.CRON_SECRET}`);
+    if (!c && !cronOk) return bad(res, 'Please log in.', 401);
 
     if (action === 'status') {
       const connected = configured() && !!(await redis.get(KEY_REFRESH));
@@ -132,18 +118,27 @@ export default async function handler(req, res) {
       if (!c.admin) return bad(res, 'Only Jay and Steve can do that.', 403);
       const id = clean(body(req).id, 100); if (!idOk(id)) return bad(res, 'Bad file.', 400);
       const token = await accessToken(), fid = await folderId(token);
-      const m = await meta(token, fid, id, 'id,name,mimeType,size,parents,trashed');
-      if (!/^image\//.test(m.mimeType)) return bad(res, 'That isn’t a photo.');
-      if (/hei[cf]/i.test(m.mimeType)) return bad(res, 'That photo is in iPhone “HEIC” format, which the site can’t read. Ask for it to be sent again as a JPG.');
-      if (Number(m.size) > 40 * 1024 * 1024) return bad(res, 'That photo is too big (40 MB max).');
-      const dl = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}?alt=media`, { headers: { authorization: `Bearer ${token}` } });
-      if (!dl.ok) return bad(res, 'Couldn’t download that photo from Google Drive.', 502);
-      let out;
-      try { out = await sharp(Buffer.from(await dl.arrayBuffer())).rotate().resize({ width: 2200, height: 2200, fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 86 }).toBuffer(); }
-      catch { return bad(res, 'The site couldn’t read that photo. Try sending it again as a JPG.'); }
-      const safe = m.name.replace(/\.\w+$/, '').replace(/[^\w\-]+/g, '_').slice(-50) || 'photo';
-      const blob = await put(`site/${c.id}/${Date.now()}-${safe}.jpg`, out, { access: 'private', contentType: 'image/jpeg', addRandomSuffix: true });
-      return send(res, 200, { src: `/api/site?action=file&path=${blob.pathname}`, name: m.name.replace(/\.\w+$/, '') });
+      const m = await meta(token, fid, id, 'id,name,mimeType,size,parents,trashed,createdTime');
+      try { return send(res, 200, await importFile(token, m, c.id)); } catch (e) { return bad(res, e.message); }
+    }
+    if (action === 'sync') {
+      /* Copy any new photos in the Drive folder into the website's photo library (a few at a time). */
+      const token = await accessToken(), fid = await folderId(token);
+      if (!(await redis.set('gdrive:sync', '1', { nx: true, ex: 25 }))) return send(res, 200, { imported: 0, remaining: 0, busy: true });
+      try {
+        const seen = new Set((await redis.smembers('site:driveseen')).map(String));
+        const q = encodeURIComponent(`'${fid}' in parents and trashed=false and mimeType contains 'image/'`);
+        const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&orderBy=createdTime%20desc&pageSize=100&fields=${encodeURIComponent('files(id,name,size,createdTime,mimeType)')}`, { headers: { authorization: `Bearer ${token}` } });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) return bad(res, 'Couldn’t read the Drive folder.', 502);
+        const todo = (j.files || []).filter(f => !seen.has(f.id));
+        let imported = 0, skipped = 0;
+        for (const f of todo.slice(0, 4)) {
+          try { await importFile(token, f, null); imported++; }
+          catch { skipped++; await redis.sadd('site:driveseen', f.id); }
+        }
+        return send(res, 200, { imported, skipped, remaining: Math.max(0, todo.length - 4) });
+      } finally { await redis.del('gdrive:sync'); }
     }
 
     /* Start a direct-to-Drive upload: returns a one-off Google URL the browser sends the file to. */
