@@ -365,9 +365,15 @@ footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080
 .tb-coach:hover{border-color:var(--red)}
 .tb-coach svg{width:14px;height:14px}
 @media (max-width:760px){.tb-hide{display:none}}
-@media (max-width:1280px){.navr .sicons{display:none}}
+@media (max-width:1500px){.navr .sicons{display:none}}
 .navr .sm{display:none}
-@media (max-width:1380px){.navr .lg{display:none}.navr .sm{display:inline}.nav ul{gap:18px}}
+.navr [data-install]{background:transparent}
+.navapp{display:none}
+@media (max-width:1180px){.navapp{display:list-item}}
+.tt .day.today{outline:2px solid var(--red);outline-offset:-2px}
+.tt .day.today h3::after{content:" · today";color:var(--red);font-size:.7em;letter-spacing:.08em}
+@media (max-width:520px),(min-width:1181px) and (max-width:1260px){.navr [data-install]{display:none}}
+@media (max-width:1700px){.navr .lg{display:none}.navr .sm{display:inline}.nav ul{gap:18px}}
 @media (max-width:640px){.brand span{display:none}.navr .btn{padding:10px 11px;font-size:13px}.navr{gap:6px}}
 @media (max-width:520px) and (min-width:421px){.brand b{display:none}}
 @media (max-width:600px) and (min-width:421px){.brand b{font-size:16px}.brand img{width:40px;height:40px}.brand{gap:8px}}
@@ -765,11 +771,12 @@ a.tagc{text-decoration:none}
         <li><a href="#safeguarding" data-nav="safeguarding">Safeguarding</a></li>
       </ul></li>
       <li><a href="#contact" data-nav="contact">Contact</a></li>
-      <li><a role="button" tabindex="0" data-install hidden style="cursor:pointer">Get the app</a></li>
+      <li class="navapp"><a role="button" tabindex="0" data-install hidden style="cursor:pointer">Get the app</a></li>
     </ul></nav>
     <div class="navr">
       <div class="sicons" data-socials></div>
       <a class="btn" href="/book">Book PT</a>
+      <button type="button" class="btn ghost" data-install hidden><span class="lg">Get the app</span><span class="sm">App</span></button>
       <a class="btn" href="#contact" data-enq="Free first class"><span class="lg">Book a free class</span><span class="sm">Free class</span></a>
       <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>

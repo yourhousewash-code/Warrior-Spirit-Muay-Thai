@@ -3,7 +3,23 @@
   var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function () {});
   var btns = document.querySelectorAll('[data-install]');
-  if (standalone) { btns.forEach(function (b) { b.hidden = true; }); return; }
+  if (standalone) {
+    btns.forEach(function (b) { b.hidden = true; });
+    /* Opened from the home-screen app: first open each (UK) day, go straight to today's classes. */
+    try {
+      var day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+      var wd = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short' }).format(new Date()).slice(0, 3).toLowerCase();
+      var mark = function () { document.querySelectorAll('.tt .day').forEach(function (d) { var h = d.querySelector('h3'); d.classList.toggle('today', !!h && h.textContent.trim().slice(0, 3).toLowerCase() === wd); }); };
+      mark(); new MutationObserver(mark).observe(document.body, { childList: true, subtree: true });
+      var first = false;
+      try { first = localStorage.getItem('ws_app_day') !== day; if (first) localStorage.setItem('ws_app_day', day); } catch (e) {}
+      if (first && (!location.hash || location.hash === '#' || location.hash === '#home')) {
+        var go = function () { var t = document.getElementById('timetable'); if (t) { location.hash = '#timetable'; t.scrollIntoView(); } };
+        if (document.readyState === 'complete') setTimeout(go, 300); else addEventListener('load', function () { setTimeout(go, 300); });
+      }
+    } catch (e) {}
+    return;
+  }
   btns.forEach(function (b) { b.hidden = false; });
   var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var deferred = null;
