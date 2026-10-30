@@ -361,7 +361,6 @@ footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080
 .tb-gym b{font:900 22px/1 var(--cond);letter-spacing:.06em;color:#fff}
 .tb-gym:hover b{color:var(--red)}
 .tb-addr{margin-left:14px;color:var(--muted)}
-@media (max-width:700px){.tb-fb{display:none}}
 @media (max-width:480px){.tb-l{overflow:visible}.tb-gym small{display:none}.tb-gym b{font-size:20px}.tb-mob{display:none!important}}
 .tb-coach{display:inline-flex;align-items:center;gap:6px;color:var(--bone)!important;border:1px solid var(--line);padding:5px 10px}
 .tb-coach:hover{border-color:var(--red)}
@@ -645,7 +644,6 @@ a.cdi:hover svg{color:#25d366}
 .faqg h3{font-size:28px;color:var(--red);margin-bottom:6px}
 @media (max-width:860px){.faqall{grid-template-columns:1fr}}
 a.tagc{text-decoration:none}
-.fbcredit{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
 .paytab{width:100%;border-collapse:collapse}.paytab th,.paytab td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left}.paytab th{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}.paytab td b{font:900 22px var(--display);text-transform:uppercase}.paytab td.p{font:700 20px var(--cond);white-space:nowrap}
 .soonlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;list-style:none;margin:0;padding:0}.soonlist li{border:1px dashed var(--line);padding:16px;background:var(--ink-2)}.soonlist b{display:block;font:900 22px/1 var(--display);text-transform:uppercase;margin-bottom:6px}.soonlist span{color:var(--soft);font-size:15px}
 .hp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
@@ -742,7 +740,7 @@ a.tagc{text-decoration:none}
 
 <div class="topbar"><div class="wrap">
   <span class="tb-l"><a class="tb-gym" href="tel:07904032142" aria-label="Call the gym on 07904 032142"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg><small>Gym phone</small><b>07904 032142</b></a><span class="tb-hide tb-addr"> Next Gen Fitness, Mount Grace Road, Potters Bar</span></span>
-  <span class="tb-r"><span class="tb-fb"><span data-fb="powered"></span></span><a class="tb-mob" href="/book">Book PT</a><a href="/account">My PT bookings</a><a class="tb-coach" href="/coach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Coach login</a></span>
+  <span class="tb-r"><a class="tb-mob" href="/book">Book PT</a><a href="/account">My PT bookings</a><a class="tb-coach" href="/coach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Coach login</a></span>
 </div></div>
 
 <header>
@@ -850,7 +848,7 @@ a.tagc{text-decoration:none}
   <section class="band news" id="news" aria-labelledby="news-h">
     <div class="wrap">
       <div class="newshead">
-        <div class="stack"><span data-fb="powered" data-fb-block></span><span class="kick">Fight news</span><h2 id="news-h">Warriors of Hope 2: the results</h2></div>
+        <div class="stack"><span class="kick">Fight news</span><h2 id="news-h">Warriors of Hope 2: the results</h2></div>
         <span class="countdown" id="fnCount">Saturday 24 October</span>
       </div>
       <div class="ngrid">
@@ -860,7 +858,6 @@ a.tagc{text-decoration:none}
             <a class="tagc" href="#fight-levels">Won by stoppage, round 2</a>
             <h3>Dino Leonida wins on his debut</h3>
             <p>Dino prepared the right way. He trained, he dieted and he listened, and it paid off with a stoppage win in round 2 of his N-Class debut against White. An amazing result and a proud night for the whole gym.</p>
-            <p class="nfp"><span data-fb-fighter="dino" data-name="Dino"></span></p>
           </div>
         </article>
         <article class="ncard">
@@ -869,7 +866,6 @@ a.tagc{text-decoration:none}
             <a class="tagc" href="#fight-levels">N-Class debut</a>
             <h3>Leo shows real heart</h3>
             <p>Leo Prodromou-Beckwith's first fight ended in a round 2 TKO defeat, but he showed heart and carried on through adversity. That is what Warrior Spirit is about, and we are proud of him.</p>
-            <p class="nfp"><span data-fb-fighter="leo" data-name="Leo"></span></p>
           </div>
         </article>
       </div>
@@ -1019,7 +1015,7 @@ a.tagc{text-decoration:none}
 
   <section class="band" id="timetable">
     <div class="wrap">
-      <div class="stack head"><span data-fb="powered" data-fb-block></span><span class="kick">Timetable</span><h2>When we train</h2></div>
+      <div class="stack head"><span class="kick">Timetable</span><h2>When we train</h2></div>
       <div class="tt">
         <div class="day"><h3>Mon</h3><div class="sess k"><b>Kids</b><span>17:30–18:20</span></div><div class="sess"><b>Drills &amp; sparring</b><span>18:30–19:30</span></div></div>
         <div class="day"><h3>Tue</h3><div class="sess k"><b>Kids</b><span>17:30–18:20</span></div><div class="sess"><b>Pads</b><span>18:00–19:00</span></div><div class="sess"><b>Pads</b><span>19:00–20:00</span></div></div>
@@ -1034,7 +1030,7 @@ a.tagc{text-decoration:none}
 
   <section class="band" id="prices">
     <div class="wrap">
-      <div class="stack head"><span class="kick">Membership</span><h2>Simple prices</h2><p class="lede">One price covers everything. No hidden extras. Pay at the gym for now. <a href="#payments">How to pay</a> <span data-fb="soon"></span></p></div>
+      <div class="stack head"><span class="kick">Membership</span><h2>Simple prices</h2><p class="lede">One price covers everything. No hidden extras. Pay at the gym for now. <a href="#payments">How to pay</a></p></div>
       <img class="pbanner" src="photos/class-gear.webp" alt="Boxing gloves, hand wraps and a gum shield on the gym floor" loading="lazy">
       <div class="prices">
         <article class="price top"><span class="tagc">Adults</span><span class="amt">£75<small>/ month</small></span><p>All inclusive. First class free.</p><ul><li>Every class on the timetable</li><li data-hours="gym">Open gym 9am–9pm weekdays</li><li>Fight team pathway</li></ul><a class="btn" href="#contact" data-enq="Free first class">Book a free class</a></article>
@@ -1072,7 +1068,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band" id="pt-sessions" aria-labelledby="pts-h">
     <div class="wrap">
-      <div class="stack head"><span data-fb="powered" data-fb-block></span><span class="kick">Choose your session</span><h2 id="pts-h">Choose your focus</h2><p class="lede">From your very first pad session to the last hard round before a fight. Every session is booked outside class times, around you. <a href="#pt-coaches">Choose your coach</a>.</p>
+      <div class="stack head"><span class="kick">Choose your session</span><h2 id="pts-h">Choose your focus</h2><p class="lede">From your very first pad session to the last hard round before a fight. Every session is booked outside class times, around you. <a href="#pt-coaches">Choose your coach</a>.</p>
         <p class="legend2"><span class="meter" aria-label="Intensity 1 out of 5"><i class="on"></i><i></i><i></i><i></i><i></i></span> <span>Intensity, from gentle to fight pace</span></p></div>
       <div class="ptcards">
         <article class="ptcard" id="pt-fund">
@@ -1132,7 +1128,7 @@ a.tagc{text-decoration:none}
   </section>
   <section class="band flush" id="pt-coaches" aria-labelledby="ptc-h">
     <div class="wrap">
-      <div class="stack head"><span data-fb="powered" data-fb-block></span><span class="kick">Choose your coach</span><h2 id="ptc-h">Train 1-to-1 with</h2><p class="lede">Every coach runs PT sessions outside class times. Pick the person, or just tell us your goal and we'll match you.</p><p style="color:var(--muted);font-size:15px;display:flex;flex-wrap:wrap;gap:8px;align-items:center"><span data-fb="soon"></span> Find and book our coaches on FighterBase too.</p></div>
+      <div class="stack head"><span class="kick">Choose your coach</span><h2 id="ptc-h">Train 1-to-1 with</h2><p class="lede">Every coach runs PT sessions outside class times. Pick the person, or just tell us your goal and we'll match you.</p></div>
       <div class="coachcards">
         <article class="coachcard">
           <div class="photo"><img src="photos/pads-1.webp" alt="Jay Shepherd" loading="lazy" style="object-position:50% 35%"></div>
@@ -2153,8 +2149,8 @@ a.tagc{text-decoration:none}
 <div class="view" data-view="payments" data-title="Prices &amp; Payments | Warrior Spirit Muay Thai Potters Bar" data-desc="Warrior Spirit membership and personal training prices, and how to pay. Adults £75 a month, kids £65, PT from £40. Online payments coming soon." hidden>
   <section class="band flush">
     <div class="wrap stack" style="gap:26px">
-      <div class="stack head"><span data-fb="powered" data-fb-block></span><span class="kick">Prices &amp; payments</span><h1 style="font-size:clamp(48px,7vw,88px)">How to pay</h1>
-        <p class="lede">For now, everything is paid at the gym. Online payments are coming soon, so you’ll be able to pay for memberships and PT here or in the FighterBase app, all from one account.</p></div>
+      <div class="stack head"><span class="kick">Prices &amp; payments</span><h1 style="font-size:clamp(48px,7vw,88px)">How to pay</h1>
+        <p class="lede">For now, everything is paid at the gym. Online payments are coming soon, so you’ll be able to pay for memberships and PT here.</p></div>
       <div class="panel" style="background:var(--ink-2);padding:22px;border-top:4px solid var(--red)">
         <table class="paytab">
           <thead><tr><th>What</th><th>Price</th><th>How to pay now</th></tr></thead>
@@ -2170,12 +2166,10 @@ a.tagc{text-decoration:none}
         <p style="color:var(--muted);margin-top:12px;font-size:15px">PT prices are per session, not per person, and can vary by coach. You’ll see the exact price before you book.</p>
       </div>
       <div class="stack" style="gap:14px">
-        <div><span data-fb="soon"></span></div>
         <h2>Paying online</h2>
         <ul class="soonlist">
           <li><b>Monthly memberships</b><span>Set up your membership once and it renews automatically.</span></li>
           <li><b>Pay when you book PT</b><span>Pay for a session at the same time as booking it.</span></li>
-          <li><b>One account</b><span>Use the same login here and in the FighterBase app to see payments and bookings.</span></li>
           <li><b>Receipts</b><span>Every payment emailed to you and saved in your account.</span></li>
         </ul>
       </div>
@@ -2302,7 +2296,6 @@ a.tagc{text-decoration:none}
       <div><h4>Programmes</h4><ul><li><a href="#kids-muay-thai">Kids Muay Thai</a></li><li><a href="#kickboxing">Kickboxing</a></li><li><a href="#fitness">Fitness</a></li><li><a href="#women">Women</a></li><li><a href="#self-defence">Self-defence</a></li><li><a href="#fight-levels">Fight levels</a></li><li><a href="#safeguarding">Safeguarding</a></li><li><a href="#faq">FAQ</a></li></ul></div><div><h4>Areas we cover</h4><ul><li><a href="#potters-bar">Potters Bar</a></li><li><a href="#brookmans-park">Brookmans Park</a></li><li><a href="#cuffley">Cuffley</a></li><li><a href="#barnet">Barnet</a></li><li><a href="#hatfield">Hatfield</a></li><li><a href="#borehamwood">Borehamwood</a></li><li><a href="#enfield">Enfield</a></li><li><a href="#waltham-cross">Waltham Cross</a></li><li><a href="#cheshunt">Cheshunt</a></li><li><a href="#hoddesdon">Hoddesdon</a></li><li><a href="#welwyn-garden-city">Welwyn Garden City</a></li><li><a href="#st-albans">St Albans</a></li><li><a href="#radlett">Radlett</a></li><li><a href="#southgate-cockfosters">Southgate & Cockfosters</a></li></ul></div><div><h4>Follow</h4><p>Training, fight nights and results.</p><div class="sicons" data-socials></div></div>
     </div>
     <p class="draft" style="color:var(--muted)"><a href="/account" rel="nofollow">My PT bookings</a> · <a href="/coach" rel="nofollow">Coach login</a> · <a href="/privacy">Privacy policy</a></p>
-    <p class="fbcredit"><span data-fb="created"></span><span>Bookings, coach area and fight news run on FighterBase, the platform for combat sports gyms and fighters.</span></p>
     <p class="draft">Draft v11 · yellow underlined items still to confirm</p>
   </div>
 </footer>
@@ -2579,7 +2572,6 @@ a.tagc{text-decoration:none}
   }).catch(function(){});
 })();
 </script>
-<script src="/assets/fighterbase.js" defer></script>
 <script src="assets/editable.js" defer></script>
 <script src="/assets/share.js" defer></script>
 <script src="/assets/confetti.js" defer></script>

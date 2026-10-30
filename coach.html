@@ -208,7 +208,6 @@
 <main class="wrap">
   <!-- login -->
   <section id="loginView" class="panel" style="max-width:440px;margin:0 auto" hidden>
-    <span data-fb="powered" data-fb-block></span>
     <span class="kick">Coaches only</span>
     <h1>Coach login</h1>
     <form id="loginForm" class="stack">
@@ -237,7 +236,6 @@
     <!-- ===== HOME ===== -->
     <div data-view="home" class="stack" style="gap:22px">
       <div class="stack" style="gap:8px">
-        <span data-fb="powered" data-fb-block></span>
         <span class="kick" id="role">Coach</span>
         <h1 id="hello">Hi</h1>
         <p class="note" id="pwnote" hidden>You’re still using the starting password. Change it in <b>Settings</b>.</p>
@@ -1823,7 +1821,6 @@ document.addEventListener('click', e => {
 <script>
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});
 </script>
-<script src="/assets/fighterbase.js" defer></script>
 <script src="/assets/share.js">
 </script>
 </body>

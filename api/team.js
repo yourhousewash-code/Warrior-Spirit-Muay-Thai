@@ -174,8 +174,8 @@ main{display:grid;gap:22px}
   <a class="brand" href="/"><img src="/img/logo.webp" alt=""><b>Warrior Spirit</b></a>
   <nav class="toplinks"><a href="/#team">Team</a><a href="/#timetable">Timetable</a><a href="/book">Book PT</a></nav>
 </div></header>
-<main class="wrap">${body}<p style="margin-top:8px"><span data-fb="powered"></span></p></main>
-<script src="/assets/fighterbase.js" defer></script>
+<main class="wrap">${body}</main>
+
 </body>
 </html>`);
 }
