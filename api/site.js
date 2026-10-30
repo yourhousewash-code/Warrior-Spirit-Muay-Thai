@@ -106,7 +106,11 @@ export default async function handler(req, res) {
     /* Changing the website itself is for the owners only. Other coaches can still read the photo library for their own profile gallery. */
     if (!me.admin && ['get', 'save', 'discard', 'edits-get', 'edits-save', 'edits-discard'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
 
-    if (action === 'library') return send(res, 200, { photos: await library(), canAdd: true, admin: !!me.admin, me: me.id });
+    if (action === 'library') {
+      const [photos, hero] = await Promise.all([library(), redis.get('site:hero')]);
+      const inHero = new Set((hero?.items || DEFAULT_HERO).map(h => h.src));
+      return send(res, 200, { photos: photos.map(p => inHero.has(p.src) ? { ...p, carousel: true } : p), canAdd: true, admin: !!me.admin, me: me.id });
+    }
     if (action === 'library-add' && req.method === 'POST') {
       const src = clean(b.src, 300); if (!FILE.test(src)) return bad(res, 'Not a valid photo.');
       if (!me.admin && !src.includes(`path=site/${me.id}/`)) return bad(res, 'You can only add your own photos.', 403);
@@ -120,7 +124,18 @@ export default async function handler(req, res) {
       const item = cur.find(x => x.src === src), builtin = PHOTOLIB.some(p => p.src === src);
       if (!item && !builtin) return bad(res, 'That photo isn’t in the library.', 404);
       if (!me.admin && (builtin || item.by !== me.id)) return bad(res, 'You can only delete photos you added.', 403);
-      const used = await usedBy(src);
+      let used = await usedBy(src);
+      if (me.admin && b.force) {
+        /* Owners can take it off the carousel and put site photos back to the original, then delete. */
+        const hero = await redis.get('site:hero'), items = (hero?.items || DEFAULT_HERO).filter(h => h.src !== src);
+        if (items.length !== (hero?.items || DEFAULT_HERO).length) {
+          if (!items.length) return bad(res, 'The carousel needs at least one photo. Add another one first.', 409);
+          await redis.set('site:hero', { items, updatedAt: Date.now(), by: me.id });
+        }
+        const imgs = await redis.get('site:images');
+        if (imgs) { const k = Object.fromEntries(Object.entries(imgs).filter(([, v]) => v?.src !== src)); await redis.set('site:images', k); }
+        used = (await usedBy(src)).filter(w => /’s page$/.test(w));
+      }
       if (used.length) return bad(res, `That photo is still used on ${used.join(' and ')}. Swap it out there first.`, 409);
       if (builtin) { await redis.sadd('site:libhide', src); return send(res, 200, { ok: true, hidden: true }); }
       await redis.set('site:library', cur.filter(x => x.src !== src));

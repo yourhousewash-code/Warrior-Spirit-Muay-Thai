@@ -559,7 +559,7 @@
         <div class="row">
           <label class="btn" for="libAdd" style="color:#fff">+ Add photos<input id="libAdd" type="file" accept="image/*" multiple hidden></label>
         </div>
-        <p class="muted" style="margin:0;font-size:14px">Photos put in the club Google Drive folder turn up here by themselves. Only use photos of children if their parents are happy for them to be on the website.</p>
+        <p class="muted" style="margin:0;font-size:14px">This includes the original photos the site started with. Videos are managed in <a href="#media">Website photos &amp; videos</a> (Video gallery tab), where owners can remove or replace any of them. Photos put in the club Google Drive folder turn up here by themselves. Only use photos of children if their parents are happy for them to be on the website.</p>
         <p class="ok" id="libProg" hidden></p><p class="err" id="libErr" hidden></p>
         <div class="mgrid" id="libGrid"></div>
       </div>
@@ -1736,16 +1736,23 @@ function drawLibrary() {
   g.innerHTML = libPhotos.map((p, i) => {
     const mine = me.admin || p.by === me.id;
     const who = p.builtin ? 'Club photo' : (p.by && p.by !== 'club' ? (p.by[0].toUpperCase() + p.by.slice(1)) : 'Club Drive');
-    return `<div class="mcard"><div class="mth"><img src="${esc(mUrl(p.src))}" alt="" loading="lazy"></div><div class="mb"><b>${esc(p.name || 'Photo')}</b><span class="muted" style="font-size:13px">${esc(who)}${p.at ? ' · ' + esc(nice(ukDate(p.at))) : ''}</span>
-      <div class="row" style="gap:6px">${me.admin ? `<button type="button" class="btn small" data-libuse="${i}">Add to carousel</button>` : ''}${mine ? `<button type="button" class="btn small ghost" data-libdel="${i}">Delete</button>` : ''}</div></div></div>`;
+    return `<div class="mcard"><div class="mth"><img src="${esc(mUrl(p.src))}" alt="" loading="lazy"></div><div class="mb"><b>${esc(p.name || 'Photo')}</b><span class="muted" style="font-size:13px">${p.carousel ? '<b style="color:var(--free)">On the carousel</b> · ' : ''}${esc(who)}${p.at ? ' · ' + esc(nice(ukDate(p.at))) : ''}</span>
+      <div class="row" style="gap:6px">${me.admin ? (p.carousel ? `<button type="button" class="btn small ghost" data-libunuse="${i}">Remove from carousel</button>` : `<button type="button" class="btn small" data-libuse="${i}">Add to carousel</button>`) : ''}${mine ? `<button type="button" class="btn small ghost" data-libdel="${i}">Delete</button>` : ''}</div></div></div>`;
   }).join('');
 }
 document.addEventListener('click', async e => {
-  const u = e.target.closest('[data-libuse]'), d = e.target.closest('[data-libdel]');
-  if (!u && !d) return;
+  const u = e.target.closest('[data-libuse]'), d = e.target.closest('[data-libdel]'), ru = e.target.closest('[data-libunuse]');
+  if (!u && !d && !ru) return;
   show($('#libErr'), '');
   try {
-    if (u) {
+    if (ru) {
+      const p = libPhotos[+ru.dataset.libunuse];
+      const cur = (await api('/api/site?action=get&list=hero')).items;
+      if (cur.length < 2) return show($('#libErr'), 'The carousel needs at least one photo.');
+      if (!confirm('Take this photo off the homepage carousel? It stays in the library.')) return;
+      await api('/api/site?action=save', { list: 'hero', items: cur.filter(x => x.src !== p.src) });
+      p.carousel = false; drawLibrary(); show($('#libProg'), 'Taken off the carousel. It’s live now.');
+    } else if (u) {
       const p = libPhotos[+u.dataset.libuse];
       const cur = (await api('/api/site?action=get&list=hero')).items;
       if (cur.some(x => x.src === p.src)) return show($('#libErr'), 'That photo is already on the carousel.');
@@ -1753,8 +1760,8 @@ document.addEventListener('click', async e => {
       show($('#libProg'), 'Added to the end of the homepage carousel and live now. Reorder it in “Website photos & videos”.');
     } else {
       const p = libPhotos[+d.dataset.libdel];
-      if (!confirm(`Delete “${p.name || 'this photo'}” from the library? This can’t be undone.`)) return;
-      await api('/api/site?action=library-del', { src: p.src });
+      if (!confirm(`Delete “${p.name || 'this photo'}” from the library${p.carousel ? ' and take it off the homepage carousel' : ''}? This can’t be undone.`)) return;
+      await api('/api/site?action=library-del', { src: p.src, force: me.admin });
       libPhotos = libPhotos.filter(x => x !== p); drawLibrary(); show($('#libProg'), 'Deleted.');
     }
   } catch (err) { show($('#libErr'), err.message); }
