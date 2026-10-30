@@ -32,6 +32,16 @@
     d.querySelector('button').onclick = function () { d.close(); d.remove(); };
     document.body.appendChild(d); d.showModal();
   }
+  function trigger() {
+    if (deferred) { deferred.prompt(); deferred.userChoice.finally(function () { deferred = null; }); return; }
+    if (ios) return dlg('<b style="font-size:20px">Add Warrior Spirit to your iPhone</b><ol style="padding-left:20px;margin:12px 0 0"><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button (the square with an arrow) at the bottom of the screen.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol>');
+    dlg('<b style="font-size:20px">Add Warrior Spirit to your home screen</b><p style="margin:12px 0 0">Open your browser menu (the three dots, top right) and choose <b>Install app</b> or <b>Add to Home screen</b>.</p>');
+  }
+  /* The "Get our app" item in the live ticker */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#get-app"]');
+    if (a) { e.preventDefault(); e.stopPropagation(); trigger(); }
+  }, true);
   btns.forEach(function (b) {
     b.addEventListener('keydown', function (e) { if (e.key === 'Enter') b.click(); });
     b.addEventListener('click', function (e) {

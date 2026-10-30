@@ -2419,8 +2419,9 @@ a.tagc{text-decoration:none}
   items.push({label:'Membership',html:'Adults <strong>£75 a month</strong>, all inclusive. Kids £65.',href:'#classes'});
   items.push({label:'Watch',html:'<strong>Fight night highlights</strong> are up on the Videos page. Sound on.',href:'#videos'});
   items.push({label:'Blog',html:'<strong>Medals and big smiles on show day</strong>. Read the latest from the gym.',href:'#blog'});
+  if(!(matchMedia('(display-mode: standalone)').matches||navigator.standalone))items.push({label:'App',html:'<strong>Get our app</strong> on your home screen. Tap here to add it.',href:'#get-app',logo:true});
   items.push({label:'Follow',html:'<strong>@warriorspirit_muaythai</strong> for fight nights, training and results.',href:SOCIAL.instagram,ext:true});
-  function render(){return items.map(function(it){var tag=it.href?'a':'span',attrs=it.href?' href="'+it.href+'"'+(it.ext?' target="_blank" rel="noopener"':''):'';return '<'+tag+' class="tk-item'+(it.cls?' '+it.cls:'')+'"'+attrs+'><b>'+it.label+'</b><span>'+it.html+'</span></'+tag+'>'}).join('')}
+  function render(){return items.map(function(it){var tag=it.href?'a':'span',attrs=it.href?' href="'+it.href+'"'+(it.ext?' target="_blank" rel="noopener"':''):'';return '<'+tag+' class="tk-item'+(it.cls?' '+it.cls:'')+'"'+attrs+'>'+(it.logo?'<img src="img/logo.webp" alt="" width="28" height="28" style="border-radius:50%;flex:none">':'')+'<b>'+it.label+'</b><span>'+it.html+'</span></'+tag+'>'}).join('')}
   var tr=document.getElementById('tkTrack');tr.innerHTML=render()+'<div aria-hidden="true" style="display:flex">'+render()+'</div>';
   [].forEach.call(tr.lastChild.querySelectorAll('a'),function(a){a.tabIndex=-1});
   tr.style.setProperty('--tk-dur',Math.max(40,items.length*7)+'s');
