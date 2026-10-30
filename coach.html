@@ -560,6 +560,7 @@
         <div id="mStatus" class="note" hidden></div>
         <div class="row">
           <label class="btn" for="mAdd" style="color:#fff" id="mAddLbl">+ Add photos or videos<input id="mAdd" type="file" accept="image/*,video/*" multiple hidden></label>
+          <button type="button" class="btn ghost" id="mDrive">+ From the club Drive</button>
           <button type="button" class="btn ghost" id="mReset" hidden>Put back the original</button>
         </div>
         <p class="muted" style="margin:0;font-size:14px">Photos are shrunk automatically. For videos, MP4 works on every phone and computer. Only use photos of children if their parents are happy for them to be on the website.</p>
@@ -570,6 +571,13 @@
           <button type="button" class="btn ghost" id="mDiscard" disabled>Undo my changes</button>
         </div>
       </div>
+      <dialog id="drvDlg" class="dlg" style="width:min(760px,calc(100vw - 24px))">
+        <h2>From the club Drive</h2>
+        <p class="muted" style="margin-top:0">Photos coaches have uploaded to the club Google Drive. Tick the ones you want and press Add. They’re copied to the website and shrunk for you. Videos can’t be picked from here yet.</p>
+        <div class="mgrid" id="drvGrid"><p class="muted">Loading…</p></div>
+        <p class="err" id="drvErr" hidden></p><p class="ok" id="drvProg" hidden></p>
+        <div class="row" style="margin-top:12px"><button type="button" class="btn" id="drvAdd" disabled>Add to the website</button><button type="button" class="btn ghost" id="drvClose">Close</button></div>
+      </dialog>
       <dialog id="mDlg" class="dlg">
         <form method="dialog" id="mForm" class="stack" style="gap:12px">
           <h2 id="mdTitle">Edit</h2>
@@ -1280,7 +1288,7 @@ async function loadMedia() {
   $('#mHelp').textContent = me.admin ? 'What you save goes live on the website straight away.' : 'Your changes are sent to Jay or Steve to approve before they go on the website.';
   document.querySelectorAll('[data-mtab]').forEach(b => b.setAttribute('aria-selected', b.dataset.mtab === mList));
   $('#mAdd').accept = mList === 'hero' ? 'image/*,video/*' : 'video/*';
-  $('#mAddLbl').firstChild.textContent = mList === 'hero' ? '+ Add photos or videos' : '+ Add videos';
+  $('#mAddLbl').firstChild.textContent = mList === 'hero' ? '+ Add photos or videos' : '+ Add videos'; $('#mDrive').hidden = mList !== 'hero';
   try {
     const r = await api(`/api/site?action=get&list=${mList}`);
     mLive = r.items; mCustom = r.custom; mPend = r.pending;
@@ -1439,6 +1447,32 @@ $('#mDiscard').addEventListener('click', () => { if (confirm('Undo all your unsa
 $('#mReset').addEventListener('click', async () => {
   if (!confirm(`Put the ${ML[mList].toLowerCase()} back to how it was originally? Your changes to it will be removed.`)) return;
   try { await api('/api/site?action=reset', { list: mList }); await loadMedia(); show($('#mProg'), 'Put back to the original.'); } catch (err) { show($('#mErr'), err.message); }
+});
+/* pick photos coaches uploaded to Google Drive */
+const drvSel = new Set();
+async function openDrive() {
+  drvSel.clear(); $('#drvAdd').disabled = true; show($('#drvErr'), ''); show($('#drvProg'), ''); $('#drvGrid').innerHTML = '<p class="muted">Loading…</p>'; $('#drvDlg').showModal();
+  try {
+    const { files } = await api('/api/gdrive?action=list');
+    $('#drvGrid').innerHTML = files.map(f => `<button type="button" class="mcard" data-drv="${esc(f.id)}" ${f.unsupported ? 'disabled' : ''} style="padding:0;cursor:pointer;border:2px solid var(--line);text-align:left"><div class="mth"><img src="/api/gdrive?action=thumb&id=${encodeURIComponent(f.id)}" alt="" loading="lazy">${f.unsupported ? '<span class="tag">HEIC: can’t use</span>' : ''}</div><div class="mb"><b style="font-size:12px">${esc(f.name)}</b></div></button>`).join('') || '<p class="empty">No photos in the Drive folder yet.</p>';
+  } catch (err) { show($('#drvErr'), err.message); $('#drvGrid').innerHTML = ''; }
+}
+$('#mDrive').addEventListener('click', () => { if (mList !== 'hero') return show($('#mErr'), 'The video gallery only takes videos. Photos can be added to the homepage carousel.'); openDrive(); });
+$('#drvClose').addEventListener('click', () => $('#drvDlg').close());
+$('#drvGrid').addEventListener('click', e => {
+  const b = e.target.closest('[data-drv]'); if (!b) return; const id = b.dataset.drv;
+  if (drvSel.has(id)) { drvSel.delete(id); b.style.borderColor = 'var(--line)'; } else { drvSel.add(id); b.style.borderColor = 'var(--red)'; }
+  $('#drvAdd').disabled = !drvSel.size; $('#drvAdd').textContent = drvSel.size ? `Add ${drvSel.size} to the website` : 'Add to the website';
+});
+$('#drvAdd').addEventListener('click', async () => {
+  const ids = [...drvSel]; $('#drvAdd').disabled = true; show($('#drvErr'), ''); let n = 0;
+  for (const [i, id] of ids.entries()) {
+    show($('#drvProg'), `Adding photo ${i + 1} of ${ids.length}…`);
+    try { const r = await api('/api/gdrive?action=import', { id }); mItems.push({ id: 'd' + Date.now().toString(36) + i, type: 'photo', src: r.src, alt: '', pos: '60% 35%' }); n++; drvSel.delete(id); }
+    catch (err) { show($('#drvErr'), err.message); }
+  }
+  show($('#drvProg'), ''); if (n) { mSet(true); drawMedia(); $('#drvDlg').close(); show($('#mProg'), `${n} photo${n === 1 ? '' : 's'} added at the end. Open each to add a description, then press Save & publish.`); }
+  $('#drvAdd').disabled = !drvSel.size;
 });
 /* owners: review coach changes */
 async function loadMediaApprovals() {

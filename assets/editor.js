@@ -67,8 +67,30 @@
         var l = document.createElement('label'); l.className = 'b'; l.style.cssText = 'display:inline-block;margin-top:4px'; l.innerHTML = 'Add a new photo to the library<input type="file" accept="image/*" hidden>';
         l.querySelector('input').onchange = function (e) { addToLibrary(e.target.files[0], d, r, draw); };
         $('[data-lib]', d).after(l);
+        var dv = document.createElement('button'); dv.type = 'button'; dv.textContent = 'From the club Drive'; dv.style.cssText = 'margin:4px 0 0 8px';
+        dv.onclick = function () { driveGrid(d, r, draw, function (src) { chosen = src; $('.wse-cur', d).src = src; $('[data-ok]', d).disabled = false; }); };
+        l.after(dv);
       }
     }).catch(function (e) { $('[data-lib]', d).textContent = e.message; });
+  }
+  function driveGrid(d, r, draw, pick) {
+    var box = $('[data-lib]', d), er = $('.e', d); er.hidden = true; box.innerHTML = 'Loading Drive photos…';
+    api('/api/gdrive?action=list').then(function (j) {
+      box.innerHTML = '';
+      var back = document.createElement('button'); back.type = 'button'; back.textContent = '← Back to the library'; back.style.gridColumn = '1/-1'; back.onclick = function () { draw(r.photos); }; box.appendChild(back);
+      j.files.forEach(function (f) {
+        var b = document.createElement('button'); b.type = 'button'; b.title = f.name; b.disabled = !!f.unsupported;
+        var im = document.createElement('img'); im.loading = 'lazy'; im.alt = ''; im.src = '/api/gdrive?action=thumb&id=' + encodeURIComponent(f.id); b.appendChild(im);
+        b.onclick = function () {
+          er.hidden = false; er.style.color = '#a9a9b3'; er.textContent = 'Adding that photo…'; b.disabled = true;
+          api('/api/gdrive?action=import', { id: f.id }).then(function (x) {
+            return api('/api/site?action=library-add', { src: x.src, name: x.name }).then(function () { r.photos.push({ src: x.src, name: x.name }); draw(r.photos); pick(x.src); er.hidden = true; });
+          }).catch(function (err) { er.style.color = '#ff6b6b'; er.textContent = err.message; b.disabled = false; });
+        };
+        box.appendChild(b);
+      });
+      if (!j.files.length) box.appendChild(document.createTextNode('No photos in the Drive folder yet.'));
+    }).catch(function (err) { box.textContent = err.message; });
   }
   function addToLibrary(f, d, r, draw) {
     if (!f) return; var er = $('.e', d); er.hidden = false; er.style.color = '#a9a9b3'; er.textContent = 'Uploading…';

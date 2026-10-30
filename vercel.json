@@ -75,5 +75,10 @@
       "path": "/api/cron?run=evening",
       "schedule": "0 17 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "api/gdrive.js": {
+      "maxDuration": 30
+    }
+  }
 }
