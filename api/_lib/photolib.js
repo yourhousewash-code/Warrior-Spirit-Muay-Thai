@@ -1,6 +1,46 @@
 /* Photos coaches can choose from when swapping a picture on the site. */
 export const PHOTOLIB = [
  {
+  "src": "photos/class-kids.webp",
+  "name": "Class: Kids Muay Thai"
+ },
+ {
+  "src": "photos/class-pads.webp",
+  "name": "Class: Pads"
+ },
+ {
+  "src": "photos/class-beginners.webp",
+  "name": "Class: Beginners"
+ },
+ {
+  "src": "photos/class-gym.webp",
+  "name": "Open gym heavy bags"
+ },
+ {
+  "src": "photos/class-wraps.webp",
+  "name": "Hand wraps in the corner"
+ },
+ {
+  "src": "photos/class-welcome.webp",
+  "name": "Welcome handshake"
+ },
+ {
+  "src": "photos/class-sparring.webp",
+  "name": "Class: Sparring"
+ },
+ {
+  "src": "photos/class-gear.webp",
+  "name": "Gloves, wraps and gum shield"
+ },
+ {
+  "src": "photos/class-pt.webp",
+  "name": "Personal training kick on pads"
+ },
+ {
+  "src": "photos/class-drills.webp",
+  "name": "Class: Drills and sparring"
+ },
+ {
   "src": "photos/aaron.webp",
   "name": "Aaron"
  },

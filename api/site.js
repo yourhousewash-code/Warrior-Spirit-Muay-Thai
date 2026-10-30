@@ -35,6 +35,7 @@ function cleanItems(list, input) {
     return { id: idv, src: x.src, poster: x.poster, title, caption: clean(x.caption, 200), date: clean(x.date, 30), cat, dur: clean(x.dur, 8) };
   });
 }
+const CLASSIMG = { 'kids': 'photos/class-kids.webp', 'kids muay thai': 'photos/class-kids.webp', 'pads': 'photos/class-pads.webp', 'drills & sparring': 'photos/class-drills.webp', 'sparring': 'photos/class-sparring.webp', 'beginners': 'photos/class-beginners.webp', 'personal training': 'photos/class-pt.webp', 'open gym': 'photos/class-gym.webp' };
 /* ---- page text and photo swaps ---- */
 const KEY = /^[\w\-]{1,40}\.[\w\-]{1,60}$/;
 const safeHtml = h => String(h).slice(0, 4000).replace(/<(\/?)(\w+)[^>]*>/g, (m, s, t) => /^(br|strong|em|b|i)$/i.test(t) ? `<${s}${t.toLowerCase()}>` : '').slice(0, 3000);
@@ -85,7 +86,8 @@ export default async function handler(req, res) {
     if (action === 'public') {
       const [hero, videos, text, images] = await Promise.all([redis.get('site:hero'), redis.get('site:videos'), redis.get('site:text'), redis.get('site:images')]);
       res.setHeader('Cache-Control', 'no-cache, max-age=0, s-maxage=5');
-      return res.status(200).json({ hero: hero?.items || null, videos: videos?.items || null, text: text || null, images: images || null });
+      const ci = (await redis.get('site:classimg')) || {};
+      return res.status(200).json({ hero: hero?.items || null, videos: videos?.items || null, text: text || null, images: images || null, classimg: Object.fromEntries(Object.entries({ ...CLASSIMG, ...ci }).filter(([, v]) => v)) });
     }
     if (action === 'file') {
       const path = clean(req.query.path, 300);
@@ -104,7 +106,7 @@ export default async function handler(req, res) {
     const b = body(req);
     const list = clean(req.query.list || b.list, 10);
     /* Changing the website itself is for the owners only. Other coaches can still read the photo library for their own profile gallery. */
-    if (!me.admin && ['get', 'save', 'discard', 'edits-get', 'edits-save', 'edits-discard'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
+    if (!me.admin && ['get', 'save', 'discard', 'classimg-save', 'edits-get', 'edits-save', 'edits-discard'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
 
     if (action === 'library') {
       const [photos, hero] = await Promise.all([library(), redis.get('site:hero')]);
@@ -142,6 +144,20 @@ export default async function handler(req, res) {
       const path = /path=(.+)$/.exec(src)?.[1];
       try { if (path) await del(path); } catch {}
       if (item.driveId) { try { await driveTrash(await accessToken(), item.driveId); } catch {} }
+      return send(res, 200, { ok: true });
+    }
+    if (action === 'classimg-get') {
+      const ci = (await redis.get('site:classimg')) || {};
+      return send(res, 200, { images: Object.fromEntries(Object.entries({ ...CLASSIMG, ...ci }).filter(([, v]) => v)) });
+    }
+    if (action === 'classimg-save' && req.method === 'POST') {
+      if (!me.admin) return bad(res, 'Only Jay and Steve can change the class pictures.', 403);
+      const name = clean(b.name, 60).toLowerCase().replace(/\s+/g, ' ').trim(); if (!name) return bad(res, 'Which class?');
+      const lib = new Set((await library()).map(x => x.src)), src = b.src ? clean(b.src, 300) : null;
+      if (src && !lib.has(src) && !FILE.test(src)) return bad(res, 'That photo isn’t in the photo library.');
+      const ci = (await redis.get('site:classimg')) || {};
+      if (b.reset) delete ci[name]; else ci[name] = src;
+      await redis.set('site:classimg', ci);
       return send(res, 200, { ok: true });
     }
     if (action === 'edits-get') {

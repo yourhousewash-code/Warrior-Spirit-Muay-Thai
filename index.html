@@ -212,6 +212,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .day{background:var(--ink-2);border-top:4px solid var(--red);padding:16px 14px;display:grid;gap:12px;align-content:start;min-width:0}
 .day h3{font-size:26px}
 .sess{display:grid;gap:1px;padding-top:10px;border-top:1px solid var(--line)}
+.sess .simg{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;margin:0 0 8px;background:var(--ink-2)}
 .sess b{font:700 18px var(--cond);text-transform:uppercase;letter-spacing:.04em}
 .sess span{font-variant-numeric:tabular-nums;color:var(--muted);font-size:15px}
 .sess.k b{color:#8fa9ff}.sess.beg b{color:var(--ok)}
@@ -1216,7 +1217,7 @@ a.tagc{text-decoration:none}
   <section class="band" id="fight-camp">
     <div class="wrap">
       <div class="split rev" style="min-height:0;margin-bottom:18px">
-        <div class="photo" style="min-height:360px"><img src="photos/hero-corner.webp" alt="Coaches in the corner before a bout" loading="lazy"></div>
+        <div class="photo" style="min-height:360px"><img src="photos/class-wraps.webp" alt="A coach wrapping a fighter’s hands in the corner before a bout" loading="lazy"></div>
         <div class="txt">
           <span class="kick">Fight camp</span>
           <h2>We get you ready for fight night</h2>
@@ -2624,6 +2625,25 @@ a.tagc{text-decoration:none}
 /* Coach edit mode: opened from the coach area (?edit=1). Visitors never load the editor. */
 (function(){try{if(/[?&]edit=1/.test(location.search))sessionStorage.setItem('ws_edit','1');
 if(sessionStorage.getItem('ws_edit')==='1'){var s=document.createElement('script');s.src='/assets/editor.js';document.body.appendChild(s)}}catch(e){}})();
+</script>
+<script>
+(function(){
+  /* Class pictures on the timetable cards. Jay and Steve choose them in the coach area. */
+  var grid=document.querySelector('#timetable .tt');if(!grid||!window.fetch)return;
+  var MAP={};
+  function norm(s){return String(s||'').toLowerCase().replace(/\s+/g,' ').trim()}
+  function pick(name){var n=norm(name);if(MAP[n])return MAP[n];if(/kid/.test(n))return MAP.kids||'';return ''}
+  function paint(){
+    [].forEach.call(grid.querySelectorAll('.sess'),function(s){
+      if(s.querySelector('.simg'))return;var b=s.querySelector('b');if(!b)return;var src=pick(b.textContent);if(!src)return;
+      var i=document.createElement('img');i.className='simg';i.alt='';i.loading='lazy';i.src=src;s.insertBefore(i,s.firstChild)});
+  }
+  function clear(){[].forEach.call(grid.querySelectorAll('.simg'),function(i){i.remove()})}
+  fetch('/api/site?action=public').then(function(r){return r.ok?r.json():null}).then(function(d){
+    if(!d||!d.classimg)return;MAP={};Object.keys(d.classimg).forEach(function(k){MAP[norm(k)]=d.classimg[k]});
+    paint();new MutationObserver(function(){paint()}).observe(grid,{childList:true});
+  }).catch(function(){});
+})();
 </script>
 <script src="/assets/install.js" defer></script>
 </body>

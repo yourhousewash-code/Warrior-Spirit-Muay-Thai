@@ -509,6 +509,13 @@
         <button class="btn" type="button" id="ntSend" style="justify-self:start">Email members the timetable</button>
       </section>
 
+      <section class="panel stack" id="ciPanel" data-admin-only hidden style="gap:12px">
+        <h2>Class pictures</h2>
+        <p class="muted" style="margin:0">The picture shown on each class on the website timetable. Pick any photo from the photo library.</p>
+        <p class="err" id="ciErr" hidden></p>
+        <div class="mgrid" id="ciGrid"></div>
+        <dialog id="ciDlg" class="dlg" style="width:min(760px,calc(100vw - 24px))"><h2 id="ciTitle">Choose a picture</h2><div class="mgrid" id="ciPick" style="max-height:60vh;overflow:auto"></div><p><button type="button" class="btn ghost" id="ciClose">Cancel</button></p></dialog>
+      </section>
       <section class="panel" id="typesPanel">
         <h2>Class types</h2>
         <p class="muted">The kinds of class we run, with a short description. Add your own if you teach something different. Everyone can add a type and change the ones they added.</p>
@@ -715,7 +722,7 @@ function go(view) {
   if (view === 'bookings') loadBookings();
   if (view === 'uploads') { loadFiles(); loadDrive(); }
   if (view === 'share') loadShare();
-  if (view === 'schedule') loadClasses();
+  if (view === 'schedule') { loadClasses(); loadClassPics(); }
   if (view === 'club') loadHours();
   if (view === 'media') loadMedia();
   if (view === 'library') loadLibrary();
@@ -1783,6 +1790,35 @@ $('#libAdd').addEventListener('change', async e => {
   show($('#libProg'), n ? `${n} photo${n === 1 ? '' : 's'} added.` : ''); try { libPhotos = (await api('/api/site?action=library')).photos.slice().reverse(); drawLibrary(); } catch {}
 });
 const mUrlUpload = b => mUploadBlob(b, b.name);
+
+/* ---------- class pictures (timetable) ---------- */
+let ciMap = {}, ciLib = [], ciName = '';
+async function loadClassPics() {
+  if (!me.admin) return;
+  try {
+    const [m, cl, lib] = await Promise.all([api('/api/site?action=classimg-get'), api('/api/pt?action=classes'), api('/api/site?action=library')]);
+    ciMap = m.images; ciLib = lib.photos.slice().reverse();
+    const names = [...new Set(cl.classes.map(k => /^kids$/i.test(k.name) ? 'Kids Muay Thai' : k.name))];
+    drawClassPics(names);
+  } catch (e) { show($('#ciErr'), e.message); }
+}
+function drawClassPics(names) {
+  $('#ciGrid').innerHTML = names.map(n => { const src = ciMap[n.toLowerCase()] || (/kid/i.test(n) ? ciMap.kids : '');
+    return `<div class="mcard"><div class="mth">${src ? `<img src="${esc(mUrl(src))}" alt="">` : '<span class="muted" style="padding:30px;text-align:center">No picture</span>'}</div><div class="mb"><b>${esc(n)}</b><div class="row" style="gap:6px"><button type="button" class="btn small" data-cipick="${esc(n)}">Change</button>${src ? `<button type="button" class="btn small ghost" data-cinone="${esc(n)}">Remove</button>` : ''}</div></div></div>`; }).join('');
+  $('#ciGrid').dataset.names = JSON.stringify(names);
+}
+async function ciSave(name, src) {
+  show($('#ciErr'), '');
+  try { await api('/api/site?action=classimg-save', { name, src }); if (src) ciMap[name.toLowerCase()] = src; else { ciMap[name.toLowerCase()] = ''; if (/kid/i.test(name)) ciMap.kids = ''; } drawClassPics(JSON.parse($('#ciGrid').dataset.names)); }
+  catch (e) { show($('#ciErr'), e.message); }
+}
+document.addEventListener('click', e => {
+  const p = e.target.closest('[data-cipick]'), n = e.target.closest('[data-cinone]');
+  if (p) { ciName = p.dataset.cipick; $('#ciTitle').textContent = `Picture for ${ciName}`; $('#ciPick').innerHTML = ciLib.map((x, i) => `<button type="button" class="mcard" data-cichoose="${i}" style="cursor:pointer;padding:0;text-align:left"><div class="mth"><img src="${esc(mUrl(x.src))}" alt="" loading="lazy"></div><div class="mb"><b>${esc(x.name || 'Photo')}</b></div></button>`).join(''); $('#ciDlg').showModal(); }
+  else if (n) ciSave(n.dataset.cinone, null);
+  else if (e.target.closest('#ciClose')) $('#ciDlg').close();
+  else { const ch = e.target.closest('[data-cichoose]'); if (ch) { $('#ciDlg').close(); ciSave(ciName, ciLib[+ch.dataset.cichoose].src); } }
+});
 </script>
 <script>
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});
