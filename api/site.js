@@ -84,7 +84,7 @@ export default async function handler(req, res) {
     /* ---- public ---- */
     if (action === 'public') {
       const [hero, videos, text, images] = await Promise.all([redis.get('site:hero'), redis.get('site:videos'), redis.get('site:text'), redis.get('site:images')]);
-      res.setHeader('Cache-Control', 'public, max-age=20, s-maxage=30, stale-while-revalidate=300');
+      res.setHeader('Cache-Control', 'no-cache, max-age=0, s-maxage=5');
       return res.status(200).json({ hero: hero?.items || null, videos: videos?.items || null, text: text || null, images: images || null });
     }
     if (action === 'file') {
