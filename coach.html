@@ -653,7 +653,7 @@
     <div data-view="share" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
       <h1>Share</h1>
-      <p class="muted">Pick a post, change the words if you like, then share it to your own Facebook, Instagram, WhatsApp or anywhere else. The links carry your name, and “Book personal training with me” opens your own booking page. Nothing is posted for you.</p>
+      <p class="muted">Pick a post, change the words if you like, then share it with the buttons: Share (WhatsApp and your other apps), Instagram, Facebook, TikTok or Google. Instagram, TikTok and Google don’t let a website fill in a post for you, so those buttons copy your caption, save the picture and open the right page. Paste the words, add the picture and post. The links carry your name, and “Book personal training with me” opens your own booking page. Nothing is posted for you.</p>
       <div class="sharegrid" id="shareGrid"></div>
     </div>
 
@@ -718,10 +718,20 @@ function loadShare() {
   $('#shareGrid').innerHTML = posts.map((p, i) => `<article class="sharecard" data-i="${i}">
     <img src="${esc(p.img)}" alt="" loading="lazy"><h3>${esc(p.t)}</h3>
     <textarea aria-label="Caption">${esc(p.text)}</textarea>
-    <div class="row"><button class="btn" type="button" data-act="share">Share</button><button class="btn ghost" type="button" data-act="copy">Copy link</button></div></article>`).join('');
+    <div class="row"><button class="btn" type="button" data-act="share">Share</button><button class="btn ghost" type="button" data-act="copy">Copy link</button></div>
+    <div class="row" style="gap:6px"><button class="btn small ghost" type="button" data-act="ig">Instagram</button><button class="btn small ghost" type="button" data-act="fb">Facebook</button><button class="btn small ghost" type="button" data-act="tt">TikTok</button><button class="btn small ghost" type="button" data-act="gb">Google</button></div></article>`).join('');
   $('#shareGrid').onclick = e => {
     const b = e.target.closest('[data-act]'); if (!b) return;
     const c = b.closest('.sharecard'), p = posts[+c.dataset.i], text = c.querySelector('textarea').value.trim();
+    const SITES = { ig: ['Instagram', 'https://www.instagram.com/'], tt: ['TikTok', 'https://www.tiktok.com/creator-center/upload'], gb: ['Google Business Profile', 'https://business.google.com/'] };
+    if (b.dataset.act === 'fb' || SITES[b.dataset.act]) {
+      const link = WSShare.link(p.path, id), full = text + ' ' + link, k = b.dataset.act;
+      /* Open the site first (so the browser allows the new tab), then copy the words and save the picture. */
+      window.open(k === 'fb' ? 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent(text) : SITES[k][1], '_blank', 'noopener');
+      WSShare.copy(full).then(() => WSShare.toast('Caption and link copied. Paste them into your post.'), () => WSShare.toast('Couldn’t copy the caption'));
+      if (k !== 'fb') fetch(p.img).then(r => r.blob()).then(bl => { const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = (p.img.split('/').pop() || 'photo').replace(/\?.*/, ''); document.body.appendChild(a); a.click(); a.remove(); }).catch(() => {});
+      return;
+    }
     if (b.dataset.act === 'copy') return WSShare.copy(WSShare.link(p.path, id)).then(() => WSShare.toast('Link copied'), () => WSShare.toast('Couldn’t copy'));
     WSShare.share({ title: p.t, text, path: p.path, image: p.img, ref: id });
   };
