@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream';
 import { get, del } from '@vercel/blob';
-import { accessToken, driveTrash } from './_lib/drive.js';
+import { accessToken, driveTrash, folderId, configured as driveConfigured, KEY_REFRESH } from './_lib/drive.js';
 import { redis, COACHES, loadCoaches, send, bad, setupProblem, body, clean, coachSession, coachEmail, mail, SITE } from './_lib/core.js';
 import { DEFAULT_HERO, DEFAULT_VIDEOS } from './_lib/sitedefaults.js';
 import { PHOTOLIB } from './_lib/photolib.js';
@@ -106,7 +106,7 @@ export default async function handler(req, res) {
     const b = body(req);
     const list = clean(req.query.list || b.list, 10);
     /* Changing the website itself is for the owners only. Other coaches can still read the photo library for their own profile gallery. */
-    if (!me.admin && ['get', 'save', 'discard', 'classimg-save', 'edits-get', 'edits-save', 'edits-discard'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
+    if (!me.admin && ['get', 'save', 'discard', 'classimg-save', 'overview', 'edits-get', 'edits-save', 'edits-discard'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
 
     if (action === 'library') {
       const [photos, hero] = await Promise.all([library(), redis.get('site:hero')]);
@@ -145,6 +145,34 @@ export default async function handler(req, res) {
       try { if (path) await del(path); } catch {}
       if (item.driveId) { try { await driveTrash(await accessToken(), item.driveId); } catch {} }
       return send(res, 200, { ok: true });
+    }
+    if (action === 'overview') {
+      if (!me.admin) return bad(res, 'Only Jay and Steve can see the overview.', 403);
+      const [lib, hero, vids, imgs, txt, ci] = await Promise.all([library(), redis.get('site:hero'), redis.get('site:videos'), redis.get('site:images'), redis.get('site:text'), redis.get('site:classimg')]);
+      const used = new Map(); const add = (src, w) => { if (!src) return; if (!used.has(src)) used.set(src, []); used.get(src).push(w); };
+      (hero?.items || DEFAULT_HERO).forEach(h => add(h.src, 'Homepage carousel'));
+      Object.entries(imgs || {}).forEach(([k, v]) => v && add(v.src, 'Page photo'));
+      Object.entries({ ...CLASSIMG, ...(ci || {}) }).forEach(([k, v]) => v && add(v, `Timetable: ${k}`));
+      for (const c of Object.keys(COACHES)) { const p = await redis.get(`profile:${c}:live`); if (p) { add(p.photo, `${COACHES[c].first}’s page`); String(p.gallery || '').split('|').filter(Boolean).forEach(g => add(g, `${COACHES[c].first}’s page`)); } }
+      const photos = lib.map(p => ({ src: p.src, name: p.name, by: p.by || (p.builtin ? 'club' : ''), at: p.at || 0, builtin: !!p.builtin, drive: !!p.driveId, usedOn: [...new Set(used.get(p.src) || [])] }));
+      let drive = { connected: false, waiting: 0, total: 0 };
+      try {
+        if (driveConfigured() && await redis.get(KEY_REFRESH)) {
+          const token = await accessToken(), fid = await folderId(token);
+          const q = encodeURIComponent(`'${fid}' in parents and trashed=false and mimeType contains 'image/'`);
+          const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&pageSize=200&fields=${encodeURIComponent('files(id,name)')}`, { headers: { authorization: `Bearer ${token}` } });
+          const j = await r.json().catch(() => ({})); const seen = new Set(((await redis.smembers('site:driveseen')) || []).map(String));
+          drive = { connected: true, total: (j.files || []).length, waiting: (j.files || []).filter(f => !seen.has(f.id)).length };
+        }
+      } catch {}
+      const pend = [];
+      for (const c of Object.keys(COACHES)) for (const l of ['edits', 'hero', 'videos']) if (await redis.get(`site:pending:${l}:${c}`)) pend.push(`${COACHES[c].first}: ${l === 'edits' ? 'page text and photos' : LISTS[l].label.toLowerCase()}`);
+      return send(res, 200, {
+        photos, drive, pending: pend,
+        carousel: (hero?.items || DEFAULT_HERO).map(h => ({ type: h.type, src: h.src, alt: h.alt || '' })), carouselCustom: !!hero,
+        videos: (vids?.items || DEFAULT_VIDEOS).length, videosCustom: !!vids,
+        textEdits: Object.keys(txt || {}).length, photoSwaps: Object.keys(imgs || {}).length,
+      });
     }
     if (action === 'classimg-get') {
       const ci = (await redis.get('site:classimg')) || {};
