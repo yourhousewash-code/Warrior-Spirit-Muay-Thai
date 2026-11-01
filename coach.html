@@ -55,6 +55,7 @@
 .ownkey{display:flex;align-items:center;gap:16px;flex-wrap:wrap;color:var(--soft);font-size:14px;margin:0 0 4px}
 .ownkey i{display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;border-left:4px solid var(--red);background:var(--ink-2)}
 .ownkey i.o{border-left-color:#4d8dff;background:rgba(77,141,255,.25)}
+#pdTags .btn[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
 .tile svg{grid-row:1/4}
 .tile p{color:var(--soft);font-size:15px;line-height:1.45;margin:0}
 .tile em{font-style:normal;font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-top:6px}
@@ -652,9 +653,50 @@
     <!-- ===== SHARE ===== -->
     <div data-view="share" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
-      <h1>Share</h1>
-      <p class="muted">Pick a post, change the words if you like, then share it with the buttons: Share (WhatsApp and your other apps), Instagram, Facebook, TikTok or Google. Instagram, TikTok and Google don’t let a website fill in a post for you, so those buttons copy your caption, save the picture and open the right page. Paste the words, add the picture and post. The links carry your name, and “Book personal training with me” opens your own booking page. Nothing is posted for you.</p>
+      <div class="calhead"><h1>Share</h1><button type="button" class="btn" id="spNew">+ New post</button></div>
+      <p class="muted">Write your own post or start from one of our ideas. Posts you save are kept here for the whole team, so you can come back, change the words and post them again. Use the buttons to share: Instagram, TikTok and Google don’t let a website fill in a post for you, so those buttons copy your caption, save the picture and open the right page. Paste the words, add the picture and post. The links carry your name, and “Book personal training” goes to your own booking page.</p>
+      <div class="mtabs" role="tablist" aria-label="Posts">
+        <button type="button" role="tab" data-sptab="saved" aria-selected="true">Saved posts</button>
+        <button type="button" role="tab" data-sptab="ideas" aria-selected="false">Our ideas</button>
+      </div>
+      <p class="err" id="spErr" hidden></p>
       <div class="sharegrid" id="shareGrid"></div>
+      <dialog id="postDlg" class="dlg" style="width:min(820px,calc(100vw - 24px))">
+        <h2 id="pdTitle" style="margin:0 0 14px">New post</h2>
+        <div class="stack" style="gap:12px">
+          <div class="row" style="align-items:flex-start;gap:14px">
+            <div style="width:170px;flex:none"><div class="mth" style="aspect-ratio:4/3;background:var(--ink)"><img id="pdImg" alt="" style="width:100%;height:100%;object-fit:cover;display:none"></div>
+              <button type="button" class="btn small ghost" id="pdPick" style="margin-top:8px;width:100%">Choose picture</button></div>
+            <div style="flex:1 1 280px;min-width:0">
+              <label for="pdText" style="display:block">Caption</label>
+              <textarea id="pdText" rows="8" spellcheck="true" lang="en-GB" autocapitalize="sentences" maxlength="2200" style="width:100%"></textarea>
+              <p class="muted" id="pdCount" style="margin:4px 0 0;font-size:13px"></p>
+            </div>
+          </div>
+          <p class="muted" style="margin:0;font-size:13px">Spelling mistakes get a red underline as you type. Right-click (or press and hold on a phone) to correct them.</p>
+          <label>Link people to<select id="pdPath"></select></label>
+          <div><b style="font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase">Hashtag ideas</b> <span class="muted" style="font-size:13px">tap to add. 3 to 5 is plenty</span><div id="pdTags" class="row" style="gap:6px;margin-top:8px"></div></div>
+          <details><summary style="cursor:pointer;font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase">Tips for a good post</summary>
+            <ul class="muted" style="margin:8px 0 0;padding-left:20px;line-height:1.55">
+              <li>Start with the best bit. People decide in the first line whether to read on.</li>
+              <li>One message per post: a class, a result, an offer. Not all three.</li>
+              <li>Say what to do next: “Book your free class”, “Message us”, “Tag a mate”.</li>
+              <li>Use your own real photos. A good clear picture beats a long caption.</li>
+              <li>Only post photos of children if their parents have said yes.</li>
+              <li>Short lines and the odd emoji are easier to read than one big block.</li>
+              <li>Ask a question to get replies. “Who’s training tonight?”</li>
+              <li>Put the hashtags at the end, not in the middle of sentences.</li>
+              <li>Read it out loud before posting. Check names, times and prices.</li>
+              <li>Post when members are online: early morning, lunchtime or evening.</li>
+            </ul></details>
+          <p class="err" id="pdErr" hidden></p>
+          <div class="row"><button type="button" class="btn" id="pdSave">Save post</button><button type="button" class="btn ghost" id="pdCancel">Cancel</button></div>
+        </div>
+      </dialog>
+      <dialog id="pickDlg" class="dlg" style="width:min(760px,calc(100vw - 24px))"><h2>Choose a picture</h2>
+        <div class="row"><label class="btn small" for="pkUp" style="color:#fff">+ Add a new picture<input id="pkUp" type="file" accept="image/*" hidden></label></div>
+        <p class="err" id="pkErr" hidden></p><div class="mgrid" id="pkGrid" style="max-height:55vh;overflow:auto;margin-top:10px"></div>
+        <p><button type="button" class="btn ghost" id="pkClose">Cancel</button></p></dialog>
     </div>
 
     <!-- ===== SETTINGS ===== -->
@@ -704,38 +746,106 @@ let me = null;
 
 
 /* ---------- share ---------- */
-function loadShare() {
-  const first = me.first, id = me.id;
-  const posts = [
-    { t: 'Book personal training with me', img: me.photo || '/photos/pads-1.webp', path: '/book?coach=' + id, text: `Want to get fitter, stronger or fight-ready? Book a 1-to-1 personal training session with me at Warrior Spirit Muay Thai, Potters Bar. From £40 an hour.` },
-    { t: 'Free first class', img: '/photos/pads-2.webp', path: '#contact', text: `New to Muay Thai? Your first class at Warrior Spirit in Potters Bar is free. Beginners class is Thursday 7pm. Come and try it.` },
-    { t: 'Classes I teach', img: '/photos/pads-1.webp', path: '#timetable', text: `Come and train with me at Warrior Spirit Muay Thai, Potters Bar. Pads, drills, sparring and beginners classes all week. Full timetable here.` },
-    { t: 'Kids Muay Thai', img: '/photos/kids-coach.webp', path: '#kids-muay-thai', text: `Kids Muay Thai at Warrior Spirit, Potters Bar. Ages 7 to 13, Monday to Thursday 5:30pm. Confidence, discipline and fun. £65 a month.` },
-    { t: 'Dino wins on debut', img: '/photos/wh2-dino-hand-raised-winner.webp', path: '#news', text: `Dino Leonida won by stoppage in round 2 on his debut at Warriors of Hope 2. He trained, he dieted, he listened. Proud of the whole team.` },
-    { t: 'Leo shows heart', img: '/photos/wh2-leo-walkout-with-jay.webp', path: '#news', text: `Leo showed real heart in his first fight at Warriors of Hope 2, carrying on through adversity. That is Warrior Spirit. Proud of him.` },
-    { t: 'Join the fight team', img: '/photos/fight-ring.webp', path: '#fight', text: `Fancy fighting? Our fight team takes you from interclubs to amateur shows with a proper camp behind you. Warrior Spirit Muay Thai, Potters Bar.` },
+let spTab = 'saved', spSaved = [], spIdeas = [], pdEdit = null, pdImgSrc = '', pkLib = null;
+const HASHTAGS = [['#MuayThai', 'general'], ['#Kickboxing', 'general'], ['#PottersBar', 'local'], ['#Hertfordshire', 'local'], ['#WarriorSpirit', 'club'], ['#MartialArts', 'general'], ['#Fitness', 'general'], ['#PersonalTraining', 'pt'], ['#FightTeam', 'fight'], ['#Interclub', 'fight'], ['#FightCamp', 'fight'], ['#KidsMartialArts', 'kids'], ['#BeginnersWelcome', 'new'], ['#FreeClass', 'new'], ['#Barnet', 'local'], ['#Hoddesdon', 'local']];
+const PATHS = [['', 'Home page'], ['#contact', 'Free first class'], ['#timetable', 'Timetable'], ['/book', 'Book personal training (my page)'], ['#kids-muay-thai', 'Kids Muay Thai'], ['#fight', 'Fight team'], ['#news', 'Fight news']];
+function spIdeasList() {
+  const id = me.id;
+  return [
+    { t: 'Book personal training with me', img: me.photo || '/photos/pads-1.webp', path: '/book?coach=' + id, text: `Want to get fitter, stronger or fight-ready? Book a 1-to-1 personal training session with me at Warrior Spirit Muay Thai, Potters Bar. From £40 an hour.\n\n#MuayThai #PersonalTraining #PottersBar` },
+    { t: 'Free first class', img: '/photos/class-welcome.webp', path: '#contact', text: `New to Muay Thai? Your first class at Warrior Spirit in Potters Bar is free. Beginners class is Thursday 7pm. Come and try it.\n\n#MuayThai #BeginnersWelcome #PottersBar` },
+    { t: 'Classes I teach', img: '/photos/class-pads.webp', path: '#timetable', text: `Come and train with me at Warrior Spirit Muay Thai, Potters Bar. Pads, drills, sparring and beginners classes all week. Full timetable here.\n\n#MuayThai #Kickboxing #WarriorSpirit` },
+    { t: 'Kids Muay Thai', img: '/photos/class-kids.webp', path: '#kids-muay-thai', text: `Kids Muay Thai at Warrior Spirit, Potters Bar. Ages 7 to 13, Monday to Thursday 5:30pm. Confidence, discipline and fun. £65 a month.\n\n#KidsMartialArts #MuayThai #PottersBar` },
+    { t: 'Dino wins on debut', img: '/photos/wh2-dino-hand-raised-winner.webp', path: '#news', text: `Dino Leonida won by stoppage in round 2 on his debut at Warriors of Hope 2. He trained, he dieted, he listened. Proud of the whole team.\n\n#FightTeam #MuayThai #WarriorSpirit` },
+    { t: 'Leo shows heart', img: '/photos/wh2-leo-walkout-with-jay.webp', path: '#news', text: `Leo showed real heart in his first fight at Warriors of Hope 2, carrying on through adversity. That is Warrior Spirit. Proud of him.\n\n#FightTeam #MuayThai #WarriorSpirit` },
+    { t: 'Join the fight team', img: '/photos/class-sparring.webp', path: '#fight', text: `Fancy fighting? Our fight team takes you from interclubs to amateur shows with a proper camp behind you. Warrior Spirit Muay Thai, Potters Bar.\n\n#FightTeam #Interclub #FightCamp` },
   ];
-  $('#shareGrid').innerHTML = posts.map((p, i) => `<article class="sharecard" data-i="${i}">
-    <img src="${esc(p.img)}" alt="" loading="lazy"><h3>${esc(p.t)}</h3>
-    <textarea aria-label="Caption">${esc(p.text)}</textarea>
-    <div class="row"><button class="btn" type="button" data-act="share">Share</button><button class="btn ghost" type="button" data-act="copy">Copy link</button></div>
-    <div class="row" style="gap:6px"><button class="btn small ghost" type="button" data-act="ig">Instagram</button><button class="btn small ghost" type="button" data-act="fb">Facebook</button><button class="btn small ghost" type="button" data-act="tt">TikTok</button><button class="btn small ghost" type="button" data-act="gb">Google</button></div></article>`).join('');
-  $('#shareGrid').onclick = e => {
-    const b = e.target.closest('[data-act]'); if (!b) return;
-    const c = b.closest('.sharecard'), p = posts[+c.dataset.i], text = c.querySelector('textarea').value.trim();
-    const SITES = { ig: ['Instagram', 'https://www.instagram.com/'], tt: ['TikTok', 'https://www.tiktok.com/creator-center/upload'], gb: ['Google Business Profile', 'https://business.google.com/'] };
-    if (b.dataset.act === 'fb' || SITES[b.dataset.act]) {
-      const link = WSShare.link(p.path, id), full = text + ' ' + link, k = b.dataset.act;
-      /* Open the site first (so the browser allows the new tab), then copy the words and save the picture. */
-      window.open(k === 'fb' ? 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent(text) : SITES[k][1], '_blank', 'noopener');
-      WSShare.copy(full).then(() => WSShare.toast('Caption and link copied. Paste them into your post.'), () => WSShare.toast('Couldn’t copy the caption'));
-      if (k !== 'fb') fetch(p.img).then(r => r.blob()).then(bl => { const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = (p.img.split('/').pop() || 'photo').replace(/\?.*/, ''); document.body.appendChild(a); a.click(); a.remove(); }).catch(() => {});
-      return;
-    }
-    if (b.dataset.act === 'copy') return WSShare.copy(WSShare.link(p.path, id)).then(() => WSShare.toast('Link copied'), () => WSShare.toast('Couldn’t copy'));
-    WSShare.share({ title: p.t, text, path: p.path, image: p.img, ref: id });
-  };
 }
+async function loadShare() {
+  spIdeas = spIdeasList(); show($('#spErr'), '');
+  document.querySelectorAll('[data-sptab]').forEach(b => b.setAttribute('aria-selected', b.dataset.sptab === spTab));
+  try { spSaved = (await api('/api/site?action=posts-list')).posts; } catch (e) { spSaved = []; show($('#spErr'), e.message); }
+  drawShare();
+}
+function spPathFor(p) { return p.path && p.path.startsWith('/book') ? '/book?coach=' + me.id : (p.path || ''); }
+function drawShare() {
+  const list = spTab === 'saved' ? spSaved : spIdeas;
+  if (!list.length) { $('#shareGrid').innerHTML = `<p class="muted">${spTab === 'saved' ? 'No saved posts yet. Press “+ New post”, or open “Our ideas” and press Edit &amp; save on one.' : ''}</p>`; return; }
+  $('#shareGrid').innerHTML = list.map((p, i) => {
+    const idea = spTab !== 'saved', own = idea ? false : (me.admin || p.by === me.id);
+    return `<article class="sharecard" data-i="${i}"><img src="${esc(mUrl(p.img || ''))}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+    <h3>${esc(idea ? p.t : (p.title || 'Post'))}</h3>${idea ? '' : `<p class="muted" style="font-size:13px">${esc(p.name || '')} · ${esc(nice(ukDate(p.updatedAt || p.at)))}</p>`}
+    <textarea aria-label="Caption" spellcheck="true" lang="en-GB">${esc(p.text)}</textarea>
+    <div class="row"><button class="btn" type="button" data-act="share">Share</button><button class="btn ghost" type="button" data-act="copy">Copy link</button></div>
+    <div class="row" style="gap:6px"><button class="btn small ghost" type="button" data-act="ig">Instagram</button><button class="btn small ghost" type="button" data-act="fb">Facebook</button><button class="btn small ghost" type="button" data-act="tt">TikTok</button><button class="btn small ghost" type="button" data-act="gb">Google</button></div>
+    <div class="row" style="gap:6px">${idea ? '<button class="btn small" type="button" data-act="edit">Edit &amp; save</button>' : (own ? '<button class="btn small" type="button" data-act="edit">Edit</button>' : '') + '<button class="btn small ghost" type="button" data-act="dup">Make a copy</button>' + (own ? '<button class="btn small ghost" type="button" data-act="del">Delete</button>' : '')}</div></article>`; }).join('');
+}
+const SITES = { ig: ['Instagram', 'https://www.instagram.com/'], tt: ['TikTok', 'https://www.tiktok.com/creator-center/upload'], gb: ['Google Business Profile', 'https://business.google.com/'] };
+document.addEventListener('click', async e => {
+  const tab = e.target.closest('[data-sptab]');
+  if (tab) { spTab = tab.dataset.sptab; document.querySelectorAll('[data-sptab]').forEach(b => b.setAttribute('aria-selected', b.dataset.sptab === spTab)); return drawShare(); }
+  if (e.target.closest('#spNew')) return openPost({ text: '', img: '', path: '' });
+  const bt = e.target.closest('#shareGrid [data-act]'); if (!bt) return;
+  const card = bt.closest('.sharecard'), list = spTab === 'saved' ? spSaved : spIdeas, p = list[+card.dataset.i], text = card.querySelector('textarea').value.trim(), k = bt.dataset.act;
+  const path = spPathFor(p), link = WSShare.link(path || '#home', me.id), img = p.img || '/photos/pads-1.webp';
+  if (k === 'edit') return openPost(spTab === 'saved' ? { ...p, text } : { text, img: p.img, path: p.path, title: p.t });
+  if (k === 'dup') return openPost({ text, img: p.img, path: p.path, title: p.title });
+  if (k === 'del') { if (!confirm('Delete this saved post for everyone?')) return; try { await api('/api/site?action=posts-del', { id: p.id }); spSaved = spSaved.filter(x => x !== p); drawShare(); } catch (er) { show($('#spErr'), er.message); } return; }
+  if (k === 'copy') return WSShare.copy(link).then(() => WSShare.toast('Link copied'), () => WSShare.toast('Couldn’t copy'));
+  if (k === 'fb' || SITES[k]) {
+    /* Open the site first (so the browser allows the new tab), then copy the words and save the picture. */
+    window.open(k === 'fb' ? 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent(text) : SITES[k][1], '_blank', 'noopener');
+    WSShare.copy(text + ' ' + link).then(() => WSShare.toast('Caption and link copied. Paste them into your post.'), () => WSShare.toast('Couldn’t copy the caption'));
+    if (k !== 'fb') fetch(mUrl(img)).then(r => r.blob()).then(bl => { const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = (img.split('/').pop() || 'photo').replace(/\?.*/, ''); document.body.appendChild(a); a.click(); a.remove(); }).catch(() => {});
+    return;
+  }
+  WSShare.share({ title: p.title || p.t, text, path: path || '#home', image: img, ref: me.id });
+});
+function pdUpdateCount() {
+  const t = $('#pdText').value, tags = (t.match(/#\w+/g) || []).length;
+  $('#pdCount').textContent = `${t.length} of 2,200 characters · ${tags} hashtag${tags === 1 ? '' : 's'}${tags > 8 ? '. That’s a lot. 3 to 5 reads better.' : ''}`;
+  document.querySelectorAll('#pdTags [data-tag]').forEach(b => b.setAttribute('aria-pressed', new RegExp(b.dataset.tag + '(\\s|$)', 'i').test(t)));
+}
+function pdSetImg(src) { pdImgSrc = src || ''; const i = $('#pdImg'); i.style.display = src ? 'block' : 'none'; if (src) i.src = mUrl(src); $('#pdPick').textContent = src ? 'Change picture' : 'Choose picture'; }
+function openPost(p) {
+  pdEdit = p.id ? p : null; show($('#pdErr'), '');
+  $('#pdTitle').textContent = p.id ? 'Edit post' : 'New post';
+  $('#pdText').value = p.text || ''; pdSetImg(p.img || '');
+  const norm = x => x && x.startsWith('/book') ? '/book' : (x || '');
+  $('#pdPath').innerHTML = PATHS.map(([v, l]) => `<option value="${esc(v)}"${norm(p.path) === v ? ' selected' : ''}>${esc(l)}</option>`).join('');
+  $('#pdTags').innerHTML = HASHTAGS.map(([t]) => `<button type="button" class="btn small ghost" data-tag="${esc(t)}" aria-pressed="false">${esc(t)}</button>`).join('');
+  pdUpdateCount(); $('#postDlg').showModal();
+}
+$('#pdText').addEventListener('input', pdUpdateCount);
+document.addEventListener('click', async e => {
+  const tg = e.target.closest('#pdTags [data-tag]');
+  if (tg) { const ta = $('#pdText'), t = tg.dataset.tag, re = new RegExp('(^|\\s)' + t + '(?=\\s|$)', 'i'); ta.value = re.test(ta.value) ? ta.value.replace(re, '$1').replace(/[ \t]+\n/g, '\n').trimEnd() : (ta.value.trimEnd() + (/#\w+$/.test(ta.value.trimEnd()) ? ' ' : '\n\n') + t); pdUpdateCount(); return; }
+  if (e.target.closest('#pdCancel')) return $('#postDlg').close();
+  if (e.target.closest('#pdPick')) return openPicker();
+  if (e.target.closest('#pkClose')) return $('#pickDlg').close();
+  const ch = e.target.closest('[data-pk]'); if (ch) { pdSetImg(pkLib[+ch.dataset.pk].src); $('#pickDlg').close(); return; }
+  if (e.target.closest('#pdSave')) {
+    show($('#pdErr'), '');
+    try {
+      const r = await api('/api/site?action=posts-save', { id: pdEdit?.id, text: $('#pdText').value, img: pdImgSrc, path: $('#pdPath').value === '/book' ? '/book?coach=' + me.id : $('#pdPath').value, title: pdEdit?.title && pdEdit.id ? pdEdit.title : '' });
+      $('#postDlg').close(); spTab = 'saved'; await loadShare(); WSShare.toast('Post saved');
+    } catch (er) { show($('#pdErr'), er.message); }
+  }
+});
+async function openPicker() {
+  show($('#pkErr'), '');
+  try { if (!pkLib) pkLib = (await api('/api/site?action=library')).photos.slice().reverse(); } catch (er) { return show($('#pkErr'), er.message); }
+  $('#pkGrid').innerHTML = pkLib.map((x, i) => `<button type="button" class="mcard" data-pk="${i}" style="cursor:pointer;padding:0;text-align:left"><div class="mth"><img src="${esc(mUrl(x.src))}" alt="" loading="lazy"></div><div class="mb"><b>${esc(x.name || 'Photo')}</b></div></button>`).join('');
+  $('#pickDlg').showModal();
+}
+$('#pkUp').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return; show($('#pkErr'), '');
+  try {
+    const b = await mShrink(f), src = await mUploadBlob(b, b.name);
+    await api('/api/site?action=library-add', { src, name: f.name.replace(/\.\w+$/, '').slice(0, 60) });
+    pkLib = null; pdSetImg(src); $('#pickDlg').close();
+  } catch (er) { show($('#pkErr'), er.message); }
+});
 
 /* ---------- views ---------- */
 function go(view) {

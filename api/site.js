@@ -174,6 +174,35 @@ export default async function handler(req, res) {
         textEdits: Object.keys(txt || {}).length, photoSwaps: Object.keys(imgs || {}).length,
       });
     }
+    /* ---- club social posts: saved drafts every coach can reuse ---- */
+    if (action === 'posts-list') {
+      const posts = ((await redis.get('site:posts')) || []).slice().reverse();
+      return send(res, 200, { posts, me: me.id, admin: !!me.admin });
+    }
+    if (action === 'posts-save' && req.method === 'POST') {
+      const text = String(b.text || '').replace(/\r/g, '').trim().slice(0, 2200);
+      if (!text) return bad(res, 'Write something for the post first.');
+      const img = b.img ? clean(b.img, 300) : '';
+      if (img) { const lib = new Set((await library()).map(x => x.src)); if (!lib.has(img) && !FILE.test(img) && !/^(photos|video)\/[\w.\-]+$/.test(img)) return bad(res, 'That picture isn’t in the photo library.'); }
+      const all = (await redis.get('site:posts')) || [];
+      const title = clean(b.title, 60) || text.split('\n')[0].slice(0, 60);
+      const now = Date.now();
+      if (b.id) {
+        const i = all.findIndex(p => p.id === clean(b.id, 20)); if (i < 0) return bad(res, 'That post no longer exists.', 404);
+        if (!me.admin && all[i].by !== me.id) return bad(res, 'You can only change your own posts. Use “Make a copy” to edit someone else’s.', 403);
+        all[i] = { ...all[i], title, text, img, updatedAt: now };
+        await redis.set('site:posts', all); return send(res, 200, { post: all[i] });
+      }
+      const post = { id: now.toString(36) + Math.random().toString(36).slice(2, 5), by: me.id, name: COACHES[me.id]?.first || me.id, title, text, img, at: now, updatedAt: now, path: clean(b.path, 80) };
+      await redis.set('site:posts', [...all, post].slice(-300));
+      return send(res, 200, { post });
+    }
+    if (action === 'posts-del' && req.method === 'POST') {
+      const all = (await redis.get('site:posts')) || [], p = all.find(x => x.id === clean(b.id, 20));
+      if (!p) return send(res, 200, { ok: true });
+      if (!me.admin && p.by !== me.id) return bad(res, 'You can only delete your own posts.', 403);
+      await redis.set('site:posts', all.filter(x => x !== p)); return send(res, 200, { ok: true });
+    }
     if (action === 'classimg-get') {
       const ci = (await redis.get('site:classimg')) || {};
       return send(res, 200, { images: Object.fromEntries(Object.entries({ ...CLASSIMG, ...ci }).filter(([, v]) => v)) });
