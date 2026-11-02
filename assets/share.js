@@ -52,14 +52,33 @@
     document.body.appendChild(m);
   }
 
+  /* Instagram and TikTok only take JPEG or PNG, so pictures are converted before they are shared */
+  async function jpegFile(src, name) {
+    var r = await fetch(src); var b = await r.blob();
+    var bm = await createImageBitmap(b), c = document.createElement('canvas'); c.width = bm.width; c.height = bm.height;
+    var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(bm, 0, 0);
+    var out = await new Promise(function (ok) { c.toBlob(ok, 'image/jpeg', 0.92); });
+    return new File([out], String(name || 'warrior-spirit').replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' });
+  }
+  /* Opens the phone's share sheet with the picture attached (pick Instagram, TikTok and so on).
+     Returns true if it was shared or cancelled, false if this device can't share a picture this way. */
+  async function shareFile(opts) {
+    try {
+      if (!navigator.share || !navigator.canShare) return false;
+      var f = await jpegFile(opts.image, (opts.image.split('/').pop() || '').replace(/\?.*/, ''));
+      if (!navigator.canShare({ files: [f] })) return false;
+      await navigator.share({ files: [f], text: opts.text || '', title: opts.title || 'Warrior Spirit Muay Thai' });
+      return true;
+    } catch (e) { return !!(e && e.name === 'AbortError'); }
+  }
+
   async function share(opts) {
     var url = linkFor(opts.path, opts.ref);
     var data = { title: opts.title || 'Warrior Spirit Muay Thai', text: opts.text || '', url: url };
     if (navigator.share) {
       try {
         if (opts.image && navigator.canShare) {
-          var r = await fetch(opts.image); var b = await r.blob();
-          var f = new File([b], (opts.image.split('/').pop() || 'photo').replace(/\?.*/, ''), { type: b.type || 'image/webp' });
+          var f; try { f = await jpegFile(opts.image, (opts.image.split('/').pop() || '').replace(/\?.*/, '')); } catch (er) { var r = await fetch(opts.image); var b = await r.blob(); f = new File([b], (opts.image.split('/').pop() || 'photo').replace(/\?.*/, ''), { type: b.type || 'image/webp' }); }
           if (navigator.canShare({ files: [f] })) { data.files = [f]; data.text = (opts.text ? opts.text + ' ' : '') + url; delete data.url; }
         }
         await navigator.share(data); return;
@@ -115,7 +134,7 @@
     });
   }
 
-  window.WSShare = { share: share, link: linkFor, toast: toast, copy: copy, addPublic: addPublic };
+  window.WSShare = { share: share, shareFile: shareFile, jpegFile: jpegFile, link: linkFor, toast: toast, copy: copy, addPublic: addPublic };
   if ($('#news') || $('#classes')) {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addPublic); else addPublic();
   }

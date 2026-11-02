@@ -796,14 +796,20 @@ document.addEventListener('click', async e => {
   if (k === 'dup') return openPost({ text, img: p.img, path: p.path, title: p.title });
   if (k === 'del') { if (!confirm('Delete this saved post for everyone?')) return; try { await api('/api/site?action=posts-del', { id: p.id }); spSaved = spSaved.filter(x => x !== p); drawShare(); } catch (er) { show($('#spErr'), er.message); } return; }
   if (k === 'copy') return WSShare.copy(link).then(() => WSShare.toast('Link copied'), () => WSShare.toast('Couldn’t copy'));
+  if (k === 'ig' || k === 'tt') {
+    /* On a phone: open the share sheet with the picture attached, and put the words on the clipboard to paste. */
+    const phone = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (phone) { WSShare.copy(text + ' ' + link).catch(() => {}); WSShare.toast('Caption copied. Pick ' + SITES[k][0] + ' in the list, then paste it into your post.'); }
+    if (phone && await WSShare.shareFile({ image: mUrl(img), text: text + ' ' + link })) return;
+  }
   if (k === 'fb' || SITES[k]) {
     /* Open the site first (so the browser allows the new tab), then copy the words and save the picture. */
     window.open(k === 'fb' ? 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent(text) : SITES[k][1], '_blank', 'noopener');
-    WSShare.copy(text + ' ' + link).then(() => WSShare.toast('Caption and link copied. Paste them into your post.'), () => WSShare.toast('Couldn’t copy the caption'));
-    if (k !== 'fb') fetch(mUrl(img)).then(r => r.blob()).then(bl => { const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = (img.split('/').pop() || 'photo').replace(/\?.*/, ''); document.body.appendChild(a); a.click(); a.remove(); }).catch(() => {});
+    WSShare.copy(text + ' ' + link).then(() => WSShare.toast(k === 'fb' ? 'Caption and link copied. Paste them into your post.' : 'Caption copied and picture saved. In ' + SITES[k][0] + ' add the picture, then paste the caption.'), () => WSShare.toast('Couldn’t copy the caption'));
+    if (k !== 'fb') WSShare.jpegFile(mUrl(img), img.split('/').pop().replace(/\?.*/, '')).then(bl => { const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = bl.name; document.body.appendChild(a); a.click(); a.remove(); }).catch(() => {});
     return;
   }
-  WSShare.share({ title: p.title || p.t, text, path: path || '#home', image: img, ref: me.id });
+  WSShare.share({ title: p.title || p.t, text, path: path || '#home', image: mUrl(img), ref: me.id });
 });
 function pdUpdateCount() {
   const t = $('#pdText').value, tags = (t.match(/#\w+/g) || []).length;

@@ -264,6 +264,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 1 Nov 2026 | Owners get a Site overview page. This handbook is created |
 | 2 Nov 2026 | Steve: a lot of this site will move to FighterBase later (for example class booking and subscriptions). Effort now goes into public pages, legal pages and speed; tooling stays small |
 | 2 Nov 2026 | Every section gets its own web address. Pages are generated from one source file by a script and committed. Terms and accessibility pages added. Fonts stored on the site. Hero videos no longer load on phones. Link-preview tags, a dated sitemap and a redirect from the vercel.app address added. AI pictures labelled as illustrations |
+| 2 Nov 2026 | Share studio: on phones the Instagram and TikTok buttons open the phone's share sheet with the picture attached (as a JPEG) and put the caption on the clipboard to paste. Instagram does not let any website pre-fill a caption. Computers keep the old way: open the site, copy the caption, save the picture |
 | 2 Nov 2026 | Two gym ring photos (Jay's Drive uploads) are straightened, zoomed and colour-boosted, then added to the photo library. Not placed on a page yet |
 
 ## 12. Still to decide
