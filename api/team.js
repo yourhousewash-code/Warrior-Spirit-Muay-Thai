@@ -131,7 +131,7 @@ ${canonical ? `<link rel="canonical" href="${esc(canonical)}"><meta property="og
 <meta property="og:title" content="${esc(title)}">${desc ? `<meta property="og:description" content="${esc(desc)}">` : ''}
 ${image ? `<meta property="og:image" content="${esc(image.startsWith('http') ? image : SITE + '/' + image.replace(/^\//, ''))}">` : ''}
 <link rel="icon" href="/img/logo.webp" type="image/webp">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700&display=swap">
+<link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/app.css">
 <style>
 main{display:grid;gap:22px}

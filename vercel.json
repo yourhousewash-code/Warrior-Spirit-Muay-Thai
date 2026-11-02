@@ -16,9 +16,15 @@
   ],
   "redirects": [
     {
-      "source": "/team",
-      "destination": "/#team",
-      "permanent": false
+      "source": "/((?!api/).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": ".*\\.vercel\\.app"
+        }
+      ],
+      "destination": "https://www.warriorspiritmuaythai.co.uk/$1",
+      "permanent": true
     }
   ],
   "headers": [
@@ -62,6 +68,15 @@
         {
           "key": "Cache-Control",
           "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/assets/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }

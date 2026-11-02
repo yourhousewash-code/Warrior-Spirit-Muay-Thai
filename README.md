@@ -4,6 +4,8 @@
 
 Static website for Warrior Spirit Muay Thai & Kickboxing, Potters Bar.
 
+**Editing the public pages:** change `site-src/index.html`, then run `node tools/build-pages.mjs` and commit the generated files (`index.html`, the section pages such as `pt.html`, and `sitemap.xml`). Do not edit those by hand.
+
 - `index.html` – the whole site (pages switch via `#page` links)
 - `photos/`, `video/`, `img/` – images, clips and logo
 

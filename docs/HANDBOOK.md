@@ -12,7 +12,7 @@
 
 **Related:** SRS Site Factory handbook (how SRS builds sites) and the Turbo handbook (what happens after launch). Neither is linked to this site yet.
 
-**Last updated:** 2 November 2026
+**Last updated:** 2 November 2026 (evening)
 
 ---
 
@@ -70,6 +70,9 @@ Used the same way everywhere (site, Google, listings).
 8. Fight results are described as results the club knows about, not official governing-body records.
 9. Colour key in the coach area: red is for everyone on the team, blue with a star stamp is owners only.
 10. Commits to the repo are made as Steve Saunders, with no AI attribution.
+11. **Public pages are built from one source.** Edit `site-src/index.html`, then run `node tools/build-pages.mjs` and commit the generated `index.html`, the section pages (`pt.html`, `classes.html` and so on) and `sitemap.xml`. Never edit those generated files by hand.
+12. Computer-made pictures are labelled "Illustration" on the site.
+13. Much of the booking, account and coach tooling is expected to move to FighterBase. Spend effort on the public pages, legal pages and speed here, and keep new tooling small.
 
 **SRS standards that apply:** see section 9 for how the site measures up.
 
@@ -97,13 +100,15 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 
 ## 5. What's built
 
-**Stack and deployment.** Static pages (`index.html`, `book.html`, `account.html`, `coach.html`, `privacy.html`) plus Vercel serverless functions in `/api` (Node 20). No framework and no build step. A push to `main` on GitHub goes live on Vercel within a couple of minutes. The site's pages are not separate web addresses: see "Known limit" below.
+**Stack and deployment.** Static pages plus Vercel serverless functions in `/api` (Node 20). No framework. The public pages are generated from `site-src/index.html` by `tools/build-pages.mjs` (run it by hand and commit the result; Vercel does not run it). Other pages are plain files: `book.html`, `account.html`, `coach.html`, `privacy.html`, `terms.html`, `accessibility.html`. A push to `main` on GitHub goes live on Vercel within a couple of minutes.
 
 **Hosting limits to design around.** Vercel Hobby plan: 12 functions maximum (11 used), cron jobs once a day only.
 
 | Feature | What it does | Where in the code |
 |---|---|---|
-| Public site | One page with about 31 "views" (classes, PT, fight team, videos, team, blog, town pages, kids, FAQ, safeguarding, contact and more) switched by `#links` | `index.html` |
+| Public site | 32 sections (home, classes, PT, fight team, videos, team, blog, areas, 15 town pages, kids, kickboxing, fitness, women, self-defence, payments, fight levels, FAQ, safeguarding, contact). Each has its own web address (for example `/pt`, `/potters-bar`), title, description, canonical and link-preview tags. Clicking between them does not reload the page. Old `/#pt` links still work | `site-src/index.html`, `tools/build-pages.mjs` |
+| Terms and accessibility pages | Plain-English terms of use and an accessibility statement, linked from the footer | `terms.html`, `accessibility.html` |
+| Fonts and speed | Fonts are stored on the site (`assets/fonts`). Hero videos and the highlights video do not load on phones or until played | `assets/fonts.css`, `site-src/index.html` |
 | Hero carousel and video gallery | Owners change them in the coach area. Falls back to built-in defaults | `api/site.js`, `api/_lib/sitedefaults.js` |
 | Class timetable and live ticker | Follows the schedule owners and coaches keep in the coach area | `api/pt.js`, `index.html` |
 | Class pictures | A picture on each timetable card, chosen by owners | `api/site.js` (`classimg`), `coach.html` |
@@ -134,7 +139,7 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 
 **Analytics:** none. The site does not count visitors. There is no Turbo line. What it can't count: visits, enquiries by source, installs of the app.
 
-**Known limit: pages are not separate web addresses.** The 31 views switch with `#links` on one web address. Search engines see one page. The sitemap lists only the home page, `/book` and `/privacy`. Town, service and kids pages cannot be found individually in Google. This is the biggest findability gap (see sections 9 and 10).
+**Known limit.** Every page file still contains all the sections (only the right one is shown), so each file is about 270 KB before compression. The pages work, but they are heavier than they need to be. If speed matters later, split the sections into separate lighter pages.
 
 ## 6. Status
 
@@ -189,23 +194,23 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | Listed on Google and Bing, baseline recorded | **To confirm** | A Google listing seems to exist. No baseline recorded |
 | Crawler Hints or IndexNow | **To do** | Vercel has no setting for this. Use IndexNow if needed |
 | One address only (www and bare domain) | **Done** | Verified: bare domain redirects to www |
-| Hosting address redirects or is noindex | **To do** | Verified: `warrior-spirit-muay-thai.vercel.app` serves the full site, indexable. The canonical tag points to www, which helps, but add a redirect or noindex |
+| Hosting address redirects or is noindex | **Done (to verify live)** | Added a permanent redirect from any `*.vercel.app` address to www (not for `/api`, so scheduled jobs keep working). Check it after deploy |
 | robots.txt with sitemap, crawlers allowed | **Done** | Blocks only `/coach`, `/account`, `/api/`. Does not block any search or AI crawler |
-| Unique title, description, canonical, Open Graph, `lang="en-GB"` for every page | **Partly** | `lang` and canonical for the home page are set. Open Graph tags are missing. Views change the title in the browser, but search engines cannot see them as separate pages |
-| Sitemap with real last-changed dates | **To do** | Three addresses, no dates |
+| Unique title, description, canonical, Open Graph, `lang="en-GB"` for every page | **Done** | All 32 sections and the other pages have their own. Link-preview image is the gym photo with the logo |
+| Sitemap with real last-changed dates | **Done** | 36 addresses, dates from the last change to the source |
 | Real 404 for missing pages | **Done** | Verified |
 | Google-readable business details match the official facts | **Partly** | One `SportsActivityLocation` block with name, phone, address and areas. Opening hours and Ltd details not checked against the facts |
-| Genuinely local town and service pages | **To confirm** | They exist as views, but cannot be indexed (see section 5). Content quality not reviewed |
-| Speed score 90+ on mobile | **To confirm** | Not measured. Known risks: a background video on the home carousel, Google Fonts loaded from Google, about 82 MB of video files |
+| Genuinely local town and service pages | **To confirm** | They now have their own addresses. Content quality not reviewed |
+| Speed score 90+ on mobile | **To confirm** | Not measured on the live site. Fonts now stored locally and videos no longer load on phones. Images and the 270 KB page size are the next suspects |
 | Images WebP with width and height, lazy | **Partly** | Photos are WebP. Width and height not checked |
-| Fonts stored on the site, two families at most | **To do** | Three families from Google Fonts |
-| No background video on phones | **To confirm** | Home carousel has video slides |
-| Privacy notice names services, cookie-free counting, ICO line, last updated | **Partly** | Names Vercel, Upstash and Google. Last updated 25 Oct 2026. **No line saying people can complain to the ICO** |
+| Fonts stored on the site, two families at most | **Partly** | Stored on the site (done). Still three families (Big Shoulders Display, Barlow, Barlow Condensed), which is one more than the standard |
+| No background video on phones | **Done** | Hero videos show their poster picture on phones and data-saver |
+| Privacy notice names services, cookie-free counting, ICO line, last updated | **Done** | Names Vercel, Upstash and Google. Has the line about complaining to the ICO. No visitor counting at all. Last updated 25 Oct 2026 |
 | No tracking or advertising cookies | **Done** | Only login cookies |
-| Terms and accessibility statement | **To do** | Neither exists |
+| Terms and accessibility statement | **Done (draft)** | Both added 2 Nov 2026. Wording about photo opt-out, coach cancellations and video captions needs Steve's check (see section 13) |
 | Ltd company details in the footer | **To confirm** | Depends on the legal entity |
 | Real reviews with their source | **Done** | "4.9 from 100 Google reviews across our Potters Bar and Hoddesdon listings" |
-| Real photos. AI images labelled as illustrations | **To do** | The 10 new class and gear pictures (`photos/class-*.webp`) are AI-made and are **not labelled** |
+| Real photos. AI images labelled as illustrations | **Done** | The 10 AI class pictures show an "Illustration" label |
 | Affiliate disclosure | **n/a** | No affiliate links |
 | https and HSTS | **Done** | Verified: HSTS max-age 63072000 |
 | Frame, nosniff, referrer, permissions headers | **Done** | Verified |
@@ -216,18 +221,17 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 
 Most urgent first.
 
-1. **Give every page its own web address** (for example `/classes`, `/kids-muay-thai`, `/potters-bar`) with its own title, description and canonical, and list them all in the sitemap. Today Google sees one page. Needs agreement on how (generated pages or rewrites) before building.
-2. **Label the AI pictures** as illustrations, or replace them with real photos.
-3. **Privacy fixes:** add the ICO complaint line, then add terms and an accessibility statement.
-4. **Confirm the test enquiry arrives,** and confirm Search Console, Bing and the Google listing. Add Open Graph tags, a sitemap with dates and a redirect or noindex for the `vercel.app` address.
-5. **Measure mobile speed,** then fix the biggest causes (fonts, hero video, image sizes).
-6. **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
-7. Coaches change their starter passwords. Check two-step verification on all accounts.
-8. Move business details into one settings file.
-9. Add the site to Turbo, with enquiry reporting.
-10. Agree the FighterBase link (section 12), then build only what is agreed.
-11. Later: online payments and memberships. Check-in and attendance (likely FighterBase).
-12. Optional: an activity log of who changed what. Vercel Pro for "one hour before" reminders. Pro would also lift the 12-function limit.
+1. **Confirm the test enquiry arrives** at warriorspirit@gmail.com, and confirm Search Console, Bing and the Google listing. Submit the new sitemap (36 addresses) once the new pages are live.
+2. **Check the new pages live:** open a few (for example `/pt`, `/potters-bar`), check the `vercel.app` redirect, and run Google's mobile speed test.
+3. **Check Steve's wording** in the new terms and accessibility pages (section 13, question 11).
+4. **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
+5. Coaches change their starter passwords. Check two-step verification on all accounts.
+6. Reduce speed risks that remain: page size (all sections in every page), image sizes, one fewer font family. Add a content security policy.
+7. Move business details into one settings file.
+8. Add the site to Turbo, with enquiry reporting.
+9. Agree the FighterBase link (section 12), then build only what is agreed.
+10. Later: online payments and memberships. Check-in and attendance (likely FighterBase).
+11. Optional: an activity log of who changed what. Vercel Pro for "one hour before" reminders. Pro would also lift the 12-function limit.
 
 ## 11. Decisions log
 
@@ -258,6 +262,8 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 1 Nov 2026 | Owner-only features are blue with a star stamp. Everyone-else features stay red |
 | 1 Nov 2026 | Share studio: coaches can create, save, edit and reuse their own posts, with hashtags, writing tips and spellcheck |
 | 1 Nov 2026 | Owners get a Site overview page. This handbook is created |
+| 2 Nov 2026 | Steve: a lot of this site will move to FighterBase later (for example class booking and subscriptions). Effort now goes into public pages, legal pages and speed; tooling stays small |
+| 2 Nov 2026 | Every section gets its own web address. Pages are generated from one source file by a script and committed. Terms and accessibility pages added. Fonts stored on the site. Hero videos no longer load on phones. Link-preview tags, a dated sitemap and a redirect from the vercel.app address added. AI pictures labelled as illustrations |
 | 2 Nov 2026 | Two gym ring photos (Jay's Drive uploads) are straightened, zoomed and colour-boosted, then added to the photo library. Not placed on a page yet |
 
 ## 12. Still to decide
@@ -274,7 +280,6 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 
 **Other**
 - Whether coaches may propose video gallery changes for owner approval.
-- Whether the Photo library tile should be blue for owners.
 - Whether to find other photos of the person who left the club, and whether to swap other uses of that photo.
 - How to give every page its own web address (see wanted next, item 1).
 - Whether to keep the Hobby plan or move to Pro at launch.
@@ -292,4 +297,6 @@ Questions for Steve. Nothing here has been filled in as if it were true.
 7. Have the coaches changed their starter passwords, and is two-step verification on for the accounts above?
 8. Did the test enquiry arrive at warriorspirit@gmail.com?
 9. Are the opening hours in the Google-readable business details correct?
-10. Which of the 10 new pictures should be labelled as illustrations, or replaced by real photos?
+10. Should any of the 10 AI pictures be replaced by real photos? (They are now labelled as illustrations.)
+11. Please check the new terms and accessibility pages. Things I wrote without being told: members can ask to be left out of photos and videos; a coach can cancel a session and the customer is emailed; some videos have no captions; replies within 5 working days. Is each true?
+12. Whether the Photo library tile should be blue. Everyone can use the library, and blue means owners only, so it would clash.
