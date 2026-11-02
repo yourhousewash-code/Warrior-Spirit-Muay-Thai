@@ -41,6 +41,14 @@ export const PHOTOLIB = [
   "name": "Class: Drills and sparring"
  },
  {
+  "src": "photos/gym-ring-red.webp",
+  "name": "Gym: ring and bags in red light"
+ },
+ {
+  "src": "photos/gym-ring-pink.webp",
+  "name": "Gym: ring corner and kit"
+ },
+ {
   "src": "photos/aaron.webp",
   "name": "Aaron"
  },

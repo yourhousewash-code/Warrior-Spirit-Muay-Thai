@@ -12,7 +12,7 @@
 
 **Related:** SRS Site Factory handbook (how SRS builds sites) and the Turbo handbook (what happens after launch). Neither is linked to this site yet.
 
-**Last updated:** 1 November 2026
+**Last updated:** 2 November 2026
 
 ---
 
@@ -258,6 +258,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 1 Nov 2026 | Owner-only features are blue with a star stamp. Everyone-else features stay red |
 | 1 Nov 2026 | Share studio: coaches can create, save, edit and reuse their own posts, with hashtags, writing tips and spellcheck |
 | 1 Nov 2026 | Owners get a Site overview page. This handbook is created |
+| 2 Nov 2026 | Two gym ring photos (Jay's Drive uploads) are straightened, zoomed and colour-boosted, then added to the photo library. Not placed on a page yet |
 
 ## 12. Still to decide
 
