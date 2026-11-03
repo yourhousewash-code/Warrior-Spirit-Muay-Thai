@@ -12,7 +12,7 @@
 
 **Related:** SRS Site Factory handbook (how SRS builds sites) and the Turbo handbook (what happens after launch). Neither is linked to this site yet.
 
-**Last updated:** 2 November 2026 (evening)
+**Last updated:** 3 November 2026
 
 ---
 
@@ -70,7 +70,7 @@ Used the same way everywhere (site, Google, listings).
 8. Fight results are described as results the club knows about, not official governing-body records.
 9. Colour key in the coach area: red is for everyone on the team, blue with a star stamp is owners only.
 10. Commits to the repo are made as Steve Saunders, with no AI attribution.
-11. **Public pages are built from one source.** Edit `site-src/index.html`, then run `node tools/build-pages.mjs` and commit the generated `index.html`, the section pages (`pt.html`, `classes.html` and so on) and `sitemap.xml`. Never edit those generated files by hand.
+11. **Public pages are built from one source.** Edit `site-src/index.html`, then run `node tools/build-pages.mjs` and commit the generated `index.html`, the section pages (`pt.html`, `classes.html` and so on), `sitemap.xml`, `photo-usage.json` and `api/_lib/photousage.js`. Never edit those generated files by hand.
 12. Computer-made pictures are labelled "Illustration" on the site.
 13. Much of the booking, account and coach tooling is expected to move to FighterBase. Spend effort on the public pages, legal pages and speed here, and keep new tooling small.
 
@@ -114,7 +114,8 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Class pictures | A picture on each timetable card, chosen by owners | `api/site.js` (`classimg`), `coach.html` |
 | Opening hours | Editable by owners, site follows | `api/pt.js` (`hours`) |
 | Edit mode | Owners click any wording or photo on the live site to change it. Photos come from the library | `assets/editable.js`, `assets/editor.js` |
-| Photo library | Shared pool of photos. Coaches add their own. Owners add to carousel or delete. Drive photos sync in automatically | `api/site.js`, `api/gdrive.js`, `coach.html` |
+| Photos & videos hub | One tile for every photo (3 Nov 2026). **All photos** (filters: on the website, not used yet, mine, from the club Drive; Drive photos sync in) and **Add photos & videos** are for everyone. **Homepage carousel**, **Video gallery** and **Page photos** (every swappable photo spot, page by page, with Replace and Put back the original) are for owners. Hover a photo to see where it's shown; tap it for every place (each linked to the live page) and what you can do. Owners: replace everywhere, add to carousel, use on a page spot, take off the website (it stays in the library), delete (only once it's shown nowhere, or force-delete with a confirm). Coaches: use on my page (Jay approves), delete their own unused photos. Old links (`#uploads`, `#library`, `#media`) land on the right tab | `coach.html`, `api/site.js` (`hub`, `where`, `unpublish`, `replace-everywhere`) |
+| Photo map | The build script lists every image on the public pages (137, 70 swappable) with its page, place and edit-mode key, so the coach area knows where each photo is shown, together with the carousel, page swaps, class pictures and coach pages | `tools/build-pages.mjs`, `photo-usage.json`, `api/_lib/photousage.js` |
 | Site overview (owners) | Every photo, who added it, where it is used, Drive status | `api/site.js` (`overview`) |
 | Coach pages `/team/name` | Bio, photo gallery, prices | `api/team.js`, `api/profile.js` |
 | PT booking | Coaches set weekly hours and holidays. Customers book 1-to-1, doubles or groups, with email alerts | `api/pt.js`, `book.html` |
@@ -266,6 +267,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 2 Nov 2026 | Every section gets its own web address. Pages are generated from one source file by a script and committed. Terms and accessibility pages added. Fonts stored on the site. Hero videos no longer load on phones. Link-preview tags, a dated sitemap and a redirect from the vercel.app address added. AI pictures labelled as illustrations |
 | 2 Nov 2026 | Share studio: on phones the Instagram and TikTok buttons open the phone's share sheet with the picture attached (as a JPEG) and put the caption on the clipboard to paste. Instagram does not let any website pre-fill a caption. Computers keep the old way: open the site, copy the caption, save the picture |
 | 2 Nov 2026 | Two gym ring photos (Jay's Drive uploads) are straightened, zoomed and colour-boosted, then added to the photo library. Not placed on a page yet |
+| 3 Nov 2026 | Photos & videos, Photo library and Website photos & videos become one **Photos & videos** hub. Every photo shows where it's shown on the website. Owners can replace it everywhere, take it off the website (it stays in the library) or delete it. Coaches can put it on their own page (Jay approves) and delete their own unused photos. A photo can only be deleted once it's shown nowhere. "Replace everywhere" never changes coach pages; "Take off the website" also removes it from coach galleries. The build script also writes a map of every photo on the public pages |
 
 ## 12. Still to decide
 
@@ -300,4 +302,4 @@ Questions for Steve. Nothing here has been filled in as if it were true.
 9. Are the opening hours in the Google-readable business details correct?
 10. Should any of the 10 AI pictures be replaced by real photos? (They are now labelled as illustrations.)
 11. Please check the new terms and accessibility pages. Things I wrote without being told: members can ask to be left out of photos and videos; a coach can cancel a session and the customer is emailed; some videos have no captions; replies within 5 working days. Is each true?
-12. Whether the Photo library tile should be blue. Everyone can use the library, and blue means owners only, so it would clash.
+12. ~~Whether the Photo library tile should be blue.~~ Settled 3 Nov 2026: one red Photos & videos tile (everyone uses it), with the owner tabs inside blue.
