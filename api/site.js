@@ -4,6 +4,9 @@ import { accessToken, driveTrash, folderId, configured as driveConfigured, KEY_R
 import { redis, COACHES, loadCoaches, send, bad, setupProblem, body, clean, coachSession, coachEmail, mail, SITE } from './_lib/core.js';
 import { DEFAULT_HERO, DEFAULT_VIDEOS } from './_lib/sitedefaults.js';
 import { PHOTOLIB } from './_lib/photolib.js';
+import { PHOTO_USAGE, TIMETABLE_URL } from './_lib/photousage.js';
+import { GALLERY, profilePhotoUrl } from './_lib/profiles.js';
+import { getClasses } from './_lib/avail.js';
 
 /* Website photos and videos that coaches can change.
    LISTS: the hero carousel and the video gallery. Until someone edits a list, the website keeps its built-in version.
@@ -43,17 +46,129 @@ async function library() {
   const hid = new Set(((await redis.smembers('site:libhide')) || []).map(String));
   return [...PHOTOLIB.map(p => ({ ...p, builtin: true })), ...((await redis.get('site:library')) || [])].filter(p => !hid.has(p.src));
 }
-/* Where is a photo currently used on the site? */
-async function usedBy(src) {
-  const [hero, imgs] = await Promise.all([redis.get('site:hero'), redis.get('site:images')]);
-  const where = [];
-  if ((hero?.items || DEFAULT_HERO).some(h => h.src === src)) where.push('the home page carousel');
-  if (Object.values(imgs || {}).some(v => v?.src === src)) where.push('a photo on the site');
-  for (const c of Object.keys(COACHES)) {
-    const p = await redis.get(`profile:${c}:live`);
-    if (p && (p.photo === src || String(p.gallery || '').split('|').includes(src))) where.push(`${COACHES[c].first}’s page`);
+/* ---- Where is each photo shown on the website? ----
+   Put together from: the homepage carousel (site:hero), every photo on the public pages (PHOTO_USAGE, made by
+   tools/build-pages.mjs) with owners' swaps (site:images), the class pictures on the timetable (site:classimg),
+   and the coach pages (live profile gallery, the standard gallery, the main photo). */
+const norm = s => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+const STATIC_TIMETABLE = ['Kids', 'Drills & sparring', 'Pads', 'Beginners', 'Sparring', 'Personal training'];
+const mergedCI = ci => Object.fromEntries(Object.entries({ ...CLASSIMG, ...(ci || {}) }).filter(([, v]) => v));
+/* The picture a timetable card shows, picked the same way as the public page. Returns [the key it came from, the photo]. */
+function classPick(name, merged) { const n = norm(name); if (merged[n]) return [n, merged[n]]; if (/kid/.test(n) && merged.kids) return ['kids', merged.kids]; return [n, '']; }
+const andList = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`;
+const galList = g => String(g || '').split('|').filter(Boolean);
+/* "photos/poster-dino.webp" → "Poster dino"; uploads lose their time stamp */
+const nameFromFile = src => { const f = src.split('/').pop().replace(/\.\w+$/, '').replace(/^\d{10,}-/, '').replace(/[-_]+/g, ' ').trim(); return f ? f[0].toUpperCase() + f.slice(1) : 'Photo'; };
+
+async function siteState() {
+  const [hero, imgs, ci, classes, lib] = await Promise.all([redis.get('site:hero'), redis.get('site:images'), redis.get('site:classimg'), getClasses(), redis.get('site:library')]);
+  const profiles = {}, drafts = {};
+  await Promise.all(Object.keys(COACHES).map(async c => { [profiles[c], drafts[c]] = await Promise.all([redis.get(`profile:${c}:live`), redis.get(`profile:${c}:draft`)]); }));
+  /* class names on the timetable: the coach area's schedule, or the page's built-in timetable if there is none */
+  const live = (classes || []).filter(k => COACHES[k.coach]);
+  const names = live.length ? [...new Set(live.map(k => k.name))] : STATIC_TIMETABLE.slice();
+  if (live.length && !live.some(k => k.day === 6)) names.push('Personal training');
+  return { hero: hero?.items || DEFAULT_HERO, imgs: imgs || {}, ci: ci || {}, names, profiles, drafts, libSrcs: new Set([...PHOTOLIB, ...(lib || [])].map(x => x.src)) };
+}
+/* Map of photo → every place it is shown. Each place: kind (carousel, spot, fixed, class, coach), label, page, url. */
+function placesFrom(st) {
+  const m = new Map(), add = (src, p) => { if (!src) return; if (!m.has(src)) m.set(src, []); m.get(src).push(p); };
+  for (const h of st.hero) if (h.type !== 'video') add(h.src, { kind: 'carousel', label: 'Homepage carousel', page: 'Homepage carousel', url: '/' });
+  for (const u of PHOTO_USAGE) {
+    if (u.kind === 'carousel' || u.kind === 'videos') continue;
+    if (u.coach && st.profiles[u.coach]?.photo) continue; // the coach's own profile photo shows here instead
+    const o = u.key && st.imgs[u.key]?.src ? st.imgs[u.key] : null;
+    add(o ? o.src : u.src, { kind: u.kind, ...(u.key ? { key: u.key } : {}), label: u.page + (u.place ? `: ${u.place}` : ''), page: u.page, url: u.url, original: !o, orig: u.src });
   }
-  return where;
+  const merged = mergedCI(st.ci), seen = new Set();
+  for (const name of st.names) {
+    const [k, src] = classPick(name, merged), label = `Timetable: ${name}`;
+    if (!src || seen.has(label)) continue; seen.add(label);
+    add(src, { kind: 'class', name: norm(name), ckey: k, label, page: 'Class timetable', url: TIMETABLE_URL, original: !st.ci[k] });
+  }
+  for (const c of Object.keys(COACHES)) {
+    const co = COACHES[c]; if (!co.listed) continue;
+    const p = st.profiles[c], page = `${co.first}’s coach page`, url = `/team/${c}`;
+    const g = galList(p?.gallery).filter(s => st.libSrcs.has(s));
+    if (g.length) g.forEach(s => add(s, { kind: 'coach', coach: c, part: 'gallery', label: page, page, url }));
+    else (GALLERY[c] || []).forEach(([s]) => add(s, { kind: 'coach', coach: c, part: 'standard', label: page, page, url }));
+    if (!p?.photo && co.photo) add(co.photo, { kind: 'coach', coach: c, part: 'photo', label: `${page}: main photo`, page, url });
+  }
+  return m;
+}
+async function placesFor(src) { return placesFrom(await siteState()).get(src) || []; }
+async function usedBy(src) { return [...new Set((await placesFor(src)).map(p => p.label))]; }
+const FIXED_WHY = 'It’s built into the page design here, so it can’t be changed from the coach area.';
+
+/* Take a photo off every place it is shown, but keep it in the library. dry: only work out what would happen.
+   Carousel: removed. Page spots: back to their original. Class pictures: back to the standard picture, or none if that is this photo.
+   Coach pages: taken out of the coach's gallery (and out of changes waiting for approval). Returns what was done and what is left. */
+async function takeOff(src, me, dry) {
+  const st = await siteState(), places = placesFrom(st).get(src) || [], done = [], left = [];
+  const items = st.hero.filter(h => h.src !== src);
+  if (items.length !== st.hero.length) {
+    if (!items.length) left.push({ label: 'Homepage carousel', why: 'The carousel needs at least one photo. Add another one first.' });
+    else { if (!dry) await redis.set('site:hero', { items, updatedAt: Date.now(), by: me.id }); done.push('Homepage carousel'); }
+  }
+  const imgs = Object.fromEntries(Object.entries(st.imgs).filter(([, v]) => v?.src !== src));
+  if (!dry && Object.keys(imgs).length !== Object.keys(st.imgs).length) await redis.set('site:images', imgs);
+  for (const p of places.filter(p => p.kind === 'spot' || p.kind === 'fixed')) {
+    if (p.kind === 'fixed') left.push({ label: p.label, why: FIXED_WHY });
+    else if (p.original || p.orig === src) left.push({ label: p.label, why: 'It’s the original photo here. Use “Replace everywhere” to put a different photo in.' });
+    else done.push(`${p.label} (back to its original photo)`);
+  }
+  const ci = { ...st.ci }; let cch = false;
+  for (const p of places.filter(p => p.kind === 'class')) {
+    for (let i = 0; i < 4; i++) {
+      const [k, cur] = classPick(p.name, mergedCI(ci)); if (cur !== src) break;
+      if (ci[k]) delete ci[k]; else ci[k] = null; // undo an owner's choice; if the standard picture is this photo too, show none
+      cch = true;
+    }
+    done.push(`${p.label} (${classPick(p.name, mergedCI(ci))[1] ? 'back to its standard picture' : 'now shows no picture'})`);
+  }
+  if (cch && !dry) await redis.set('site:classimg', ci);
+  for (const c of new Set(places.filter(p => p.kind === 'coach').map(p => p.coach))) {
+    const ps = places.filter(p => p.kind === 'coach' && p.coach === c), first = COACHES[c].first, page = `${first}’s coach page`, live = st.profiles[c];
+    if (ps.some(p => p.part === 'gallery' || p.part === 'standard')) {
+      if (!live) left.push({ label: page, why: `It’s one of the standard photos on ${first}’s page. Choose ${first}’s own gallery photos in My profile to change it.` });
+      else {
+        let g = galList(live.gallery); if (!g.length) g = (GALLERY[c] || []).map(x => x[0]);
+        g = g.filter(s => s !== src);
+        if (!g.length) g = (GALLERY[c] || []).map(x => x[0]).filter(s => s !== src); // an empty gallery shows the standard photos
+        if (!dry) await redis.set(`profile:${c}:live`, { ...live, gallery: g.join('|'), updatedAt: Date.now() });
+        done.push(`${page} (taken out of the gallery)`);
+      }
+    }
+    if (ps.some(p => p.part === 'photo')) left.push({ label: `${page}: main photo`, why: `It’s ${first}’s main photo. Upload a different one in My profile.` });
+  }
+  /* changes a coach has sent for approval would bring it back, so take it out of those too */
+  if (!dry) for (const c of Object.keys(COACHES)) {
+    const d = st.drafts[c]; if (d && galList(d.gallery).includes(src)) await redis.set(`profile:${c}:draft`, { ...d, gallery: galList(d.gallery).filter(s => s !== src).join('|') });
+  }
+  return { done, left };
+}
+/* Swap one photo for another wherever owners can change it: carousel, page spots, class pictures. Coach pages are left to the coach. */
+async function replaceEverywhere(src, to, alt, me) {
+  const st = await siteState(), places = placesFrom(st).get(src) || [], done = [], left = [];
+  if (st.hero.some(h => h.type !== 'video' && h.src === src)) {
+    const has = st.hero.some(h => h.src === to);
+    const items = has ? st.hero.filter(h => h.src !== src) : st.hero.map(h => h.type !== 'video' && h.src === src ? { ...h, src: to, alt, pos: '50% 50%' } : h);
+    await redis.set('site:hero', { items, updatedAt: Date.now(), by: me.id }); done.push('Homepage carousel');
+  }
+  const imgs = { ...st.imgs }; let ch = false;
+  for (const p of places) {
+    if (p.kind === 'spot') { if (p.orig === to) delete imgs[p.key]; else imgs[p.key] = { src: to, alt, orig: p.orig }; ch = true; done.push(p.label); }
+    else if (p.kind === 'fixed') left.push({ label: p.label, why: FIXED_WHY });
+  }
+  if (ch) await redis.set('site:images', imgs);
+  const ci = { ...st.ci }; let cch = false;
+  for (const p of places.filter(p => p.kind === 'class')) { if (CLASSIMG[p.ckey] === to) delete ci[p.ckey]; else ci[p.ckey] = to; cch = true; done.push(p.label); }
+  if (cch) await redis.set('site:classimg', ci);
+  for (const p of places.filter(p => p.kind === 'coach')) {
+    const first = COACHES[p.coach].first;
+    left.push({ label: p.label, why: p.part === 'photo' ? `It’s ${first}’s main photo. Upload a different one in My profile.` : `Coach pages aren’t changed by this. Change ${first}’s gallery in My profile.` });
+  }
+  return { done, left };
 }
 async function cleanEdits(d) {
   const lib = new Set((await library()).map(x => x.src));
@@ -106,7 +221,28 @@ export default async function handler(req, res) {
     const b = body(req);
     const list = clean(req.query.list || b.list, 10);
     /* Changing the website itself is for the owners only. Other coaches can still read the photo library for their own profile gallery. */
-    if (!me.admin && ['get', 'save', 'discard', 'classimg-save', 'overview', 'edits-get', 'edits-save', 'edits-discard'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
+    if (!me.admin && ['get', 'save', 'discard', 'classimg-save', 'overview', 'edits-get', 'edits-save', 'edits-discard', 'unpublish', 'replace-everywhere'].includes(action)) return bad(res, 'Only Jay and Steve can change the website.', 403);
+
+    /* Photos & videos hub: the whole library, each photo with every place it is shown. Owners also get every swappable photo spot. */
+    if (action === 'hub') {
+      const [lib, st] = await Promise.all([library(), siteState()]);
+      const pm = placesFrom(st), inLib = new Set(lib.map(p => p.src));
+      const photos = lib.map(p => ({ src: p.src, name: p.name || 'Photo', by: p.by || (p.builtin ? 'club' : ''), at: p.at || 0, builtin: !!p.builtin, drive: !!p.driveId, places: pm.get(p.src) || [] }));
+      /* owners also see photos that are on the site but not in the library (older carousel uploads, hidden originals) */
+      if (me.admin) for (const [src, places] of pm) if (!inLib.has(src) && (FILE.test(src) || /^photos\//.test(src))) {
+        photos.push({ src, name: PHOTOLIB.find(x => x.src === src)?.name || st.hero.find(h => h.src === src)?.alt || nameFromFile(src), by: '', at: 0, builtin: !FILE.test(src), extra: true, places });
+      }
+      const spots = me.admin ? PHOTO_USAGE.filter(u => u.key).map(u => {
+        const o = st.imgs[u.key]?.src ? st.imgs[u.key] : null, pp = u.coach && st.profiles[u.coach]?.photo;
+        return { key: u.key, page: u.page, place: u.place, url: u.url, orig: u.src, src: o ? o.src : u.src, swapped: !!o, ...(pp ? { profilePhoto: profilePhotoUrl(u.coach, pp), first: COACHES[u.coach]?.first || u.coach } : {}) };
+      }) : [];
+      const mine = st.drafts[me.id] || st.profiles[me.id];
+      return send(res, 200, { photos, spots, admin: !!me.admin, me: me.id, myPage: !!COACHES[me.id]?.listed, myGallery: galList(mine?.gallery), myLive: galList(st.profiles[me.id]?.gallery), myPending: st.drafts[me.id]?.status === 'pending' });
+    }
+    if (action === 'where') {
+      const src = clean(req.query.src || b.src, 300);
+      return send(res, 200, { src, places: await placesFor(src) });
+    }
 
     if (action === 'library') {
       const [photos, hero] = await Promise.all([library(), redis.get('site:hero')]);
@@ -126,19 +262,14 @@ export default async function handler(req, res) {
       const item = cur.find(x => x.src === src), builtin = PHOTOLIB.some(p => p.src === src);
       if (!item && !builtin) return bad(res, 'That photo isn’t in the library.', 404);
       if (!me.admin && (builtin || item.by !== me.id)) return bad(res, 'You can only delete photos you added.', 403);
-      let used = await usedBy(src);
       if (me.admin && b.force) {
-        /* Owners can take it off the carousel and put site photos back to the original, then delete. */
-        const hero = await redis.get('site:hero'), items = (hero?.items || DEFAULT_HERO).filter(h => h.src !== src);
-        if (items.length !== (hero?.items || DEFAULT_HERO).length) {
-          if (!items.length) return bad(res, 'The carousel needs at least one photo. Add another one first.', 409);
-          await redis.set('site:hero', { items, updatedAt: Date.now(), by: me.id });
-        }
-        const imgs = await redis.get('site:images');
-        if (imgs) { const k = Object.fromEntries(Object.entries(imgs).filter(([, v]) => v?.src !== src)); await redis.set('site:images', k); }
-        used = (await usedBy(src)).filter(w => /’s page$/.test(w));
+        /* Owners: take it off everywhere it's shown, then delete. If it can't come off somewhere, change nothing. */
+        const plan = await takeOff(src, me, true);
+        if (plan.left.length) return bad(res, `That photo can’t be taken off ${andList([...new Set(plan.left.map(x => x.label))])}, so it hasn’t been deleted. ${plan.left[0].why}`, 409);
+        await takeOff(src, me, false);
       }
-      if (used.length) return bad(res, `That photo is still used on ${used.join(' and ')}. Swap it out there first.`, 409);
+      const used = await usedBy(src);
+      if (used.length) return bad(res, `That photo is still shown on ${andList(used)}. ${me.admin ? 'Take it off the website first.' : 'Ask Jay or Steve to take it off the website first.'}`, 409);
       if (builtin) { await redis.sadd('site:libhide', src); return send(res, 200, { ok: true, hidden: true }); }
       await redis.set('site:library', cur.filter(x => x.src !== src));
       const path = /path=(.+)$/.exec(src)?.[1];
@@ -148,13 +279,9 @@ export default async function handler(req, res) {
     }
     if (action === 'overview') {
       if (!me.admin) return bad(res, 'Only Jay and Steve can see the overview.', 403);
-      const [lib, hero, vids, imgs, txt, ci] = await Promise.all([library(), redis.get('site:hero'), redis.get('site:videos'), redis.get('site:images'), redis.get('site:text'), redis.get('site:classimg')]);
-      const used = new Map(); const add = (src, w) => { if (!src) return; if (!used.has(src)) used.set(src, []); used.get(src).push(w); };
-      (hero?.items || DEFAULT_HERO).forEach(h => add(h.src, 'Homepage carousel'));
-      Object.entries(imgs || {}).forEach(([k, v]) => v && add(v.src, 'Page photo'));
-      Object.entries({ ...CLASSIMG, ...(ci || {}) }).forEach(([k, v]) => v && add(v, `Timetable: ${k}`));
-      for (const c of Object.keys(COACHES)) { const p = await redis.get(`profile:${c}:live`); if (p) { add(p.photo, `${COACHES[c].first}’s page`); String(p.gallery || '').split('|').filter(Boolean).forEach(g => add(g, `${COACHES[c].first}’s page`)); } }
-      const photos = lib.map(p => ({ src: p.src, name: p.name, by: p.by || (p.builtin ? 'club' : ''), at: p.at || 0, builtin: !!p.builtin, drive: !!p.driveId, usedOn: [...new Set(used.get(p.src) || [])] }));
+      const [lib, hero, vids, imgs, txt, st] = await Promise.all([library(), redis.get('site:hero'), redis.get('site:videos'), redis.get('site:images'), redis.get('site:text'), siteState()]);
+      const used = placesFrom(st);
+      const photos = lib.map(p => ({ src: p.src, name: p.name, by: p.by || (p.builtin ? 'club' : ''), at: p.at || 0, builtin: !!p.builtin, drive: !!p.driveId, usedOn: [...new Set((used.get(p.src) || []).map(x => x.label))] }));
       let drive = { connected: false, waiting: 0, total: 0 };
       try {
         if (driveConfigured() && await redis.get(KEY_REFRESH)) {
@@ -234,7 +361,7 @@ export default async function handler(req, res) {
       const next = { text: { ...prev.text, ...d.text }, images: { ...prev.images, ...d.images }, by: me.id, at: Date.now(), note: clean(b.note, 300) };
       await redis.set(`site:pending:edits:${me.id}`, next);
       const to = await Promise.all(['jay', 'steve'].map(coachEmail));
-      await mail(to.filter(Boolean), `${nameOf(me.id)} has edited the website`, [`${COACHES[me.id].name} has changed some wording or photos on the website.`, 'They won’t show until you approve them.', `Review them here: ${SITE}/coach#media`]);
+      await mail(to.filter(Boolean), `${nameOf(me.id)} has edited the website`, [`${COACHES[me.id].name} has changed some wording or photos on the website.`, 'They won’t show until you approve them.', `Review them here: ${SITE}/coach#photos/carousel`]);
       return send(res, 200, { status: 'pending' });
     }
     if (action === 'edits-discard' && req.method === 'POST') { await redis.del(`site:pending:edits:${me.id}`); return send(res, 200, { ok: true }); }
@@ -259,7 +386,7 @@ export default async function handler(req, res) {
       const to = await Promise.all(['jay', 'steve'].map(coachEmail));
       await mail(to.filter(Boolean), `${nameOf(me.id)} has changed the website ${LISTS[list].label.toLowerCase()}`, [
         `${COACHES[me.id].name} has sent changes to the ${LISTS[list].label.toLowerCase()} on the website.`,
-        'They won’t show until you approve them.', `Review them here: ${SITE}/coach#club`]);
+        'They won’t show until you approve them.', `Review them here: ${SITE}/coach#photos/carousel`]);
       return send(res, 200, { status: 'pending' });
     }
 
@@ -318,7 +445,7 @@ export default async function handler(req, res) {
       }
       await redis.del(key);
       const note = clean(b.note, 300);
-      if (to) await mail(to, 'Website changes not approved', [`Your changes to the ${LISTS[list].label.toLowerCase()} weren’t approved this time.`, note ? `Note: ${note}` : '', `You can try again here: ${SITE}/coach#club`].filter(Boolean));
+      if (to) await mail(to, 'Website changes not approved', [`Your changes to the ${LISTS[list].label.toLowerCase()} weren’t approved this time.`, note ? `Note: ${note}` : '', `You can try again here: ${SITE}/coach#photos`].filter(Boolean));
       return send(res, 200, { status: 'rejected' });
     }
 
@@ -326,6 +453,26 @@ export default async function handler(req, res) {
       if (!LISTS[list]) return bad(res, 'Unknown list.', 404);
       await redis.del(`site:${list}`);
       return send(res, 200, { ok: true });
+    }
+
+    /* Take a photo off the website everywhere it's shown, keeping it in the library. */
+    if (action === 'unpublish' && req.method === 'POST') {
+      const src = clean(b.src, 300);
+      if (!okSrc(src)) return bad(res, 'Not a valid photo.');
+      const lib = new Set((await library()).map(x => x.src));
+      if (!lib.has(src) && !(await placesFor(src)).length) return bad(res, 'That photo isn’t in the photo library.', 404);
+      return send(res, 200, await takeOff(src, me, false));
+    }
+    /* Swap a photo for another library photo in the carousel, page spots and class pictures. */
+    if (action === 'replace-everywhere' && req.method === 'POST') {
+      const src = clean(b.src, 300), to = clean(b.to, 300);
+      if (!okSrc(src) || !okSrc(to)) return bad(res, 'Not a valid photo.');
+      if (src === to) return bad(res, 'Pick a different photo.');
+      const libList = await library(), lib = new Set(libList.map(x => x.src));
+      if (!lib.has(to)) return bad(res, 'The new photo isn’t in the photo library.', 404);
+      if (!lib.has(src) && !(await placesFor(src)).length) return bad(res, 'That photo isn’t in the photo library.', 404);
+      const p = libList.find(x => x.src === to), alt = p?.builtin ? clean(p.name, 200) : '';
+      return send(res, 200, await replaceEverywhere(src, to, alt, me));
     }
     return bad(res, 'Unknown action', 404);
   } catch (e) {

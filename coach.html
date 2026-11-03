@@ -48,14 +48,14 @@
 .tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 @media (max-width:1100px){.tiles{grid-template-columns:1fr 1fr}}
 .tile{background:var(--ink-2);border:1px solid var(--line);border-left:4px solid var(--red);color:var(--bone);text-align:left;padding:18px;display:grid;grid-template-columns:44px 1fr;gap:4px 16px;align-items:start;cursor:pointer;font:inherit}
-.tile[data-admin-only],.panel[data-admin-only]{position:relative}
-.tile[data-admin-only]::after,.panel[data-admin-only]::after,.ownkey i.o::after{content:"";position:absolute;top:10px;right:10px;width:28px;height:28px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%234d8dff' stroke='%23fff' stroke-width='2'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23fff' stroke-width='1' stroke-dasharray='2 2'/><path d='M16 8.5l2.2 4.7 5.1.6-3.8 3.5 1 5.1L16 20l-4.5 2.4 1-5.1-3.8-3.5 5.1-.6z' fill='%23fff'/></svg>") center/contain no-repeat;transform:rotate(-12deg);pointer-events:none}
+.tile[data-admin-only],.panel[data-admin-only],.panel.own,.ownacts{position:relative}
+.tile[data-admin-only]::after,.panel[data-admin-only]::after,.panel.own::after,.ownacts::after,.ownkey i.o::after{content:"";position:absolute;top:10px;right:10px;width:28px;height:28px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%234d8dff' stroke='%23fff' stroke-width='2'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23fff' stroke-width='1' stroke-dasharray='2 2'/><path d='M16 8.5l2.2 4.7 5.1.6-3.8 3.5 1 5.1L16 20l-4.5 2.4 1-5.1-3.8-3.5 5.1-.6z' fill='%23fff'/></svg>") center/contain no-repeat;transform:rotate(-12deg);pointer-events:none}
 .ownkey i.o{position:relative;border-left-color:#4d8dff;background:none;width:22px;height:22px;margin-right:8px;vertical-align:-6px;border-left:0}
 .ownkey i.o::after{top:0;right:0;width:22px;height:22px}
 .tile[data-admin-only]{border-left-color:#4d8dff;background:linear-gradient(90deg,rgba(77,141,255,.10),var(--ink-2) 55%)}
 .tile[data-admin-only] svg,.tile[data-admin-only] em{color:#4d8dff}
 .tile[data-admin-only]:hover{border-color:#4d8dff}
-.panel[data-admin-only]{border-top-color:#4d8dff}
+.panel[data-admin-only],.panel.own{border-top-color:#4d8dff}
 .ownkey{display:flex;align-items:center;gap:16px;flex-wrap:wrap;color:var(--soft);font-size:14px;margin:0 0 4px}
 .ownkey i{display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;border-left:4px solid var(--red);background:var(--ink-2)}
 .ownkey i.o{border-left-color:#4d8dff;background:rgba(77,141,255,.25)}
@@ -198,6 +198,47 @@
 .mfocus img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .mfocus i{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border:3px solid var(--red);border-radius:50%;box-shadow:0 0 0 2px #fff;pointer-events:none}
 .mchecks{display:flex;gap:14px;flex-wrap:wrap}.mchecks label{display:flex;gap:6px;align-items:center;grid-template-columns:none}
+/* Photos & videos hub */
+.mtabs button[data-admin-only]{position:relative;border-color:rgba(77,141,255,.55);color:#9dbdff;padding-right:38px}
+.mtabs button[data-admin-only]::after{content:"";position:absolute;right:9px;top:50%;width:20px;height:20px;margin-top:-10px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%234d8dff' stroke='%23fff' stroke-width='2'/><path d='M16 8.5l2.2 4.7 5.1.6-3.8 3.5 1 5.1L16 20l-4.5 2.4 1-5.1-3.8-3.5 5.1-.6z' fill='%23fff'/></svg>") center/contain no-repeat;transform:rotate(-12deg)}
+.mtabs button[data-admin-only][aria-selected=true]{background:#4d8dff;border-color:#4d8dff;color:#fff}
+.pf{display:flex;gap:6px;flex-wrap:wrap}
+.pf button{border:1px solid var(--line);background:none;color:var(--soft);padding:8px 12px;font:700 13px var(--cond);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;min-height:38px}
+.pf button[aria-pressed=true]{background:var(--bone);border-color:var(--bone);color:var(--ink)}
+button.phc{font:inherit;color:inherit;cursor:pointer;text-align:left;padding:0}
+button.mth.phc{display:block;width:100%;border:0}
+.mcard.phc:hover,.mcard.phc:focus-visible{border-color:var(--bone)}
+.mth .tag.on{background:var(--free);color:#000}
+.mth .tag.sw{background:#4d8dff;color:#fff}
+.mth .shown{position:absolute;left:0;right:0;bottom:0;padding:20px 8px 7px;background:linear-gradient(transparent,rgba(0,0,0,.92) 45%);color:#fff;font:600 12px/1.3 var(--body);text-align:left;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s;pointer-events:none}
+.phc:hover .shown,.phc:focus-visible .shown,.mcard:hover .phc .shown{opacity:1;transform:none}
+@media (hover:none){.mth .shown{display:none}}
+.phd{width:min(820px,calc(100vw - 24px))}
+.phbig{background:#000;display:grid;place-items:center;margin:-22px -22px 0}
+.phbig img{display:block;max-width:100%;max-height:50vh;object-fit:contain}
+.phh{font:700 14px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+.phwhere{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.phwhere li{display:flex;gap:6px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--ink);border-left:3px solid var(--free);padding:9px 12px;font-size:15px}
+.phwhere li small{display:block;color:var(--muted);font-size:13px}
+.phwhere li.none{border-left-color:var(--line);color:var(--muted)}
+.phwhere a{color:var(--bone);font:700 13px var(--cond);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.ownacts{border-left:4px solid #4d8dff;background:linear-gradient(90deg,rgba(77,141,255,.12),transparent 75%);padding:12px 46px 12px 14px;display:grid;gap:10px;margin-top:12px}
+.ownacts>b{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:#9dbdff}
+.btn.blue{background:#4d8dff;border-color:#4d8dff;color:#fff}
+.btn.blue.ghost{background:transparent;color:#cfe0ff}
+.btn.ghost.danger{color:var(--bad)}
+.phres{display:grid;gap:4px;font-size:14px;border-left:3px solid var(--free);background:var(--ink);padding:10px 12px}
+.phres.warn{border-left-color:var(--tbc)}
+.phres ul{margin:0;padding-left:18px;color:var(--soft)}
+.spg{background:var(--ink);border:1px solid var(--line)}
+.spg>summary{cursor:pointer;padding:12px 14px;display:flex;gap:6px 12px;align-items:baseline;flex-wrap:wrap;list-style:none}
+.spg>summary::-webkit-details-marker{display:none}
+.spg>summary::before{content:"\25B8";color:var(--muted)}
+.spg[open]>summary::before{content:"\25BE"}
+.spg>summary b{font:900 20px/1 var(--display);text-transform:uppercase}
+.spg .mgrid{padding:0 12px 12px}
+.mb a.see{color:var(--soft);font-size:13px}
+@media (max-width:560px){#libGrid,#ppGrid,#spotList .mgrid,#ovUsed,#ovUnused{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#libGrid .mb,#spotList .mb,#ppGrid .mb{padding:8px;gap:6px}#libGrid .mb b,#ppGrid .mb b,#spotList .mb b{font-size:13px}.mth .tag{font-size:10px;padding:2px 5px}#spotList .mb .btn.small{padding:8px 9px;font-size:12px}}
 .dlg{background:var(--ink-2);color:var(--bone);border:0;border-top:4px solid var(--red);padding:22px;width:min(520px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto}
 .dlg::backdrop{background:rgba(0,0,0,.65)}
 .trow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:12px;background:var(--ink);border-left:4px solid var(--c,var(--line));align-items:start}
@@ -304,9 +345,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5M19 8v6M16 11h6"/></svg>
           <b>Manage coaches</b><p>Add a new coach, give them a login, reset a forgotten password, or hide a coach who’s left. Only you can see this.</p><em>Open →</em>
         </button>
-        <button type="button" class="tile" data-go="uploads">
+        <button type="button" class="tile" data-go="photos">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="1"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 8M12 2v6M9 5l3-3 3 3"/></svg>
-          <b>Photos &amp; videos</b><p>Send training and fight-night photos and videos straight from your phone. They’re stored privately so Steve can use them on the website and socials.</p><em>Open →</em>
+          <b>Photos &amp; videos</b><p id="phTileText">Every club photo in one place. Tap one to see where it’s shown on the website. Add your own photos, use them on your coach page, and send videos from your phone.</p><em>Open →</em>
         </button>
         <button type="button" class="tile" data-go="schedule">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M3 9h18M8 2v4M16 2v4M7 14h4M7 17h8"/></svg>
@@ -322,15 +363,7 @@
         </button>
         <button type="button" class="tile" data-go="overview" data-admin-only hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12s3.5-7 9-7 9 7 9 7-3.5 7-9 7-9-7-9-7z"/><circle cx="12" cy="12" r="3"/></svg>
-          <b>Site overview</b><p>Owners only. See every photo, who added it, and where it is used on the website. Spot photos not used anywhere yet.</p><em>Open →</em>
-        </button>
-        <button type="button" class="tile" data-go="library">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
-          <b>Photo library</b><p>Every club photo in one place, including the ones uploaded to the club Drive. Add your own, use them on the website or your page, or delete ones you don’t want.</p><em>Open →</em>
-        </button>
-        <button type="button" class="tile" data-go="media" data-admin-only hidden>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="1"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 15l-5-5L7 18M8 21h8"/></svg>
-          <b>Website photos &amp; videos</b><p>Owners only. Add, replace, remove and reorder the photos in the homepage carousel and the videos in the video gallery.</p><em>Open →</em>
+          <b>Site overview</b><p>Owners only. A summary of the website: carousel, videos, wording changes, the club Drive and anything waiting for approval. Every photo and where it is used, with a link into Photos &amp; videos.</p><em>Open →</em>
         </button>
         <button type="button" class="tile" data-go="share">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
@@ -481,22 +514,131 @@
       <div class="panel"><div id="bookList" class="list"><p class="empty">Loading…</p></div></div>
     </div>
 
-    <!-- ===== UPLOADS ===== -->
-    <div data-view="uploads" class="stack" style="gap:18px" hidden>
+    <!-- ===== PHOTOS & VIDEOS (everyone; carousel, video gallery and page photos are owners only) ===== -->
+    <div data-view="photos" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
-      <h1>Photos &amp; videos</h1>
-      <div class="panel">
+      <div class="calhead"><h1>Photos &amp; videos</h1></div>
+      <p class="muted" id="phHelp" style="margin:0"></p>
+      <div class="panel" id="mApprovals" hidden style="border-top-color:var(--tbc)"></div>
+      <div class="mtabs" role="tablist" aria-label="Photos and videos">
+        <button type="button" role="tab" data-ptab="all" aria-selected="true">All photos</button>
+        <button type="button" role="tab" data-ptab="add" aria-selected="false">Add photos &amp; videos</button>
+        <button type="button" role="tab" data-ptab="carousel" aria-selected="false" data-admin-only hidden>Homepage carousel</button>
+        <button type="button" role="tab" data-ptab="videos" aria-selected="false" data-admin-only hidden>Video gallery</button>
+        <button type="button" role="tab" data-ptab="spots" aria-selected="false" data-admin-only hidden>Page photos</button>
+      </div>
+
+      <!-- all photos -->
+      <section class="panel stack" data-ppanel="all" style="gap:14px">
+        <div class="calhead" style="gap:10px">
+          <div class="pf" role="group" aria-label="Show">
+            <button type="button" data-pf="all" aria-pressed="true">All</button>
+            <button type="button" data-pf="used" aria-pressed="false">On the website</button>
+            <button type="button" data-pf="unused" aria-pressed="false">Not used yet</button>
+            <button type="button" data-pf="mine" aria-pressed="false">Mine</button>
+            <button type="button" data-pf="drive" aria-pressed="false">From the club Drive</button>
+          </div>
+          <label class="btn small" for="libAdd" style="color:#fff">+ Add photos<input id="libAdd" type="file" accept="image/*" multiple hidden></label>
+        </div>
+        <p class="muted" style="margin:0;font-size:14px" id="libHelp"></p>
+        <p class="ok" id="libProg" hidden></p><p class="err" id="libErr" hidden></p>
+        <div class="mgrid" id="libGrid"><p class="muted">Loading…</p></div>
+      </section>
+
+      <!-- add photos and videos -->
+      <section class="stack" data-ppanel="add" style="gap:18px" hidden>
+        <div class="panel">
+          <h2>Photos for the website</h2>
+          <p class="muted" style="margin:0">Add photos you’d like on the website or on a coach page. They go straight into All photos, shrunk to a sensible size. Only use photos of children if their parents are happy for them to be on the website.</p>
+          <label class="btn" for="libAdd2" style="color:#fff;justify-self:start">+ Add photos<input id="libAdd2" type="file" accept="image/*" multiple hidden></label>
+          <p class="ok" id="addProg" hidden></p><p class="err" id="addErr" hidden></p>
+        </div>
+        <div class="panel">
+          <h2>Send photos &amp; videos to the club</h2>
+          <p class="muted" style="margin:0">Fight-night videos, or lots of photos at once, straight from your phone. They’re kept privately for Jay and Steve to use on the website and socials. When the club Google Drive is connected they go there, and photos then turn up in All photos by themselves.</p>
         <div class="drop">
           <p class="muted">Training, fight nights, the team, the gym. Only upload photos of children if their parents are happy for them to be used.</p>
           <label class="btn" for="files" style="color:#fff">Choose photos or videos<input id="files" type="file" accept="image/*,video/*" multiple hidden></label>
           <div id="driveBox" class="muted" style="font-size:14px"></div>
         </div>
-        <div id="upProg" class="stack"></div>
-      </div>
-      <div class="panel">
-        <h2 id="galTitle">Your uploads</h2>
-        <div id="gallery" class="files"><p class="empty">Loading…</p></div>
-      </div>
+          <div id="upProg" class="stack"></div>
+        </div>
+        <div class="panel">
+          <h2 id="galTitle">Your uploads</h2>
+          <div id="gallery" class="files"><p class="empty">Loading…</p></div>
+        </div>
+      </section>
+
+      <!-- homepage carousel and video gallery (owners) -->
+      <section class="panel stack own" data-ppanel="lists" style="gap:14px" hidden>
+        <h2 id="mTitle">Homepage carousel</h2>
+        <p class="muted" id="mHelp" style="margin:0"></p>
+        <div id="mStatus" class="note" hidden></div>
+        <div class="row">
+          <label class="btn" for="mAdd" style="color:#fff" id="mAddLbl">+ Add photos or videos<input id="mAdd" type="file" accept="image/*,video/*" multiple hidden></label>
+          <button type="button" class="btn ghost" id="mDrive">+ From the club Drive</button>
+          <button type="button" class="btn ghost" id="mReset" hidden>Put back the original</button>
+        </div>
+        <p class="muted" style="margin:0;font-size:14px" id="mNote">Photos are shrunk automatically and added to All photos too. For videos, MP4 works on every phone and computer. Only use photos of children if their parents are happy for them to be on the website.</p>
+        <p class="err" id="mErr" hidden></p><p class="ok" id="mProg" hidden></p>
+        <div class="mgrid" id="mGrid"></div>
+        <div class="row" style="position:sticky;bottom:0;background:var(--ink-2);padding:10px 0">
+          <button type="button" class="btn" id="mSave" disabled>Save changes</button>
+          <button type="button" class="btn ghost" id="mDiscard" disabled>Undo my changes</button>
+        </div>
+      </section>
+
+      <!-- page photos (owners) -->
+      <section class="panel stack own" data-ppanel="spots" style="gap:14px" hidden>
+        <h2>Page photos</h2>
+        <p class="muted" style="margin:0">Every photo on the website’s pages that can be swapped, page by page. Replace one with any photo from the library, or put back the original. Changes go live straight away (the same as tapping a photo in “Edit the website”). Photos built into the page design, such as town page banners and link cards, can’t be swapped so aren’t listed. The carousel, video gallery and class pictures have their own places.</p>
+        <p class="ok" id="spotOk" hidden></p><p class="err" id="spotErr" hidden></p>
+        <div id="spotList" class="stack" style="gap:10px"><p class="muted">Loading…</p></div>
+      </section>
+
+      <dialog id="drvDlg" class="dlg" style="width:min(760px,calc(100vw - 24px))">
+        <h2>From the club Drive</h2>
+        <p class="muted" style="margin-top:0">Photos coaches have uploaded to the club Google Drive. Tick the ones you want and press Add. They’re copied to the website and shrunk for you. Videos can’t be picked from here yet.</p>
+        <div class="mgrid" id="drvGrid"><p class="muted">Loading…</p></div>
+        <p class="err" id="drvErr" hidden></p><p class="ok" id="drvProg" hidden></p>
+        <div class="row" style="margin-top:12px"><button type="button" class="btn" id="drvAdd" disabled>Add to the website</button><button type="button" class="btn ghost" id="drvClose">Close</button></div>
+      </dialog>
+      <dialog id="mDlg" class="dlg">
+        <form method="dialog" id="mForm" class="stack" style="gap:12px">
+          <h2 id="mdTitle">Edit</h2>
+          <div class="mfocus" id="mdFocus" hidden><img id="mdImg" alt=""><i id="mdDot"></i></div>
+          <p class="muted" id="mdFocusHelp" style="margin:0;font-size:13px" hidden>Tap the picture on the part that matters most (a face, say). That part stays in view on phones and wide screens.</p>
+          <label class="btn ghost" for="mdFile" id="mdFileLbl" style="justify-self:start">Replace the file<input id="mdFile" type="file" accept="image/*,video/*" hidden></label>
+          <div id="mdHeroF" class="stack" style="gap:12px"><label for="mdAlt">Describe the picture (for people who can’t see it)<input id="mdAlt" maxlength="200" placeholder="e.g. Jay holding pads for a fighter"></label></div>
+          <div id="mdVidF" class="stack" style="gap:12px" hidden>
+            <label for="mdVTitle">Title<input id="mdVTitle" maxlength="80" placeholder="e.g. Dino's winning fight"></label>
+            <label for="mdVCap">One-line description<input id="mdVCap" maxlength="200"></label>
+            <label for="mdVDate">Date shown<input id="mdVDate" maxlength="30" placeholder="e.g. October 2026"></label>
+            <div class="mchecks"><span class="muted">Shows under:</span><label><input type="checkbox" id="mdCFight"> Fights</label><label><input type="checkbox" id="mdCWin"> Wins</label><label><input type="checkbox" id="mdCTrain"> Training</label></div>
+            <label class="btn ghost" for="mdPoster" style="justify-self:start">Change the thumbnail picture<input id="mdPoster" type="file" accept="image/*" hidden></label>
+          </div>
+          <p class="err" id="mdErr" hidden></p><p class="ok" id="mdProg" hidden></p>
+          <div class="row"><button class="btn" type="submit" id="mdOk">Done</button></div>
+        </form>
+      </dialog>
+      <!-- one photo: where it is shown and what you can do -->
+      <dialog id="phDlg" class="dlg phd" aria-labelledby="phName">
+        <div class="phbig"><img id="phImg" alt=""></div>
+        <h2 id="phName" style="margin:14px 0 4px;overflow-wrap:anywhere"></h2>
+        <p class="muted" id="phMeta" style="margin:0;font-size:14px"></p>
+        <h3 class="phh">Shown on</h3>
+        <ul class="phwhere" id="phWhere"></ul>
+        <div id="phRes" class="stack" style="gap:8px;margin-top:12px"></div>
+        <div class="row" id="phActs" style="margin-top:12px"></div>
+        <div class="ownacts" id="phOwn" hidden><b>Owners only</b><div class="row" id="phOwnActs"></div></div>
+        <div class="row" style="margin-top:14px"><button type="button" class="btn ghost" id="phClose">Close</button></div>
+      </dialog>
+      <dialog id="ppDlg" class="dlg" style="width:min(820px,calc(100vw - 24px))">
+        <h2 id="ppTitle">Choose a photo</h2>
+        <p class="muted" id="ppHelp" style="margin-top:0"></p>
+        <div class="mgrid" id="ppGrid" style="max-height:58vh;overflow:auto"></div>
+        <p style="margin-bottom:0"><button type="button" class="btn ghost" id="ppClose">Cancel</button></p>
+      </dialog>
     </div>
 
     <!-- ===== CLASS SCHEDULE ===== -->
@@ -583,75 +725,9 @@
       <div class="calhead"><h1>Site overview</h1></div>
       <p class="err" id="ovErr" hidden></p>
       <div class="panel stack" id="ovSummary" style="gap:8px"></div>
+      <p class="muted" style="margin:0">Tap a photo to open it in <a href="#photos">Photos &amp; videos</a>, where you can see every place it’s shown and change it.</p>
       <div class="panel stack" style="gap:12px"><h2>Photos not used anywhere yet</h2><div class="mgrid" id="ovUnused"></div></div>
       <div class="panel stack" style="gap:12px"><h2>Photos in use</h2><div class="mgrid" id="ovUsed"></div></div>
-    </div>
-
-    <!-- ===== PHOTO LIBRARY ===== -->
-    <div data-view="library" class="stack" style="gap:18px" hidden>
-      <button type="button" class="back" data-go="home">← Back to dashboard</button>
-      <div class="calhead"><h1>Photo library</h1></div>
-      <p class="muted" id="libHelp"></p>
-      <div class="panel stack" style="gap:14px">
-        <div class="row">
-          <label class="btn" for="libAdd" style="color:#fff">+ Add photos<input id="libAdd" type="file" accept="image/*" multiple hidden></label>
-        </div>
-        <p class="muted" style="margin:0;font-size:14px">This includes the original photos the site started with. Videos are managed in <a href="#media">Website photos &amp; videos</a> (Video gallery tab), where owners can remove or replace any of them. Photos put in the club Google Drive folder turn up here by themselves. Only use photos of children if their parents are happy for them to be on the website.</p>
-        <p class="ok" id="libProg" hidden></p><p class="err" id="libErr" hidden></p>
-        <div class="mgrid" id="libGrid"></div>
-      </div>
-    </div>
-
-    <!-- ===== WEBSITE PHOTOS & VIDEOS ===== -->
-    <div data-view="media" class="stack" style="gap:18px" hidden>
-      <button type="button" class="back" data-go="home">← Back to dashboard</button>
-      <div class="calhead"><h1>Website photos &amp; videos</h1></div>
-      <p class="muted" id="mHelp"></p>
-      <div class="panel" id="mApprovals" hidden style="border-top-color:var(--tbc)"></div>
-      <div class="mtabs" role="tablist" aria-label="What to edit">
-        <button type="button" role="tab" data-mtab="hero" aria-selected="true">Homepage carousel</button>
-        <button type="button" role="tab" data-mtab="videos" aria-selected="false">Video gallery</button>
-      </div>
-      <div class="panel stack" style="gap:14px">
-        <div id="mStatus" class="note" hidden></div>
-        <div class="row">
-          <label class="btn" for="mAdd" style="color:#fff" id="mAddLbl">+ Add photos or videos<input id="mAdd" type="file" accept="image/*,video/*" multiple hidden></label>
-          <button type="button" class="btn ghost" id="mDrive">+ From the club Drive</button>
-          <button type="button" class="btn ghost" id="mReset" hidden>Put back the original</button>
-        </div>
-        <p class="muted" style="margin:0;font-size:14px">Photos are shrunk automatically. For videos, MP4 works on every phone and computer. Only use photos of children if their parents are happy for them to be on the website.</p>
-        <p class="err" id="mErr" hidden></p><p class="ok" id="mProg" hidden></p>
-        <div class="mgrid" id="mGrid"></div>
-        <div class="row" style="position:sticky;bottom:0;background:var(--ink);padding:10px 0">
-          <button type="button" class="btn" id="mSave" disabled>Save changes</button>
-          <button type="button" class="btn ghost" id="mDiscard" disabled>Undo my changes</button>
-        </div>
-      </div>
-      <dialog id="drvDlg" class="dlg" style="width:min(760px,calc(100vw - 24px))">
-        <h2>From the club Drive</h2>
-        <p class="muted" style="margin-top:0">Photos coaches have uploaded to the club Google Drive. Tick the ones you want and press Add. They’re copied to the website and shrunk for you. Videos can’t be picked from here yet.</p>
-        <div class="mgrid" id="drvGrid"><p class="muted">Loading…</p></div>
-        <p class="err" id="drvErr" hidden></p><p class="ok" id="drvProg" hidden></p>
-        <div class="row" style="margin-top:12px"><button type="button" class="btn" id="drvAdd" disabled>Add to the website</button><button type="button" class="btn ghost" id="drvClose">Close</button></div>
-      </dialog>
-      <dialog id="mDlg" class="dlg">
-        <form method="dialog" id="mForm" class="stack" style="gap:12px">
-          <h2 id="mdTitle">Edit</h2>
-          <div class="mfocus" id="mdFocus" hidden><img id="mdImg" alt=""><i id="mdDot"></i></div>
-          <p class="muted" id="mdFocusHelp" style="margin:0;font-size:13px" hidden>Tap the picture on the part that matters most (a face, say). That part stays in view on phones and wide screens.</p>
-          <label class="btn ghost" for="mdFile" id="mdFileLbl" style="justify-self:start">Replace the file<input id="mdFile" type="file" accept="image/*,video/*" hidden></label>
-          <div id="mdHeroF" class="stack" style="gap:12px"><label for="mdAlt">Describe the picture (for people who can’t see it)<input id="mdAlt" maxlength="200" placeholder="e.g. Jay holding pads for a fighter"></label></div>
-          <div id="mdVidF" class="stack" style="gap:12px" hidden>
-            <label for="mdVTitle">Title<input id="mdVTitle" maxlength="80" placeholder="e.g. Dino's winning fight"></label>
-            <label for="mdVCap">One-line description<input id="mdVCap" maxlength="200"></label>
-            <label for="mdVDate">Date shown<input id="mdVDate" maxlength="30" placeholder="e.g. October 2026"></label>
-            <div class="mchecks"><span class="muted">Shows under:</span><label><input type="checkbox" id="mdCFight"> Fights</label><label><input type="checkbox" id="mdCWin"> Wins</label><label><input type="checkbox" id="mdCTrain"> Training</label></div>
-            <label class="btn ghost" for="mdPoster" style="justify-self:start">Change the thumbnail picture<input id="mdPoster" type="file" accept="image/*" hidden></label>
-          </div>
-          <p class="err" id="mdErr" hidden></p><p class="ok" id="mdProg" hidden></p>
-          <div class="row"><button class="btn" type="submit" id="mdOk">Done</button></div>
-        </form>
-      </dialog>
     </div>
 
     <!-- ===== SHARE ===== -->
@@ -858,10 +934,17 @@ $('#pkUp').addEventListener('change', async e => {
 });
 
 /* ---------- views ---------- */
+/* old addresses for the three photo pages land on the right tab of Photos & videos */
+const PH_OLD = { uploads: 'add', library: 'all', media: 'carousel' };
 function go(view) {
   if (!me) return;
-  if (!['home', 'availability', 'bookings', 'uploads', 'share', 'schedule', 'media', 'settings', 'prices', 'profile', 'team', 'enquiries', 'club', 'library', 'overview'].includes(view) || (['team', 'enquiries', 'club', 'media', 'overview'].includes(view) && !me.admin)) view = 'home';
+  let tab = null;
+  if (PH_OLD[view]) { tab = PH_OLD[view]; view = 'photos'; }
+  else if (view.startsWith('photos/')) { tab = view.slice(7); view = 'photos'; }
+  if (!['home', 'availability', 'bookings', 'photos', 'share', 'schedule', 'settings', 'prices', 'profile', 'team', 'enquiries', 'club', 'overview'].includes(view) || (['team', 'enquiries', 'club', 'overview'].includes(view) && !me.admin)) view = 'home';
+  const was = document.querySelector('#dash > [data-view]:not([hidden])')?.dataset.view;
   document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
+  if (view === 'photos') { openHub(tab); if (was !== 'photos') scrollTo({ top: 0 }); return; }
   if (view === 'home') { loadCal(); loadApprovals(); loadMediaNotice(); }
   if (view === 'prices') loadPrices();
   if (view === 'profile') loadProfile();
@@ -870,12 +953,9 @@ function go(view) {
   if (view === 'home' && me.admin) countEnquiries();
   if (view === 'availability') loadAvail();
   if (view === 'bookings') loadBookings();
-  if (view === 'uploads') { loadFiles(); loadDrive(); }
   if (view === 'share') loadShare();
   if (view === 'schedule') { loadClasses(); loadClassPics(); }
   if (view === 'club') loadHours();
-  if (view === 'media') loadMedia();
-  if (view === 'library') loadLibrary();
   if (view === 'overview') loadOverview();
   scrollTo({ top: 0 });
 }
@@ -1468,8 +1548,8 @@ const mLabel = it => mList === 'hero' ? (it.alt || (it.type === 'video' ? 'Video
 async function loadMedia() {
   show($('#mErr'), ''); show($('#mProg'), '');
   $('#mSave').textContent = me.admin ? 'Save & publish' : 'Send for approval';
-  $('#mHelp').textContent = me.admin ? 'What you save goes live on the website straight away.' : 'Your changes are sent to Jay or Steve to approve before they go on the website.';
-  document.querySelectorAll('[data-mtab]').forEach(b => b.setAttribute('aria-selected', b.dataset.mtab === mList));
+  $('#mHelp').textContent = (me.admin ? 'What you save goes live on the website straight away.' : 'Your changes are sent to Jay or Steve to approve before they go on the website.') + (mList === 'hero' ? ' Tap a photo to see everywhere else it’s shown.' : '');
+  $('#mTitle').textContent = ML[mList];
   $('#mAdd').accept = mList === 'hero' ? 'image/*,video/*' : 'video/*';
   $('#mAddLbl').firstChild.textContent = mList === 'hero' ? '+ Add photos or videos' : '+ Add videos'; $('#mDrive').hidden = mList !== 'hero';
   try {
@@ -1492,14 +1572,13 @@ function drawMedia() {
   $('#mGrid').innerHTML = mItems.map((it, i) => {
     const th = mList === 'hero' && it.type === 'photo' ? it.src : it.poster;
     const pos = it.pos ? `style="object-position:${esc(it.pos)}"` : '';
-    return `<div class="mcard${live.has(it.src) ? '' : ' isnew'}"><div class="mth"><img src="${esc(mUrl(th))}" ${pos} alt="">${mList === 'videos' || it.type === 'video' ? '<span class="tag">▶ Video</span>' : ''}${live.has(it.src) ? '' : '<span class="tag new">New</span>'}</div>
+    const ph = mList === 'hero' && it.type === 'photo' && live.has(it.src), sh = ph ? (hubData ? phShown(phFind(it.src)) : 'Shown on: Homepage carousel') : '';
+    return `<div class="mcard${live.has(it.src) ? '' : ' isnew'}"><${ph ? `button type="button" class="mth phc" data-phsrc="${esc(it.src)}" aria-label="${esc(sh)}. Open this photo"` : 'div class="mth"'}><img src="${esc(mUrl(th))}" ${pos} alt="">${mList === 'videos' || it.type === 'video' ? '<span class="tag">▶ Video</span>' : ''}${live.has(it.src) ? '' : '<span class="tag new">New</span>'}${ph ? `<span class="shown">${esc(sh)}</span>` : ''}</${ph ? 'button' : 'div'}>
       <div class="mb"><b>${i + 1}. ${esc(mLabel(it)) || '<span class="muted">No description</span>'}</b>
       <div class="mbt"><button type="button" data-mup="${i}" ${i ? '' : 'disabled'} aria-label="Move earlier">↑</button><button type="button" data-mdn="${i}" ${i < mItems.length - 1 ? '' : 'disabled'} aria-label="Move later">↓</button><button type="button" data-medit="${i}">Edit</button><button type="button" data-mdel="${i}">Remove</button></div></div></div>`;
   }).join('') || '<p class="empty">Nothing here yet. Add something to start.</p>';
 }
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-mtab]');
-  if (t) { if (mDirty && !confirm('Leave this list? Your unsaved changes will be lost.')) return; mList = t.dataset.mtab; loadMedia(); return; }
   const g = k => { const b = e.target.closest(`[data-${k}]`); return b ? +b.dataset[k.replace(/^m/, 'm')] : null; };
   const up = g('mup'), dn = g('mdn'), ed = g('medit'), dl = g('mdel');
   if (up !== null) { [mItems[up - 1], mItems[up]] = [mItems[up], mItems[up - 1]]; mSet(true); drawMedia(); }
@@ -1507,6 +1586,8 @@ document.addEventListener('click', e => {
   else if (ed !== null) openMedia(ed);
   else if (dl !== null) { if (mItems.length < 2) return show($('#mErr'), 'Keep at least one item in the list.'); if (confirm(`Remove “${mLabel(mItems[dl]) || 'this item'}” from the website?`)) { mItems.splice(dl, 1); mSet(true); drawMedia(); } }
 });
+/* photos put on the carousel go into the photo library too (not fatal if it fails) */
+async function mToLibrary(src, name) { try { await api('/api/site?action=library-add', { src, name: String(name || '').replace(/\.\w+$/, '').slice(0, 60) }); hubData = null; } catch {} }
 async function mUploadBlob(blob, name) {
   const safe = name.replace(/[^\w.\-]+/g, '_').slice(-60);
   const r = await upload(`site/${me.id}/${Date.now()}-${safe}`, blob, { access: 'private', handleUploadUrl: '/api/uploads?action=token', multipart: blob.size > 20e6, contentType: blob.type || undefined });
@@ -1562,7 +1643,7 @@ $('#mAdd').addEventListener('change', async e => {
       if (mList === 'videos') {
         if (r.type !== 'video') throw new Error('The video gallery only takes videos.');
         mItems.push({ id: 'n' + Date.now().toString(36) + n, src: r.src, poster: r.poster, title: f.name.replace(/\.\w+$/, '').replace(/[_\-]+/g, ' ').slice(0, 80), caption: '', date: new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }), cat: 'fight', dur: r.dur });
-      } else mItems.push({ id: 'n' + Date.now().toString(36) + n, type: r.type, src: r.src, ...(r.type === 'video' ? { poster: r.poster } : {}), alt: '', pos: '60% 35%' });
+      } else { mItems.push({ id: 'n' + Date.now().toString(36) + n, type: r.type, src: r.src, ...(r.type === 'video' ? { poster: r.poster } : {}), alt: '', pos: '60% 35%' }); if (r.type === 'photo') await mToLibrary(r.src, f.name); }
       added++;
     } catch (err) { show($('#mErr'), `${f.name}: ${err.message}`); }
   }
@@ -1596,7 +1677,7 @@ $('#mdFile').addEventListener('change', async e => {
   try {
     const r = await mProcess(f, m => show($('#mdProg'), m));
     if (mList === 'videos' && r.type !== 'video') throw new Error('The video gallery only takes videos.');
-    Object.assign(it, { src: r.src, type: r.type }); if (r.type === 'video') { it.poster = r.poster; if (mList === 'videos') it.dur = r.dur; } else delete it.poster;
+    Object.assign(it, { src: r.src, type: r.type }); if (r.type === 'video') { it.poster = r.poster; if (mList === 'videos') it.dur = r.dur; } else { delete it.poster; await mToLibrary(r.src, f.name); }
     $('#mdImg').src = mUrl(r.type === 'photo' ? r.src : r.poster);
   } catch (err) { show($('#mdErr'), err.message); }
   show($('#mdProg'), ''); $('#mdOk').disabled = false;
@@ -1621,7 +1702,7 @@ $('#mSave').addEventListener('click', async () => {
   show($('#mErr'), ''); mBusySet(true);
   try {
     const r = await api('/api/site?action=save', { list: mList, items: mItems });
-    await loadMedia();
+    hubData = null; await loadMedia();
     show($('#mProg'), r.status === 'live' ? 'Saved. It’s live on the website now (it can take up to a minute to show).' : 'Sent. Jay or Steve will approve it before it goes on the website.');
   } catch (err) { show($('#mErr'), err.message); mBusySet(false); }
   mBusySet(false);
@@ -1696,7 +1777,7 @@ async function loadMediaNotice() {
   const box = $('#mediaNotice'); if (!me.admin) { box.hidden = true; return; }
   try {
     const { pending } = await api('/api/site?action=pending'); box.hidden = !pending.length; if (!pending.length) return;
-    box.innerHTML = `<h2>Website photos &amp; videos</h2><p class="muted">${pending.map(p => `${esc(p.name)} changed the ${esc(p.label.toLowerCase())}`).join('; ')}. They’re waiting for you.</p><a class="btn small" href="#media">Review →</a>`;
+    box.innerHTML = `<h2>Photos &amp; videos</h2><p class="muted">${pending.map(p => `${esc(p.name)} changed the ${esc(p.label.toLowerCase())}`).join('; ')}. They’re waiting for you.</p><a class="btn small" href="#photos/carousel">Review →</a>`;
   } catch {}
 }
 
@@ -1873,12 +1954,57 @@ $('#pwForm').addEventListener('submit', async e => {
 
 init();
 
-/* ---------- photo library ---------- */
-let libPhotos = [];
-async function loadLibrary() {
-  $('#libHelp').textContent = me.admin ? 'Owners can put any photo on the homepage carousel, or delete photos nobody is using.' : 'Add your own photos here. Pick them for your coach page from “My profile”. You can delete photos you added.';
+/* ---------- photos & videos hub ---------- */
+/* One place for every photo: the library (with where each one is shown), adding photos and videos,
+   and for owners the homepage carousel, the video gallery and the photos on each page. */
+let hubData = null, phTab = 'all', phFilter = 'all', phCur = null, phOpenAfter = null;
+const PH_TABS = ['all', 'add', 'carousel', 'videos', 'spots'], PH_OWN = ['carousel', 'videos', 'spots'];
+const phWho = p => p.extra ? 'Not in the photo library' : p.builtin ? 'Club photo' : p.by && p.by !== 'club' ? (COLS[p.by] || me.team?.find(t => t.id === p.by)?.first || p.by[0].toUpperCase() + p.by.slice(1)) : 'Club Drive';
+const phPages = p => [...new Set(p.places.map(x => x.page))];
+const phFrom = p => p.extra ? 'Shown on the website but not in the photo library' : p.builtin ? 'One of the photos the website started with' : p.by === 'club' || !p.by ? 'From the club Drive' : `Added by ${phWho(p)}${p.drive ? ' through the club Drive' : ''}`;
+function phShown(p) {
+  if (!p.places.length) return 'Not on the website yet';
+  const pg = phPages(p);
+  return 'Shown on: ' + (pg.length > 3 ? `${pg.slice(0, 3).join(', ')} and ${pg.length - 3} more` : pg.join(', '));
+}
+function phFind(src) { return hubData?.photos.find(p => p.src === src) || { src, name: 'Photo', places: [], by: '', at: 0, extra: true }; }
+async function loadHub() { hubData = await api('/api/site?action=hub'); hubData.photos.reverse(); return hubData; }
+
+function openHub(tab) {
+  if (!PH_TABS.includes(tab) || (PH_OWN.includes(tab) && !me.admin)) tab = 'all';
+  /* keep the address tidy: old links (#library, #uploads, #media) become #photos/<tab> */
+  const want = tab === 'all' ? 'photos' : 'photos/' + tab;
+  if (location.hash.slice(1) !== want) history.replaceState(null, '', '#' + want);
+  phTab = tab;
+  document.querySelectorAll('[data-ptab]').forEach(b => b.setAttribute('aria-selected', b.dataset.ptab === tab));
+  document.querySelectorAll('[data-ppanel]').forEach(s => s.hidden = s.dataset.ppanel !== (tab === 'carousel' || tab === 'videos' ? 'lists' : tab));
+  $('#phHelp').textContent = me.admin
+    ? 'Every club photo in one place. Tap a photo to see everywhere it’s shown on the website, swap it, take it off the website or delete it. Blue tabs and buttons are for owners only.'
+    : 'Every club photo in one place. Tap a photo to see where it’s shown on the website, or to use it on your coach page.';
+  if (tab === 'all') loadHubAll();
+  if (tab === 'add') { loadFiles(); loadDrive(); }
+  if (tab === 'carousel' || tab === 'videos') {
+    mList = tab === 'carousel' ? 'hero' : 'videos'; loadMedia();
+    if (mList === 'hero') loadHub().then(() => { if (phTab === 'carousel') drawMedia(); }).catch(() => {});
+  }
+  if (tab === 'spots') loadSpots();
+  if (me.admin && tab !== 'carousel' && tab !== 'videos') loadMediaApprovals();
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-ptab]'); if (!t) return;
+  if (mDirty && (phTab === 'carousel' || phTab === 'videos') && t.dataset.ptab !== phTab && !confirm('Leave this list? Your unsaved changes will be lost.')) return;
+  if (mDirty && t.dataset.ptab !== phTab) mSet(false);
+  location.hash = t.dataset.ptab === 'all' ? 'photos' : 'photos/' + t.dataset.ptab;
+});
+
+/* ---- all photos ---- */
+async function loadHubAll() {
+  $('#libHelp').textContent = me.admin
+    ? 'Includes the original photos the site started with. Photos put in the club Google Drive folder turn up here by themselves. Videos are in the Video gallery tab.'
+    : 'Add your own photos, then tap one to put it on your coach page (Jay approves it first). You can delete photos you added that aren’t on the website.';
   show($('#libErr'), '');
-  try { const r = await api('/api/site?action=library'); libPhotos = r.photos.slice().reverse(); drawLibrary(); } catch (e) { show($('#libErr'), e.message); }
+  try { await loadHub(); drawLibrary(); } catch (e) { show($('#libErr'), e.message); }
+  if (phOpenAfter) { const s = phOpenAfter; phOpenAfter = null; openPhoto(s); }
   syncDrive();
 }
 async function syncDrive() {
@@ -1890,57 +2016,214 @@ async function syncDrive() {
     if (r.imported) show($('#libProg'), `Bringing in photos from the club Drive… ${total} so far`);
     if (!r.remaining || r.busy) break;
   }
-  if (total) { show($('#libProg'), `${total} new photo${total === 1 ? '' : 's'} brought in from the club Drive.`); try { libPhotos = (await api('/api/site?action=library')).photos.slice().reverse(); drawLibrary(); } catch {} }
+  if (total) { show($('#libProg'), `${total} new photo${total === 1 ? '' : 's'} brought in from the club Drive.`); try { await loadHub(); drawLibrary(); } catch {} }
   else show($('#libProg'), '');
 }
+const PH_FILTERS = { all: () => true, used: p => p.places.length, unused: p => !p.places.length, mine: p => p.by === me.id, drive: p => p.drive };
 function drawLibrary() {
-  const g = $('#libGrid');
-  if (!libPhotos.length) { g.innerHTML = '<p class="muted">No photos yet.</p>'; return; }
-  g.innerHTML = libPhotos.map((p, i) => {
-    const mine = me.admin || p.by === me.id;
-    const who = p.builtin ? 'Club photo' : (p.by && p.by !== 'club' ? (p.by[0].toUpperCase() + p.by.slice(1)) : 'Club Drive');
-    return `<div class="mcard"><div class="mth"><img src="${esc(mUrl(p.src))}" alt="" loading="lazy"></div><div class="mb"><b>${esc(p.name || 'Photo')}</b><span class="muted" style="font-size:13px">${p.carousel ? '<b style="color:var(--free)">On the carousel</b> · ' : ''}${esc(who)}${p.at ? ' · ' + esc(nice(ukDate(p.at))) : ''}</span>
-      <div class="row" style="gap:6px">${me.admin ? (p.carousel ? `<button type="button" class="btn small ghost" data-libunuse="${i}">Remove from carousel</button>` : `<button type="button" class="btn small" data-libuse="${i}">Add to carousel</button>`) : ''}${mine ? `<button type="button" class="btn small ghost" data-libdel="${i}">Delete</button>` : ''}</div></div></div>`;
+  const g = $('#libGrid'), all = hubData ? hubData.photos : [];
+  document.querySelectorAll('[data-pf]').forEach(b => {
+    const n = all.filter(PH_FILTERS[b.dataset.pf]).length;
+    b.setAttribute('aria-pressed', b.dataset.pf === phFilter);
+    b.textContent = `${b.textContent.replace(/ \(\d+\)$/, '')} (${n})`;
+  });
+  const list = all.filter(PH_FILTERS[phFilter]);
+  if (!list.length) { g.innerHTML = `<p class="muted">${all.length ? 'No photos here.' : 'No photos yet.'}</p>`; return; }
+  g.innerHTML = list.map(p => {
+    const sh = phShown(p);
+    return `<button type="button" class="mcard phc" data-phsrc="${esc(p.src)}" aria-label="${esc(p.name)}. ${esc(sh)}"><div class="mth"><img src="${esc(mUrl(p.src))}" alt="" loading="lazy">${p.places.length ? `<span class="tag on">On the website</span>` : ''}${p.extra ? '<span class="tag new" style="background:var(--tbc)">Not in library</span>' : ''}<span class="shown">${esc(sh)}</span></div>
+      <div class="mb"><b>${esc(p.name || 'Photo')}</b><span class="muted" style="font-size:13px">${esc(phWho(p))}${p.drive && p.by !== 'club' ? ' · via the Drive' : ''}${p.at ? ' · ' + esc(nice(ukDate(p.at))) : ''}</span></div></button>`;
   }).join('');
 }
-document.addEventListener('click', async e => {
-  const u = e.target.closest('[data-libuse]'), d = e.target.closest('[data-libdel]'), ru = e.target.closest('[data-libunuse]');
-  if (!u && !d && !ru) return;
-  show($('#libErr'), '');
-  try {
-    if (ru) {
-      const p = libPhotos[+ru.dataset.libunuse];
-      const cur = (await api('/api/site?action=get&list=hero')).items;
-      if (cur.length < 2) return show($('#libErr'), 'The carousel needs at least one photo.');
-      if (!confirm('Take this photo off the homepage carousel? It stays in the library.')) return;
-      await api('/api/site?action=save', { list: 'hero', items: cur.filter(x => x.src !== p.src) });
-      p.carousel = false; drawLibrary(); show($('#libProg'), 'Taken off the carousel. It’s live now.');
-    } else if (u) {
-      const p = libPhotos[+u.dataset.libuse];
-      const cur = (await api('/api/site?action=get&list=hero')).items;
-      if (cur.some(x => x.src === p.src)) return show($('#libErr'), 'That photo is already on the carousel.');
-      await api('/api/site?action=save', { list: 'hero', items: [...cur, { id: 'l' + Date.now().toString(36), type: 'photo', src: p.src, alt: '', pos: '60% 35%' }] });
-      show($('#libProg'), 'Added to the end of the homepage carousel and live now. Reorder it in “Website photos & videos”.');
-    } else {
-      const p = libPhotos[+d.dataset.libdel];
-      if (!confirm(`Delete “${p.name || 'this photo'}” from the library${p.carousel ? ' and take it off the homepage carousel' : ''}? This can’t be undone.`)) return;
-      await api('/api/site?action=library-del', { src: p.src, force: me.admin });
-      libPhotos = libPhotos.filter(x => x !== p); drawLibrary(); show($('#libProg'), 'Deleted.');
-    }
-  } catch (err) { show($('#libErr'), err.message); }
+document.addEventListener('click', e => {
+  const f = e.target.closest('[data-pf]'); if (f) { phFilter = f.dataset.pf; drawLibrary(); return; }
+  const c = e.target.closest('[data-phsrc]'); if (c) openPhoto(c.dataset.phsrc);
 });
-$('#libAdd').addEventListener('change', async e => {
-  const files = [...e.target.files]; e.target.value = ''; show($('#libErr'), ''); let n = 0;
+async function addToLibrary(files, prog, err) {
+  show(err, ''); let n = 0;
   for (const f of files) {
     try {
-      show($('#libProg'), `Adding ${n + 1} of ${files.length}…`);
-      const b = await mShrink(f), src = await mUrlUpload(b);
+      show(prog, `Adding ${n + 1} of ${files.length}…`);
+      const b = await mShrink(f), src = await mUploadBlob(b, b.name);
       await api('/api/site?action=library-add', { src, name: f.name.replace(/\.\w+$/, '').slice(0, 60) }); n++;
-    } catch (err) { show($('#libErr'), `${f.name}: ${err.message}`); }
+    } catch (er) { show(err, `${f.name}: ${er.message}`); }
   }
-  show($('#libProg'), n ? `${n} photo${n === 1 ? '' : 's'} added.` : ''); try { libPhotos = (await api('/api/site?action=library')).photos.slice().reverse(); drawLibrary(); } catch {}
-});
+  show(prog, n ? `${n} photo${n === 1 ? '' : 's'} added to All photos.` : '');
+  try { await loadHub(); if (phTab === 'all') drawLibrary(); } catch {}
+}
+$('#libAdd').addEventListener('change', e => { const files = [...e.target.files]; e.target.value = ''; addToLibrary(files, $('#libProg'), $('#libErr')); });
+$('#libAdd2').addEventListener('change', e => { const files = [...e.target.files]; e.target.value = ''; addToLibrary(files, $('#addProg'), $('#addErr')); });
 const mUrlUpload = b => mUploadBlob(b, b.name);
+
+/* ---- one photo: where it's shown, and what you can do with it ---- */
+const PLACE_NOTE = { carousel: () => 'A slide at the top of the home page', fixed: () => 'Built into the page design', class: x => x.original ? 'Class picture (the standard one)' : 'Class picture', coach: x => ({ gallery: 'In the coach’s gallery', standard: 'One of the standard gallery photos', photo: 'The coach’s main photo' }[x.part]), spot: x => x.original ? 'The original photo here' : 'Swapped in' };
+async function openPhoto(src) {
+  if (!hubData) { try { await loadHub(); } catch (e) { return alertBox(e.message); } }
+  phCur = phFind(src); $('#phRes').innerHTML = ''; drawPhoto();
+  if (!$('#phDlg').open) $('#phDlg').showModal();
+}
+function drawPhoto() {
+  const p = phCur, used = p.places.length, mine = p.by === me.id && !p.builtin && !p.extra;
+  $('#phImg').src = mUrl(p.src); $('#phImg').alt = p.name || '';
+  $('#phName').textContent = p.name || 'Photo';
+  $('#phMeta').textContent = [phFrom(p), p.at ? nice(ukDate(p.at)) : ''].filter(Boolean).join(' · ');
+  /* every place, grouped when the same place has it more than once */
+  const groups = new Map(); for (const x of p.places) { const k = x.label + '|' + x.url; if (!groups.has(k)) groups.set(k, { ...x, n: 0 }); groups.get(k).n++; }
+  $('#phWhere').innerHTML = used ? [...groups.values()].map(x => `<li><span><b>${esc(x.label)}</b>${x.n > 1 ? ` <span class="muted">(${x.n} times)</span>` : ''}<small>${esc(PLACE_NOTE[x.kind] ? PLACE_NOTE[x.kind](x) : '')}</small></span><a href="${esc(x.url)}" target="_blank" rel="noopener">Open page ↗</a></li>`).join('')
+    : '<li class="none">Not on the website yet.</li>';
+  const onLive = hubData?.myLive?.includes(p.src), onMine = hubData?.myGallery?.includes(p.src), canMine = hubData?.myPage && !p.extra;
+  const acts = [];
+  if (canMine) acts.push(onLive && onMine ? `<button type="button" class="btn small ghost" disabled>On your coach page</button>`
+    : onMine ? `<button type="button" class="btn small ghost" disabled>${hubData.myPending ? 'Sent to Jay for your coach page' : 'In your coach page changes (not sent yet)'}</button>`
+    : `<button type="button" class="btn small" data-pha="mine">Use on my page</button>`);
+  if (!me.admin && mine) acts.push(used ? `<span class="muted" style="font-size:14px">It’s on the website, so only Jay or Steve can take it off before it can be deleted.</span>` : `<button type="button" class="btn small ghost danger" data-pha="del">Delete</button>`);
+  $('#phActs').innerHTML = acts.join(''); $('#phActs').hidden = !acts.length;
+  $('#phOwn').hidden = !me.admin;
+  if (me.admin) {
+    const onCar = p.places.some(x => x.kind === 'carousel');
+    $('#phOwnActs').innerHTML = [
+      used ? `<button type="button" class="btn small blue" data-pha="replace">Replace everywhere</button>` : '',
+      onCar ? `<button type="button" class="btn small blue ghost" data-pha="caroff">Take off the carousel</button>` : `<button type="button" class="btn small blue ghost" data-pha="caron">Add to carousel</button>`,
+      `<button type="button" class="btn small blue ghost" data-pha="spot">Use on a page spot</button>`,
+      used ? `<button type="button" class="btn small blue ghost" data-pha="off">Take off the website</button>` : '',
+      p.extra && /^\/api\/site\?action=file/.test(p.src) ? `<button type="button" class="btn small blue ghost" data-pha="addlib">Add to the photo library</button>` : '',
+      p.extra ? '' : `<button type="button" class="btn small ghost danger" data-pha="del">Delete</button>`,
+    ].join('');
+  }
+}
+function phResult(r, lead) {
+  const box = document.createElement('div'); box.className = 'phres' + (r.left?.length ? ' warn' : '');
+  box.innerHTML = `<b>${esc(lead)}</b>${r.done?.length ? `<ul>${r.done.map(d => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}${r.left?.length ? `<b style="margin-top:6px">Still shown here:</b><ul>${r.left.map(l => `<li>${esc(l.label)}: ${esc(l.why)}</li>`).join('')}</ul>` : ''}`;
+  $('#phRes').innerHTML = ''; $('#phRes').append(box);
+}
+const phMsg = (m, bad) => { $('#phRes').innerHTML = `<p class="${bad ? 'err' : 'ok'}" style="margin:0">${esc(m)}</p>`; };
+const placeLines = p => [...new Set(p.places.map(x => x.label))].map(l => '• ' + l).join('\n');
+/* after a change: fresh data everywhere the photo might be showing */
+async function phRefresh() {
+  await loadHub(); phCur = phFind(phCur.src); drawPhoto();
+  if (phTab === 'all') drawLibrary();
+  if (phTab === 'spots') drawSpots();
+  if (phTab === 'carousel' || phTab === 'videos') loadMedia();
+}
+$('#phClose').addEventListener('click', () => $('#phDlg').close());
+$('#phDlg').addEventListener('click', async e => {
+  const b = e.target.closest('[data-pha]'); if (!b) return;
+  const p = phCur, a = b.dataset.pha, name = `“${p.name || 'this photo'}”`;
+  if (a !== 'mine' && mDirty && !confirm('You have unsaved changes to the carousel or video gallery. They’ll be lost if you carry on. Carry on?')) return;
+  if (mDirty) mSet(false);
+  b.disabled = true;
+  try {
+    if (a === 'mine') {
+      const r = await api('/api/profile?action=mine'), d = r.draft || r.live, g = String(d.gallery || '').split('|').filter(Boolean);
+      if (g.length >= 8) throw new Error('Your page already has 8 photos. Take one off in My profile first.');
+      const profile = { photo: d.photo || '', role: d.role || '', intro: d.intro || '', background: d.background || '', chips: d.chips || '', ask: d.ask || '', instagram: d.instagram || '', gallery: [...g, p.src].join('|') };
+      const s = await api('/api/profile?action=save', { coach: me.id, profile });
+      await phRefresh(); phMsg(s.status === 'live' ? 'Added to your coach page. It’s live now.' : 'Added to your coach page and sent to Jay. It goes live once he approves it.');
+    } else if (a === 'del') {
+      const used = p.places.length;
+      if (!confirm(used ? `${name} is shown on:\n${placeLines(p)}\n\nDeleting takes it off all of these first (page photos go back to their original), then deletes it. This can’t be undone.` : `Delete ${name}?${p.builtin ? ' It’s one of the original photos, so it’s hidden from the library rather than removed.' : ' This can’t be undone.'}`)) { b.disabled = false; return; }
+      await api('/api/site?action=library-del', { src: p.src, force: me.admin && !!used });
+      $('#phDlg').close(); await loadHub().catch(() => {});
+      if (phTab === 'all') { drawLibrary(); show($('#libProg'), `Deleted ${name}.`); }
+      if (phTab === 'spots') drawSpots();
+      return;
+    } else if (a === 'off') {
+      if (!confirm(`Take ${name} off the website?\n\nIt’s shown on:\n${placeLines(p)}\n\nIt stays in the photo library. The carousel loses it, page photos go back to their original, class pictures go back to their standard picture, and it comes out of coach page galleries.`)) { b.disabled = false; return; }
+      const r = await api('/api/site?action=unpublish', { src: p.src });
+      await phRefresh(); phResult(r, r.done.length ? 'Taken off:' : 'Nothing could be taken off.');
+    } else if (a === 'replace') {
+      const to = await pickPhoto({ title: 'Replace everywhere with…', help: `Pick the photo to put in place of ${name}. It’s swapped in the carousel, page photos and class pictures. Coach pages and photos built into the page design aren’t changed.`, not: p.src });
+      if (!to) { b.disabled = false; return; }
+      const np = phFind(to), owned = p.places.filter(x => x.kind !== 'coach' && x.kind !== 'fixed');
+      if (!confirm(`Put “${np.name}” in place of ${name}?\n\n${owned.length ? [...new Set(owned.map(x => x.label))].map(l => '• ' + l).join('\n') : 'Nowhere owners can change.'}\n\nThis goes live straight away.`)) { b.disabled = false; return; }
+      const r = await api('/api/site?action=replace-everywhere', { src: p.src, to });
+      await phRefresh(); phResult(r, r.done.length ? `Swapped for “${np.name}” on:` : 'Nothing was swapped.');
+    } else if (a === 'caron' || a === 'caroff') {
+      const cur = (await api('/api/site?action=get&list=hero')).items;
+      if (a === 'caroff') {
+        if (cur.filter(x => x.src !== p.src).length < 1) throw new Error('The carousel needs at least one photo.');
+        await api('/api/site?action=save', { list: 'hero', items: cur.filter(x => x.src !== p.src) });
+        await phRefresh(); phMsg('Taken off the homepage carousel. It’s live now and still in the library.');
+      } else {
+        if (cur.some(x => x.src === p.src)) throw new Error('That photo is already on the carousel.');
+        await api('/api/site?action=save', { list: 'hero', items: [...cur, { id: 'l' + Date.now().toString(36), type: 'photo', src: p.src, alt: p.builtin ? p.name : '', pos: '60% 35%' }] });
+        await phRefresh(); phMsg('Added to the end of the homepage carousel and live now. Reorder it in the Homepage carousel tab.');
+      }
+    } else if (a === 'spot') {
+      const s = await pickSpot(p.src);
+      if (!s) { b.disabled = false; return; }
+      await api('/api/site?action=edits-save', { text: {}, images: { [s.key]: s.orig === p.src ? null : { src: p.src, alt: p.builtin ? p.name : '', orig: s.orig } } });
+      await phRefresh(); phMsg(`Now on ${s.page}${s.place ? ': ' + s.place : ''}. It’s live.`);
+    } else if (a === 'addlib') {
+      await api('/api/site?action=library-add', { src: p.src, name: p.name });
+      await phRefresh(); phMsg('Added to the photo library.');
+    }
+  } catch (er) { phMsg(er.message, true); }
+  b.disabled = false;
+});
+
+/* ---- pickers: a library photo, or a photo spot on a page ---- */
+let ppDone = null;
+function ppOpen(title, help, html, done) {
+  $('#ppTitle').textContent = title; $('#ppHelp').textContent = help; $('#ppGrid').innerHTML = html;
+  ppDone = done; $('#ppDlg').showModal();
+}
+$('#ppClose').addEventListener('click', () => $('#ppDlg').close());
+$('#ppDlg').addEventListener('close', () => { if (ppDone) { const d = ppDone; ppDone = null; d(null); } });
+$('#ppGrid').addEventListener('click', e => {
+  const b = e.target.closest('[data-ppv]'); if (!b || !ppDone) return;
+  const d = ppDone; ppDone = null; $('#ppDlg').close(); d(b.dataset.ppv);
+});
+function pickPhoto({ title, help, not }) {
+  const list = (hubData?.photos || []).filter(x => x.src !== not && !x.extra);
+  return new Promise(ok => ppOpen(title, help, list.map(x => `<button type="button" class="mcard phc" data-ppv="${esc(x.src)}"><div class="mth"><img src="${esc(mUrl(x.src))}" alt="" loading="lazy">${x.places.length ? '<span class="tag on">On the website</span>' : ''}</div><div class="mb"><b>${esc(x.name || 'Photo')}</b></div></button>`).join('') || '<p class="muted">No other photos in the library.</p>', ok));
+}
+function pickSpot(src) {
+  const spots = (hubData?.spots || []).filter(s => !s.profilePhoto && s.src !== src);
+  return new Promise(ok => ppOpen('Use on a page spot', 'Pick where this photo should go. It replaces the photo there and goes live straight away. You can put the original back in the Page photos tab.',
+    spotGroups(spots, (s, i) => `<button type="button" class="mcard phc" data-ppv="${i}"><div class="mth"><img src="${esc(mUrl(s.src))}" alt="" loading="lazy"><span class="tag${s.swapped ? ' sw' : ''}">${s.swapped ? 'Swapped' : 'Original'}</span></div><div class="mb"><b>${esc(s.place || s.page)}</b></div></button>`, true),
+    v => ok(v === null ? null : spots[+v])));
+}
+/* spots grouped by page, each group folded away */
+function spotGroups(spots, card, closed) {
+  const by = new Map(); spots.forEach((s, i) => { if (!by.has(s.page)) by.set(s.page, []); by.get(s.page).push([s, i]); });
+  return [...by].map(([page, list], n) => { const sw = list.filter(([s]) => s.swapped).length;
+    return `<details class="spg" style="grid-column:1/-1"${!closed && n === 0 ? ' open' : ''}><summary><b>${esc(page)}</b><span class="muted">${list.length} photo${list.length === 1 ? '' : 's'}${sw ? ` · ${sw} swapped` : ''}</span></summary><div class="mgrid">${list.map(([s, i]) => card(s, i)).join('')}</div></details>`; }).join('') || '<p class="muted">No photo spots.</p>';
+}
+
+/* ---- page photos (owners) ---- */
+async function loadSpots() {
+  show($('#spotErr'), '');
+  try { await loadHub(); drawSpots(); } catch (e) { show($('#spotErr'), e.message); }
+}
+function drawSpots() {
+  const open = new Set([...document.querySelectorAll('#spotList details[open] > summary b')].map(b => b.textContent));
+  $('#spotList').innerHTML = spotGroups(hubData.spots, (s, i) => {
+    const sh = s.profilePhoto ? `${s.first}’s own profile photo shows here` : phShown(phFind(s.src));
+    return `<div class="mcard"><button type="button" class="mth phc" ${s.profilePhoto ? 'disabled' : `data-phsrc="${esc(s.src)}"`} aria-label="${esc(s.place || s.page)}. ${esc(sh)}"><img src="${esc(mUrl(s.profilePhoto || s.src))}" alt="" loading="lazy"><span class="tag${s.swapped ? ' sw' : ''}">${s.profilePhoto ? `${esc(s.first)}’s own photo` : s.swapped ? 'Swapped' : 'Original'}</span><span class="shown">${esc(sh)}</span></button>
+      <div class="mb"><b>${esc(s.place || s.page)}</b><a class="see" href="${esc(s.url)}" target="_blank" rel="noopener">See it on the page ↗</a>
+      <div class="row" style="gap:6px">${s.profilePhoto ? `<span class="muted" style="font-size:13px">${esc(s.first)} changes it in My profile.</span>` : `<button type="button" class="btn small blue" data-sprep="${i}">Replace</button>${s.swapped ? `<button type="button" class="btn small ghost" data-sporig="${i}">Put back the original</button>` : ''}`}</div></div></div>`;
+  });
+  if (open.size) document.querySelectorAll('#spotList details').forEach(d => { d.open = open.has(d.querySelector('summary b').textContent); });
+}
+$('#spotList').addEventListener('click', async e => {
+  const r = e.target.closest('[data-sprep]'), o = e.target.closest('[data-sporig]'); if (!r && !o) return;
+  const s = hubData.spots[+(r || o).dataset[r ? 'sprep' : 'sporig']];
+  show($('#spotErr'), ''); show($('#spotOk'), '');
+  try {
+    if (r) {
+      const to = await pickPhoto({ title: `Replace: ${s.place || s.page}`, help: `${s.page}. Pick the photo to show here. It goes live straight away.`, not: s.src });
+      if (!to) return;
+      const np = phFind(to);
+      await api('/api/site?action=edits-save', { text: {}, images: { [s.key]: to === s.orig ? null : { src: to, alt: np.builtin ? np.name : '', orig: s.orig } } });
+      show($('#spotOk'), `“${np.name}” is now on ${s.page}${s.place ? ': ' + s.place : ''}. It’s live.`);
+    } else {
+      await api('/api/site?action=edits-save', { text: {}, images: { [s.key]: null } });
+      show($('#spotOk'), `The original photo is back on ${s.page}${s.place ? ': ' + s.place : ''}.`);
+    }
+    await loadHub(); drawSpots();
+  } catch (er) { show($('#spotErr'), er.message); }
+});
 
 /* ---------- class pictures (timetable) ---------- */
 let ciMap = {}, ciLib = [], ciName = '';
@@ -1977,16 +2260,18 @@ async function loadOverview() {
   try {
     const o = await api('/api/site?action=overview');
     const who = p => p.builtin ? 'Club photo' : (p.by && p.by !== 'club' ? p.by[0].toUpperCase() + p.by.slice(1) : 'Club Drive');
-    const card = p => `<div class="mcard"><div class="mth"><img src="${esc(mUrl(p.src))}" alt="" loading="lazy"></div><div class="mb"><b>${esc(p.name || 'Photo')}</b><span class="muted" style="font-size:13px">${esc(who(p))}${p.drive ? ' · from Drive' : ''}${p.at ? ' · ' + esc(nice(ukDate(p.at))) : ''}</span>${p.usedOn.length ? `<span style="font-size:13px">${p.usedOn.map(esc).join('<br>')}</span>` : ''}</div></div>`;
+    const card = p => `<button type="button" class="mcard phc" data-ovsrc="${esc(p.src)}" aria-label="${esc(p.name || 'Photo')}. Open in Photos and videos"><div class="mth"><img src="${esc(mUrl(p.src))}" alt="" loading="lazy"></div><div class="mb"><b>${esc(p.name || 'Photo')}</b><span class="muted" style="font-size:13px">${esc(who(p))}${p.drive ? ' · from Drive' : ''}${p.at ? ' · ' + esc(nice(ukDate(p.at))) : ''}</span>${p.usedOn.length ? `<span style="font-size:13px">${p.usedOn.map(esc).join('<br>')}</span>` : ''}<span class="muted" style="font-size:13px;text-decoration:underline">Open in Photos &amp; videos →</span></div></button>`;
     const added = o.photos.filter(p => !p.builtin), unused = o.photos.filter(p => !p.usedOn.length);
     $('#ovSummary').innerHTML = `<p style="margin:0"><b>Homepage carousel:</b> ${o.carousel.length} items${o.carouselCustom ? '' : ' (the original set)'} · <b>Videos:</b> ${o.videos}${o.videosCustom ? '' : ' (original set)'} · <b>Wording changes:</b> ${o.textEdits} · <b>Photo swaps:</b> ${o.photoSwaps}</p>
       <p style="margin:0"><b>Photo library:</b> ${o.photos.length} photos (${added.length} added since launch) · <b>Not used anywhere:</b> ${unused.length}</p>
-      <p style="margin:0"><b>Club Drive:</b> ${o.drive.connected ? `${o.drive.total} photos in the folder, ${o.drive.waiting} not yet brought in (open the Photo library to bring them in)` : 'not connected'}</p>
+      <p style="margin:0"><b>Club Drive:</b> ${o.drive.connected ? `${o.drive.total} photos in the folder, ${o.drive.waiting} not yet brought in (open Photos &amp; videos to bring them in)` : 'not connected'}</p>
       <p style="margin:0"><b>Waiting for your approval:</b> ${o.pending.length ? o.pending.map(esc).join('; ') : 'nothing'}</p>`;
     $('#ovUnused').innerHTML = unused.map(card).join('') || '<p class="muted">Every photo is in use.</p>';
     $('#ovUsed').innerHTML = o.photos.filter(p => p.usedOn.length).map(card).join('');
   } catch (e) { show($('#ovErr'), e.message); }
 }
+/* a photo in the overview opens in Photos & videos, with its details */
+document.addEventListener('click', e => { const c = e.target.closest('[data-ovsrc]'); if (!c) return; phOpenAfter = c.dataset.ovsrc; location.hash = 'photos'; });
 </script>
 <script>
 document.querySelectorAll('input[type=password]').forEach(function(i){var w=document.createElement('span');w.className='pw';i.parentNode.insertBefore(w,i);w.appendChild(i);var b=document.createElement('button');b.type='button';b.textContent='Show';b.setAttribute('aria-label','Show password');b.addEventListener('click',function(){var h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});w.appendChild(b)});

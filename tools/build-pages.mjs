@@ -1,6 +1,7 @@
-// Builds one real page per section of the site, plus sitemap.xml.
+// Builds one real page per section of the site, plus sitemap.xml and the map of where each photo appears.
 // Edit site-src/index.html, then run:  node tools/build-pages.mjs
-// Output (committed): index.html, <section>.html (served at /<section>), sitemap.xml
+// Output (committed): index.html, <section>.html (served at /<section>), sitemap.xml,
+//   photo-usage.json (public) and api/_lib/photousage.js (the same map, for the coach area's server code)
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 
@@ -60,3 +61,87 @@ const list = [
 writeFileSync('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   list.map(([p, d]) => `<url><loc>${SITE}${p}</loc><lastmod>${d}</lastmod></url>`).join('\n') + '\n</urlset>\n');
 console.log(`built ${starts.length} pages + sitemap (${list.length} urls)`);
+
+/* ---- Where each photo appears ----
+   Lists every <img> in every section, with the page it is on, a readable place name and, for photos
+   owners can swap, the same key edit mode uses (this must match assets/editable.js: scope, fnv, IMGSKIP). */
+const PAGE_NAMES = {
+  home: 'Home page', classes: 'Classes page', pt: 'Personal training page', fight: 'Fight team page', videos: 'Videos page',
+  team: 'Coaches page', blog: 'News page', areas: 'Areas page', 'kids-muay-thai': 'Kids Muay Thai page', kickboxing: 'Kickboxing page',
+  fitness: 'Fitness page', women: 'Women’s page', 'self-defence': 'Self-defence page', payments: 'Prices page', 'fight-levels': 'Fight levels page',
+  faq: 'FAQ page', safeguarding: 'Safeguarding page', contact: 'Contact page', 'southgate-cockfosters': 'Southgate & Cockfosters page',
+};
+const pageName = k => PAGE_NAMES[k] || k.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ') + ' page';
+const fnv = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); };
+const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', rsquo: '’', lsquo: '‘', ldquo: '“', rdquo: '”', ndash: '–', mdash: '—', pound: '£', hellip: '…', middot: '·' };
+const text = h => h.replace(/<[^>]+>/g, ' ').replace(/&(#x[\da-f]+|#\d+|\w+);/gi, (a, e) => e[0] === '#' ? String.fromCodePoint(e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : +e.slice(1)) : (ENT[e] ?? a)).replace(/\s+/g, ' ').trim();
+const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
+const RAW = new Set(['script', 'style', 'textarea', 'title']);
+const BLOCK = new Set(['address', 'article', 'aside', 'blockquote', 'details', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'main', 'nav', 'ol', 'p', 'pre', 'section', 'table', 'ul']);
+const attrsOf = s => { const a = {}; for (const x of s.matchAll(/([^\s=>\/"']+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"']+)))?/g)) a[x[1].toLowerCase()] = x[2] ?? x[3] ?? x[4] ?? ''; return a; };
+const stack = [], imgs = [];
+let open = [], pos = 0;
+const tagRe = /<!--[\s\S]*?-->|<\/([a-zA-Z][\w-]*)\s*>|<([a-zA-Z][\w-]*)((?:\s+[^\s=>\/"']+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>"']+))?)*)\s*\/?>/g;
+// close elements down to stack[i]; a heading or label that closes passes its text to the elements around it
+const closeTo = i => {
+  while (stack.length > i) {
+    const e = stack.pop();
+    for (const o of open.filter(o => o.el === e)) { const s = text(src.slice(o.at, pos)); if (s) for (const anc of o.anc) if (!anc[o.field]) anc[o.field] = s.slice(0, 70); }
+    open = open.filter(o => o.el !== e);
+  }
+};
+const nearest = (names, stop) => { for (let i = stack.length - 1; i >= 0; i--) { if (names.includes(stack[i].tag)) return i; if (stop.includes(stack[i].tag)) return -1; } return -1; };
+let t;
+while ((t = tagRe.exec(src))) {
+  if (t[0].startsWith('<!--')) continue;
+  pos = t.index;
+  if (t[1]) { // closing tag
+    const name = t[1].toLowerCase(), i = nearest([name], []);
+    if (i >= 0) closeTo(i);
+    continue;
+  }
+  const name = t[2].toLowerCase(), a = attrsOf(t[3] || ''), cls = new Set((a.class || '').split(/\s+/).filter(Boolean));
+  // the browser closes an open <p> before a block, and an open <li>/<dt>/<dd>/<option> before the next one
+  if (BLOCK.has(name) && stack[stack.length - 1]?.tag === 'p') closeTo(stack.length - 1);
+  const auto = name === 'li' ? nearest(['li'], ['ul', 'ol']) : (name === 'dt' || name === 'dd') ? nearest(['dt', 'dd'], ['dl']) : name === 'option' ? nearest(['option'], ['select']) : -1;
+  if (auto >= 0) closeTo(auto);
+  const el = { tag: name, id: a.id || '', cls, a, at: t.index };
+  if (name === 'img') { imgs.push({ el, anc: stack.slice() }); continue; }
+  if (VOID.has(name)) continue;
+  if (RAW.has(name)) { const end = src.toLowerCase().indexOf(`</${name}`, tagRe.lastIndex); tagRe.lastIndex = end < 0 ? src.length : end; const close = src.indexOf('>', tagRe.lastIndex); tagRe.lastIndex = close < 0 ? src.length : close + 1; continue; }
+  stack.push(el);
+  if (/^h[1-3]$/.test(name)) open.push({ el, at: tagRe.lastIndex, field: 'head', anc: stack.slice(0, -1) });
+  else if (name === 'span' && cls.has('kick')) open.push({ el, at: tagRe.lastIndex, field: 'kick', anc: stack.slice(0, -1) });
+}
+const SKIPTAG = new Set(['nav', 'form', 'button', 'a', 'header']), SKIPCLS = ['vgrid', 'dots', 'hero-badge', 'hero-news', 'townhero', 'teamhero'];
+const seen = {};
+const usage = [];
+for (const { el, anc } of imgs) {
+  const chain = [el, ...anc.slice().reverse()]; // the image, then its parents from nearest to furthest
+  if (!anc.some(e => e.id === 'top' && e.tag === 'main')) continue;
+  const view = anc.find(e => e.a['data-view'] && e.cls.has('view'))?.a['data-view'];
+  if (!view) continue;
+  const s = el.a.src || '';
+  const skip = chain.some((e, i) => SKIPTAG.has(e.tag) || e.id === 'slides' || 'data-noedit' in e.a || SKIPCLS.some(c => e.cls.has(c)) || (e.cls.has('x') && chain.slice(i + 1).some(p => p.cls.has('campgal'))));
+  const idEl = chain.find(e => e.id), scope = idEl ? idEl.id.replace(/[^\w\-]/g, '').slice(0, 30) : 'page';
+  let key = null;
+  if (!skip && /^photos\/.+\.(webp|jpe?g|png)$/i.test(s)) { const k = scope + '.i' + fnv(s); seen[k] = (seen[k] || 0) + 1; key = seen[k] > 1 ? k + '-' + seen[k] : k; }
+  const kind = chain.some(e => e.id === 'slides') ? 'carousel' : chain.some(e => e.cls.has('vgrid')) ? 'videos' : key ? 'spot' : 'fixed';
+  // the nearest heading, label or aria-label inside the page (not the page's own first heading)
+  const named = anc.slice().reverse().find(e => e.tag !== 'main' && !e.a['data-view'] && (e.head || e.kick || e.a['aria-label']));
+  const section = idEl && idEl !== el && idEl.id !== 'top' ? idEl.id : '';
+  const prof = anc.find(e => e.tag === 'section' && e.cls.has('profile') && e.id);
+  const entry = { src: s, view, page: pageName(view), place: named ? (named.head || named.kick || text(named.a['aria-label'])) : '', url: urlOf(view) + (section && section !== view ? '#' + section : ''), kind };
+  if (key) entry.key = key;
+  if (prof && chain.some(e => e.cls.has('photo'))) entry.coach = prof.id; // a coach's own profile photo replaces this one when they have one
+  usage.push(entry);
+}
+const usageJson = JSON.stringify(usage, null, 1);
+writeFileSync('photo-usage.json', usageJson + '\n');
+writeFileSync('api/_lib/photousage.js', `/* GENERATED by tools/build-pages.mjs from site-src/index.html. Do not edit this file.
+   Every <img> on the public pages: the page it is on, a readable place, and (kind "spot") the key edit mode uses to swap it.
+   kind: spot (owners can swap it), fixed (part of the page design), carousel (the hero, see site:hero), videos (video thumbnails). */
+export const PHOTO_USAGE = ${usageJson};
+export const TIMETABLE_URL = ${JSON.stringify(urlOf(idToView.get('timetable') || 'classes') + '#timetable')};
+`);
+console.log(`photo map: ${usage.length} images, ${usage.filter(u => u.kind === 'spot').length} swappable spots`);

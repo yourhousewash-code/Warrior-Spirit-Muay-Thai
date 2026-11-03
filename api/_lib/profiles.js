@@ -21,6 +21,10 @@ export const DEFAULTS = {
     background: '', chips: 'Trainer\nFought at MAX Muay Thai, Thailand\nTechnique\nClasses', ask: '', instagram: 'kianh_pt',
   },
 };
+/* Photos a coach page shows until the coach picks their own gallery (matches what the page showed before galleries could be chosen). */
+export const GALLERY = {
+  jay: [['photos/pads-1.webp', 'Jay holding pads'], ['photos/kids-coach.webp', 'Jay coaching a junior'], ['photos/jay-win.webp', 'Jay celebrating a win'], ['photos/corner-crowd.webp', 'Jay in the corner']],
+};
 export const BLANK = { role: 'Trainer', intro: '', background: '', chips: 'Trainer', ask: '', instagram: '' };
 export async function liveProfile(c) { return (await redis.get(`profile:${c}:live`)) || { ...(DEFAULTS[c] || BLANK), photo: '' }; }
 export const profilePhotoUrl = (c, p) => p ? `/api/profile?action=photo&coach=${c}&v=${encodeURIComponent(p.split('/').pop())}` : '';

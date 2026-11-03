@@ -2,15 +2,12 @@
 import {
   redis, COACHES, loadCoaches, publicIds, setupProblem, getPrices, priceOf, FORMATS, DURATIONS, minsLabel, SITE, ADDRESS, TZ,
 } from './_lib/core.js';
-import { liveProfile, profilePhotoUrl } from './_lib/profiles.js';
+import { liveProfile, profilePhotoUrl, GALLERY } from './_lib/profiles.js';
 import { PHOTOLIB } from './_lib/photolib.js';
 import { getClasses, freeIntervals, startsIn, DAY } from './_lib/avail.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const GALLERY = {
-  jay: [['photos/pads-1.webp', 'Jay holding pads'], ['photos/kids-coach.webp', 'Jay coaching a junior'], ['photos/jay-win.webp', 'Jay celebrating a win'], ['photos/corner-crowd.webp', 'Jay in the corner']],
-};
 const hm = t => { const [h, m] = t.split(':').map(Number); return `${h % 12 || 12}${m ? ':' + String(m).padStart(2, '0') : ''}${h < 12 ? 'am' : 'pm'}`; };
 const money = v => '£' + (Number.isInteger(v) ? v : v.toFixed(2));
 const dayLabel = ms => new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(ms));
