@@ -72,8 +72,8 @@ Used the same way everywhere (site, Google, listings).
 10. Commits to the repo are made as Steve Saunders, with no AI attribution.
 11. **Public pages are built from one source.** Edit `site-src/index.html`, then run `node tools/build-pages.mjs` and commit the generated `index.html`, the section pages (`pt.html`, `classes.html` and so on), `sitemap.xml`, `photo-usage.json` and `api/_lib/photousage.js`. Never edit those generated files by hand.
 12. Computer-made pictures are labelled "Illustration" on the site.
-14. **Optional, never empty** (Steve, 4 Nov 2026): anything optional can be switched on or off by owners, and nothing on the public site shows as an empty space or "to confirm" wording unless it's a required item. A part with wording to fill in can't be switched on until it's filled in.
 13. Much of the booking, account and coach tooling is expected to move to FighterBase. Spend effort on the public pages, legal pages and speed here, and keep new tooling small.
+14. **Optional, never empty** (Steve, 4 Nov 2026): anything optional can be switched on or off by owners, and nothing on the public site shows as an empty space or "to confirm" wording unless it's a required item. A part with wording to fill in can't be switched on until it's filled in.
 
 **SRS standards that apply:** see section 9 for how the site measures up.
 
