@@ -119,6 +119,8 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Photo map | The build script lists every image on the public pages (137, 70 swappable) with its page, place and edit-mode key, so the coach area knows where each photo is shown, together with the carousel, page swaps, class pictures and coach pages | `tools/build-pages.mjs`, `photo-usage.json`, `api/_lib/photousage.js` |
 | What the website shows (owners) | Optional parts of the public pages (parking, borrowing gloves, contract and notice, parents watching, welfare officer, every coach DBS checked, governing body and insurance, show-day results, Warriors League result, YouTube channel, Google reviews rating) switched on or off in Club details. Anything off is left out completely, with no gap, also with no JavaScript. A part with [square bracket] wording can't be switched on until it's filled in through Edit the website; putting the original wording back hides it again. Defaults are built into the pages. In edit mode, switched-off parts show faded with a blue edge, FAQ answers open while editing, and shared wording (parking on 14 town pages and the FAQ) is one edit | `api/_lib/siteoptions.js`, `site-src/index.html` (`data-opt`), `tools/build-pages.mjs`, `api/site.js` (`options-get`, `options-save`), `coach.html`, `assets/editable.js`, `assets/editor.js` |
 | Photo and video opt-out | Members choose "Happy to be in club photos and videos" or "Please leave me out" in their account (it covers a parent's child too). Every coach sees the names and dates in Photos & videos. Privacy and terms mention it. Children's own names aren't held, so a child shows under the parent's name | `account.html`, `api/auth.js` (`photo-pref`, `photo-optouts`), `coach.html` |
+| Two-step sign-in (coach area) | After the right password, owners (always) and coaches who switch it on in Settings get a 6-digit code by email (owners: Jay's and Steve's emails are set). The code is stored hashed, runs out in 10 minutes, works once in the browser that asked, stops after 5 wrong tries; at most 5 codes an hour, 30 seconds between "Send a new code". An owner with no email is let in once with a warning (the other owner is emailed), then must ask the other owner to add one in Manage coaches → Change email. Coaches switch it on with a test code and off with their password. The password-reset link counts as the second step | `api/auth.js` (`coach-login`, `coach-code`, `coach-code-resend`, `coach-twostep-start`, `coach-twostep-confirm`, `coach-twostep-off`), `api/_lib/twostep.js`, `coach.html` |
+| Trusted devices and signing out | "Trust this device for 30 days" (on by default) skips the code on that device. Settings lists trusted devices with last used date and Remove (which also signs that device out), plus "Sign out everywhere". A password change or reset signs out every other device and forgets trusted devices. Owner sessions from before two-step ended once when it went live (4 Nov 2026). Owners can change each other's email in Manage coaches | `api/auth.js` (`coach-devices`, `coach-device-remove`, `coach-signout-all`), `api/_lib/core.js` (`coachSession`), `coach.html` |
 | Site overview (owners) | Every photo, who added it, where it is used, Drive status | `api/site.js` (`overview`) |
 | Coach pages `/team/name` | Bio, photo gallery, prices | `api/team.js`, `api/profile.js` |
 | PT booking | Coaches set weekly hours and holidays. Customers book 1-to-1, doubles or groups, with email alerts | `api/pt.js`, `book.html` |
@@ -133,7 +135,7 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Security headers | HSTS, nosniff, referrer policy, frame protection, permissions policy. Coach and account pages are noindex and not cached | `vercel.json` |
 | Privacy page | Says which services handle data, cookies, rights, contact | `privacy.html` |
 
-**Where data lives (database keys):** `classes`, `classtypes`, `gymhours`, `site:hero`, `site:videos`, `site:text`, `site:images`, `site:library`, `site:classimg`, `site:posts`, `user:<email>`, `booking:<id>`, `cbk:<id>`, `profile:<coach>:live`, `site:options`, `photo:optout`. Never document values.
+**Where data lives (database keys):** `classes`, `classtypes`, `gymhours`, `site:hero`, `site:videos`, `site:text`, `site:images`, `site:library`, `site:classimg`, `site:posts`, `user:<email>`, `booking:<id>`, `cbk:<id>`, `profile:<coach>:live`, `site:options`, `photo:optout`, `coach:sess`, `coach:<id>:2fa`, `coach:<id>:devices`. Never document values.
 
 **Forms and where enquiries go.** The contact form posts to `/api/enquiry`, which emails the addresses above. Personal details go in the request body, not the web address. A real test enquiry has not yet been confirmed (Steve will test it).
 
@@ -219,7 +221,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | https and HSTS | **Done** | Verified: HSTS max-age 63072000 |
 | Frame, nosniff, referrer, permissions headers | **Done** | Verified |
 | Content security policy | **To do** | Not set |
-| Two-step verification on every account | **To confirm** | |
+| Two-step verification on every account | **Partly** | Coach area done 4 Nov 2026 (required for owners). Outside accounts (Vercel, GitHub, Google, names.co.uk, Upstash) still to confirm: each person turns it on in that account's settings |
 
 ## 10. Wanted next
 
@@ -274,7 +276,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 4 Nov 2026 | No women-only sessions, no student prices (adults and kids only) and no bus routes, so they are removed; directions stay. Steve's rule: optional things are switchable, and nothing shows as an empty space or "to confirm" wording unless it's required. Owners switch optional parts in Club details; a part can't be switched on until its wording is filled in. Coach bios show only once the coach fills in My profile. The "Draft v11" line is removed |
 | 4 Nov 2026 | Members can ask to be left out of photos and videos in their account (it covers their child too); coaches see the list |
 | 4 Nov 2026 | The club is a sole trader. Jay owns the Google Business Profile; the Hoddesdon listing is left for now. Speed accepted as good by Steve |
-| 4 Nov 2026 | Two-step sign-in for the coach area: required for owners, optional for coaches (to build). Search Console and Bing to be owned by warriorspirit@gmail.com |
+| 4 Nov 2026 | Two-step sign-in for the coach area built and live: an emailed 6-digit code, required for owners, optional for coaches, trusted devices for 30 days, "Sign out everywhere". An owner with no email is let in once with a warning, then must ask the other owner. Search Console and Bing to be owned by warriorspirit@gmail.com |
 | 4 Nov 2026 | A full FighterBase club-onboarding brief written for the FighterBase developer (Claude Doc "FighterBase club onboarding: brief and handover"): six required stages, optional modules, guides, and the "never empty" rule |
 
 ## 12. Still to decide
