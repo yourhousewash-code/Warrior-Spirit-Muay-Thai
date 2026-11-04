@@ -195,7 +195,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | Listed on Google and Bing, baseline recorded | **To confirm** | A Google listing seems to exist. No baseline recorded |
 | Crawler Hints or IndexNow | **To do** | Vercel has no setting for this. Use IndexNow if needed |
 | One address only (www and bare domain) | **Done** | Verified: bare domain redirects to www |
-| Hosting address redirects or is noindex | **Done (to verify live)** | Added a permanent redirect from any `*.vercel.app` address to www (not for `/api`, so scheduled jobs keep working). Check it after deploy |
+| Hosting address redirects or is noindex | **Done** | Added a permanent redirect from any `*.vercel.app` address to www (not for `/api`, so scheduled jobs keep working). Verified 4 Nov 2026: `warrior-spirit-muay-thai.vercel.app/pt` lands on `www…/pt` |
 | robots.txt with sitemap, crawlers allowed | **Done** | Blocks only `/coach`, `/account`, `/api/`. Does not block any search or AI crawler |
 | Unique title, description, canonical, Open Graph, `lang="en-GB"` for every page | **Done** | All 32 sections and the other pages have their own. Link-preview image is the gym photo with the logo |
 | Sitemap with real last-changed dates | **Done** | 36 addresses, dates from the last change to the source |
@@ -223,7 +223,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 Most urgent first.
 
 1. **Confirm the test enquiry arrives** at warriorspirit@gmail.com, and confirm Search Console, Bing and the Google listing. Submit the new sitemap (36 addresses) once the new pages are live.
-2. **Check the new pages live:** open a few (for example `/pt`, `/potters-bar`), check the `vercel.app` redirect, and run Google's mobile speed test.
+2. **Run Google's mobile speed test** on the live pages. (The `vercel.app` redirect and the `/pt` page were checked live on 4 Nov 2026.)
 3. **Check Steve's wording** in the new terms and accessibility pages (section 13, question 11).
 4. **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
 5. Coaches change their starter passwords. Check two-step verification on all accounts.
