@@ -12,7 +12,7 @@
 
 **Related:** SRS Site Factory handbook (how SRS builds sites) and the Turbo handbook (what happens after launch). Neither is linked to this site yet.
 
-**Last updated:** 3 November 2026
+**Last updated:** 4 November 2026
 
 ---
 
@@ -38,7 +38,7 @@ Used the same way everywhere (site, Google, listings).
 |---|---|---|
 | Trading name | Warrior Spirit Muay Thai & Kickboxing | Confirmed |
 | Other names the club is known by | Hoddesdon Muay Thai & K1 Kickboxing (the old name), WMT Muay Thai (a club we took over) | Confirmed |
-| Legal entity (Ltd, partnership, sole trader?) | Not recorded | **To confirm** |
+| Legal entity | Sole trader (Steve, 4 Nov 2026). The website must show the owner's name with the trading name, an address and an email | Confirmed; owner's full name **to confirm** |
 | Address (shown on the site) | Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB | Confirmed |
 | Phone (one format) | 07904 032142 (WhatsApp uses the same number) | Confirmed |
 | Email shown to the public | warriorspirit@gmail.com (changed from Jay's personal address on 30 Oct 2026) | Confirmed |
@@ -72,6 +72,7 @@ Used the same way everywhere (site, Google, listings).
 10. Commits to the repo are made as Steve Saunders, with no AI attribution.
 11. **Public pages are built from one source.** Edit `site-src/index.html`, then run `node tools/build-pages.mjs` and commit the generated `index.html`, the section pages (`pt.html`, `classes.html` and so on), `sitemap.xml`, `photo-usage.json` and `api/_lib/photousage.js`. Never edit those generated files by hand.
 12. Computer-made pictures are labelled "Illustration" on the site.
+14. **Optional, never empty** (Steve, 4 Nov 2026): anything optional can be switched on or off by owners, and nothing on the public site shows as an empty space or "to confirm" wording unless it's a required item. A part with wording to fill in can't be switched on until it's filled in.
 13. Much of the booking, account and coach tooling is expected to move to FighterBase. Spend effort on the public pages, legal pages and speed here, and keep new tooling small.
 
 **SRS standards that apply:** see section 9 for how the site measures up.
@@ -93,7 +94,7 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Coach logins on the site | Jay, Steve, Aaron, Kian (usernames `jay`, `steve`, `aaron`, `kian`). Jay can add or hide coaches | Coaches should change their starter passwords. Steve's login has no starting password |
 | Google Search Console | Not confirmed | **To confirm** |
 | Bing Webmaster Tools | Not confirmed | **To confirm** |
-| Google Business Profile | A listing seems to exist (the site shows a 4.9 rating from about 100 Google reviews across the Potters Bar and Hoddesdon listings) | Owner and access **to confirm** |
+| Google Business Profile | Jay owns the Potters Bar listing and is adding the website address (Steve, 4 Nov 2026). The Hoddesdon listing is left alone for now. A listing seems to exist (the site shows a 4.9 rating from about 100 Google reviews across the Potters Bar and Hoddesdon listings) | Owner and access **to confirm** |
 | Form service | None. Forms post to the site's own `/api/enquiry` | Email goes by Gmail |
 | Social profiles | Instagram, TikTok (Facebook not confirmed) | Logins are with the club and coaches, not AI |
 | Affiliate or partner accounts | None | n/a |
@@ -116,6 +117,8 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Edit mode | Owners click any wording or photo on the live site to change it. Photos come from the library | `assets/editable.js`, `assets/editor.js` |
 | Photos & videos hub | One tile for every photo (3 Nov 2026). **All photos** (filters: on the website, not used yet, mine, from the club Drive; Drive photos sync in) and **Add photos & videos** are for everyone. **Homepage carousel**, **Video gallery** and **Page photos** (every swappable photo spot, page by page, with Replace and Put back the original) are for owners. Hover a photo to see where it's shown; tap it for every place (each linked to the live page) and what you can do. Owners: replace everywhere, add to carousel, use on a page spot, take off the website (it stays in the library), delete (only once it's shown nowhere, or force-delete with a confirm). Coaches: use on my page (Jay approves), delete their own unused photos. Old links (`#uploads`, `#library`, `#media`) land on the right tab | `coach.html`, `api/site.js` (`hub`, `where`, `unpublish`, `replace-everywhere`) |
 | Photo map | The build script lists every image on the public pages (137, 70 swappable) with its page, place and edit-mode key, so the coach area knows where each photo is shown, together with the carousel, page swaps, class pictures and coach pages | `tools/build-pages.mjs`, `photo-usage.json`, `api/_lib/photousage.js` |
+| What the website shows (owners) | Optional parts of the public pages (parking, borrowing gloves, contract and notice, parents watching, welfare officer, every coach DBS checked, governing body and insurance, show-day results, Warriors League result, YouTube channel, Google reviews rating) switched on or off in Club details. Anything off is left out completely, with no gap, also with no JavaScript. A part with [square bracket] wording can't be switched on until it's filled in through Edit the website; putting the original wording back hides it again. Defaults are built into the pages. In edit mode, switched-off parts show faded with a blue edge, FAQ answers open while editing, and shared wording (parking on 14 town pages and the FAQ) is one edit | `api/_lib/siteoptions.js`, `site-src/index.html` (`data-opt`), `tools/build-pages.mjs`, `api/site.js` (`options-get`, `options-save`), `coach.html`, `assets/editable.js`, `assets/editor.js` |
+| Photo and video opt-out | Members choose "Happy to be in club photos and videos" or "Please leave me out" in their account (it covers a parent's child too). Every coach sees the names and dates in Photos & videos. Privacy and terms mention it. Children's own names aren't held, so a child shows under the parent's name | `account.html`, `api/auth.js` (`photo-pref`, `photo-optouts`), `coach.html` |
 | Site overview (owners) | Every photo, who added it, where it is used, Drive status | `api/site.js` (`overview`) |
 | Coach pages `/team/name` | Bio, photo gallery, prices | `api/team.js`, `api/profile.js` |
 | PT booking | Coaches set weekly hours and holidays. Customers book 1-to-1, doubles or groups, with email alerts | `api/pt.js`, `book.html` |
@@ -130,7 +133,7 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Security headers | HSTS, nosniff, referrer policy, frame protection, permissions policy. Coach and account pages are noindex and not cached | `vercel.json` |
 | Privacy page | Says which services handle data, cookies, rights, contact | `privacy.html` |
 
-**Where data lives (database keys):** `classes`, `classtypes`, `gymhours`, `site:hero`, `site:videos`, `site:text`, `site:images`, `site:library`, `site:classimg`, `site:posts`, `user:<email>`, `booking:<id>`, `cbk:<id>`, `profile:<coach>:live`. Never document values.
+**Where data lives (database keys):** `classes`, `classtypes`, `gymhours`, `site:hero`, `site:videos`, `site:text`, `site:images`, `site:library`, `site:classimg`, `site:posts`, `user:<email>`, `booking:<id>`, `cbk:<id>`, `profile:<coach>:live`, `site:options`, `photo:optout`. Never document values.
 
 **Forms and where enquiries go.** The contact form posts to `/api/enquiry`, which emails the addresses above. Personal details go in the request body, not the web address. A real test enquiry has not yet been confirmed (Steve will test it).
 
@@ -202,7 +205,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | Real 404 for missing pages | **Done** | Verified |
 | Google-readable business details match the official facts | **Partly** | One `SportsActivityLocation` block with name, phone, address and areas. Opening hours and Ltd details not checked against the facts |
 | Genuinely local town and service pages | **To confirm** | They now have their own addresses. Content quality not reviewed |
-| Speed score 90+ on mobile | **To confirm** | Not measured on the live site. Fonts now stored locally and videos no longer load on phones. Images and the 270 KB page size are the next suspects |
+| Speed score 90+ on mobile | **Accepted** | Steve, 4 Nov 2026: confident the speed is good (not measured with Google's test). Fonts are stored locally and videos don't load on phones |
 | Images WebP with width and height, lazy | **Partly** | Photos are WebP. Width and height not checked |
 | Fonts stored on the site, two families at most | **Partly** | Stored on the site (done). Still three families (Big Shoulders Display, Barlow, Barlow Condensed), which is one more than the standard |
 | No background video on phones | **Done** | Hero videos show their poster picture on phones and data-saver |
@@ -223,9 +226,9 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 Most urgent first.
 
 1. **Confirm the test enquiry arrives** at warriorspirit@gmail.com, and confirm Search Console, Bing and the Google listing. Submit the new sitemap (36 addresses) once the new pages are live.
-2. **Run Google's mobile speed test** on the live pages. (The `vercel.app` redirect and the `/pt` page were checked live on 4 Nov 2026.)
+2. Search Console and Bing: being set up with Steve on 4 Nov 2026 under warriorspirit@gmail.com.
 3. **Check Steve's wording** in the new terms and accessibility pages (section 13, question 11).
-4. **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
+4. **Fill in optional wording, then switch it on in Club details → What the website shows** (no longer shown as yellow placeholders). Was: **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
 5. Coaches change their starter passwords. Check two-step verification on all accounts.
 6. Reduce speed risks that remain: page size (all sections in every page), image sizes, one fewer font family. Add a content security policy.
 7. Move business details into one settings file.
@@ -268,6 +271,11 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 2 Nov 2026 | Share studio: on phones the Instagram and TikTok buttons open the phone's share sheet with the picture attached (as a JPEG) and put the caption on the clipboard to paste. Instagram does not let any website pre-fill a caption. Computers keep the old way: open the site, copy the caption, save the picture |
 | 2 Nov 2026 | Two gym ring photos (Jay's Drive uploads) are straightened, zoomed and colour-boosted, then added to the photo library. Not placed on a page yet |
 | 3 Nov 2026 | Photos & videos, Photo library and Website photos & videos become one **Photos & videos** hub. Every photo shows where it's shown on the website. Owners can replace it everywhere, take it off the website (it stays in the library) or delete it. Coaches can put it on their own page (Jay approves) and delete their own unused photos. A photo can only be deleted once it's shown nowhere. "Replace everywhere" never changes coach pages; "Take off the website" also removes it from coach galleries. The build script also writes a map of every photo on the public pages |
+| 4 Nov 2026 | No women-only sessions, no student prices (adults and kids only) and no bus routes, so they are removed; directions stay. Steve's rule: optional things are switchable, and nothing shows as an empty space or "to confirm" wording unless it's required. Owners switch optional parts in Club details; a part can't be switched on until its wording is filled in. Coach bios show only once the coach fills in My profile. The "Draft v11" line is removed |
+| 4 Nov 2026 | Members can ask to be left out of photos and videos in their account (it covers their child too); coaches see the list |
+| 4 Nov 2026 | The club is a sole trader. Jay owns the Google Business Profile; the Hoddesdon listing is left for now. Speed accepted as good by Steve |
+| 4 Nov 2026 | Two-step sign-in for the coach area: required for owners, optional for coaches (to build). Search Console and Bing to be owned by warriorspirit@gmail.com |
+| 4 Nov 2026 | A full FighterBase club-onboarding brief written for the FighterBase developer (Claude Doc "FighterBase club onboarding: brief and handover"): six required stages, optional modules, guides, and the "never empty" rule |
 
 ## 12. Still to decide
 
@@ -291,15 +299,15 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 
 Questions for Steve. Nothing here has been filled in as if it were true.
 
-1. What is the legal entity behind the club (limited company, partnership, sole trader)? If a limited company, what are its registered name, number and office, and is it VAT registered?
+1. ~~Legal entity~~ Sole trader (4 Nov 2026). Still needed: the owner's full name as it should appear with the trading name.
 2. Which Gmail account sends the site's emails (the one behind `SMTP_USER`)?
 3. Is Google Search Console set up for the domain, and is Bing Webmaster Tools? Has the sitemap been submitted?
-4. Who owns the Google Business Profile for Potters Bar, and is the Hoddesdon listing still live?
+4. ~~Google Business Profile owner~~ Jay (4 Nov 2026); Hoddesdon left for now.
 5. Which social accounts exist for Facebook and YouTube, and who holds the logins?
 6. Does Jay own the `.com` domain, and should it redirect to the `.co.uk` site?
 7. Have the coaches changed their starter passwords, and is two-step verification on for the accounts above?
 8. Did the test enquiry arrive at warriorspirit@gmail.com?
 9. Are the opening hours in the Google-readable business details correct?
 10. Should any of the 10 AI pictures be replaced by real photos? (They are now labelled as illustrations.)
-11. Please check the new terms and accessibility pages. Things I wrote without being told: members can ask to be left out of photos and videos; a coach can cancel a session and the customer is emailed; some videos have no captions; replies within 5 working days. Is each true?
+11. ~~Terms and accessibility wording~~ Confirmed by Steve on 4 Nov 2026; the photo opt-out is now built. Was: Please check the new terms and accessibility pages. Things I wrote without being told: members can ask to be left out of photos and videos; a coach can cancel a session and the customer is emailed; some videos have no captions; replies within 5 working days. Is each true?
 12. ~~Whether the Photo library tile should be blue.~~ Settled 3 Nov 2026: one red Photos & videos tile (everyone uses it), with the owner tabs inside blue.
