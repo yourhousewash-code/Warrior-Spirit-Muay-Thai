@@ -21,8 +21,14 @@ export const BASE_COACHES = {
 /* Site owners with full control: Jay (head coach) and Steve (site owner). */
 export const ADMIN_IDS = ['jay', 'steve'];
 export const COACHES = {};
+/* Coach sign-in state, read with the coaches on every request: for each coach, the session generation ("g": raised by
+   "Sign out everywhere" and password changes, which ends every older session) and the trusted devices that were removed
+   ("out": device id → when, so a removed device's session ends too). Hash `coach:sess`, one field per coach. */
+export const SESS = {};
 export async function loadCoaches() {
-  const saved = await redis.get('coaches');
+  const [saved, sess] = await Promise.all([redis.get('coaches'), redis.hgetall('coach:sess')]);
+  for (const k of Object.keys(SESS)) delete SESS[k];
+  for (const [k, v] of Object.entries(sess || {})) { try { SESS[k] = typeof v === 'string' ? JSON.parse(v) : v; } catch {} }
   const list = Array.isArray(saved) && saved.length ? saved : Object.values(BASE_COACHES);
   for (const k of Object.keys(COACHES)) delete COACHES[k];
   for (const b of Object.values(BASE_COACHES)) if (b.owner && !list.some(x => x.id === b.id)) list.push(b);
@@ -123,11 +129,14 @@ export function cookies(req) {
   });
   return out;
 }
-export function setSession(res, name, data, days) {
-  const exp = Date.now() + days * 864e5;
+export function setSession(res, name, data, days) { setSigned(res, name, data, days * 86400); }
+/* A signed, HttpOnly, Secure, SameSite=Lax cookie that lasts `seconds`. */
+export function setSigned(res, name, data, seconds) {
+  const exp = Date.now() + seconds * 1000;
   const v = sign({ ...data, exp });
-  appendCookie(res, `${name}=${encodeURIComponent(v)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${days * 86400}`);
+  appendCookie(res, `${name}=${encodeURIComponent(v)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${Math.round(seconds)}`);
 }
+export function readSigned(req, name) { return unsign(cookies(req)[name]); }
 export function clearSession(res, name) {
   appendCookie(res, `${name}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`);
 }
@@ -137,7 +146,13 @@ function appendCookie(res, c) {
 }
 export function coachSession(req) {
   const d = unsign(cookies(req).ws_coach);
-  return d && COACHES[d.id] && COACHES[d.id].active ? COACHES[d.id] : null;
+  const c = d && COACHES[d.id];
+  if (!c || !c.active) return null;
+  const s = SESS[d.id] || {};
+  if ((d.g || 0) !== (s.g || 0)) return null; // ended by "Sign out everywhere" or a password change
+  if (d.dv && s.out && s.out[d.dv]) return null; // this trusted device was removed
+  if (c.admin && !d.m) return null; // an owner session from before two-step sign-in: sign in again with a code
+  return c;
 }
 export function userSession(req) {
   const d = unsign(cookies(req).ws_user);

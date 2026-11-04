@@ -269,6 +269,25 @@ button.mth.phc{display:block;width:100%;border:0}
 .nolist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
 .nolist li{background:var(--ink);border-left:4px solid var(--red);padding:10px 12px;display:grid;gap:2px;min-width:0}
 .nolist b{overflow-wrap:anywhere}.nolist small{color:var(--muted);font-size:13px}
+/* two-step sign-in */
+.codein{font:900 44px/1 var(--display);letter-spacing:.32em;text-align:center;padding:14px 4px 14px calc(4px + .32em);max-width:100%}
+.codein::placeholder{color:#3a3f4d}
+.tick{display:flex;gap:12px;align-items:flex-start;font:400 16px/1.4 var(--body);letter-spacing:0;text-transform:none;color:var(--bone);cursor:pointer}
+.tick input{width:22px;height:22px;flex:none;margin:1px 0 0;padding:0;accent-color:var(--red)}
+.tick small{display:block;color:var(--muted);font-size:14px}
+.linkbtn{background:none;border:0;padding:0;color:var(--bone);text-decoration:underline;font:inherit;cursor:pointer}
+.linkbtn:disabled{color:var(--muted);text-decoration:none;cursor:default}
+.warnbar{border:1px solid var(--tbc);background:rgba(245,197,66,.08);padding:14px 16px;display:grid;gap:10px;justify-items:start}
+.warnbar b{font:700 17px/1.2 var(--cond);letter-spacing:.06em;text-transform:uppercase;color:var(--tbc)}
+.tsstate{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;padding:14px;background:var(--ink);border-left:4px solid var(--free)}
+.tsstate.off{border-left-color:var(--line)}
+.tsstate b{font:700 18px/1.2 var(--cond);letter-spacing:.06em;text-transform:uppercase}
+.tsstate p{margin:4px 0 0;color:var(--soft);font-size:15px}
+#tsPanel .tgl input:checked+i{background:var(--free)}
+#tsPanel h3{margin-top:6px}
+.tsbox{border-left:4px solid var(--tbc);background:var(--ink);padding:14px;display:grid;gap:12px}
+#tsDevices .item{background:var(--ink)}
+@media (max-width:420px){.codein{font-size:36px;letter-spacing:.24em;padding-left:calc(4px + .24em)}}
 </style>
 </head>
 <body>
@@ -289,6 +308,17 @@ button.mth.phc{display:block;width:100%;border:0}
       <button class="btn full" type="submit">Log in</button>
       <p class="muted" style="margin:0"><a href="#" id="forgotLink">Forgot your password?</a></p>
     </form>
+    <!-- two-step sign-in: the code from the email -->
+    <form id="codeForm" class="stack" hidden novalidate>
+      <p class="muted" id="codeTo">We’ve emailed you a 6-digit code. It runs out in 10 minutes.</p>
+      <label for="lc">Sign-in code<input id="lc" class="codein" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="000000" aria-describedby="codeTo" required></label>
+      <label class="tick" for="ltrust"><input type="checkbox" id="ltrust" checked><span>Trust this device for 30 days<small>You won’t need a code here until then. Untick on a shared computer.</small></span></label>
+      <p class="err" id="cerr" role="alert" hidden></p><p class="ok" id="cok" hidden></p>
+      <button class="btn full" type="submit">Sign in</button>
+      <p class="muted" style="margin:0">No email? <button type="button" class="linkbtn" id="resendCode">Send a new code</button> <span id="resendWait"></span></p>
+      <p class="muted" style="margin:0;font-size:15px"><b style="color:var(--soft)">Wrong email?</b> The code goes to the email saved on your coach account. If that address is wrong or you can’t get into it, ask <span id="codeAsk">Jay or Steve</span> to change it in Manage coaches.</p>
+      <p class="muted" style="margin:0"><a href="#" id="codeBack">Back to log in</a></p>
+    </form>
     <form id="forgotForm" class="stack" hidden>
       <p class="muted">Enter your username and we’ll email a reset link to the address saved on your account.</p>
       <label for="fu">Username<input id="fu" autocomplete="username" autocapitalize="none" required></label>
@@ -305,6 +335,7 @@ button.mth.phc{display:block;width:100%;border:0}
   </section>
 
   <section id="dash" hidden class="stack" style="gap:22px">
+    <div class="warnbar" id="noEmailBar" role="alert" hidden></div>
     <!-- ===== HOME ===== -->
     <div data-view="home" class="stack" style="gap:22px">
       <div class="stack" style="gap:8px">
@@ -830,6 +861,30 @@ button.mth.phc{display:block;width:100%;border:0}
           <button class="btn" type="submit">Change password</button>
         </form>
       </div>
+      <section class="panel" id="tsPanel">
+        <h2>Two-step sign-in</h2>
+        <p class="muted">After your password, we email you a 6-digit code to type in. Someone who finds out your password still can’t get in without your email.</p>
+        <div class="tsstate" id="tsState"></div>
+        <form class="tsbox" id="tsEnable" hidden novalidate>
+          <p id="tsEnableTo">We’ve emailed you a code.</p>
+          <label for="tsCode">Code from the email<input id="tsCode" class="codein" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="000000"></label>
+          <p class="err" id="tsEnErr" role="alert" hidden></p>
+          <div class="row"><button class="btn" type="submit">Switch on</button><button type="button" class="btn ghost" id="tsEnCancel">Cancel</button></div>
+          <p class="muted" style="margin:0"><button type="button" class="linkbtn" id="tsResend">Send a new code</button> <span id="tsResendWait"></span></p>
+        </form>
+        <form class="tsbox" id="tsOff" hidden>
+          <p>Enter your password to switch two-step sign-in off.</p>
+          <label for="tsPw">Password<input id="tsPw" type="password" autocomplete="current-password" required></label>
+          <p class="err" id="tsOffErr" role="alert" hidden></p>
+          <div class="row"><button class="btn" type="submit">Switch off</button><button type="button" class="btn ghost" id="tsOffCancel">Keep it on</button></div>
+        </form>
+        <p class="ok" id="tsOk" hidden></p><p class="err" id="tsErr" hidden></p>
+        <h3>Trusted devices</h3>
+        <p class="muted">Phones and computers where you ticked “Trust this device”. They skip the code for 30 days. Remove any you don’t recognise or don’t use any more: that also signs them out.</p>
+        <div class="list" id="tsDevices"><p class="empty">Loading…</p></div>
+        <div class="row"><button type="button" class="btn ghost danger" id="tsAll">Sign out everywhere</button></div>
+        <p class="muted" style="font-size:14px;margin:0">Signs you out on every phone and computer, this one too, and forgets every trusted device. Changing your password also signs out every other device and forgets trusted devices.</p>
+      </section>
     </div>
   </section>
 </main>
@@ -840,7 +895,7 @@ const $ = s => document.querySelector(s);
 const api = async (url, data) => {
   const r = await fetch(url, data === undefined ? { credentials: 'same-origin' } : { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
   let j = {}; try { j = await r.json(); } catch {}
-  if (!r.ok) throw new Error(j.error || 'Something went wrong. Please try again.');
+  if (!r.ok) { const er = new Error(j.error || 'Something went wrong. Please try again.'); er.data = j; throw er; }
   return j;
 };
 const show = (el, msg) => { el.textContent = msg; el.hidden = !msg; };
@@ -988,6 +1043,7 @@ function go(view) {
   if (view === 'schedule') { loadClasses(); loadClassPics(); }
   if (view === 'club') { loadHours(); loadOptions(); }
   if (view === 'overview') loadOverview();
+  if (view === 'settings') loadTwoStep();
   scrollTo({ top: 0 });
 }
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { const v = g.dataset.go; if (location.hash.slice(1) === v || (v === 'home' && !location.hash)) go(v); else location.hash = v === 'home' ? '' : v; } });
@@ -1015,6 +1071,7 @@ async function init() {
   $('#role').textContent = me.admin ? 'Head coach · you can see every coach' : 'Coach';
   $('#pwnote').hidden = me.passwordChanged;
   $('#se').value = me.email || '';
+  drawNoEmailBar();
   if (me.admin) {
     fillCoachSelects();
     $('#pfSubmit').textContent = 'Save & publish';
@@ -1041,9 +1098,116 @@ $('#resetForm').addEventListener('submit', async e => {
 });
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#lerr'), '');
-  try { await api('/api/auth?action=coach-login', { username: $('#lu').value, password: $('#lp').value }); init(); }
+  try {
+    const j = await api('/api/auth?action=coach-login', { username: $('#lu').value, password: $('#lp').value });
+    if (j.step === 'code') return showCodeStep(j);
+    $('#lp').value = ''; init();
+  }
   catch (err) { show($('#lerr'), err.message); }
 });
+
+/* ---------- two-step sign-in ---------- */
+const maskEmail = e => { const [u, d] = String(e || '').split('@'); return d ? `${u.slice(0, Math.min(2, Math.max(1, u.length - 1)))}•••@${d}` : ''; };
+const waits = {};
+function cooldown(btn, out, secs) {
+  clearInterval(waits[btn.id]); let left = secs || 30;
+  const tick = () => { btn.disabled = left > 0; out.textContent = left > 0 ? `(you can ask again in ${left}s)` : ''; if (left-- <= 0) clearInterval(waits[btn.id]); };
+  tick(); waits[btn.id] = setInterval(tick, 1000);
+}
+function showCodeStep(j) {
+  $('#loginForm').hidden = true; $('#codeForm').hidden = false; $('#lp').value = '';
+  show($('#cerr'), ''); show($('#cok'), '');
+  $('#codeTo').textContent = `We’ve emailed a 6-digit code to ${j.to}. It runs out in 10 minutes.`;
+  $('#codeAsk').textContent = j.ask || 'Jay or Steve';
+  $('#lc').value = ''; $('#lc').focus();
+  cooldown($('#resendCode'), $('#resendWait'), j.wait);
+}
+function backToLogin() { $('#codeForm').hidden = true; $('#loginForm').hidden = false; $('#lp').focus(); }
+/* Six digits typed or pasted (or filled in by the phone from the email) signs in straight away. */
+function codeInput(inp, form) { inp.addEventListener('input', () => { const v = inp.value.replace(/\D/g, '').slice(0, 6); if (v !== inp.value) inp.value = v; if (v.length === 6 && !form.dataset.busy) form.requestSubmit(); }); }
+codeInput($('#lc'), $('#codeForm'));
+$('#codeBack').onclick = e => { e.preventDefault(); backToLogin(); };
+$('#codeForm').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.target; if (f.dataset.busy) return;
+  show($('#cerr'), ''); show($('#cok'), '');
+  if ($('#lc').value.replace(/\D/g, '').length !== 6) { show($('#cerr'), 'Enter the 6 digits from the email.'); return $('#lc').focus(); }
+  f.dataset.busy = '1';
+  try { await api('/api/auth?action=coach-code', { code: $('#lc').value, trust: $('#ltrust').checked }); f.hidden = true; $('#loginForm').hidden = false; init(); }
+  catch (err) { show($('#cerr'), err.message); if (err.data?.restart) backToLogin(); else { $('#lc').value = ''; $('#lc').focus(); } }
+  finally { delete f.dataset.busy; }
+});
+$('#resendCode').onclick = async () => {
+  show($('#cerr'), ''); show($('#cok'), '');
+  try { const j = await api('/api/auth?action=coach-code-resend', {}); show($('#cok'), `New code sent to ${j.to}. Only the newest code works.`); cooldown($('#resendCode'), $('#resendWait'), j.wait); $('#lc').value = ''; $('#lc').focus(); }
+  catch (err) { show($('#cerr'), err.message); if (err.data?.restart) backToLogin(); }
+};
+function drawNoEmailBar() {
+  const bar = $('#noEmailBar'); bar.hidden = !me.needsEmail; if (!me.needsEmail) return;
+  bar.innerHTML = me.twoStep === 'required'
+    ? `<b>Add your email address now</b><p>Owners must use two-step sign-in, but there’s no email address on your account for the codes. So this time you were let in without one, and ${esc(me.ask)} has been told. <strong>Next time you won’t be able to sign in until there’s an email on your account.</strong> Add it in Settings, or ask ${esc(me.ask)} to add it in Manage coaches.</p><a class="btn small" href="#settings">Add my email</a>`
+    : `<b>Add your email address</b><p>Two-step sign-in is on, but there’s no email address on your account for the codes, so you were let in without one. Add your email in Settings.</p><a class="btn small" href="#settings">Add my email</a>`;
+}
+async function loadTwoStep() {
+  const st = me.twoStep, to = me.email ? maskEmail(me.email) : '';
+  for (const id of ['#tsOk', '#tsErr']) show($(id), '');
+  $('#tsEnable').hidden = true; $('#tsOff').hidden = true;
+  const where = to ? `Codes go to ${esc(to)} (your booking emails address above).` : '<span class="err">There’s no email on your account yet. Add one above: the codes go there.</span>';
+  $('#tsState').className = 'tsstate' + (st === 'off' ? ' off' : '');
+  $('#tsState').innerHTML = st === 'required'
+    ? `<div><b>On · required for owners</b><p>Always on for Jay and Steve, so it can’t be switched off. ${where}</p></div><span class="pill open">On</span>`
+    : `<div><b>${st === 'on' ? 'On' : 'Off'}</b><p>${st === 'on' ? where : 'Optional for coaches. Switch it on and we’ll send a test code to check it reaches you.'}</p></div>
+       <label class="tgl"><input type="checkbox" role="switch" id="tsSwitch" ${st === 'on' ? 'checked' : ''} aria-label="Two-step sign-in"><i></i><span>${st === 'on' ? 'On' : 'Off'}</span></label>`;
+  try {
+    const { devices } = await api('/api/auth?action=coach-devices');
+    const d8 = ms => new Intl.DateTimeFormat('en-GB', { timeZone: TZ, day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(ms));
+    $('#tsDevices').innerHTML = devices.length ? devices.map(d => `<div class="item open"><div><b>${esc(d.name)}</b>${d.here ? ' <span class="pill open">This device</span>' : ''}
+      <div class="meta">Last used ${esc(d8(d.last))}, ${esc(time(d.last))} · trusted on ${esc(d8(d.added))} · until ${esc(d8(d.until))}</div></div>
+      <div class="acts"><button type="button" class="btn small ghost" data-devrm="${esc(d.id)}">Remove</button></div></div>`).join('')
+      : `<p class="empty">No trusted devices.${st === 'off' ? '' : ' Tick “Trust this device” when you sign in with a code.'}</p>`;
+  } catch (err) { $('#tsDevices').innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+}
+async function tsSendTest() {
+  show($('#tsEnErr'), '');
+  const j = await api('/api/auth?action=coach-twostep-start', {});
+  $('#tsEnableTo').textContent = `We’ve emailed a test code to ${j.to}. Enter it to switch two-step sign-in on. It runs out in 10 minutes.`;
+  cooldown($('#tsResend'), $('#tsResendWait'), j.wait);
+}
+$('#tsPanel').addEventListener('change', async e => {
+  if (e.target.id !== 'tsSwitch') return;
+  const want = e.target.checked; e.target.checked = !want; // stays as it was until confirmed
+  show($('#tsErr'), ''); show($('#tsOk'), '');
+  if (want) {
+    try { await tsSendTest(); $('#tsOff').hidden = true; $('#tsEnable').hidden = false; $('#tsCode').value = ''; $('#tsCode').focus(); }
+    catch (err) { show($('#tsErr'), err.message); }
+  } else { $('#tsEnable').hidden = true; $('#tsOff').hidden = false; show($('#tsOffErr'), ''); $('#tsPw').value = ''; $('#tsPw').focus(); }
+});
+codeInput($('#tsCode'), $('#tsEnable'));
+$('#tsEnable').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.target; if (f.dataset.busy) return; show($('#tsEnErr'), '');
+  if ($('#tsCode').value.replace(/\D/g, '').length !== 6) { show($('#tsEnErr'), 'Enter the 6 digits from the email.'); return $('#tsCode').focus(); }
+  f.dataset.busy = '1';
+  try { me = (await api('/api/auth?action=coach-twostep-confirm', { code: $('#tsCode').value })).coach; await loadTwoStep(); show($('#tsOk'), 'Two-step sign-in is on. Next time you sign in, we’ll email you a code.'); }
+  catch (err) { show($('#tsEnErr'), err.message); $('#tsCode').value = ''; $('#tsCode').focus(); }
+  finally { delete f.dataset.busy; }
+});
+$('#tsResend').onclick = async () => { try { await tsSendTest(); $('#tsCode').value = ''; $('#tsCode').focus(); } catch (err) { show($('#tsEnErr'), err.message); } };
+$('#tsEnCancel').onclick = () => { $('#tsEnable').hidden = true; };
+$('#tsOffCancel').onclick = () => { $('#tsOff').hidden = true; };
+$('#tsOff').addEventListener('submit', async e => {
+  e.preventDefault(); show($('#tsOffErr'), '');
+  try { me = (await api('/api/auth?action=coach-twostep-off', { password: $('#tsPw').value })).coach; await loadTwoStep(); show($('#tsOk'), 'Two-step sign-in is off.'); }
+  catch (err) { show($('#tsOffErr'), err.message); }
+});
+$('#tsDevices').addEventListener('click', async e => {
+  const b = e.target.closest('[data-devrm]'); if (!b) return;
+  if (b.dataset.confirm !== '1') { b.dataset.confirm = '1'; b.textContent = 'Tap again to remove'; return; }
+  try { const j = await api('/api/auth?action=coach-device-remove', { id: b.dataset.devrm }); if (j.signedOut) { location.href = '/coach'; return; } loadTwoStep(); show($('#tsOk'), 'Device removed and signed out.'); }
+  catch (err) { show($('#tsErr'), err.message); }
+});
+$('#tsAll').onclick = async () => {
+  if (!confirm('Sign out on every phone and computer, this one too, and forget every trusted device?')) return;
+  try { await api('/api/auth?action=coach-signout-all', {}); location.href = '/coach'; } catch (err) { show($('#tsErr'), err.message); }
+};
 $('#logout').addEventListener('click', async () => { await api('/api/auth?action=coach-logout', {}); location.href = '/coach'; });
 function alertBox(msg) { const p = document.createElement('p'); p.className = 'err'; p.textContent = msg; document.querySelector('[data-view]:not([hidden])').prepend(p); setTimeout(() => p.remove(), 6000); }
 
@@ -1872,20 +2036,27 @@ async function loadTeam() {
     box.innerHTML = coaches.map(c => {
       const state = !c.active ? ['Hidden', 'cancelled'] : c.listed ? ['On the website', 'open'] : ['Waiting for their profile', ''];
       return `<div class="item ${state[1]}"><div><b>${esc(c.name)}</b> <span class="pill ${state[1] === 'open' ? 'open' : ''}">${state[0]}</span>
-        <div class="meta">Username: <strong>${esc(c.id)}</strong>${c.email ? ' · ' + esc(c.email) : ''}${c.passwordChanged ? '' : ' · still on starting password'}${c.listed ? ` · <a href="/team/${esc(c.id)}" target="_blank" rel="noopener">View page</a>` : ''}</div>
+        <div class="meta">Username: <strong>${esc(c.id)}</strong>${c.email ? ' · ' + esc(c.email) : ''}${c.passwordChanged ? '' : ' · still on starting password'}${c.twoStep !== 'off' ? ` · two-step sign-in ${c.twoStep === 'required' ? 'required' : 'on'}` : ''}${c.needsEmail ? ' · <span class="err">no email for sign-in codes</span>' : ''}${c.listed ? ` · <a href="/team/${esc(c.id)}" target="_blank" rel="noopener">View page</a>` : ''}</div>
+        ${c.id === me.id ? '' : `<div class="row" data-tme="${esc(c.id)}" hidden style="margin-top:8px"><input type="email" placeholder="Their email" value="${esc(c.email || '')}" data-nem style="flex:1 1 200px" aria-label="${esc(c.first)}’s email"><button type="button" class="btn small" data-setem="${esc(c.id)}">Save email</button></div>`}
         ${['jay','steve'].includes(c.id) ? '' : `<div class="row" data-tm="${esc(c.id)}" hidden style="margin-top:8px"><input type="text" placeholder="New password (8+ characters)" data-npw style="flex:1 1 200px"><button type="button" class="btn small" data-setpw="${esc(c.id)}">Set password</button></div>`}</div>
-        <div class="acts">${['jay','steve'].includes(c.id) ? '' : `<button type="button" class="btn small ghost" data-showpw="${esc(c.id)}">Reset password</button><button type="button" class="btn small ghost" data-active="${esc(c.id)}" data-to="${!c.active}">${c.active ? 'Hide' : 'Bring back'}</button>`}</div></div>`;
+        <div class="acts">${c.id === me.id ? '' : `<button type="button" class="btn small ghost" data-showem="${esc(c.id)}">Change email</button>`}${['jay','steve'].includes(c.id) ? '' : `<button type="button" class="btn small ghost" data-showpw="${esc(c.id)}">Reset password</button><button type="button" class="btn small ghost" data-active="${esc(c.id)}" data-to="${!c.active}">${c.active ? 'Hide' : 'Bring back'}</button>`}</div></div>`;
     }).join('');
   } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
 }
 $('#teamList').addEventListener('click', async e => {
   const sp = e.target.closest('[data-showpw]'), set = e.target.closest('[data-setpw]'), act = e.target.closest('[data-active]');
+  const se = e.target.closest('[data-showem]'), setem = e.target.closest('[data-setem]');
   if (sp) { const row = document.querySelector(`[data-tm="${sp.dataset.showpw}"]`); row.hidden = !row.hidden; return; }
+  if (se) { const row = document.querySelector(`[data-tme="${se.dataset.showem}"]`); row.hidden = !row.hidden; return; }
   try {
+    if (setem) {
+      await api('/api/auth?action=coach-update', { id: setem.dataset.setem, email: setem.parentElement.querySelector('[data-nem]').value });
+      return loadTeam();
+    }
     if (set) {
       const pw = set.parentElement.querySelector('[data-npw]').value;
       await api('/api/auth?action=coach-update', { id: set.dataset.setpw, password: pw });
-      set.parentElement.innerHTML = `<span class="ok">Password set. Let them know their new password.</span>`;
+      set.parentElement.innerHTML = `<span class="ok">Password set. They’ve been signed out everywhere. Let them know their new password.</span>`;
       return;
     }
     if (act) {
@@ -2026,11 +2197,11 @@ document.addEventListener('click', async e => {
 /* ---------- settings ---------- */
 $('#emailForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#seok'), ''); show($('#seerr'), '');
-  try { await api('/api/auth?action=coach-settings', { email: $('#se').value }); show($('#seok'), 'Saved.'); } catch (err) { show($('#seerr'), err.message); }
+  try { me = (await api('/api/auth?action=coach-settings', { email: $('#se').value })).coach; show($('#seok'), 'Saved.'); drawNoEmailBar(); loadTwoStep(); } catch (err) { show($('#seerr'), err.message); }
 });
 $('#pwForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#pwok'), ''); show($('#pwerr'), '');
-  try { await api('/api/auth?action=coach-settings', { currentPassword: $('#pc').value, newPassword: $('#pn').value }); show($('#pwok'), 'Password changed.'); $('#pwnote').hidden = true; e.target.reset(); }
+  try { me = (await api('/api/auth?action=coach-settings', { currentPassword: $('#pc').value, newPassword: $('#pn').value })).coach; show($('#pwok'), 'Password changed. You’ve been signed out on every other device, and trusted devices have been forgotten.'); $('#pwnote').hidden = true; e.target.reset(); loadTwoStep(); }
   catch (err) { show($('#pwerr'), err.message); }
 });
 

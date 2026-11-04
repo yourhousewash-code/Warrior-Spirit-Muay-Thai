@@ -2,8 +2,12 @@ import crypto from 'node:crypto';
 import {
   redis, COACHES, loadCoaches, activeIds, publicIds, send, bad, setupProblem, body, clean, validEmail, rateLimit,
   hashPassword, checkPassword, checkCoachPassword, setSession, clearSession, saveCoaches,
-  coachSession, userSession, coachEmail, mail, mailReady, SITE,
+  coachSession, userSession, coachEmail, mail, mailReady, SITE, readSigned, SESS,
 } from './_lib/core.js';
+import {
+  twoStepState, askWho, startSession, endAllSessions, listDevices, trustedDevice, touchDevice, trustThisDevice,
+  removeDevices, forgetTrustCookie, trustCookie, sendCode, checkCode, challenge, setChallenge, clearChallenge, noEmailPass, isOwner, RESEND_WAIT,
+} from './_lib/twostep.js';
 
 export default async function handler(req, res) {
   const problem = setupProblem();
@@ -20,8 +24,45 @@ export default async function handler(req, res) {
         const cid = clean(b.username, 30).toLowerCase();
         if (!(await rateLimit(`coach:${cid}:${ip}`, 8, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
         if (!COACHES[cid]?.active || !(await checkCoachPassword(cid, String(b.password || '')))) return bad(res, 'That username or password isn’t right.', 401);
-        setSession(res, 'ws_coach', { id: cid }, 30);
-        return send(res, 200, { coach: await coachInfo(cid) });
+        /* Two-step sign-in: owners always, other coaches if they switched it on. A trusted device skips the code. */
+        const ts = await twoStepState(cid);
+        if (ts === 'off') { startSession(res, cid, 'p'); return send(res, 200, { coach: await coachInfo(cid) }); }
+        const dev = await trustedDevice(req, cid);
+        if (dev) { await touchDevice(cid, dev); startSession(res, cid, 't', dev.id); return send(res, 200, { coach: await coachInfo(cid) }); }
+        if (!(await coachEmail(cid))) {
+          /* No email to send a code to. A coach who chose two-step is let in (it's optional for them); an owner is let in
+             once, with a warning and an email to the other owner, then has to ask the other owner to add an email. */
+          if (ts === 'on') { startSession(res, cid, 'p'); return send(res, 200, { coach: await coachInfo(cid), warning: 'noemail' }); }
+          if (await noEmailPass(cid)) { startSession(res, cid, 'n'); return send(res, 200, { coach: await coachInfo(cid), warning: 'noemail' }); }
+          return send(res, 403, { error: `There’s no email address on your account, so we can’t send your sign-in code, and owners can’t sign in without one. Ask ${askWho(cid)} to add your email in Manage coaches → Change email, then try again.`, noEmail: true });
+        }
+        const r = await sendCode(cid, 'login');
+        if (r.error) return bad(res, r.error, r.status);
+        setChallenge(res, cid, r.n);
+        return send(res, 200, { step: 'code', to: r.to, ask: askWho(cid), wait: RESEND_WAIT });
+      }
+      /* Second step: the 6-digit code from the email. */
+      case 'coach-code': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const ch = challenge(req);
+        if (!ch || !COACHES[ch.id]?.active || (ch.g || 0) !== (SESS_G(ch.id))) return send(res, 401, { error: 'Your sign-in timed out. Enter your username and password again.', restart: true });
+        if (!(await rateLimit(`2fa:try:${ip}`, 30, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
+        const r = await checkCode(ch.id, 'login', ch.n, b.code);
+        if (r.error) return send(res, r.status, { error: r.error, expired: !!r.expired });
+        clearChallenge(res);
+        const dv = b.trust ? await trustThisDevice(req, res, ch.id) : null;
+        if (!dv) forgetTrustCookie(res, ch.id);
+        startSession(res, ch.id, '2', dv);
+        return send(res, 200, { coach: await coachInfo(ch.id) });
+      }
+      case 'coach-code-resend': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const ch = challenge(req);
+        if (!ch || !COACHES[ch.id]?.active) return send(res, 401, { error: 'Your sign-in timed out. Enter your username and password again.', restart: true });
+        const r = await sendCode(ch.id, 'login', { resend: true });
+        if (r.error) return bad(res, r.error, r.status);
+        setChallenge(res, ch.id, r.n);
+        return send(res, 200, { to: r.to, wait: RESEND_WAIT });
       }
       case 'coach-forgot': {
         if (req.method !== 'POST') return bad(res, 'Use POST', 405);
@@ -49,15 +90,75 @@ export default async function handler(req, res) {
         if (!cid || !COACHES[cid]?.active) return bad(res, 'That reset link has expired. Ask for a new one.', 400);
         await redis.set(`coach:${cid}:hash`, hashPassword(pw));
         await redis.del(key);
-        setSession(res, 'ws_coach', { id: cid }, 30);
+        /* A new password signs out every device and forgets trusted devices. The link came to their email, so it counts as the code. */
+        await endAllSessions(cid);
+        forgetTrustCookie(res, cid);
+        startSession(res, cid, 'r');
         return send(res, 200, { coach: await coachInfo(cid) });
       }
       case 'coach-me': {
         const c = coachSession(req);
         if (!c) return send(res, 200, { coach: null });
+        const dev = await trustedDevice(req, c.id); // keeps "last used" up to date on trusted devices
+        if (dev && Date.now() - (dev.last || 0) > 600e3) await touchDevice(c.id, dev);
         return send(res, 200, { coach: await coachInfo(c.id) });
       }
-      case 'coach-logout': clearSession(res, 'ws_coach'); return send(res, 200, { ok: true });
+      case 'coach-logout': clearSession(res, 'ws_coach'); clearChallenge(res); return send(res, 200, { ok: true });
+
+      /* ----- Settings → Two-step sign-in ----- */
+      case 'coach-devices': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const here = readSigned(req, trustCookie(c.id))?.dv || '';
+        const devices = (await listDevices(c.id)).map(d => ({ id: d.id, name: d.name, added: d.added, last: d.last, until: d.exp, here: d.id === here }));
+        return send(res, 200, { twoStep: await twoStepState(c.id), devices });
+      }
+      case 'coach-device-remove': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const id = clean(b.id, 40);
+        if (!(await listDevices(c.id)).some(d => d.id === id)) return bad(res, 'That device has already been removed.', 404);
+        await removeDevices(c.id, [id]);
+        if (readSigned(req, trustCookie(c.id))?.dv === id) forgetTrustCookie(res, c.id);
+        const self = readSigned(req, 'ws_coach')?.dv === id;
+        if (self) clearSession(res, 'ws_coach');
+        return send(res, 200, { ok: true, signedOut: self });
+      }
+      case 'coach-signout-all': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        await endAllSessions(c.id);
+        forgetTrustCookie(res, c.id); clearSession(res, 'ws_coach');
+        return send(res, 200, { ok: true });
+      }
+      /* Coaches (not owners) switch it on with a test code, so we know the codes reach them. */
+      case 'coach-twostep-start': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        if (isOwner(c.id)) return bad(res, 'Two-step sign-in is always on for owners.');
+        if ((await twoStepState(c.id)) === 'on') return bad(res, 'Two-step sign-in is already on.');
+        const r = await sendCode(c.id, 'enable', { resend: true });
+        if (r.error) return bad(res, r.error, r.status);
+        return send(res, 200, { to: r.to, wait: RESEND_WAIT });
+      }
+      case 'coach-twostep-confirm': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        if (isOwner(c.id)) return bad(res, 'Two-step sign-in is always on for owners.');
+        if (!(await rateLimit(`2fa:try:${ip}`, 30, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
+        const r = await checkCode(c.id, 'enable', null, b.code);
+        if (r.error) return send(res, r.status, { error: r.error, expired: !!r.expired });
+        await redis.set(`coach:${c.id}:2fa`, { on: true, at: Date.now() });
+        return send(res, 200, { coach: await coachInfo(c.id) });
+      }
+      case 'coach-twostep-off': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        if (isOwner(c.id)) return bad(res, 'Two-step sign-in is required for owners, so it can’t be switched off.', 403);
+        if (!(await rateLimit(`coach:${c.id}:${ip}`, 8, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
+        if (!(await checkCoachPassword(c.id, String(b.password || '')))) return bad(res, 'That password isn’t right.', 401);
+        await redis.del(`coach:${c.id}:2fa`, `coach:${c.id}:2fa:enable`);
+        return send(res, 200, { coach: await coachInfo(c.id) });
+      }
       /* Every coach: members who asked (in their account) to be left out of photos and videos. Names and dates only. */
       case 'photo-optouts': {
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
@@ -106,6 +207,13 @@ export default async function handler(req, res) {
         if (!c.admin) return bad(res, 'Only Jay can change coaches.', 403);
         const cid = clean(b.id, 20);
         if (!COACHES[cid]) return bad(res, 'Coach not found.', 404);
+        /* Owners can change any coach's email, including the other owner's (so an owner with no email for sign-in codes can be helped). */
+        if (b.email !== undefined) {
+          const e = clean(b.email, 120).toLowerCase();
+          if (!validEmail(e)) return bad(res, 'That email address doesn’t look right.');
+          await changeEmail(cid, e, c.first);
+          return send(res, 200, { ok: true });
+        }
         if (COACHES[cid].admin) return bad(res, 'An owner account can’t be changed here.');
         if (typeof b.active === 'boolean') COACHES[cid].active = b.active;
         if (b.name) { const n = clean(b.name, 60).replace(/\s+/g, ' '); if (n.includes(' ')) { COACHES[cid].name = n; COACHES[cid].first = n.split(' ')[0]; } }
@@ -113,6 +221,7 @@ export default async function handler(req, res) {
         if (b.password) {
           if (String(b.password).length < 8) return bad(res, 'Choose a password of at least 8 characters.');
           await redis.set(`coach:${cid}:hash`, hashPassword(String(b.password)));
+          await endAllSessions(cid); // signs them out everywhere and forgets their trusted devices
         }
         return send(res, 200, { ok: true });
       }
@@ -122,12 +231,18 @@ export default async function handler(req, res) {
         if (b.email !== undefined) {
           const e = clean(b.email, 120).toLowerCase();
           if (e && !validEmail(e)) return bad(res, 'That email address doesn’t look right.');
-          await redis.set(`coach:${c.id}:email`, e);
+          const ts = await twoStepState(c.id);
+          if (!e && !envEmail(c.id) && ts !== 'off') return bad(res, ts === 'required' ? 'Owners need an email address for sign-in codes. Enter a new one instead of clearing it.' : 'Your sign-in codes go to this email. Enter a new one, or switch two-step sign-in off first.');
+          await changeEmail(c.id, e, '');
         }
         if (b.newPassword) {
           if (!(await checkCoachPassword(c.id, String(b.currentPassword || '')))) return bad(res, 'Your current password isn’t right.', 401);
           if (String(b.newPassword).length < 8) return bad(res, 'Choose a password of at least 8 characters.');
           await redis.set(`coach:${c.id}:hash`, hashPassword(String(b.newPassword)));
+          /* A new password signs out every other device and forgets every trusted device. This one stays signed in. */
+          await endAllSessions(c.id);
+          forgetTrustCookie(res, c.id);
+          startSession(res, c.id, readSigned(req, 'ws_coach')?.m || 'p');
         }
         return send(res, 200, { coach: await coachInfo(c.id) });
       }
@@ -268,5 +383,20 @@ async function sendVerify(email, name) {
 async function coachInfo(cid) {
   const c = COACHES[cid];
   const team = Object.values(COACHES).filter(x => x.active).map(x => ({ id: x.id, name: x.name, first: x.first }));
-  return { id: c.id, name: c.name, first: c.first, admin: c.admin, email: await coachEmail(cid), passwordChanged: !!(await redis.get(`coach:${cid}:hash`)), team };
+  const email = await coachEmail(cid), twoStep = await twoStepState(cid);
+  return { id: c.id, name: c.name, first: c.first, admin: c.admin, email, passwordChanged: !!(await redis.get(`coach:${cid}:hash`)), team,
+    twoStep, needsEmail: twoStep !== 'off' && !email, ask: askWho(cid) };
 }
+const envEmail = cid => (COACHES[cid]?.envEmail ? process.env[COACHES[cid].envEmail] : '') || '';
+/* Saves a coach's email (booking alerts and sign-in codes). The old address is told, in case it wasn't them. */
+async function changeEmail(cid, e, by) {
+  const before = await coachEmail(cid);
+  await redis.set(`coach:${cid}:email`, e);
+  const after = await coachEmail(cid);
+  if (before && before !== after) await mail(before, 'Your Warrior Spirit coach email has changed', [
+    `Hi ${COACHES[cid].first},`,
+    `${by ? by + ' changed the' : 'The'} email on your Warrior Spirit coach account ${by ? 'to' : 'was changed to'} ${after || 'nothing'}. Booking alerts and sign-in codes now go there.`,
+    `If this wasn’t expected, tell ${askWho(cid)} straight away and change your password.`,
+  ]);
+}
+const SESS_G = cid => SESS[cid]?.g || 0;
