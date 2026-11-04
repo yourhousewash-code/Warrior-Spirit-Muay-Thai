@@ -12,6 +12,8 @@
     '.wse-dlg h2{margin:0 0 10px;font:800 20px system-ui,sans-serif;text-transform:uppercase}.wse-dlg textarea,.wse-dlg input[type=text]{width:100%;box-sizing:border-box;background:#0b0c10;color:#f4efe6;border:1px solid #444;padding:10px;font:16px/1.4 system-ui,sans-serif}' +
     '.wse-dlg .m{color:#a9a9b3;font-size:13px;margin:6px 0 12px}.wse-dlg .r{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.wse-dlg .e{color:#ff6b6b;margin:8px 0}' +
     '.wse-lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0}.wse-lib button{padding:0;border:2px solid transparent;background:#000;min-height:0;aspect-ratio:4/3;position:relative}.wse-lib img{width:100%;height:100%;object-fit:cover;display:block}.wse-lib button[aria-pressed=true]{border-color:#e11d2e}.wse-cur{max-height:160px;max-width:100%;display:block;margin:0 0 10px;object-fit:contain;background:#000}' +
+    'html.wse [data-opt]:not([data-on]),html.wse [data-opt-alt][data-on]{opacity:.55;box-shadow:-5px 0 0 #4d8dff}' +
+    'html.wse .ph:not(.wse-done){color:#f5c542}.wse-bar .wse-hint{flex-basis:100%;text-align:center;font-weight:400;font-size:12px;color:#a9a9b3}.wse-bar .wse-hint i{display:inline-block;width:10px;height:10px;background:#4d8dff;margin-right:6px;vertical-align:-1px}' +
     '.wse-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1c8f4a;color:#fff;padding:10px 16px;z-index:100000;font:700 14px system-ui,sans-serif}';
   document.head.appendChild(css);
 
@@ -29,16 +31,18 @@
 
   function dlg(html) { var d = document.createElement('dialog'); d.className = 'wse-dlg'; d.innerHTML = html; document.body.appendChild(d); d.addEventListener('close', function () { d.remove(); }); d.addEventListener('click', function (e) { if (e.target === d) d.close(); }); d.showModal(); return d; }
   function editText(it) {
-    var cur = E.toEdit(it.el.innerHTML), d = dlg('<h2>Change the wording</h2><textarea rows="' + Math.min(12, Math.max(3, Math.ceil(cur.length / 55) + 1)) + '" maxlength="2000"></textarea><p class="m">New line: press Enter. Bold: put **two stars** either side of the words. This only changes the words. The design and layout stay as they are.</p><p class="e" hidden></p><div class="r"><button class="p" data-ok>Use this</button><button data-rev>Put back the original</button><button data-no>Cancel</button></div>');
+    var cur = E.toEdit(it.el.innerHTML), d = dlg('<h2>Change the wording</h2><textarea rows="' + Math.min(12, Math.max(3, Math.ceil(cur.length / 55) + 1)) + '" maxlength="2000"></textarea><p class="m">New line: press Enter. Bold: put **two stars** either side of the words. This only changes the words. The design and layout stay as they are.</p>' +
+      (it.shared ? '<p class="m" style="color:#9dbdff">This is an optional part of the website. Replace everything in [square brackets] with the real details. The same words are used everywhere this part appears. Visitors only see it once it’s switched on in Club details → What the website shows.</p>' : '') + '<p class="e" hidden></p><div class="r"><button class="p" data-ok>Use this</button><button data-rev>Put back the original</button><button data-no>Cancel</button></div>');
     var ta = $('textarea', d); ta.value = cur; ta.focus();
     $('[data-no]', d).onclick = function () { d.close(); };
-    $('[data-rev]', d).onclick = function () { it.el.innerHTML = it.orig; it.el.__edited = false; if (dText[it.key] === undefined && !it.live) { } dText[it.key] = null; mark(it); refresh(); d.close(); };
+    $('[data-rev]', d).onclick = function () { same(it).forEach(function (x) { x.el.innerHTML = x.orig; x.el.__edited = false; mark(x); }); dText[it.key] = null; refresh(); d.close(); };
     $('[data-ok]', d).onclick = function () {
       var v = ta.value.trim(); if (!v) { var er = $('.e', d); er.textContent = 'This can’t be empty. Use “Put back the original” to undo a change.'; er.hidden = false; return; }
       var html = E.fromEdit(v); if (html === it.el.innerHTML) { d.close(); return; }
-      it.el.innerHTML = html; it.el.__edited = true; dText[it.key] = { html: html, orig: it.orig }; mark(it); refresh(); d.close();
+      dText[it.key] = { html: html, orig: it.orig }; same(it).forEach(function (x) { x.el.innerHTML = html; x.el.__edited = true; mark(x); }); refresh(); d.close();
     };
   }
+  function same(it) { return it.shared ? items.filter(function (x) { return x.key === it.key; }) : [it]; }
   var lib = null;
   function editImage(it) {
     var chosen = null;
@@ -106,6 +110,8 @@
   }
 
   function start() {
+    document.documentElement.classList.add('wse'); // shows the optional parts that are switched off, faded, so they can be filled in
+    [].forEach.call(document.querySelectorAll('#top details'), function (x) { x.open = true; }); // tapping a question edits it, so show every answer
     var c = E.collect(); items = c.texts.map(function (x) { x.kind = 't'; return x; }).concat(c.imgs.map(function (x) { x.kind = 'i'; return x; }));
     items.forEach(function (it) { it.el.setAttribute('data-wse', it.kind); byEl.set(it.el, it); mark(it); });
     document.addEventListener('click', function (e) {
@@ -115,7 +121,8 @@
       it.kind === 't' ? editText(it) : editImage(it);
     }, true);
     bar = document.createElement('div'); bar.className = 'wse-bar';
-    bar.innerHTML = '<span>✏️ Editing</span><span class="n"></span><button class="p" data-save disabled>' + (window.__wsAdmin ? 'Save &amp; publish' : 'Send for approval') + '</button><button data-undo disabled>Undo</button><button data-exit>Exit</button>';
+    bar.innerHTML = '<span>✏️ Editing</span><span class="n"></span><button class="p" data-save disabled>' + (window.__wsAdmin ? 'Save &amp; publish' : 'Send for approval') + '</button><button data-undo disabled>Undo</button><button data-exit>Exit</button>' +
+      (document.querySelector('[data-opt]') ? '<span class="wse-hint"><i></i>Faded with a blue edge: switched off, so visitors don’t see it. Yellow: wording still to fill in. Switch parts on in Club details → What the website shows.</span>' : '');
     document.body.appendChild(bar);
     bar.querySelector('[data-save]').onclick = function () {
       var b = this; b.disabled = true;

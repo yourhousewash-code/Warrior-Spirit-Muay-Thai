@@ -250,6 +250,25 @@ button.mth.phc{display:block;width:100%;border:0}
 .hrow b{font:700 15px var(--cond);letter-spacing:.1em;text-transform:uppercase}
 .hrow label.chk{display:flex;gap:8px;align-items:center;font-size:14px}.hrow label.chk input{width:auto}
 @media (max-width:760px){.hrow{grid-template-columns:1fr 1fr}.hrow b{grid-column:1/-1}.hrow input[data-hf=note]{grid-column:1/-1}}
+/* What the website shows (owners): one row per optional part, with an on/off switch */
+.optrow{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:start;padding:14px;background:var(--ink);border-left:4px solid #4d8dff;min-width:0}
+.optrow.off{border-left-color:var(--line)}
+.optrow b{font:700 17px/1.2 var(--cond);letter-spacing:.06em;text-transform:uppercase}
+.optrow p{margin:0;color:var(--soft);font-size:14px}
+.optrow .st{font-size:13px;color:var(--muted)}.optrow .st.warn{color:var(--tbc)}.optrow .st.live{color:var(--ok)}
+.optrow .st a{color:inherit}
+.optrow .lnk{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center}.optrow .lnk input{flex:1 1 240px;min-width:0}
+.tgl{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;font:700 13px var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--soft);padding-top:2px}
+.tgl input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.tgl i{width:52px;height:30px;border-radius:15px;background:#2a2e3a;position:relative;transition:background .15s;flex:none}
+.tgl i::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#cfd2da;transition:transform .15s}
+.tgl input:checked+i{background:#4d8dff}.tgl input:checked+i::after{transform:translateX(22px);background:#fff}
+.tgl input:focus-visible+i{outline:3px solid var(--tbc);outline-offset:2px}
+.tgl input:disabled+i,.tgl input:disabled~span{opacity:.4}.tgl:has(input:disabled){cursor:not-allowed}
+/* members who asked to be left out of photos and videos (every coach) */
+.nolist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.nolist li{background:var(--ink);border-left:4px solid var(--red);padding:10px 12px;display:grid;gap:2px;min-width:0}
+.nolist b{overflow-wrap:anywhere}.nolist small{color:var(--muted);font-size:13px}
 </style>
 </head>
 <body>
@@ -519,6 +538,11 @@ button.mth.phc{display:block;width:100%;border:0}
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
       <div class="calhead"><h1>Photos &amp; videos</h1></div>
       <p class="muted" id="phHelp" style="margin:0"></p>
+      <section class="panel stack" id="noPhotoPanel" style="gap:10px">
+        <h2>Members who asked to be left out of photos and videos</h2>
+        <p class="muted" style="margin:0;font-size:14px">They chose this in their account. A parent’s choice covers their child too. Please don’t take, post or share photos or videos of them. If someone asks you in person instead, let Jay know.</p>
+        <ul class="nolist" id="noPhotoList"><li class="muted" style="border:0;background:none;padding:0">Loading…</li></ul>
+      </section>
       <div class="panel" id="mApprovals" hidden style="border-top-color:var(--tbc)"></div>
       <div class="mtabs" role="tablist" aria-label="Photos and videos">
         <button type="button" role="tab" data-ptab="all" aria-selected="true">All photos</button>
@@ -716,6 +740,13 @@ button.mth.phc{display:block;width:100%;border:0}
         <div class="list" id="hoursList"></div>
         <p class="err" id="hrErr" hidden></p><p class="ok" id="hrOk" hidden></p>
         <button class="btn" type="button" id="hrSave" style="justify-self:start">Save opening hours</button>
+      </section>
+      <section class="panel" id="optsPanel" data-admin-only hidden>
+        <h2>What the website shows</h2>
+        <p class="muted" style="margin:0">Some parts of the website are optional. Switch on the ones the club uses. Anything switched off is left out completely, so visitors never see an empty space or wording that still needs filling in.</p>
+        <p class="note" style="margin:0">Before you switch something on, its wording must be filled in. Open <a href="/?edit=1">Edit the website</a> on the page shown (or use the “Fill it in” link), tap the faded part with the blue edge and replace the words in [square brackets]. Then come back here and switch it on. Until the wording is filled in, the switch stays off.</p>
+        <div class="list" id="optList"><p class="muted">Loading…</p></div>
+        <p class="err" id="optErr" hidden></p><p class="ok" id="optOk" hidden></p>
       </section>
     </div>
 
@@ -944,7 +975,7 @@ function go(view) {
   if (!['home', 'availability', 'bookings', 'photos', 'share', 'schedule', 'settings', 'prices', 'profile', 'team', 'enquiries', 'club', 'overview'].includes(view) || (['team', 'enquiries', 'club', 'overview'].includes(view) && !me.admin)) view = 'home';
   const was = document.querySelector('#dash > [data-view]:not([hidden])')?.dataset.view;
   document.querySelectorAll('[data-view]').forEach(v => v.hidden = v.dataset.view !== view);
-  if (view === 'photos') { openHub(tab); if (was !== 'photos') scrollTo({ top: 0 }); return; }
+  if (view === 'photos') { openHub(tab); if (was !== 'photos') { loadNoPhoto(); scrollTo({ top: 0 }); } return; }
   if (view === 'home') { loadCal(); loadApprovals(); loadMediaNotice(); }
   if (view === 'prices') loadPrices();
   if (view === 'profile') loadProfile();
@@ -955,7 +986,7 @@ function go(view) {
   if (view === 'bookings') loadBookings();
   if (view === 'share') loadShare();
   if (view === 'schedule') { loadClasses(); loadClassPics(); }
-  if (view === 'club') loadHours();
+  if (view === 'club') { loadHours(); loadOptions(); }
   if (view === 'overview') loadOverview();
   scrollTo({ top: 0 });
 }
@@ -1320,6 +1351,57 @@ $('#hrSave').addEventListener('click', async () => {
   try { hours = (await api('/api/pt?action=hours-save', { hours: list })).hours; drawHours(); show($('#hrOk'), 'Saved. The website now shows the new opening hours.'); }
   catch (err) { show($('#hrErr'), err.message); }
 });
+
+/* What the website shows (owners): optional parts of the public pages, switched on or off */
+let opts = [];
+const ukDay = ms => new Intl.DateTimeFormat('en-GB', { timeZone: TZ, day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(ms));
+async function loadOptions() {
+  if (!me.admin) return;
+  try { opts = (await api('/api/site?action=options-get')).options; drawOptions(); } catch (err) { show($('#optErr'), err.message); $('#optList').innerHTML = ''; }
+}
+function drawOptions() {
+  $('#optList').innerHTML = opts.map(o => {
+    const fill = `<a href="${esc(o.edit)}">Fill it in →</a>`;
+    const blocked = !o.on && ((o.needsWording && !o.wordingDone) || (o.needsLink && !o.link));
+    let st, cls = '';
+    if (o.shown) { st = 'Shown on the website.'; cls = 'live'; }
+    else if (o.on && o.needsWording && !o.wordingDone) { st = `Switched on, but hidden until its wording is filled in. ${fill}`; cls = 'warn'; }
+    else if (o.on && o.needsLink && !o.link) { st = 'Switched on, but hidden until the address is added below.'; cls = 'warn'; }
+    else if (o.needsWording && !o.wordingDone) { st = `Wording still to fill in, so it can’t be switched on yet. ${fill}`; cls = 'warn'; }
+    else if (o.needsLink && !o.link) { st = 'Add the channel address below, then switch it on.'; cls = 'warn'; }
+    else st = o.needsWording ? `Wording filled in. Switch it on to show it. <a href="${esc(o.edit)}">Check the wording →</a>` : 'Not shown on the website.';
+    const who = o.by && o.at ? ` Changed by ${esc(o.by)}, ${esc(ukDay(o.at))}.` : '';
+    return `<div class="optrow${o.on ? '' : ' off'}">
+      <div class="stack" style="gap:4px"><b>${esc(o.label)}</b><p>${esc(o.desc)}</p><span class="st ${cls}">${st}${who}</span></div>
+      <label class="tgl" title="${blocked ? 'Fill in the wording first' : ''}"><input type="checkbox" role="switch" data-optk="${esc(o.key)}" ${o.on ? 'checked' : ''} ${blocked ? 'disabled' : ''} aria-label="${esc(o.label)}"><i></i><span>${o.on ? 'On' : 'Off'}</span></label>
+      ${o.needsLink ? `<div class="lnk"><input data-optl="${esc(o.key)}" type="url" inputmode="url" placeholder="https://www.youtube.com/@yourchannel" value="${esc(o.link)}" aria-label="${esc(o.label)} address"><button type="button" class="btn small ghost" data-optls="${esc(o.key)}">Save address</button></div>` : ''}
+    </div>`;
+  }).join('');
+}
+async function saveOption(data, msg) {
+  show($('#optErr'), ''); show($('#optOk'), '');
+  try { opts = (await api('/api/site?action=options-save', data)).options; drawOptions(); show($('#optOk'), msg); }
+  catch (err) { drawOptions(); show($('#optErr'), err.message); }
+}
+$('#optList').addEventListener('change', e => {
+  const k = e.target.dataset.optk; if (!k) return;
+  const o = opts.find(x => x.key === k);
+  saveOption({ key: k, on: e.target.checked }, e.target.checked ? `“${o.label}” is now shown on the website.` : `“${o.label}” is now left off the website.`);
+});
+$('#optList').addEventListener('click', e => {
+  const k = e.target.dataset.optls; if (!k) return;
+  const o = opts.find(x => x.key === k), v = document.querySelector(`[data-optl="${k}"]`).value;
+  saveOption({ key: k, link: v }, v.trim() ? `Address saved for “${o.label}”.` : `Address removed for “${o.label}”.`);
+});
+
+/* Photos & videos: members who asked to be left out (every coach sees this, since they take the photos) */
+async function loadNoPhoto() {
+  try {
+    const { members } = await api('/api/auth?action=photo-optouts');
+    $('#noPhotoList').innerHTML = members.length ? members.map(m => `<li><b>${esc(m.name)}</b><small>${m.at ? 'Asked on ' + esc(ukDay(m.at)) : ''}</small></li>`).join('')
+      : '<li class="muted" style="border:0;background:none;padding:0">No one has asked to be left out yet.</li>';
+  } catch (err) { $('#noPhotoList').innerHTML = `<li class="err" style="border:0;background:none;padding:0">${esc(err.message)}</li>`; }
+}
 
 /* class types */
 function drawTypes() {

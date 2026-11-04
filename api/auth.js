@@ -58,6 +58,15 @@ export default async function handler(req, res) {
         return send(res, 200, { coach: await coachInfo(c.id) });
       }
       case 'coach-logout': clearSession(res, 'ws_coach'); return send(res, 200, { ok: true });
+      /* Every coach: members who asked (in their account) to be left out of photos and videos. Names and dates only. */
+      case 'photo-optouts': {
+        const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
+        const all = (await redis.hgetall(OPTOUT)) || {};
+        const list = Object.values(all).map(v => { try { return typeof v === 'string' ? JSON.parse(v) : v; } catch { return null; } })
+          .filter(v => v && v.name).map(v => ({ name: String(v.name).slice(0, 80), at: Number(v.at) || 0 }))
+          .sort((a, b) => a.name.localeCompare(b.name, 'en-GB'));
+        return send(res, 200, { members: list });
+      }
 
       /* ----- Jay: manage the coaching team ----- */
       case 'team': {
@@ -182,6 +191,22 @@ export default async function handler(req, res) {
         await redis.hset(`user:${email}`, { mobile });
         return send(res, 200, { user: userOut(await redis.hgetall(`user:${email}`)) });
       }
+      /* Photos and videos: "ok" (happy to be in them) or "out" (please leave me out). One setting per account; it covers
+         a parent's child too. Coaches see the names of everyone who chose "out" (photo-optouts above). */
+      case 'photo-pref': {
+        if (req.method !== 'POST') return bad(res, 'Use POST', 405);
+        const email = userSession(req); if (!email) return bad(res, 'Please log in.', 401);
+        const u = await redis.hgetall(`user:${email}`); if (!u) return bad(res, 'Please log in again.', 401);
+        const v = b.photos === 'out' ? 'out' : b.photos === 'ok' ? 'ok' : null;
+        if (!v) return bad(res, 'Choose one of the two options.');
+        if (v !== u.photos) {
+          const at = Date.now();
+          await redis.hset(`user:${email}`, { photos: v, photosAt: at });
+          if (v === 'out') await redis.hset(OPTOUT, { [email]: JSON.stringify({ name: u.name || email.split('@')[0], at }) });
+          else await redis.hdel(OPTOUT, email);
+        }
+        return send(res, 200, { user: userOut(await redis.hgetall(`user:${email}`)) });
+      }
       case 'google': {
         if (req.method !== 'POST') return bad(res, 'Use POST', 405);
         const cid = process.env.GOOGLE_CLIENT_ID;
@@ -229,7 +254,8 @@ export default async function handler(req, res) {
   }
 }
 
-function userOut(u) { return { email: u.email, name: u.name, mobile: u.mobile || '', verified: u.verified !== 'no', needsMobile: !(u.mobile || '').replace(/\D/g, '').length }; }
+const OPTOUT = 'photo:optout'; // hash: member email → { name, at } for everyone who asked to be left out of photos and videos
+function userOut(u) { return { email: u.email, name: u.name, mobile: u.mobile || '', verified: u.verified !== 'no', needsMobile: !(u.mobile || '').replace(/\D/g, '').length, photos: u.photos === 'out' || u.photos === 'ok' ? u.photos : '', photosAt: Number(u.photosAt) || 0 }; }
 async function sendVerify(email, name) {
   if (!mailReady()) return;
   const token = crypto.randomBytes(24).toString('base64url');

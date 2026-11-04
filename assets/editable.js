@@ -1,7 +1,10 @@
 /* Finds the pieces of the page that coaches may change (plain text blocks and photos) and applies saved changes.
-   Nothing here changes layout. Text may only use line breaks, bold and italic. */
+   Nothing here changes layout. Text may only use line breaks, bold and italic.
+   Wording for an optional part of the page (a placeholder in [square brackets]) has a fixed key in data-ek, e.g. "opt.parking".
+   Every copy of it on the site shares that key, and the coach area checks it before the part can be switched on. */
 (function () {
-  var TEXT = 'h1,h2,h3,h4,p,li,figcaption,blockquote,summary,dt,dd,.kick,td,th';
+  var TEXT = 'h1,h2,h3,h4,p,li,figcaption,blockquote,summary,dt,dd,.kick,td,th,[data-ek]';
+  var EK = /^[\w\-]{1,40}\.[\w\-]{1,60}$/;
   var SKIP = 'nav,form,button,a,script,style,svg,select,textarea,header,.ticker,#tkTrack,#timetable,[data-hours],[data-noedit],.shbtn,.sh-menu,dialog,.hero-news,.dots';
   var INLINE = { BR: 1, STRONG: 1, B: 1, EM: 1, I: 1 };
   var IMGSKIP = 'nav,form,button,a,header,#slides,.vgrid,.dots,[data-noedit],.hero-badge,.hero-news,.townhero,.teamhero,.campgal .x';
@@ -42,7 +45,8 @@
       if (el.querySelector('img,video,svg')) return;
       var h = el.innerHTML.trim(), t = el.textContent.replace(/\s+/g, ' ').trim();
       if (t.length < 2 || /^(\W|\d)*$/.test(t)) return;
-      texts.push({ el: el, key: key(scope(el) + '.t' + fnv(t), el), orig: h });
+      var ek = el.getAttribute('data-ek');
+      texts.push({ el: el, key: ek && EK.test(ek) ? ek : key(scope(el) + '.t' + fnv(t), el), orig: h, shared: !!ek });
     });
     [].forEach.call(main.querySelectorAll('img'), function (el) {
       if (el.closest(IMGSKIP)) return;

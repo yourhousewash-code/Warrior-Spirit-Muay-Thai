@@ -24,6 +24,9 @@
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* Optional parts (owners switch them in the coach area: Club details → What the website shows). Out of use = not shown at all.
+   data-opt: shown only when switched on. data-opt-alt: shown only while it's off. data-on is baked in by the build, then follows the coach area. */
+html:not(.wse) [data-opt]:not([data-on]),html:not(.wse) [data-opt-alt][data-on]{display:none!important}
 
 /* PT sessions */
 .meter{display:inline-flex;gap:3px;align-items:center}
@@ -81,7 +84,6 @@ body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 .policy h3{font-size:28px;margin-top:34px;color:var(--red)}
 .policy p,.policy li{color:var(--soft)}
 .policy ul{display:grid;gap:6px;padding-left:20px}
-.draftnote{border:1px dashed var(--tbc);color:var(--tbc);padding:12px 16px;margin-bottom:12px}
 
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SportsActivityLocation", "name": "Warrior Spirit Muay Thai & Kickboxing", "alternateName": ["Warrior Spirit Muay Thai", "Hoddesdon Muay Thai & K1 Kickboxing", "WMT Muay Thai"], "telephone": "+447904032142", "address": {"@type": "PostalAddress", "streetAddress": "Next Gen Fitness, Mount Grace Road", "addressLocality": "Potters Bar", "postalCode": "EN6 1RB", "addressCountry": "GB"}, "areaServed": ["Potters Bar", "Barnet", "Cuffley", "Brookmans Park", "Hatfield", "Cheshunt", "Enfield", "Hoddesdon", "Borehamwood", "St Albans", "Welwyn Garden City"], "sameAs": ["https://www.instagram.com/warriorspirit_muaythai/", "https://www.tiktok.com/@warriorspirit32"], "priceRange": "\u00a3\u00a3"}</script>
@@ -120,7 +122,6 @@ p{margin:0;max-width:62ch}
 .lede{font-size:clamp(18px,2vw,21px);color:#d4d6dd}
 .stack{display:grid;gap:18px;align-content:start}
 .head{margin-bottom:44px}
-.tbc{color:var(--tbc);border-bottom:1px dashed var(--tbc);font-weight:600}
 .btn{display:inline-flex;align-items:center;gap:10px;font:700 17px/1 var(--cond);text-transform:uppercase;letter-spacing:.12em;text-decoration:none;padding:18px 28px;border:2px solid var(--red);background:var(--red);color:#fff;cursor:pointer;transition:transform .15s,box-shadow .15s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -10px rgba(227,20,30,.7)}
 .btn.ghost{background:rgba(0,0,0,.25);border-color:var(--bone)}
@@ -306,13 +307,13 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .play{position:absolute;left:14px;bottom:14px;background:var(--red);font:700 12px var(--cond);letter-spacing:.14em;text-transform:uppercase;padding:6px 10px}
 @media (max-width:980px){.posts{grid-template-columns:1fr 1fr}.post.feature{grid-template-columns:1fr}.post.feature .photo{min-height:0;aspect-ratio:16/10}}
 @media (max-width:620px){.posts{grid-template-columns:1fr}.post.feature{grid-column:auto}}
-.socials{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);margin-top:28px}
+.socials{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;background:var(--line);margin-top:28px}
 .soc{background:var(--ink-2);padding:22px;display:flex;gap:16px;align-items:center;text-decoration:none;min-width:0}
 .soc svg{width:38px;height:38px;flex:none}
 .soc b{display:block;font:900 24px/1 var(--display);text-transform:uppercase}
 .soc span{font-size:15px;color:var(--muted);overflow-wrap:anywhere}
 .soc:hover{background:#1b1e27}
-@media (max-width:760px){.socials{grid-template-columns:1fr}}
+@media (max-width:760px){.socials{grid-auto-flow:row;grid-template-columns:1fr}}
 
 .gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:230px;gap:4px}
 .gallery .photo:nth-child(1){grid-column:span 2;grid-row:span 2}
@@ -492,7 +493,7 @@ a.cdi:hover svg{color:#25d366}
 .vmeta span{color:var(--soft);font-size:15px}
 @media (max-width:980px){.vgrid{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.vgrid{grid-template-columns:1fr}}
-.ytband{margin-top:28px;padding:22px 24px;background:var(--ink-2);border-left:6px solid var(--red)}
+.ytband{margin-top:28px;padding:22px 24px;background:var(--ink-2);border-left:6px solid var(--red);display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between}
 .vmodal{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.92);display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .vmodal[hidden]{display:none}
 .vm-in{width:min(1100px,100%);display:grid;gap:10px}
@@ -834,7 +835,7 @@ a.tagc{text-decoration:none}
           <a class="btn" href="#contact" data-enq="Free first class">Book your free first class →</a>
           <a class="btn ghost" href="#timetable">See the timetable</a>
         </div>
-        <a class="rating" href="#team"><span class="stars" aria-hidden="true">★★★★★</span><b>4.9</b><span>from 100 Google reviews across our Potters Bar and Hoddesdon listings</span></a>
+        <a class="rating" data-opt="reviews" href="#team"><span class="stars" aria-hidden="true">★★★★★</span><b>4.9</b><span>from 100 Google reviews across our Potters Bar and Hoddesdon listings</span></a>
       </div>
       <aside class="hero-news" id="heroNews" aria-label="Fight night">
         <div class="hn-head"><span>Fight night · Sat 24 Oct</span><a href="#news">Details ↓</a></div>
@@ -1043,7 +1044,7 @@ a.tagc{text-decoration:none}
 
   <section class="band" id="prices">
     <div class="wrap">
-      <div class="stack head"><span class="kick">Membership</span><h2>Simple prices</h2><p class="lede">One price covers everything. No hidden extras. Pay at the gym for now. <a href="#payments">How to pay</a></p></div>
+      <div class="stack head"><span class="kick">Membership</span><h2>Simple prices</h2><p class="lede">Two memberships, adults and kids, and each one covers everything. No hidden extras. Pay at the gym for now. <a href="#payments">How to pay</a></p></div>
       <img class="pbanner" src="photos/class-gear.webp" alt="Boxing gloves, hand wraps and a gum shield on the gym floor" loading="lazy">
       <div class="prices">
         <article class="price top"><span class="tagc">Adults</span><span class="amt">£75<small>/ month</small></span><p>All inclusive. First class free.</p><ul><li>Every class on the timetable</li><li data-hours="gym">Open gym 9am–9pm weekdays</li><li>Fight team pathway</li></ul><a class="btn" href="#contact" data-enq="Free first class">Book a free class</a></article>
@@ -1354,8 +1355,9 @@ a.tagc{text-decoration:none}
           <span class="vmeta"><small>March 2026</small><b>Warm-up on the pads</b><span>Getting sharp before fight time.</span></span>
         </button>
       </div>
-      <div class="ytband">
-        <div><span class="kick">More on YouTube</span><p>Full fights, technique breakdowns and training videos. <span class="tbc">YouTube channel link to add</span></p></div>
+      <div class="ytband" data-opt="youtube">
+        <div><span class="kick">More on YouTube</span><p>Full fights, technique breakdowns and training videos.</p></div>
+        <a class="btn ghost" data-opt-link="youtube" href="https://www.youtube.com/" target="_blank" rel="noopener">Watch on YouTube →</a>
       </div>
     </div>
   </section>
@@ -1434,9 +1436,8 @@ a.tagc{text-decoration:none}
         <span class="kick">Trainer</span>
         <h2>Aaron Bekir</h2>
         <p class="lede">Aaron trains members on the pads and in the classes, and makes sure every round counts.</p>
-        <p class="ptext"><span class="tbc">His background: how long he has trained, fights or titles, and which classes he takes</span></p>
         <div class="pchips"><span>Trainer</span><span>Pads</span><span>Classes</span></div>
-        <p class="ask"><b>Ask Aaron about</b> <span class="tbc">what he loves teaching</span>.</p>
+        <p class="ask" hidden data-noedit><b>Ask Aaron about</b></p>
         <div class="cta"><a class="igbtn" href="https://www.instagram.com/aaronbekir_/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg><span>@aaronbekir_</span></a><a class="btn" href="/book?coach=aaron">Book a PT session with Aaron</a><a class="btn ghost" href="/team/aaron">Aaron’s coach page →</a></div>
       </div>
     </div>
@@ -1449,9 +1450,8 @@ a.tagc{text-decoration:none}
         <span class="kick">Trainer</span>
         <h2>Kian Hughes</h2>
         <p class="lede">Kian coaches in the classes and on the pads, helping members tighten up their technique.</p>
-        <p class="ptext"><span class="tbc">His background: how long he has trained, fights or titles, and which classes he takes</span></p>
         <div class="pchips"><span>Trainer</span><span>Fought at MAX Muay Thai, Thailand</span><span>Technique</span><span>Classes</span></div>
-        <p class="ask"><b>Ask Kian about</b> <span class="tbc">what he loves teaching</span>.</p>
+        <p class="ask" hidden data-noedit><b>Ask Kian about</b></p>
         <div class="cta"><a class="igbtn" href="https://www.instagram.com/kianh_pt/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg><span>@kianh_pt</span></a><a class="btn" href="/book?coach=kian">Book a PT session with Kian</a><a class="btn ghost" href="/team/kian">Kian’s coach page →</a></div>
       </div>
     </div>
@@ -1510,7 +1510,7 @@ a.tagc{text-decoration:none}
             <div class="meta"><span class="tagc">Fight news</span><time datetime="2026-03-28">28 March 2026</time></div>
             <h3>Medals and big smiles on show day</h3>
             <p>A proud day for the team. Our young fighters stepped through the ropes, put the work from camp into practice, and came home with medals.</p>
-            <div class="more" hidden><p>Every one of them earned it on the pads and in sparring in the weeks before. Thanks to the families who came to support, and to the coaches in the corner all day.</p><p><span class="tbc">Add fighter names and results</span></p></div>
+            <div class="more" hidden><p>Every one of them earned it on the pads and in sparring in the weeks before. Thanks to the families who came to support, and to the coaches in the corner all day.</p><p class="ph" data-opt="fight-results" data-ek="opt.fight-results">[Fighter names and results from the show]</p></div>
             <button class="readbtn" type="button">Read more</button>
           </div>
         </article>
@@ -1559,8 +1559,8 @@ a.tagc{text-decoration:none}
             <div class="meta"><span class="tagc">Fight news</span></div>
             <h3>Hands raised</h3>
             <p>That moment when camp pays off. Steve gets his hand raised at Warriors League.</p>
-            <div class="more" hidden><p><span class="tbc">Add fighter, opponent, show and result</span></p></div>
-            <button class="readbtn" type="button">Read more</button>
+            <div class="more" hidden data-opt="steve-result"><p class="ph" data-ek="opt.steve-result">[Steve’s opponent, the show and the result]</p></div>
+            <button class="readbtn" type="button" data-opt="steve-result">Read more</button>
           </div>
         </article>
       </div>
@@ -1569,9 +1569,9 @@ a.tagc{text-decoration:none}
         <a class="soc" href="https://www.instagram.com/warriorspirit_muaythai/" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>
           <div><b>Instagram</b><span>@warriorspirit_muaythai</span></div></a>
-        <div class="soc">
+        <a class="soc" data-opt="youtube" data-opt-link="youtube" href="https://www.youtube.com/" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          <div><b>YouTube</b><span class="tbc">Channel link to add</span></div></div>
+          <div><b>YouTube</b><span>Our channel</span></div></a>
         <a class="soc" href="https://www.tiktok.com/@warriorspirit32" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
           <div><b>TikTok</b><span>@warriorspirit32</span></div></a>
@@ -1615,7 +1615,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Potters Bar</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>A few minutes from anywhere in town, and handy for the M25 (junction 24) and A1(M) (junction 1).</span></div><div><small>By train</small><span>Potters Bar station is on the Great Northern line, so it’s easy from Hadley Wood, Brookmans Park and Hatfield too.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>A few minutes from anywhere in town, and handy for the M25 (junction 24) and A1(M) (junction 1).</span></div><div><small>By train</small><span>Potters Bar station is on the Great Northern line, so it’s easy from Hadley Wood, Brookmans Park and Hatfield too.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Little Heath, Bentley Heath and South Mimms.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1648,7 +1648,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Brookmans Park</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 5 minutes down the road into Potters Bar.</span></div><div><small>By train</small><span>One stop from Brookmans Park to Potters Bar on the Great Northern line.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 5 minutes down the road into Potters Bar.</span></div><div><small>By train</small><span>One stop from Brookmans Park to Potters Bar on the Great Northern line.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Welham Green and Bell Bar.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1681,7 +1681,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Cuffley</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 10 minutes via Northaw on the B156.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 10 minutes via Northaw on the B156.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Northaw and Goffs Oak.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1714,7 +1714,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Barnet</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 10 to 15 minutes up the A1000 Great North Road.</span></div><div><small>By train</small><span>From New Barnet or Hadley Wood, Potters Bar is one or two stops up the Great Northern line.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 10 to 15 minutes up the A1000 Great North Road.</span></div><div><small>By train</small><span>From New Barnet or Hadley Wood, Potters Bar is one or two stops up the Great Northern line.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to High Barnet, New Barnet and Hadley Wood.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1747,13 +1747,13 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Hatfield</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 minutes down the A1(M).</span></div><div><small>By train</small><span>Hatfield to Potters Bar is three stops on the Great Northern line.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 minutes down the A1(M).</span></div><div><small>By train</small><span>Hatfield to Potters Bar is three stops on the Great Northern line.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Welham Green and the University of Hertfordshire area.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
     </div>
   </section>
-  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Hatfield questions</span><h2>Good to know</h2></div><div><details><summary>How do I get to Warrior Spirit from Hatfield?</summary><p>About 15 minutes by car down the A1(M), or three stops by train to Potters Bar.</p></details><details><summary>Do you have options for students?</summary><p><span class="tbc">Student pricing, if offered</span></p></details></div></div></section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Hatfield questions</span><h2>Good to know</h2></div><div><details><summary>How do I get to Warrior Spirit from Hatfield?</summary><p>About 15 minutes by car down the A1(M), or three stops by train to Potters Bar.</p></details></div></div></section>
   <section class="band flush"><div class="wrap"><div class="stack head" style="margin-bottom:20px"><span class="kick">Nearby areas</span></div><div class="nearby"><a href="#borehamwood">Borehamwood<small>About 15 min</small></a><a href="#enfield">Enfield<small>About 15–20 min</small></a><a href="#waltham-cross">Waltham Cross<small>About 15 min</small></a><a href="#cheshunt">Cheshunt<small>About 15–20 min</small></a></div></div></section>
   <section class="nextband"><div class="wrap"><div><span class="kick">Hatfield to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
@@ -1780,7 +1780,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Borehamwood</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 minutes via South Mimms.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 minutes via South Mimms.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Elstree and Shenley.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1813,7 +1813,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Enfield</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 to 20 minutes along The Ridgeway or via the M25.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 to 20 minutes along The Ridgeway or via the M25.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Enfield Chase, Gordon Hill and Crews Hill.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1846,7 +1846,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Waltham Cross</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 minutes along the M25, junction 25 to junction 24.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 minutes along the M25, junction 25 to junction 24.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Theobalds and Goffs Oak.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1879,7 +1879,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Cheshunt</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 to 20 minutes on the M25 (junction 25 to 24), or across through Goffs Oak and Cuffley.</span></div><div><small>Car share</small><span>Ask us about sharing lifts with other members coming from your way.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 to 20 minutes on the M25 (junction 25 to 24), or across through Goffs Oak and Cuffley.</span></div><div><small>Car share</small><span>Ask us about sharing lifts with other members coming from your way.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Turnford, Goffs Oak and Flamstead End.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1912,7 +1912,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Hoddesdon</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 25 minutes via the A10 and the M25.</span></div><div><small>Car share</small><span>Ask us about sharing lifts with other members coming from your way.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 25 minutes via the A10 and the M25.</span></div><div><small>Car share</small><span>Ask us about sharing lifts with other members coming from your way.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Broxbourne and Wormley.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1945,7 +1945,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Welwyn Garden City</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 20 minutes down the A1(M) to junction 1.</span></div><div><small>By train</small><span>Welwyn Garden City to Potters Bar is a direct Great Northern service.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 20 minutes down the A1(M) to junction 1.</span></div><div><small>By train</small><span>Welwyn Garden City to Potters Bar is a direct Great Northern service.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Welwyn, Digswell and Panshanger.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -1978,7 +1978,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from St Albans</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 20 to 25 minutes via London Colney and the M25 (junction 22 to 24).</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 20 to 25 minutes via London Colney and the M25 (junction 22 to 24).</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to London Colney and Colney Heath.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -2011,7 +2011,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Radlett</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 minutes via Shenley and South Mimms.</span></div><div><small>By bus</small><span><span class="tbc">Bus route details</span></span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 minutes via Shenley and South Mimms.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Shenley and Aldenham.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -2044,7 +2044,7 @@ a.tagc{text-decoration:none}
       </div>
       <aside class="getting">
         <h3>Getting here from Southgate & Cockfosters</h3>
-        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 to 20 minutes up Cockfosters Road (A111).</span></div><div><small>By train</small><span>From Hadley Wood station, Potters Bar is one stop on the Great Northern line.</span></div><div><small>Parking</small><span><span class="tbc">Parking details</span></span></div></div>
+        <div class="rlist"><div><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB</span></div><div><small>By car</small><span>About 15 to 20 minutes up Cockfosters Road (A111).</span></div><div><small>By train</small><span>From Hadley Wood station, Potters Bar is one stop on the Great Northern line.</span></div><div data-opt="parking"><small>Parking</small><span class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</span></div></div>
         <p class="also">Also close to Oakwood, Cockfosters and Hadley Wood.</p>
         <p class="tnote">Times are approximate, off-peak.</p>
       </aside>
@@ -2072,7 +2072,7 @@ a.tagc{text-decoration:none}
       <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Monday to Thursday, 5:30pm to 6:20pm</li><li>Ages 7 to 13</li><li>£65 a month</li><li>No experience needed</li><li>Interclubs when they’re ready</li></ul><a class="btn" href="#contact" data-enq="Kids class">Enquire</a></aside>
     </div>
   </section>
-  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#safeguarding">Safeguarding →</a><a href="#fight-levels">Fight levels explained →</a><a href="#faq">FAQ →</a></div></div><div><details><summary>What age can kids start Muay Thai?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Will my child get hurt?</summary><p>Safety comes first. Kids work on pads and drills, and there is no hard sparring. Our head coach is DBS checked and first-aid trained.</p></details><details><summary>What do they need to bring?</summary><p>Shorts, a T-shirt and a water bottle. We train barefoot.</p></details><details><summary>Can parents watch?</summary><p><span class="tbc">Confirm whether parents can watch</span></p></details></div></div></section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#safeguarding">Safeguarding →</a><a href="#fight-levels">Fight levels explained →</a><a href="#faq">FAQ →</a></div></div><div><details><summary>What age can kids start Muay Thai?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Will my child get hurt?</summary><p>Safety comes first. Kids work on pads and drills, and there is no hard sparring. Our head coach is DBS checked and first-aid trained.</p></details><details><summary>What do they need to bring?</summary><p>Shorts, a T-shirt and a water bottle. We train barefoot.</p></details><details data-opt="parents-watching"><summary>Can parents watch?</summary><p class="ph" data-ek="opt.parents-watching">[Say whether parents can stay and watch kids classes, and where]</p></details></div></div></section>
   <section class="nextband"><div class="wrap"><div><span class="kick">Kids Muay Thai</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Kids class">Book a free class →</a></div></section>
 </div>
 
@@ -2135,7 +2135,7 @@ a.tagc{text-decoration:none}
       <aside class="getting"><h3>At a glance</h3><ul class="ticks"><li>Friendly mixed classes</li><li>Partners matched to your level</li><li>1-to-1 sessions from £40 an hour</li><li>Sparring always optional</li></ul><a class="btn" href="#contact" data-enq="Free first class">Enquire</a></aside>
     </div>
   </section>
-  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#self-defence">Self-defence →</a><a href="#fitness">Fitness →</a></div></div><div><details><summary>Do you run women-only classes?</summary><p><span class="tbc">Confirm whether you run women-only sessions</span></p></details><details><summary>Will I be partnered with men?</summary><p>Coaches pair people sensibly by size and experience, and you can always ask to work with someone specific.</p></details></div></div></section>
+  <section class="band flush"><div class="wrap faqgrid"><div class="stack"><span class="kick">Questions</span><h2>Good to know</h2><div class="related"><a href="#self-defence">Self-defence →</a><a href="#fitness">Fitness →</a></div></div><div><details><summary>Will I be partnered with men?</summary><p>Coaches pair people sensibly by size and experience, and you can always ask to work with someone specific.</p></details></div></div></section>
   <section class="nextband"><div class="wrap"><div><span class="kick">Women</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
@@ -2229,7 +2229,7 @@ a.tagc{text-decoration:none}
   <section class="band">
     <div class="wrap">
       <div class="stack head"><span class="kick">FAQ</span><h2>Your questions, answered</h2><p class="lede">Everything people usually ask before their first class. Can’t see yours? <a href="#contact">Ask us</a>.</p></div>
-      <div class="faqall"><div class="faqg"><h3>Getting started</h3><details><summary>Do I need any experience?</summary><p>No. Thursday’s 7pm beginners class starts from zero.</p></details><details><summary>Do I need to be fit?</summary><p>No. Fitness comes from training. Everyone works at their own pace.</p></details><details><summary>What should I wear?</summary><p>Shorts and a T-shirt. We train barefoot.</p></details><details><summary>What should I bring?</summary><p>Water and a towel. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details><details><summary>Can I borrow kit?</summary><p><span class="tbc">Confirm whether gloves can be borrowed</span></p></details><details><summary>How do I book my first class?</summary><p>Your first class is free. Send us a message through the contact form and we’ll point you to the best class.</p></details></div><div class="faqg"><h3>Classes and membership</h3><details><summary>How much is membership?</summary><p>Adults £75 a month, all inclusive. Kids £65 a month.</p></details><details><summary>How much is personal training?</summary><p>1-to-1 sessions start from £40 an hour. Doubles (two people) start from £45 and small groups from £55. Sessions run for 1 hour, 1½ hours or 2 hours.</p></details><details><summary>When are classes?</summary><p>Monday to Friday evenings, with kids classes Monday to Thursday at 5:30pm. See the timetable.</p></details><details><summary>Is there open gym?</summary><p data-hours="faq">Yes, members can use the gym from 9am to 9pm on weekdays outside class times.</p></details><details><summary>Are you open at weekends?</summary><p>Saturday mornings are for personal training, 8am to 12pm. Sunday is closed.</p></details><details><summary>Do you have a contract?</summary><p><span class="tbc">Confirm contract and notice terms</span></p></details></div><div class="faqg"><h3>Muay Thai and kickboxing</h3><details><summary>What is Muay Thai?</summary><p>The national sport of Thailand, known as the art of eight limbs because it uses fists, elbows, knees and shins.</p></details><details><summary>Is Muay Thai the same as kickboxing?</summary><p>It is a form of kickboxing that adds knees, elbows and the clinch.</p></details><details><summary>Do you do boxing?</summary><p>We don’t run separate boxing classes, but Muay Thai includes plenty of boxing technique.</p></details><details><summary>Is Muay Thai good for fitness?</summary><p>Yes. It’s a demanding full-body workout that builds strength, stamina and coordination.</p></details><details><summary>Do I have to spar?</summary><p>No. Sparring is optional and only once a coach says you’re ready.</p></details></div><div class="faqg"><h3>Kids</h3><details><summary>What age can kids start?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Is it safe for children?</summary><p>Yes. Kids train on pads and drills with no hard sparring. Head coach Jay is DBS checked, first-aid trained and has over 18 years of teaching experience. Read our <a href="#safeguarding">safeguarding policy</a>.</p></details><details><summary>Can kids compete?</summary><p>When they and their parents are ready, we take kids to interclubs.</p></details></div><div class="faqg"><h3>Fighting</h3><details><summary>How do I join the fight team?</summary><p>Train regularly, then talk to the coaches. They’ll tell you when you’re ready for an interclub.</p></details><details><summary>What is an interclub?</summary><p>A friendly, controlled bout between gyms, usually with protective kit.</p></details><details><summary>What do N-Class and C-Class mean?</summary><p>They’re levels for amateur fighters. See our guide to fight levels.</p></details></div><div class="faqg"><h3>Getting here</h3><details><summary>Where are you?</summary><p>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB.</p></details><details><summary>Is there parking?</summary><p><span class="tbc">Parking details</span></p></details><details><summary>Are you the old Hoddesdon Muay Thai?</summary><p>Yes. The club started in Hoddesdon, moved to Potters Bar and became Warrior Spirit. Along the way we also took over our friends’ gym, WMT Muay Thai.</p></details><details><summary>Which areas do members come from?</summary><p>Potters Bar, Barnet, Cuffley, Cheshunt, Hatfield, Enfield, Hoddesdon and more. See areas we cover.</p></details></div></div>
+      <div class="faqall"><div class="faqg"><h3>Getting started</h3><details><summary>Do I need any experience?</summary><p>No. Thursday’s 7pm beginners class starts from zero.</p></details><details><summary>Do I need to be fit?</summary><p>No. Fitness comes from training. Everyone works at their own pace.</p></details><details><summary>What should I wear?</summary><p>Shorts and a T-shirt. We train barefoot.</p></details><details><summary>What should I bring?</summary><p>Water and a towel. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details><details data-opt="gloves"><summary>Can I borrow kit?</summary><p class="ph" data-ek="opt.gloves">[Say whether beginners can borrow gloves, and for how many classes]</p></details><details><summary>How do I book my first class?</summary><p>Your first class is free. Send us a message through the contact form and we’ll point you to the best class.</p></details></div><div class="faqg"><h3>Classes and membership</h3><details><summary>How much is membership?</summary><p>There are two prices: adults £75 a month, all inclusive, and kids (7 to 13) £65 a month. There are no separate student or concession prices. Your first class is free.</p></details><details><summary>How much is personal training?</summary><p>1-to-1 sessions start from £40 an hour. Doubles (two people) start from £45 and small groups from £55. Sessions run for 1 hour, 1½ hours or 2 hours.</p></details><details><summary>When are classes?</summary><p>Monday to Friday evenings, with kids classes Monday to Thursday at 5:30pm. See the timetable.</p></details><details><summary>Is there open gym?</summary><p data-hours="faq">Yes, members can use the gym from 9am to 9pm on weekdays outside class times.</p></details><details><summary>Are you open at weekends?</summary><p>Saturday mornings are for personal training, 8am to 12pm. Sunday is closed.</p></details><details data-opt="contract-terms"><summary>Do you have a contract?</summary><p class="ph" data-ek="opt.contract-terms">[Say whether there’s a contract or minimum term, and how much notice members give to stop]</p></details></div><div class="faqg"><h3>Muay Thai and kickboxing</h3><details><summary>What is Muay Thai?</summary><p>The national sport of Thailand, known as the art of eight limbs because it uses fists, elbows, knees and shins.</p></details><details><summary>Is Muay Thai the same as kickboxing?</summary><p>It is a form of kickboxing that adds knees, elbows and the clinch.</p></details><details><summary>Do you do boxing?</summary><p>We don’t run separate boxing classes, but Muay Thai includes plenty of boxing technique.</p></details><details><summary>Is Muay Thai good for fitness?</summary><p>Yes. It’s a demanding full-body workout that builds strength, stamina and coordination.</p></details><details><summary>Do I have to spar?</summary><p>No. Sparring is optional and only once a coach says you’re ready.</p></details></div><div class="faqg"><h3>Kids</h3><details><summary>What age can kids start?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Is it safe for children?</summary><p>Yes. Kids train on pads and drills with no hard sparring. Head coach Jay is DBS checked, first-aid trained and has over 18 years of teaching experience. Read our <a href="#safeguarding">safeguarding policy</a>.</p></details><details><summary>Can kids compete?</summary><p>When they and their parents are ready, we take kids to interclubs.</p></details></div><div class="faqg"><h3>Fighting</h3><details><summary>How do I join the fight team?</summary><p>Train regularly, then talk to the coaches. They’ll tell you when you’re ready for an interclub.</p></details><details><summary>What is an interclub?</summary><p>A friendly, controlled bout between gyms, usually with protective kit.</p></details><details><summary>What do N-Class and C-Class mean?</summary><p>They’re levels for amateur fighters. See our guide to fight levels.</p></details></div><div class="faqg"><h3>Getting here</h3><details><summary>Where are you?</summary><p>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB.</p></details><details data-opt="parking"><summary>Is there parking?</summary><p class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</p></details><details><summary>Are you the old Hoddesdon Muay Thai?</summary><p>Yes. The club started in Hoddesdon, moved to Potters Bar and became Warrior Spirit. Along the way we also took over our friends’ gym, WMT Muay Thai.</p></details><details><summary>Which areas do members come from?</summary><p>Potters Bar, Barnet, Cuffley, Cheshunt, Hatfield, Enfield, Hoddesdon and more. See areas we cover.</p></details></div></div>
     </div>
   </section>
   <section class="nextband"><div class="wrap"><div><span class="kick">Still unsure?</span><h2>Just come and try it</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
@@ -2240,22 +2240,23 @@ a.tagc{text-decoration:none}
     <div class="wrap policy">
       <span class="kick">Safeguarding</span>
       <h2>Keeping children safe</h2>
-      <p class="draftnote">Draft for Jay to check before going live. Yellow items need confirming.</p>
       <p class="lede">The safety and wellbeing of every child and young person who trains with us comes first. This page explains how we look after them and what to do if you have a concern.</p>
       <h3>Our coaches</h3>
-      <ul><li>Head coach Jay Shepherd is DBS checked and first-aid trained.</li><li>All coaches working with children hold an up-to-date DBS check. <span class="tbc">Confirm for each coach</span></li><li>Coaches follow our code of conduct: respectful language, no one-to-one contact with children out of sight of others, and no private messaging with children.</li></ul>
-      <h3>Welfare officer</h3>
-      <p>Our club welfare officer is <span class="tbc">name</span>. You can contact them on <span class="tbc">phone or email</span> about any concern, however small.</p>
+      <ul><li>Head coach Jay Shepherd is DBS checked and first-aid trained.</li><li data-opt="dbs-all">All coaches working with children hold an up-to-date DBS check.</li><li>Coaches follow our code of conduct: respectful language, no one-to-one contact with children out of sight of others, and no private messaging with children.</li></ul>
+      <h3 data-opt="welfare-officer">Welfare officer</h3>
+      <p class="ph" data-opt="welfare-officer" data-ek="opt.welfare-officer">Our club welfare officer is [name]. You can contact them on [phone or email] about any concern, however small.</p>
       <h3>In class</h3>
       <ul><li>Kids classes (ages 7 to 13) are supervised by qualified coaches at all times.</li><li>There is no hard sparring for children. Contact work is light, controlled and matched by age, size and experience.</li><li>A first-aid kit is always available, and injuries are recorded and reported to parents.</li><li>Children compete at interclubs only with parental agreement and with suitable protective kit.</li></ul>
       <h3>Drop-off and collection</h3>
-      <p>Please bring your child into the gym and collect them from inside at the end of class. Let a coach know if someone else is collecting. <span class="tbc">Confirm whether parents can stay and watch</span></p>
+      <p>Please bring your child into the gym and collect them from inside at the end of class. Let a coach know if someone else is collecting.</p>
+      <p class="ph" data-opt="parents-watching" data-ek="opt.parents-watching">[Say whether parents can stay and watch kids classes, and where]</p>
       <h3>Photos and videos</h3>
       <p>We only use photos or videos of children on our website or social media with written permission from a parent or guardian. You can withdraw permission at any time and we’ll remove the image.</p>
       <h3>Raising a concern</h3>
-      <p>If you’re worried about a child’s safety or wellbeing, speak to our welfare officer or head coach. If a child is in immediate danger, call 999. You can also contact the NSPCC helpline on 0808 800 5000.</p>
-      <h3>Membership and insurance</h3>
-      <p><span class="tbc">Governing body membership and insurance details</span></p>
+      <p data-opt="welfare-officer">If you’re worried about a child’s safety or wellbeing, speak to our welfare officer or head coach. If a child is in immediate danger, call 999. You can also contact the NSPCC helpline on 0808 800 5000.</p>
+      <p data-opt-alt="welfare-officer">If you’re worried about a child’s safety or wellbeing, speak to our head coach, Jay Shepherd, or call the club on 07904 032142. If a child is in immediate danger, call 999. You can also contact the NSPCC helpline on 0808 800 5000.</p>
+      <h3 data-opt="insurance">Membership and insurance</h3>
+      <p class="ph" data-opt="insurance" data-ek="opt.insurance">[Which governing body the club belongs to, and what insurance covers members]</p>
     </div>
   </section>
   <section class="nextband"><div class="wrap"><div><span class="kick">Kids Muay Thai</span><h2>Questions? Talk to us</h2></div><a class="btn" href="#contact" data-enq="Kids class">Get in touch →</a></div></section>
@@ -2269,7 +2270,7 @@ a.tagc{text-decoration:none}
         <span class="kick">Contact</span>
         <h2>Your first class is free</h2>
         <p class="lede">Book your free first class, ask about kids classes or PT, or just come and say hello.</p>
-        <a class="rating" href="#team"><span class="stars" aria-hidden="true">★★★★★</span><b>4.9</b><span>from 100 Google reviews across our Potters Bar and Hoddesdon listings</span></a>
+        <a class="rating" data-opt="reviews" href="#team"><span class="stars" aria-hidden="true">★★★★★</span><b>4.9</b><span>from 100 Google reviews across our Potters Bar and Hoddesdon listings</span></a>
         <div class="cdetails">
           <div class="cd"><small>Address</small><span>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB<br><a href="https://www.google.com/maps/search/?api=1&query=Warrior+Spirit+Muay+Thai+Next+Gen+Fitness+Mount+Grace+Road+Potters+Bar+EN6+1RB" target="_blank" rel="noopener">Get directions →</a></span></div>
           <div class="cd"><small>Phone</small><a href="tel:07904032142">07904 032142</a></div>
@@ -2310,7 +2311,6 @@ a.tagc{text-decoration:none}
       <div><h4>Programmes</h4><ul><li><a href="#kids-muay-thai">Kids Muay Thai</a></li><li><a href="#kickboxing">Kickboxing</a></li><li><a href="#fitness">Fitness</a></li><li><a href="#women">Women</a></li><li><a href="#self-defence">Self-defence</a></li><li><a href="#fight-levels">Fight levels</a></li><li><a href="#safeguarding">Safeguarding</a></li><li><a href="#faq">FAQ</a></li></ul></div><div><h4>Areas we cover</h4><ul><li><a href="#potters-bar">Potters Bar</a></li><li><a href="#brookmans-park">Brookmans Park</a></li><li><a href="#cuffley">Cuffley</a></li><li><a href="#barnet">Barnet</a></li><li><a href="#hatfield">Hatfield</a></li><li><a href="#borehamwood">Borehamwood</a></li><li><a href="#enfield">Enfield</a></li><li><a href="#waltham-cross">Waltham Cross</a></li><li><a href="#cheshunt">Cheshunt</a></li><li><a href="#hoddesdon">Hoddesdon</a></li><li><a href="#welwyn-garden-city">Welwyn Garden City</a></li><li><a href="#st-albans">St Albans</a></li><li><a href="#radlett">Radlett</a></li><li><a href="#southgate-cockfosters">Southgate & Cockfosters</a></li></ul></div><div><h4>Follow</h4><p>Training, fight nights and results.</p><div class="sicons" data-socials></div></div>
     </div>
     <p class="draft" style="color:var(--muted)"><a href="/account" rel="nofollow">My PT bookings</a> · <a href="/coach" rel="nofollow">Coach login</a> · <a href="/privacy">Privacy policy</a> · <a href="/terms">Terms</a> · <a href="/accessibility">Accessibility</a></p>
-    <p class="draft">Draft v11 · yellow underlined items still to confirm</p>
   </div>
 </footer>
 
@@ -2389,8 +2389,12 @@ a.tagc{text-decoration:none}
     tiktok:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>'
   };
   var NAME={instagram:'Instagram',facebook:'Facebook',youtube:'YouTube',tiktok:'TikTok',whatsapp:'WhatsApp'};
-  document.querySelectorAll('[data-socials]').forEach(function(box){
-    Object.keys(SOCIAL).forEach(function(k){if(!SOCIAL[k])return;var a=document.createElement('a');a.href=SOCIAL[k];a.target='_blank';a.rel='noopener';a.setAttribute('aria-label',NAME[k]);a.title=NAME[k];a.innerHTML=ICON[k];box.appendChild(a)})});
+  function draw(){document.querySelectorAll('[data-socials]').forEach(function(box){
+    box.textContent='';
+    Object.keys(SOCIAL).forEach(function(k){if(!SOCIAL[k])return;var a=document.createElement('a');a.href=SOCIAL[k];a.target='_blank';a.rel='noopener';a.setAttribute('aria-label',NAME[k]);a.title=NAME[k];a.innerHTML=ICON[k];box.appendChild(a)})})}
+  draw();
+  /* owners switch on the YouTube channel in the coach area (What the website shows) */
+  window.__social=function(k,url){if(k in SOCIAL&&SOCIAL[k]!==url){SOCIAL[k]=url;draw()}};
 
   /* Ticker: what's on, worked out from today's date (UK time) */
   var TT={1:[['Kids Muay Thai','17:30'],['Drills & sparring','18:30']],2:[['Kids Muay Thai','17:30'],['Pads','18:00'],['Pads','19:00']],3:[['Kids Muay Thai','17:30'],['Drills & sparring','18:30']],4:[['Kids Muay Thai','17:30'],['Pads','18:00'],['Beginners','19:00']],5:[['Sparring','18:00']],6:[['Personal training','08:00–12:00']],0:[]};
@@ -2575,6 +2579,27 @@ a.tagc{text-decoration:none}
 </script>
 
 <script>
+/* Website content that owners change in the coach area (carousel, videos, wording, photos, class pictures, optional parts).
+   Fetched once and shared by the scripts below. */
+window.__pub=window.fetch?fetch('/api/site?action=public').then(function(r){return r.ok?r.json():null}).catch(function(){return null}):Promise.resolve(null);
+/* Optional parts of the page (see the note at the top of the styles). The built-in defaults are already on the page;
+   this follows what owners have switched on or off. An item is only ever "on" here once its wording is filled in. */
+(function(){
+  function each(sel,fn){[].forEach.call(document.querySelectorAll(sel),fn)}
+  function set(k,on){each('[data-opt],[data-opt-alt]',function(el){if(el.getAttribute('data-opt')!==k&&el.getAttribute('data-opt-alt')!==k)return;if(on)el.setAttribute('data-on','');else el.removeAttribute('data-on')})}
+  window.__pub.then(function(d){
+    if(!d||!d.options)return;
+    Object.keys(d.options).forEach(function(k){
+      var o=d.options[k]||{},on=!!o.on;set(k,on);
+      if(on&&/^https:\/\/[\w.\-]+\//.test(o.link||'')){
+        each('[data-opt-link]',function(a){if(a.getAttribute('data-opt-link')===k)a.href=o.link});
+        if(window.__social)window.__social(k,o.link);
+      }
+    });
+  });
+})();
+</script>
+<script>
 /* Coach profiles: show the latest approved version from the coach area, if there is one. */
 (function(){
   fetch('/api/profile?action=public').then(function(r){return r.ok?r.json():null}).then(function(d){
@@ -2643,7 +2668,7 @@ a.tagc{text-decoration:none}
   var editing=false;try{editing=sessionStorage.getItem('ws_edit')==='1'||/[?&]edit=1/.test(location.search)}catch(e){}
   function apply(d){if(!d)return;applyHero(d.hero);applyVideos(d.videos);if(!editing&&window.WSEdit&&(d.text||d.images))WSEdit.apply(d.text,d.images)}
   function run(){
-    fetch('/api/site?action=public').then(function(r){return r.ok?r.json():null}).then(function(d){
+    (window.__pub||fetch('/api/site?action=public').then(function(r){return r.ok?r.json():null})).then(function(d){
       if(!d||(!d.hero&&!d.videos&&!d.text&&!d.images))return;
       apply(d);
     }).catch(function(){});
@@ -2669,7 +2694,7 @@ if(sessionStorage.getItem('ws_edit')==='1'){var s=document.createElement('script
       var i=document.createElement('img');i.className='simg';i.alt='';i.loading='lazy';i.src=src;s.insertBefore(i,s.firstChild)});
   }
   function clear(){[].forEach.call(grid.querySelectorAll('.simg'),function(i){i.remove()})}
-  fetch('/api/site?action=public').then(function(r){return r.ok?r.json():null}).then(function(d){
+  (window.__pub||fetch('/api/site?action=public').then(function(r){return r.ok?r.json():null})).then(function(d){
     if(!d||!d.classimg)return;MAP={};Object.keys(d.classimg).forEach(function(k){MAP[norm(k)]=d.classimg[k]});
     paint();new MutationObserver(function(){paint()}).observe(grid,{childList:true});
   }).catch(function(){});

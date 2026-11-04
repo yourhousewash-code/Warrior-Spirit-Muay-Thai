@@ -4,9 +4,26 @@
 //   photo-usage.json (public) and api/_lib/photousage.js (the same map, for the coach area's server code)
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
+import { SITE_OPTIONS } from '../api/_lib/siteoptions.js';
 
 const SITE = 'https://www.warriorspiritmuaythai.co.uk';
-const src = readFileSync('site-src/index.html', 'utf8');
+let src = readFileSync('site-src/index.html', 'utf8');
+
+/* Optional parts (data-opt / data-opt-alt, listed in api/_lib/siteoptions.js): every key on the page must be known, and the
+   default state is baked in (data-on), so the pages are right with no JavaScript and before the coach area's switches load. */
+{
+  const known = new Map(SITE_OPTIONS.map(o => [o.key, o]));
+  const used = new Set();
+  src = src.replace(/(<[a-zA-Z][\w-]*\s[^<>]*?\bdata-opt(?:-alt)?=")([\w-]+)(")/g, (all, a, k, z) => {
+    if (!known.has(k)) throw new Error(`site-src/index.html uses data-opt="${k}", which isn't in api/_lib/siteoptions.js`);
+    used.add(k);
+    return known.get(k).on ? `${a}${k}${z} data-on` : all;
+  });
+  const unused = SITE_OPTIONS.filter(o => !used.has(o.key)).map(o => o.key);
+  if (unused.length) throw new Error(`api/_lib/siteoptions.js lists ${unused.join(', ')}, but the page has no data-opt for it`);
+  for (const o of SITE_OPTIONS) for (const t of o.texts || []) if (!src.includes(`data-ek="${t}"`)) throw new Error(`${o.key}: no placeholder with data-ek="${t}" on the page`);
+  console.log(`optional parts: ${used.size} (${SITE_OPTIONS.filter(o => o.on).map(o => o.key).join(', ') || 'none'} on by default)`);
+}
 
 // split into views
 const re = /<div class="view" data-view="([^"]+)"([^>]*)>/g;

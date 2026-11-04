@@ -7,6 +7,7 @@ import { PHOTOLIB } from './_lib/photolib.js';
 import { PHOTO_USAGE, TIMETABLE_URL } from './_lib/photousage.js';
 import { GALLERY, profilePhotoUrl } from './_lib/profiles.js';
 import { getClasses } from './_lib/avail.js';
+import { SITE_OPTIONS, optionByKey, missingTexts, cleanLink, effectiveOptions } from './_lib/siteoptions.js';
 
 /* Website photos and videos that coaches can change.
    LISTS: the hero carousel and the video gallery. Until someone edits a list, the website keeps its built-in version.
@@ -189,6 +190,17 @@ async function cleanEdits(d) {
   }
   return out;
 }
+/* Every optional part with its switch, whether its wording is filled in, and where to fill it in. */
+async function optionsList() {
+  const [saved, text] = await Promise.all([redis.get('site:options'), redis.get('site:text')]);
+  const live = effectiveOptions(saved, text);
+  return SITE_OPTIONS.map(o => {
+    const s = saved?.[o.key], missing = missingTexts(o, text);
+    return { key: o.key, label: o.label, desc: o.desc, edit: `${o.page}?edit=1`, on: typeof s?.on === 'boolean' ? s.on : o.on, byDefault: typeof s?.on !== 'boolean',
+      needsWording: !!(o.texts || []).length, wordingDone: !missing.length, needsLink: !!o.link, link: s?.link || '', shown: live[o.key].on,
+      by: s?.by ? nameOf(s.by) : '', at: s?.at || 0 };
+  });
+}
 function merge(live, delta) { const o = { ...(live || {}) }; for (const [k, v] of Object.entries(delta || {})) { if (v === null) delete o[k]; else o[k] = v; } return o; }
 const nameOf = c => COACHES[c]?.first || c;
 
@@ -199,10 +211,10 @@ export default async function handler(req, res) {
   try {
     /* ---- public ---- */
     if (action === 'public') {
-      const [hero, videos, text, images] = await Promise.all([redis.get('site:hero'), redis.get('site:videos'), redis.get('site:text'), redis.get('site:images')]);
+      const [hero, videos, text, images, opts] = await Promise.all([redis.get('site:hero'), redis.get('site:videos'), redis.get('site:text'), redis.get('site:images'), redis.get('site:options')]);
       res.setHeader('Cache-Control', 'no-cache, max-age=0, s-maxage=5');
       const ci = (await redis.get('site:classimg')) || {};
-      return res.status(200).json({ hero: hero?.items || null, videos: videos?.items || null, text: text || null, images: images || null, classimg: Object.fromEntries(Object.entries({ ...CLASSIMG, ...ci }).filter(([, v]) => v)) });
+      return res.status(200).json({ hero: hero?.items || null, videos: videos?.items || null, text: text || null, images: images || null, classimg: Object.fromEntries(Object.entries({ ...CLASSIMG, ...ci }).filter(([, v]) => v)), options: effectiveOptions(opts, text) });
     }
     if (action === 'file') {
       const path = clean(req.query.path, 300);
@@ -453,6 +465,21 @@ export default async function handler(req, res) {
       if (!LISTS[list]) return bad(res, 'Unknown list.', 404);
       await redis.del(`site:${list}`);
       return send(res, 200, { ok: true });
+    }
+
+    /* What the website shows: optional parts owners switch on or off (site:options). Defaults live in api/_lib/siteoptions.js.
+       Something with wording to fill in can't be switched on until its placeholder has been replaced in Edit the website. */
+    if (action === 'options-get') return send(res, 200, { options: await optionsList() });
+    if (action === 'options-save' && req.method === 'POST') {
+      const o = optionByKey(clean(b.key, 40)); if (!o) return bad(res, 'Unknown item.', 404);
+      const [saved, text] = await Promise.all([redis.get('site:options'), redis.get('site:text')]);
+      const cur = saved?.[o.key] || {}, on = b.on === undefined ? (typeof cur.on === 'boolean' ? cur.on : o.on) : !!b.on;
+      let link = cur.link || '';
+      if (o.link && b.link !== undefined) { link = cleanLink(o.link, b.link); if (link === null) return bad(res, 'That doesn’t look like a YouTube channel address. Copy it from your channel page, for example https://www.youtube.com/@yourchannel'); }
+      if (on && missingTexts(o, text).length) return bad(res, `Fill in the wording for “${o.label}” first: open Edit the website and replace the words in [square brackets]. Then switch it on.`);
+      if (on && o.link && !link) return bad(res, `Add the ${o.label} address first, then switch it on.`);
+      await redis.set('site:options', { ...(saved || {}), [o.key]: { on, ...(o.link ? { link } : {}), by: me.id, at: Date.now() } });
+      return send(res, 200, { options: await optionsList() });
     }
 
     /* Take a photo off the website everywhere it's shown, keeping it in the library. */
