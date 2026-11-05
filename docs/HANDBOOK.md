@@ -130,7 +130,7 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Member accounts | Email and password, email verification, Google sign-in | `api/auth.js`, `account.html` |
 | Coach area | Dashboard, availability, bookings, schedule, club details, uploads, share, settings | `coach.html` |
 | Share studio | Coaches write, save, edit and reuse social posts. Hashtags, tips, spellcheck. Buttons for Instagram, Facebook, TikTok and Google | `coach.html`, `api/site.js` (`posts-*`) |
-| Enquiry form | Sends to Jay's coach email, the BOOKINGS_COPY_EMAIL address and warriorspirit@gmail.com. Owners see them in the Enquiries tile | `api/enquiry.js` |
+| Enquiry form | Sends to Jay's coach email, the BOOKINGS_COPY_EMAIL address and warriorspirit@gmail.com. Owners see them in the Enquiries tile Name and phone are required; email and the rest optional. The phone is checked as it's typed (UK mobiles 07 with 11 digits, UK landlines, +44 and other countries) and saved tidied ("07957 100963"); WhatsApp or text replies need a mobile, and an email reply needs an email. Same rules on the server | `api/enquiry.js`, `api/_lib/phone.js`, `site-src/index.html` |
 | App on the home screen | Web app manifest, logo icons, "Get our app" buttons (hidden once installed). Installed app opens on today's classes on its first open each day | `manifest.webmanifest`, `sw.js`, `assets/install.js` |
 | Security headers | HSTS, nosniff, referrer policy, frame protection, permissions policy. Coach and account pages are noindex and not cached | `vercel.json` |
 | Privacy page | Says which services handle data, cookies, rights, contact | `privacy.html` |
@@ -278,6 +278,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 4 Nov 2026 | The club is a sole trader. Jay owns the Google Business Profile; the Hoddesdon listing is left for now. Speed accepted as good by Steve |
 | 4 Nov 2026 | Two-step sign-in for the coach area built and live: an emailed 6-digit code, required for owners, optional for coaches, trusted devices for 30 days, "Sign out everywhere". An owner with no email is let in once with a warning, then must ask the other owner. Search Console and Bing to be owned by warriorspirit@gmail.com |
 | 4 Nov 2026 | A full FighterBase club-onboarding brief written for the FighterBase developer (Claude Doc "FighterBase club onboarding: brief and handover"): six required stages, optional modules, guides, and the "never empty" rule |
+| 5 Nov 2026 | Enquiry form: name and phone required, everything else optional; the phone number is checked for being a real UK (or international) number as it's typed |
 
 ## 12. Still to decide
 

@@ -1,4 +1,5 @@
 /* Website enquiries (free class, PT, kids, questions): saved for Jay and emailed to the gym. */
+import { checkPhone } from './_lib/phone.js';
 import {
   redis, COACHES, loadCoaches, send, bad, setupProblem, body, clean, validEmail, rateLimit, coachSession, coachEmail, mail, id, fmt, SITE,
 } from './_lib/core.js';
@@ -21,7 +22,11 @@ export default async function handler(req, res) {
         page: clean(b.page, 60), created: Date.now(), status: 'new',
       };
       if (!e.name) return bad(res, 'Add your name so we know who to reply to.');
-      if (!e.phone && !e.email) return bad(res, 'Add a mobile number or email so we can get back to you.');
+      const ph = checkPhone(e.phone);
+      if (!ph.ok) return bad(res, ph.why);
+      e.phone = ph.value;
+      if (/whatsapp|text/i.test(e.reply) && ph.mobile === false) return bad(res, 'WhatsApp and texts need a mobile number. Add a mobile, or pick “Phone call”.');
+      if (/email/i.test(e.reply) && !e.email) return bad(res, 'Add your email address, or pick another way to reply.');
       if (e.email && !validEmail(e.email)) return bad(res, 'That email address doesn’t look right.');
       if (!b.consent) return bad(res, 'Tick the box so we can contact you about your enquiry.');
       await redis.hset(`enquiry:${e.id}`, e);

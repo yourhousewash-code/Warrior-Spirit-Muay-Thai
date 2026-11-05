@@ -346,6 +346,7 @@ label{display:grid;gap:6px;font:700 13px var(--cond);letter-spacing:.14em;text-t
 input,select,textarea{font:16px var(--body);color:var(--bone);background:var(--ink);border:1px solid var(--line);padding:13px 14px;width:100%}
 textarea{min-height:110px;resize:vertical}
 .full{grid-column:1/-1}
+#enquiry label{align-content:start}.req{color:var(--red)}.opt,.reqnote{font:400 13px var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}.reqnote{margin-left:12px}.fhint{display:block;min-height:1.2em;margin-top:6px;font:400 13px var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}.fhint.bad{color:#ff8a80}.fhint.ok{color:#7fd99a}input.bad{border-color:#ff8a80!important}
 .consent{display:flex;gap:10px;align-items:flex-start;font:400 15px var(--body);letter-spacing:0;text-transform:none;color:var(--soft)}
 .consent input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--red)}
 .ok{grid-column:1/-1;border:1px solid var(--ok);color:#c7f3da;padding:14px 16px}
@@ -2284,9 +2285,9 @@ a.tagc{text-decoration:none}
       <form id="enquiry" novalidate>
         <h3>Book your free class or send a message</h3>
         <label class="full" for="enq">What's it about?<select id="enq"><option>Free first class</option><option>Kids class</option><option>Personal training</option><optgroup label="Personal training sessions"><option>PT: Fundamentals</option><option>PT: Fitness Pads</option><option>PT: Technique &amp; Skills</option><option>PT: Fight Camp</option><option>PT: Doubles (2 people)</option><option>PT: Group session</option><option>PT with Jay</option><option>PT with Aaron</option><option>PT with Kian</option></optgroup><option>Fight team</option><option>Membership</option><option>Something else</option></select></label>
-        <label for="name">Name<input id="name" autocomplete="name" required></label>
-        <label for="phone">Mobile<input id="phone" type="tel" autocomplete="tel"></label>
-        <label for="email">Email<input id="email" type="email" autocomplete="email"></label>
+        <label for="name"><span>Name <span class="req" aria-hidden="true">*</span></span><input id="name" autocomplete="name" required aria-required="true"></label>
+        <label for="phone"><span>Phone <span class="req" aria-hidden="true">*</span></span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-required="true" aria-describedby="phoneHint" placeholder="e.g. 07700 900123"><small class="fhint" id="phoneHint" aria-live="polite"></small></label>
+        <label for="email"><span>Email <span class="opt">(optional)</span></span><input id="email" type="email" autocomplete="email"></label>
         <label for="reply">Best way to reply<select id="reply"><option>WhatsApp</option><option>Phone call</option><option>Text</option><option>Email</option></select></label>
         <label for="exp">Experience<select id="exp"><option>None at all</option><option>Under a year</option><option>1 year or more</option><option>Have fought</option></select></label>
         <label for="when">Best days to train<input id="when" placeholder="e.g. Tue and Thu evenings"></label>
@@ -2294,7 +2295,7 @@ a.tagc{text-decoration:none}
         <label class="hp" aria-hidden="true">Leave this empty<input id="hpw" tabindex="-1" autocomplete="off"></label>
         <label class="full consent" for="okc"><input type="checkbox" id="okc"> I'm happy for Warrior Spirit to contact me about this enquiry.</label>
         <div class="err" id="err" hidden></div>
-        <div class="full"><button class="btn" type="submit">Send enquiry</button></div>
+        <div class="full"><button class="btn" type="submit">Send enquiry</button> <span class="reqnote"><span class="req">*</span> required</span></div>
         <div class="ok" id="ok" hidden>Thanks, your message has gone to the gym. We'll get back to you the way you asked, usually within a day. Want PT? You can <a href="/book">book a session online</a> now.</div>
       </form>
     </div>
@@ -2562,18 +2563,55 @@ a.tagc{text-decoration:none}
     if(b.hasAttribute('data-play')){var v=post.querySelector('video');if(v.paused){v.muted=false;v.play().catch(function(){});b.textContent='Pause clip'}else{v.pause();b.textContent='Play clip'}return}
     var m=post.querySelector('.more');m.hidden=!m.hidden;b.textContent=m.hidden?'Read more':'Show less';
   })});
+  /* phone: required, checked as people type (the same rules as api/_lib/phone.js) */
+  function checkPhone(raw) {
+    const s = String(raw || '').trim();
+    if (!s) return { ok: false, why: 'Add your phone number so we can get back to you.' };
+    if (/[a-z]/i.test(s)) return { ok: false, why: 'That phone number has letters in it. Numbers only, please.' };
+    let d = s.replace(/\(0\)/g, '').replace(/[^\d+]/g, '');
+    if (d.startsWith('+44')) d = '0' + d.slice(3);
+    else if (d.startsWith('0044')) d = '0' + d.slice(4);
+    else if (/^44\d{10}$/.test(d)) d = '0' + d.slice(2);
+    d = d.replace(/^00(?=[1-9]\d{9,10}$)/, '0');
+    if (d.startsWith('+') || d.startsWith('00')) {
+      const n = d.replace(/^\+|^00/, '');
+      return n.length >= 8 && n.length <= 15 ? { ok: true, mobile: null, value: '+' + n } : { ok: false, why: 'That phone number doesn’t look right. Check the number of digits.' };
+    }
+    if (/^7\d{9}$/.test(d)) return { ok: false, why: 'Add the 0 at the start: UK mobile numbers start 07.' };
+    if (/^07\d{9}$/.test(d)) return { ok: true, mobile: true, value: `${d.slice(0, 5)} ${d.slice(5)}` };
+    if (/^02\d{9}$/.test(d)) return { ok: true, mobile: false, value: `${d.slice(0, 3)} ${d.slice(3, 7)} ${d.slice(7)}` };
+    if (/^03\d{9}$/.test(d)) return { ok: true, mobile: false, value: `${d.slice(0, 4)} ${d.slice(4, 7)} ${d.slice(7)}` };
+    if (/^01\d{9}$/.test(d)) return { ok: true, mobile: false, value: `${d.slice(0, 5)} ${d.slice(5)}` };
+    if (/^01\d{8}$/.test(d)) return { ok: true, mobile: false, value: `${d.slice(0, 5)} ${d.slice(5)}` };
+    if (/^07\d*$/.test(d)) return { ok: false, why: `UK mobile numbers have 11 digits, starting 07. That one has ${d.length}.` };
+    if (/^0\d*$/.test(d)) return { ok: false, why: 'That phone number doesn’t look right. UK numbers start 07, 01, 02 or 03 and have 10 or 11 digits.' };
+    return { ok: false, why: 'That phone number doesn’t look right. Start it with 0, or +44 for a UK number.' };
+  }
+  var phEl=document.getElementById('phone'),phHint=document.getElementById('phoneHint'),phTouched=false;
+  function phoneState(){var r=checkPhone(phEl.value),rp=(document.getElementById('reply')||{}).value||'';
+    phEl.classList.toggle('bad',phTouched&&!r.ok);phHint.className='fhint'+(phTouched?(r.ok?(/whatsapp|text/i.test(rp)&&r.mobile===false?' bad':' ok'):' bad'):'');
+    phHint.textContent=!phTouched?'':!r.ok?r.why:(/whatsapp|text/i.test(rp)&&r.mobile===false)?'That looks like a landline. WhatsApp and texts need a mobile.':(r.mobile===null?'Looks right (a number outside the UK).':'Looks right: '+r.value);
+    if(r.ok){var er=document.getElementById('err');if(er&&!er.hidden&&/phone|mobile|landline|digits|0 at the start/i.test(er.textContent))er.hidden=true}
+    return r}
+  phEl.addEventListener('blur',function(){if(phEl.value.trim())phTouched=true;phoneState()});
+  phEl.addEventListener('input',function(){if(phTouched)phoneState()});
+  document.getElementById('reply').addEventListener('change',function(){if(phTouched)phoneState()});
   document.getElementById('enquiry').addEventListener('submit',function(e){
     e.preventDefault();
     var err=document.getElementById('err'),n=document.getElementById('name'),p=document.getElementById('phone'),em=document.getElementById('email');
     err.hidden=true;document.getElementById('ok').hidden=true;
     if(!n.value.trim()){err.textContent='Add your name so we know who to reply to.';err.hidden=false;n.focus();return}
-    if(!p.value.trim()&&!em.value.trim()){err.textContent='Add a mobile number or email so we can get back to you.';err.hidden=false;p.focus();return}
+    phTouched=true;var ph=phoneState();if(!ph.ok){err.textContent=ph.why;err.hidden=false;p.focus();return}
+    p.value=ph.value;
+    var rp=document.getElementById('reply').value;
+    if(/whatsapp|text/i.test(rp)&&ph.mobile===false){err.textContent='WhatsApp and texts need a mobile number. Add a mobile, or pick “Phone call”.';err.hidden=false;p.focus();return}
+    if(/email/i.test(rp)&&!em.value.trim()){err.textContent='Add your email address, or pick another way to reply.';err.hidden=false;em.focus();return}
     if(!document.getElementById('okc').checked){err.textContent='Tick the box so we can contact you about your enquiry.';err.hidden=false;return}
     var f=e.target,btn=f.querySelector('button[type=submit]'),v=function(i){return (document.getElementById(i)||{}).value||''};
     btn.disabled=true;btn.textContent='Sending…';
     fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({about:v('enq'),name:v('name'),phone:v('phone'),email:v('email'),reply:v('reply'),experience:v('exp'),when:v('when'),message:v('msg'),consent:true,website:v('hpw'),page:(window.__view?window.__view():'home')})})
       .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Something went wrong.');return j})})
-      .then(function(){f.reset();document.getElementById('ok').hidden=false;btn.textContent='Sent ✓';setTimeout(function(){btn.disabled=false;btn.textContent='Send enquiry'},4000)})
+      .then(function(){f.reset();phTouched=false;phoneState();document.getElementById('ok').hidden=false;btn.textContent='Sent ✓';setTimeout(function(){btn.disabled=false;btn.textContent='Send enquiry'},4000)})
       .catch(function(x){err.textContent=x.message+' You can also call us on 07904 032142.';err.hidden=false;btn.disabled=false;btn.textContent='Send enquiry'});
   });
 })();
