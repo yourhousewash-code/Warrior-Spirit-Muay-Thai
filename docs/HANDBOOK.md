@@ -281,6 +281,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 5 Nov 2026 | Enquiry form: name and phone required, everything else optional; the phone number is checked for being a real UK (or international) number as it's typed |
 | 5 Nov 2026 | Search Console set up in Steve's yourhousewash@gmail.com Google account (Claude can't sign in to warriorspirit@gmail.com), with warriorspirit@gmail.com and Jay added as owners. Bing set up in Steve's Microsoft account. Both verified by meta tags; sitemaps submitted |
 | 5 Nov 2026 | Sole trader: the owner's name is not shown on the site (Steve's decision). Enquiries confirmed arriving at warriorspirit@gmail.com |
+| 5 Nov 2026 | Alfred's Standing Orders v1 adopted (provisional adoption): this project reports to Alfred, writes a status card every working session to `C:\The Manor\Businesses\SRS\warrior-spirit-status.md` (introduction report beside it), and follows the chain of command and approval rules. The orders are in `CLAUDE.md` |
 
 ## 12. Still to decide
 
