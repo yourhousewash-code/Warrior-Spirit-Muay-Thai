@@ -38,7 +38,7 @@ Used the same way everywhere (site, Google, listings).
 |---|---|---|
 | Trading name | Warrior Spirit Muay Thai & Kickboxing | Confirmed |
 | Other names the club is known by | Hoddesdon Muay Thai & K1 Kickboxing (the old name), WMT Muay Thai (a club we took over) | Confirmed |
-| Legal entity | Sole trader (Steve, 4 Nov 2026). The website must show the owner's name with the trading name, an address and an email | Confirmed; owner's full name **to confirm** |
+| Legal entity | Sole trader (Steve, 4 Nov 2026). Steve decided on 5 Nov 2026 not to show the owner's name; the site shows the trading name, address, phone and email | Confirmed |
 | Address (shown on the site) | Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB | Confirmed |
 | Phone (one format) | 07904 032142 (WhatsApp uses the same number) | Confirmed |
 | Email shown to the public | warriorspirit@gmail.com (changed from Jay's personal address on 30 Oct 2026) | Confirmed |
@@ -192,7 +192,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | Code in GitHub, auto-deploys | **Done** | Private repo, deploys from `main` |
 | Business details in one settings file | **To do** | Typed through the pages, JSON-LD, footer and privacy page |
 | Agreed engine (Astro on Cloudflare) | **n/a for now** | Custom Vercel build. Patterns to carry across later: owner editing, photo library, coach area, booking |
-| Every form sends, test enquiry arrived | **To do** | Sends to three addresses. A real test has not been confirmed |
+| Every form sends, test enquiry arrived | **Done** | Steve confirmed 5 Nov 2026 that enquiries are arriving at warriorspirit@gmail.com |
 | Personal details out of the address bar | **Done** | Forms post in the request body |
 | Enquiries reported to Turbo | **To do** | Not in Turbo |
 | Tap-to-call and email shown | **Done** | Phone and warriorspirit@gmail.com on the contact section |
@@ -214,7 +214,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | Privacy notice names services, cookie-free counting, ICO line, last updated | **Done** | Names Vercel, Upstash and Google. Has the line about complaining to the ICO. No visitor counting at all. Last updated 25 Oct 2026 |
 | No tracking or advertising cookies | **Done** | Only login cookies |
 | Terms and accessibility statement | **Done (draft)** | Both added 2 Nov 2026. Wording about photo opt-out, coach cancellations and video captions needs Steve's check (see section 13) |
-| Ltd company details in the footer | **To confirm** | Depends on the legal entity |
+| Ltd company details in the footer | **n/a** | Sole trader, not a limited company. Owner's name not shown, by Steve's choice (5 Nov 2026) |
 | Real reviews with their source | **Done** | "4.9 from 100 Google reviews across our Potters Bar and Hoddesdon listings" |
 | Real photos. AI images labelled as illustrations | **Done** | The 10 AI class pictures show an "Illustration" label |
 | Affiliate disclosure | **n/a** | No affiliate links |
@@ -227,7 +227,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 
 Most urgent first.
 
-1. **Confirm the test enquiry arrives** at warriorspirit@gmail.com, and confirm Search Console, Bing and the Google listing. Submit the new sitemap (36 addresses) once the new pages are live.
+1. **Google listing:** Jay adds the website address to the Google profile. Submit the new sitemap (36 addresses) once the new pages are live.
 2. Watch Search Console and Bing over the next few weeks: pages indexed, searches people use.
 3. **Check Steve's wording** in the new terms and accessibility pages (section 13, question 11).
 4. **Fill in optional wording, then switch it on in Club details → What the website shows** (no longer shown as yellow placeholders). Was: **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
@@ -280,6 +280,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 4 Nov 2026 | A full FighterBase club-onboarding brief written for the FighterBase developer (Claude Doc "FighterBase club onboarding: brief and handover"): six required stages, optional modules, guides, and the "never empty" rule |
 | 5 Nov 2026 | Enquiry form: name and phone required, everything else optional; the phone number is checked for being a real UK (or international) number as it's typed |
 | 5 Nov 2026 | Search Console set up in Steve's yourhousewash@gmail.com Google account (Claude can't sign in to warriorspirit@gmail.com), with warriorspirit@gmail.com and Jay added as owners. Bing set up in Steve's Microsoft account. Both verified by meta tags; sitemaps submitted |
+| 5 Nov 2026 | Sole trader: the owner's name is not shown on the site (Steve's decision). Enquiries confirmed arriving at warriorspirit@gmail.com |
 
 ## 12. Still to decide
 
@@ -303,14 +304,14 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 
 Questions for Steve. Nothing here has been filled in as if it were true.
 
-1. ~~Legal entity~~ Sole trader (4 Nov 2026). Still needed: the owner's full name as it should appear with the trading name.
+1. ~~Legal entity~~ Sole trader (4 Nov 2026); owner's name not shown (Steve, 5 Nov 2026).
 2. Which Gmail account sends the site's emails (the one behind `SMTP_USER`)?
 3. ~~Search Console and Bing~~ Done 5 Nov 2026.
 4. ~~Google Business Profile owner~~ Jay (4 Nov 2026); Hoddesdon left for now.
 5. Which social accounts exist for Facebook and YouTube, and who holds the logins?
 6. Does Jay own the `.com` domain, and should it redirect to the `.co.uk` site?
 7. Have the coaches changed their starter passwords, and is two-step verification on for the accounts above?
-8. Did the test enquiry arrive at warriorspirit@gmail.com?
+8. ~~Test enquiry~~ Arriving (5 Nov 2026).
 9. Are the opening hours in the Google-readable business details correct?
 10. Should any of the 10 AI pictures be replaced by real photos? (They are now labelled as illustrations.)
 11. ~~Terms and accessibility wording~~ Confirmed by Steve on 4 Nov 2026; the photo opt-out is now built. Was: Please check the new terms and accessibility pages. Things I wrote without being told: members can ask to be left out of photos and videos; a coach can cancel a session and the customer is emailed; some videos have no captions; replies within 5 working days. Is each true?
