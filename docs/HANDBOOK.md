@@ -92,8 +92,8 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Google Cloud project (Google sign-in and Drive uploads) | Steve's general-use Google business login | Variables `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`. Drive folder "Warrior Spirit Uploads" |
 | Other secrets in Vercel | `SESSION_SECRET`, `CRON_SECRET`, `BOOKINGS_COPY_EMAIL`, `SITE_URL` | Never copy values anywhere |
 | Coach logins on the site | Jay, Steve, Aaron, Kian (usernames `jay`, `steve`, `aaron`, `kian`). Jay can add or hide coaches | Coaches should change their starter passwords. Steve's login has no starting password |
-| Google Search Console | Not confirmed | **To confirm** |
-| Bing Webmaster Tools | Not confirmed | **To confirm** |
+| Google Search Console | Set up 5 Nov 2026: property `https://www.warriorspiritmuaythai.co.uk/` verified by an HTML tag in the page head (keep the `google-site-verification` meta tag in `site-src/index.html`). Owners: yourhousewash@gmail.com (Steve's Chrome account, verified), warriorspirit@gmail.com and jayshep1980@gmail.com (Jay). Sitemap submitted: 36 pages found | Done |
+| Bing Webmaster Tools | Set up 5 Nov 2026 in Steve's Microsoft account, verified by the `msvalidate.01` meta tag in `site-src/index.html` (keep it). Sitemap submitted | Done |
 | Google Business Profile | Jay owns the Potters Bar listing and is adding the website address (Steve, 4 Nov 2026). The Hoddesdon listing is left alone for now. A listing seems to exist (the site shows a 4.9 rating from about 100 Google reviews across the Potters Bar and Hoddesdon listings) | Owner and access **to confirm** |
 | Form service | None. Forms post to the site's own `/api/enquiry` | Email goes by Gmail |
 | Social profiles | Instagram, TikTok (Facebook not confirmed) | Logins are with the club and coaches, not AI |
@@ -196,7 +196,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | Personal details out of the address bar | **Done** | Forms post in the request body |
 | Enquiries reported to Turbo | **To do** | Not in Turbo |
 | Tap-to-call and email shown | **Done** | Phone and warriorspirit@gmail.com on the contact section |
-| Search Console and Bing set up, sitemap submitted, home page sent | **To confirm** | |
+| Search Console and Bing set up, sitemap submitted, home page sent | **Done** | 5 Nov 2026: both verified by meta tags, sitemaps submitted (Google found all 36 pages) |
 | Listed on Google and Bing, baseline recorded | **To confirm** | A Google listing seems to exist. No baseline recorded |
 | Crawler Hints or IndexNow | **To do** | Vercel has no setting for this. Use IndexNow if needed |
 | One address only (www and bare domain) | **Done** | Verified: bare domain redirects to www |
@@ -228,7 +228,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 Most urgent first.
 
 1. **Confirm the test enquiry arrives** at warriorspirit@gmail.com, and confirm Search Console, Bing and the Google listing. Submit the new sitemap (36 addresses) once the new pages are live.
-2. Search Console and Bing: being set up with Steve on 4 Nov 2026 under warriorspirit@gmail.com.
+2. Watch Search Console and Bing over the next few weeks: pages indexed, searches people use.
 3. **Check Steve's wording** in the new terms and accessibility pages (section 13, question 11).
 4. **Fill in optional wording, then switch it on in Club details → What the website shows** (no longer shown as yellow placeholders). Was: **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
 5. Coaches change their starter passwords. Check two-step verification on all accounts.
@@ -279,6 +279,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 4 Nov 2026 | Two-step sign-in for the coach area built and live: an emailed 6-digit code, required for owners, optional for coaches, trusted devices for 30 days, "Sign out everywhere". An owner with no email is let in once with a warning, then must ask the other owner. Search Console and Bing to be owned by warriorspirit@gmail.com |
 | 4 Nov 2026 | A full FighterBase club-onboarding brief written for the FighterBase developer (Claude Doc "FighterBase club onboarding: brief and handover"): six required stages, optional modules, guides, and the "never empty" rule |
 | 5 Nov 2026 | Enquiry form: name and phone required, everything else optional; the phone number is checked for being a real UK (or international) number as it's typed |
+| 5 Nov 2026 | Search Console set up in Steve's yourhousewash@gmail.com Google account (Claude can't sign in to warriorspirit@gmail.com), with warriorspirit@gmail.com and Jay added as owners. Bing set up in Steve's Microsoft account. Both verified by meta tags; sitemaps submitted |
 
 ## 12. Still to decide
 
@@ -304,7 +305,7 @@ Questions for Steve. Nothing here has been filled in as if it were true.
 
 1. ~~Legal entity~~ Sole trader (4 Nov 2026). Still needed: the owner's full name as it should appear with the trading name.
 2. Which Gmail account sends the site's emails (the one behind `SMTP_USER`)?
-3. Is Google Search Console set up for the domain, and is Bing Webmaster Tools? Has the sitemap been submitted?
+3. ~~Search Console and Bing~~ Done 5 Nov 2026.
 4. ~~Google Business Profile owner~~ Jay (4 Nov 2026); Hoddesdon left for now.
 5. Which social accounts exist for Facebook and YouTube, and who holds the logins?
 6. Does Jay own the `.com` domain, and should it redirect to the `.co.uk` site?
