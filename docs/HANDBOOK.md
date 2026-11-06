@@ -10,7 +10,7 @@
 
 **Related:** SRS Site Factory handbook (how SRS builds sites) and the Turbo handbook (what happens after launch). Neither is linked to this site yet.
 
-**Last updated:** 6 November 2026
+**Last updated:** 6 November 2026 (evening)
 
 ---
 
@@ -83,8 +83,8 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 
 | Account | Owner / who can get in | Notes |
 |---|---|---|
-| Domain `warriorspiritmuaythai.co.uk` | Registered at names.co.uk. Steve has the login | Points at Vercel. The `.com` is thought to belong to Jay (unconfirmed) |
-| GitHub | `yourhousewash-code` (Steve), private repo `Warrior-Spirit-Muay-Thai`. Pushes to `main` deploy automatically | GitHub reports the repo has moved to the capitalised name. Update the remote when convenient |
+| Domain `warriorspiritmuaythai.co.uk` | Registered at names.co.uk. Steve has the login | Points at Vercel. The `.com` is thought to belong to Jay (unconfirmed). SRS rule (Steve, 6 Nov 2026): client domains go on Cloudflare; the move is planned (wanted next, item 2) |
+| GitHub | `yourhousewash-code` (Steve), private repo `Warrior-Spirit-Muay-Thai`. Pushes to `main` deploy automatically | Remote updated to the capitalised name on 6 Nov 2026 |
 | Vercel (hosting) | Steve's account | Settings and secrets live in Vercel → Project → Settings → Environment Variables |
 | Upstash Redis (database) | Linked through Vercel | Holds accounts, bookings, classes, hours and site content |
 | Vercel Blob (file storage) | Linked through Vercel | Holds uploaded photos and videos |
@@ -228,16 +228,17 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 Most urgent first.
 
 1. **Google listing:** Jay adds the website address to the Google profile. Once Steve's dedicated SRS Google account exists, ask Jay to give it manager access, then set the website link with `?src=gbp` (or ask Turbo to, through its Business Profile API).
-2. Watch Search Console and Bing over the next few weeks: pages indexed, searches people use.
-3. **Check Steve's wording** in the new terms and accessibility pages (section 13, question 11).
-4. **Fill in optional wording, then switch it on in Club details → What the website shows** (no longer shown as yellow placeholders). Was: **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
-5. Coaches change their starter passwords. Check two-step verification on all accounts.
-6. Reduce speed risks that remain: page size (all sections in every page), image sizes, one fewer font family. Add a content security policy.
-7. Move business details into one settings file.
-8. Add the site to Turbo, with enquiry reporting.
-9. Agree the FighterBase link (section 12), then build only what is agreed.
-10. Later: online payments and memberships. Check-in and attendance (likely FighterBase).
-11. Optional: an activity log of who changed what. Vercel Pro for "one hour before" reminders. Pro would also lift the 12-function limit.
+2. **Domain to Cloudflare** (Steve's SRS rule, 6 Nov 2026): add the domain to the SRS Cloudflare account, copy the DNS records (the Vercel records; there is no domain email today), switch the nameservers at names.co.uk, then check the site and its padlock. Later, move the registration to Cloudflare in the club's name. Each step that changes an account needs Steve's yes; he signs in, Claude sets up the rest.
+3. Watch Search Console and Bing over the next few weeks: pages indexed, searches people use. (6 Nov 2026: a web search for the site's own name did not show it; check Google's index in Search Console.)
+4. **Check Steve's wording** in the new terms and accessibility pages (section 13, question 11).
+5. **Fill in optional wording, then switch it on in Club details → What the website shows** (no longer shown as yellow placeholders). Was: **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
+6. Coaches change their starter passwords. Check two-step verification on all accounts.
+7. Reduce speed risks that remain: page size (all sections in every page), image sizes, one fewer font family. Add a content security policy.
+8. Move business details into one settings file.
+9. Add the site to Turbo, with enquiry reporting by source (`?src=gbp` and the form), so the club can see which visits become members.
+10. Agree the FighterBase link (section 12), then build only what is agreed.
+11. Later: online payments and memberships. Check-in and attendance (likely FighterBase).
+12. Optional: an activity log of who changed what. Vercel Pro for "one hour before" reminders. Pro would also lift the 12-function limit.
 
 ## 11. Decisions log
 
@@ -284,6 +285,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 5 Nov 2026 | Alfred's Standing Orders v1 adopted (provisional adoption): this project reports to Alfred, writes a status card every working session to `C:\The Manor\Businesses\SRS\warrior-spirit-status.md` (introduction report beside it), and follows the chain of command and approval rules. The orders are in `CLAUDE.md` |
 | 6 Nov 2026 | The Batcave starter replaces Standing Orders v1: every session and wake-up starts from `C:\The Manor\Batcave\Starter Pack\Ready to paste\Warrior Spirit Muay Thai.md` (Agent Rules core, Lead and Builder add-ons, orders). Project log `warrior-spirit-log.md` beside the status card. Team set up in the repo: `handoffs/TASKS.md`, `handoffs/HANDOFF-PACK.md`, `STATUS.md` (all kept off the live site) |
 | 6 Nov 2026 | Steve (10:30, order A-017): one handbook copy, in the repo, with a pointer in the Project; in a live session his chat go-ahead covers publishing, but wake-ups and unattended runs build on a branch and wait for an exact "publish <commit>" approval; a dedicated SRS Google account for client profiles, agreed in principle, with no new Google access requests until it exists. Google's Business Profile API was approved for Turbo (A-015); Warrior Spirit asks Turbo, through Alfred, for any profile changes by API |
+| 6 Nov 2026 | Steve approved publishing the team set-up (commit 6c055be, his word "yes", 11:24, order WS-001); merged and deployed 15:59. Team rhythm: this project wakes itself at 11:00, 16:00, 19:00 and 01:00 UK. Reuse shared accounts before creating any. **Client domains go on Cloudflare** (SRS rule, 18:10). Road to paying: every run keeps a "Road to paying" section on the status card (Steve: "I need these to be functioning, paying businesses very soon") |
 
 ## 12. Still to decide
 
