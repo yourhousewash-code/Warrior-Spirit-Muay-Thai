@@ -4,15 +4,13 @@
 
 **If it isn't here, it isn't decided.** This handbook changes only by agreement: someone proposes a change and says why, Steve agrees, then it is made and dated in the decisions log. Facts about what is built are updated as part of building.
 
-**Copies (kept identical):**
-- `docs/HANDBOOK.md` in the GitHub repo `yourhousewash-code/Warrior-Spirit-Muay-Thai`
-- the Project doc `claude/handbook.md` in the claude.ai Project "Warrior Spirit Muay Thai"
+**One copy** (Steve, 6 Nov 2026): this file, `docs/HANDBOOK.md` in the GitHub repo `yourhousewash-code/Warrior-Spirit-Muay-Thai`. The claude.ai Project "Warrior Spirit Muay Thai" keeps only a one-line pointer to it (`claude/handbook.md`).
 
 **This file is private.** It is kept out of the live website (see `.vercelignore`). Never publish it: it mentions FighterBase.
 
 **Related:** SRS Site Factory handbook (how SRS builds sites) and the Turbo handbook (what happens after launch). Neither is linked to this site yet.
 
-**Last updated:** 4 November 2026
+**Last updated:** 6 November 2026
 
 ---
 
@@ -74,6 +72,8 @@ Used the same way everywhere (site, Google, listings).
 12. Computer-made pictures are labelled "Illustration" on the site.
 13. Much of the booking, account and coach tooling is expected to move to FighterBase. Spend effort on the public pages, legal pages and speed here, and keep new tooling small.
 14. **Optional, never empty** (Steve, 4 Nov 2026): anything optional can be switched on or off by owners, and nothing on the public site shows as an empty space or "to confirm" wording unless it's a required item. A part with wording to fill in can't be switched on until it's filled in.
+15. **Going live** (Steve, 6 Nov 2026): every push to `main` deploys the live site. In a live session, Steve's go-ahead in chat covers publishing the change discussed (his words are recorded). On wake-ups and unattended runs, changes are built on a branch and wait for Steve's exact "publish <commit>" approval.
+16. **Team files stay private:** `handoffs/` (TASKS.md, HANDOFF-PACK.md, handoffs), `STATUS.md`, `docs/` and `CLAUDE.md` are kept out of the live site by `.vercelignore`.
 
 **SRS standards that apply:** see section 9 for how the site measures up.
 
@@ -94,7 +94,7 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Coach logins on the site | Jay, Steve, Aaron, Kian (usernames `jay`, `steve`, `aaron`, `kian`). Jay can add or hide coaches | Coaches should change their starter passwords. Steve's login has no starting password |
 | Google Search Console | Set up 5 Nov 2026: property `https://www.warriorspiritmuaythai.co.uk/` verified by an HTML tag in the page head (keep the `google-site-verification` meta tag in `site-src/index.html`). Owners: yourhousewash@gmail.com (Steve's Chrome account, verified), warriorspirit@gmail.com and jayshep1980@gmail.com (Jay). Sitemap submitted: 36 pages found | Done |
 | Bing Webmaster Tools | Set up 5 Nov 2026 in Steve's Microsoft account, verified by the `msvalidate.01` meta tag in `site-src/index.html` (keep it). Sitemap submitted | Done |
-| Google Business Profile | Jay owns the Potters Bar listing and is adding the website address (Steve, 4 Nov 2026). The Hoddesdon listing is left alone for now. A listing seems to exist (the site shows a 4.9 rating from about 100 Google reviews across the Potters Bar and Hoddesdon listings) | Owner and access **to confirm** |
+| Google Business Profile | Jay owns the Potters Bar listing and is adding the website address (Steve, 4 Nov 2026). The Hoddesdon listing is left alone for now. A listing seems to exist (the site shows a 4.9 rating from about 100 Google reviews across the Potters Bar and Hoddesdon listings). SRS will manage client profiles from a dedicated SRS Google account (agreed in principle, Steve, 6 Nov 2026; Steve is setting it up); no Google access requests until it exists. Changes by Google's Business Profile API go through Turbo, which owns the approved API | SRS access waits for the SRS Google account |
 | Form service | None. Forms post to the site's own `/api/enquiry` | Email goes by Gmail |
 | Social profiles | Instagram, TikTok (Facebook not confirmed) | Logins are with the club and coaches, not AI |
 | Affiliate or partner accounts | None | n/a |
@@ -227,7 +227,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 
 Most urgent first.
 
-1. **Google listing:** Jay adds the website address to the Google profile. Submit the new sitemap (36 addresses) once the new pages are live.
+1. **Google listing:** Jay adds the website address to the Google profile. Once Steve's dedicated SRS Google account exists, ask Jay to give it manager access, then set the website link with `?src=gbp` (or ask Turbo to, through its Business Profile API).
 2. Watch Search Console and Bing over the next few weeks: pages indexed, searches people use.
 3. **Check Steve's wording** in the new terms and accessibility pages (section 13, question 11).
 4. **Fill in optional wording, then switch it on in Club details → What the website shows** (no longer shown as yellow placeholders). Was: **Fill the yellow "to confirm" items on the public pages** (parking, bus routes, contract and notice terms, gloves to borrow, parents watching, women-only sessions, student pricing, governing body and insurance, coach bios, fight results, YouTube link). Then remove the "Draft v11" footer line.
@@ -282,6 +282,8 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 5 Nov 2026 | Search Console set up in Steve's yourhousewash@gmail.com Google account (Claude can't sign in to warriorspirit@gmail.com), with warriorspirit@gmail.com and Jay added as owners. Bing set up in Steve's Microsoft account. Both verified by meta tags; sitemaps submitted |
 | 5 Nov 2026 | Sole trader: the owner's name is not shown on the site (Steve's decision). Enquiries confirmed arriving at warriorspirit@gmail.com |
 | 5 Nov 2026 | Alfred's Standing Orders v1 adopted (provisional adoption): this project reports to Alfred, writes a status card every working session to `C:\The Manor\Businesses\SRS\warrior-spirit-status.md` (introduction report beside it), and follows the chain of command and approval rules. The orders are in `CLAUDE.md` |
+| 6 Nov 2026 | The Batcave starter replaces Standing Orders v1: every session and wake-up starts from `C:\The Manor\Batcave\Starter Pack\Ready to paste\Warrior Spirit Muay Thai.md` (Agent Rules core, Lead and Builder add-ons, orders). Project log `warrior-spirit-log.md` beside the status card. Team set up in the repo: `handoffs/TASKS.md`, `handoffs/HANDOFF-PACK.md`, `STATUS.md` (all kept off the live site) |
+| 6 Nov 2026 | Steve (10:30, order A-017): one handbook copy, in the repo, with a pointer in the Project; in a live session his chat go-ahead covers publishing, but wake-ups and unattended runs build on a branch and wait for an exact "publish <commit>" approval; a dedicated SRS Google account for client profiles, agreed in principle, with no new Google access requests until it exists. Google's Business Profile API was approved for Turbo (A-015); Warrior Spirit asks Turbo, through Alfred, for any profile changes by API |
 
 ## 12. Still to decide
 
