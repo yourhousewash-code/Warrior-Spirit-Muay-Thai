@@ -10,7 +10,7 @@
 
 **Related:** SRS Site Factory handbook (how SRS builds sites) and the Turbo handbook (what happens after launch). Neither is linked to this site yet.
 
-**Last updated:** 6 November 2026 (evening)
+**Last updated:** 12 November 2026
 
 ---
 
@@ -132,8 +132,10 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 | Share studio | Coaches write, save, edit and reuse social posts. Hashtags, tips, spellcheck. Buttons for Instagram, Facebook, TikTok and Google | `coach.html`, `api/site.js` (`posts-*`) |
 | Enquiry form | Sends to Jay's coach email, the BOOKINGS_COPY_EMAIL address and warriorspirit@gmail.com. Owners see them in the Enquiries tile. Name and phone are required; email and the rest optional. The phone is checked as it's typed (UK mobiles 07 with 11 digits, UK landlines, +44 and other countries) and saved tidied ("07957 100963"); WhatsApp or text replies need a mobile, and an email reply needs an email. Same rules on the server | `api/enquiry.js`, `api/_lib/phone.js`, `site-src/index.html` |
 | App on the home screen | Web app manifest, logo icons, "Get our app" buttons (hidden once installed). Installed app opens on today's classes on its first open each day | `manifest.webmanifest`, `sw.js`, `assets/install.js` |
-| Security headers | HSTS, nosniff, referrer policy, frame protection, permissions policy. Coach and account pages are noindex and not cached | `vercel.json` |
+| Security headers | HSTS, nosniff, referrer policy, frame protection, permissions policy. Coach and account pages are noindex and not cached. A content security policy runs in report-only mode (12 Nov 2026) until it has been checked on the live site, then it can be enforced | `vercel.json` |
 | Privacy page | Says which services handle data, cookies, rights, contact | `privacy.html` |
+| Bot check (Cloudflare Turnstile) | Built 12 Nov 2026 (order A-038): an invisible "are you human" check on the enquiry form, member sign-up and member password reset, checked on the server. **Off until both keys are set** in Vercel (`TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`; Steve makes the widget in the SRS Cloudflare account). If Cloudflare can't be reached, people are let through and the rate limits still apply. **When it's switched on, add Cloudflare (bot check) to the privacy page.** Tighter limits too: logins per account across all connections, and per connection on password reset | `api/_lib/turnstile.js`, `assets/human.js`, `api/enquiry.js`, `api/auth.js`, `account.html`, `site-src/index.html` |
+| Tests | `npm test`: the phone check, one section per page, titles of 60 characters or fewer, descriptions and canonicals, no FighterBase on public pages, private files kept off the site. The build also refuses a title over 60 characters | `tests/site.test.mjs`, `tools/build-pages.mjs` |
 
 **Where data lives (database keys):** `classes`, `classtypes`, `gymhours`, `site:hero`, `site:videos`, `site:text`, `site:images`, `site:library`, `site:classimg`, `site:posts`, `user:<email>`, `booking:<id>`, `cbk:<id>`, `profile:<coach>:live`, `site:options`, `photo:optout`, `coach:sess`, `coach:<id>:2fa`, `coach:<id>:devices`. Never document values.
 
@@ -145,7 +147,7 @@ The business owns its own accounts. SRS accounts use `steve@srsprojects.co.uk`. 
 
 **Analytics:** none. The site does not count visitors. There is no Turbo line. What it can't count: visits, enquiries by source, installs of the app.
 
-**Known limit.** Every page file still contains all the sections (only the right one is shown), so each file is about 270 KB before compression. The pages work, but they are heavier than they need to be. If speed matters later, split the sections into separate lighter pages.
+**Page size.** Since 12 Nov 2026 each page file holds only its own section plus the shared header, footer, styles and scripts (about 120 KB instead of 300 KB before compression). Links between sections are ordinary page loads; a "free class" or "kids class" choice made on one page is carried to the contact form (browser session storage). Scripts for one section must check their elements exist, because other pages don't have them.
 
 ## 6. Status
 
@@ -220,7 +222,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | Affiliate disclosure | **n/a** | No affiliate links |
 | https and HSTS | **Done** | Verified: HSTS max-age 63072000 |
 | Frame, nosniff, referrer, permissions headers | **Done** | Verified |
-| Content security policy | **To do** | Not set |
+| Content security policy | **Partly** | Report-only since the 12 Nov 2026 branch; enforce after a check of the live pages and the coach area |
 | Two-step verification on every account | **Partly** | Coach area done 4 Nov 2026 (required for owners). Outside accounts (Vercel, GitHub, Google, names.co.uk, Upstash) still to confirm: each person turns it on in that account's settings |
 
 ## 10. Wanted next
@@ -286,6 +288,8 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 6 Nov 2026 | The Batcave starter replaces Standing Orders v1: every session and wake-up starts from `C:\The Manor\Batcave\Starter Pack\Ready to paste\Warrior Spirit Muay Thai.md` (Agent Rules core, Lead and Builder add-ons, orders). Project log `warrior-spirit-log.md` beside the status card. Team set up in the repo: `handoffs/TASKS.md`, `handoffs/HANDOFF-PACK.md`, `STATUS.md` (all kept off the live site) |
 | 6 Nov 2026 | Steve (10:30, order A-017): one handbook copy, in the repo, with a pointer in the Project; in a live session his chat go-ahead covers publishing, but wake-ups and unattended runs build on a branch and wait for an exact "publish <commit>" approval; a dedicated SRS Google account for client profiles, agreed in principle, with no new Google access requests until it exists. Google's Business Profile API was approved for Turbo (A-015); Warrior Spirit asks Turbo, through Alfred, for any profile changes by API |
 | 6 Nov 2026 | Steve approved publishing the team set-up (commit 6c055be, his word "yes", 11:24, order WS-001); merged and deployed 15:59. Team rhythm: this project wakes itself at 11:00, 16:00, 19:00 and 01:00 UK. Reuse shared accounts before creating any. **Client domains go on Cloudflare** (SRS rule, 18:10). Road to paying: every run keeps a "Road to paying" section on the status card (Steve: "I need these to be functioning, paying businesses very soon") |
+| 11 Nov 2026 | FighterBase cross-check agreed by Steve: the site stays the shop window; booking, PT, member accounts, reminders, calendar feeds and payments move to FighterBase when it's ready (kids booking after its kids review); the site keeps its own enquiry form until FighterBase's trial widget exists; "Powered by FighterBase" appears only on switch-over day; owners and coaches keep site logins for the site's content tools |
+| 12 Nov 2026 | Steve: build the skills-audit fixes on a branch (one section per page, contrast, bot check, titles, security settings and tests); publish commit 1f13439 (done); add the site to Turbo now; SRS gets **manager** access to the club's Google profile, the club stays owner and FighterBase gets none (they are legally separate); Jay adds steve@srsprojects.co.uk himself. The profile is managed by an address starting "wh…@gmail.com" (to confirm with Jay). Found and fixed on the branch: the "Send enquiry" button jumped when the phone field lost focus, so a first click could miss |
 
 ## 12. Still to decide
 
