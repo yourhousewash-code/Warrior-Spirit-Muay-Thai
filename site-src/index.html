@@ -42,7 +42,7 @@ html:not(.wse) [data-opt]:not([data-on]),html:not(.wse) [data-opt-alt][data-on]{
 .ptc{padding:18px 18px 20px;display:grid;gap:12px;align-content:start;grid-template-rows:auto auto 1fr auto}
 .pthead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .pthead h3{font-size:28px}
-.best{color:var(--soft);font-size:15px}.best b{display:block;font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.best{color:var(--soft);font-size:15px}.best b{display:block;font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red-text)}
 .ptc .ticks{font-size:15px}
 .ptfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:12px;border-top:1px solid var(--line)}
 .ptprice{font:700 15px var(--cond);letter-spacing:.06em;text-transform:uppercase}
@@ -55,7 +55,7 @@ html:not(.wse) [data-opt]:not([data-on]),html:not(.wse) [data-opt-alt][data-on]{
 .fr h3{font-size:clamp(34px,4.5vw,52px)}
 .frsteps{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line)}
 .frsteps div{background:var(--ink);padding:12px 14px;display:grid;gap:2px}
-.frsteps b{font:900 24px/1 var(--display);text-transform:uppercase;color:var(--red)}
+.frsteps b{font:900 24px/1 var(--display);text-transform:uppercase;color:var(--red-text)}
 .frsteps span{font-size:14px;color:var(--soft)}
 .fr .btn{justify-self:start}
 @media (max-width:860px){.friend{grid-template-columns:1fr}.friend .photo{min-height:0;aspect-ratio:16/9}}
@@ -78,12 +78,12 @@ html:not(.wse) [data-opt]:not([data-on]),html:not(.wse) [data-opt-alt][data-on]{
 @media (max-width:980px){.coachcards{grid-template-columns:1fr 1fr}}
 @media (max-width:620px){.coachcards{grid-template-columns:1fr}}
 
-.wafab{position:fixed;z-index:30;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:inline-flex;align-items:center;gap:8px;padding:12px 18px 12px 14px;background:#25d366;color:#fff;border-radius:999px;text-decoration:none;font:700 15px var(--cond);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 10px 30px -8px rgba(0,0,0,.6)}
+.wafab{position:fixed;z-index:30;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:inline-flex;align-items:center;gap:8px;padding:12px 18px 12px 14px;background:#25d366;color:#0b0c10;border-radius:999px;text-decoration:none;font:700 15px var(--cond);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 10px 30px -8px rgba(0,0,0,.6)}
 .wafab svg{width:24px;height:24px}
 .wafab:hover{filter:brightness(1.06)}
 @media (max-width:520px){.wafab span{display:none}.wafab{padding:14px}}
 .policy{max-width:760px}
-.policy h3{font-size:28px;margin-top:34px;color:var(--red)}
+.policy h3{font-size:28px;margin-top:34px;color:var(--red-text)}
 .policy p,.policy li{color:var(--soft)}
 .policy ul{display:grid;gap:6px;padding-left:20px}
 
@@ -99,6 +99,7 @@ html:not(.wse) [data-opt]:not([data-on]),html:not(.wse) [data-opt-alt][data-on]{
 /* Layout: photo-led fight poster. Full-bleed real gym photos, roundel red/navy, 1180px content column */
 :root{
   --ink:#0b0c10; --ink-2:#14161d; --red:#e3141e; --navy:#1d3a8f; --bone:#f3f0ea;
+  --red-text:#ff3b44; /* brand red, lightened for small text on dark backgrounds (WCAG AA 4.5:1) */
   --muted:#a3a8b6; --soft:#cfd2da; --line:#262a35; --tbc:#f5c542; --ok:#7be3a6;
   --display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
   --cond:"Barlow Condensed","Arial Narrow",sans-serif;
@@ -119,7 +120,7 @@ h1,h2,h3{font-family:var(--display);text-transform:uppercase;line-height:.9;marg
 h2{font-size:clamp(44px,7.5vw,88px);font-weight:900}
 h3{font-size:30px;font-weight:900}
 p{margin:0;max-width:62ch}
-.kick{font:700 14px/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--red);display:inline-flex;align-items:center;gap:10px}
+.kick{font:700 14px/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--red-text);display:inline-flex;align-items:center;gap:10px}
 .kick::before{content:"";width:28px;height:3px;background:currentColor}
 .lede{font-size:clamp(18px,2vw,21px);color:#d4d6dd}
 .stack{display:grid;gap:18px;align-content:start}
@@ -160,7 +161,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .hero-in{display:grid;gap:22px;max-width:600px}
 .hero-badge{width:clamp(110px,14vw,170px);filter:drop-shadow(0 10px 30px rgba(0,0,0,.6))}
 .hero h1{font-size:clamp(64px,10vw,136px);font-weight:900}
-.hero h1 em{font-style:normal;color:var(--red)}
+.hero h1 em{font-style:normal;color:var(--red-text)}
 .cta{display:flex;flex-wrap:wrap;gap:14px}
 @media (max-width:700px){.hero::after{background:linear-gradient(0deg,var(--ink) 8%,rgba(11,12,16,.78) 55%,rgba(11,12,16,.4))}}
 
@@ -169,7 +170,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .fact{padding:22px 18px;border-right:1px solid rgba(255,255,255,.25);display:grid;gap:4px;min-width:0}
 .fact:last-child{border-right:0}
 .fact b{font:900 34px/1 var(--display);text-transform:uppercase}
-.fact span{font:600 14px var(--cond);letter-spacing:.1em;text-transform:uppercase;opacity:.9}
+.fact span{font:600 14px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:#fff}
 @media (max-width:760px){.facts .wrap{grid-template-columns:repeat(2,1fr)}.fact:nth-child(2){border-right:0}.fact:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.25)}}
 
 .reel{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding-block:4px}
@@ -180,7 +181,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .benefit{display:grid;grid-template-columns:210px 1fr;background:var(--ink-2);min-width:0}
 .benefit .photo{min-height:230px}
 .benefit .t{padding:24px 24px 26px;display:grid;gap:10px;align-content:start}
-.benefit .t span,.tagc{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.benefit .t span,.tagc{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red-text)}
 .benefit .t p{color:var(--soft);font-size:16px}
 @media (max-width:980px){.ben{grid-template-columns:1fr}}
 @media (max-width:520px){.benefit{grid-template-columns:1fr}.benefit .photo{min-height:0;aspect-ratio:16/9}}
@@ -190,11 +191,12 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .pathc::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,12,16,.97) 40%,rgba(11,12,16,.2))}
 .pathc .in{position:relative;z-index:1;padding:32px clamp(20px,3vw,40px) 36px;display:grid;gap:14px}
 .pathc .in>span{font:700 14px var(--cond);letter-spacing:.18em;text-transform:uppercase;color:var(--tbc)}
-.pathc.fighter .in>span{color:var(--red)}
+.pathc.fighter .in>span{color:var(--red-text)}
 .ticks{margin:0;padding:0;list-style:none;display:grid;gap:8px;color:#dfe1e7}
 .ticks li{padding-left:22px;position:relative}
 .ticks li::before{content:"";position:absolute;left:0;top:.65em;width:10px;height:3px;background:var(--red)}
 .gel{margin-top:4px;background:var(--red);padding:26px clamp(20px,3vw,40px);display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center;justify-content:space-between}
+.gel p{color:#fff}
 .gel b{font:900 clamp(30px,4vw,46px)/1 var(--display);text-transform:uppercase}
 @media (max-width:860px){.paths{grid-template-columns:1fr}.pathc{min-height:500px}}
 
@@ -218,7 +220,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .limbs{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--line)}
 .limb{background:var(--ink-2);padding:16px 14px;display:grid;gap:2px}
 .limb b{font:900 26px/1 var(--display);text-transform:uppercase}
-.limb b i{font-style:normal;color:var(--red);margin-right:6px}
+.limb b i{font-style:normal;color:var(--red-text);margin-right:6px}
 .limb span{font:600 14px var(--cond);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
 @media (max-width:860px){.split,.split.rev{grid-template-columns:1fr}.split.rev>.photo{order:0}}
 
@@ -251,7 +253,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .fight .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
 .ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line)}
 .rung{background:rgba(11,12,16,.85);padding:16px 14px;display:grid;gap:4px}
-.rung small{font:700 12px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.rung small{font:700 12px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red-text)}
 .rung b{font:900 24px/1 var(--display);text-transform:uppercase}
 .rung span{font-size:14px;color:var(--muted)}
 .walkout{aspect-ratio:9/16;max-height:640px;border:2px solid var(--bone);justify-self:center;width:100%;max-width:360px;margin:0}
@@ -265,10 +267,10 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 
 .coach{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,64px);align-items:center}
 .coach .photo{aspect-ratio:4/5}
-.tagline{font:900 clamp(30px,4vw,44px)/1 var(--display);text-transform:uppercase;color:var(--red)}
+.tagline{font:900 clamp(30px,4vw,44px)/1 var(--display);text-transform:uppercase;color:var(--red-text)}
 .cstats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);border:2px solid var(--line)}
 .cstats div{background:var(--ink);padding:16px 14px;display:grid;gap:4px}
-.cstats b{font:900 40px/1 var(--display);color:var(--red)}
+.cstats b{font:900 40px/1 var(--display);color:var(--red-text)}
 .cstats span{font:600 14px var(--cond);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .mono{display:grid;place-items:center;background:radial-gradient(120% 90% at 50% 0%,rgba(227,20,30,.35),transparent 60%),linear-gradient(160deg,#1a1d27,#0d0e13)}
 .mono .wm{position:absolute;width:70%;height:auto;opacity:.08;object-fit:contain}
@@ -306,7 +308,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:rg
 .post p{color:var(--soft);font-size:16px}
 .post .more{display:grid;gap:10px}
 .readbtn{justify-self:start;background:none;border:0;border-bottom:2px solid var(--red);color:var(--bone);padding:2px 0;font:700 15px var(--cond);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
-.play{position:absolute;left:14px;bottom:14px;background:var(--red);font:700 12px var(--cond);letter-spacing:.14em;text-transform:uppercase;padding:6px 10px}
+.play{position:absolute;left:14px;bottom:14px;background:var(--red);color:#fff;font:700 12px var(--cond);letter-spacing:.14em;text-transform:uppercase;padding:6px 10px}
 @media (max-width:980px){.posts{grid-template-columns:1fr 1fr}.post.feature{grid-template-columns:1fr}.post.feature .photo{min-height:0;aspect-ratio:16/10}}
 @media (max-width:620px){.posts{grid-template-columns:1fr}.post.feature{grid-column:auto}}
 .socials{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;background:var(--line);margin-top:28px}
@@ -328,7 +330,7 @@ details{border-bottom:1px solid var(--line)}
 details:first-child{border-top:1px solid var(--line)}
 summary{cursor:pointer;list-style:none;padding:20px 44px 20px 0;font:700 21px var(--cond);text-transform:uppercase;letter-spacing:.04em;position:relative}
 summary::-webkit-details-marker{display:none}
-summary::after{content:"+";position:absolute;right:6px;top:12px;font:900 32px var(--display);color:var(--red)}
+summary::after{content:"+";position:absolute;right:6px;top:12px;font:900 32px var(--display);color:var(--red-text)}
 details[open] summary::after{content:"–"}
 details p{padding:0 0 22px;color:var(--soft)}
 @media (max-width:860px){.faqgrid{grid-template-columns:1fr}}
@@ -338,7 +340,7 @@ details p{padding:0 0 22px;color:var(--soft)}
 .contact .wrap{position:relative;z-index:1;display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:start}
 .cdetails{display:grid;gap:2px;background:var(--line);margin-top:8px}
 .cd{background:rgba(20,22,29,.92);padding:16px 18px;display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:baseline}
-.cd small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.cd small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red-text)}
 .cd a{text-decoration:none}
 .hours{display:grid;grid-template-columns:auto auto;gap:2px 16px;font-variant-numeric:tabular-nums;justify-content:start}
 form{display:grid;grid-template-columns:1fr 1fr;gap:14px;background:rgba(20,22,29,.95);padding:26px;border-top:4px solid var(--red)}
@@ -347,7 +349,7 @@ label{display:grid;gap:6px;font:700 13px var(--cond);letter-spacing:.14em;text-t
 input,select,textarea{font:16px var(--body);color:var(--bone);background:var(--ink);border:1px solid var(--line);padding:13px 14px;width:100%}
 textarea{min-height:110px;resize:vertical}
 .full{grid-column:1/-1}
-#enquiry label{align-content:start}.req{color:var(--red)}.opt,.reqnote{font:400 13px var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}.reqnote{margin-left:12px}.fhint{display:block;min-height:1.2em;margin-top:6px;font:400 13px var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}.fhint.bad{color:#ff8a80}.fhint.ok{color:#7fd99a}input.bad{border-color:#ff8a80!important}
+#enquiry label{align-content:start}.req{color:var(--red-text)}.opt,.reqnote{font:400 13px var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}.reqnote{margin-left:12px}.fhint{display:block;min-height:1.2em;margin-top:6px;font:400 13px var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}.fhint.bad{color:#ff8a80}.fhint.ok{color:#7fd99a}input.bad{border-color:#ff8a80!important}
 .consent{display:flex;gap:10px;align-items:flex-start;font:400 15px var(--body);letter-spacing:0;text-transform:none;color:var(--soft)}
 .consent input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--red)}
 .ok{grid-column:1/-1;border:1px solid var(--ok);color:#c7f3da;padding:14px 16px}
@@ -369,13 +371,13 @@ footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080
 .tb-l{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb-r{display:flex;gap:18px;align-items:center;flex:none}
 .tb-gym{display:inline-flex;align-items:center;gap:8px;color:var(--bone)!important;text-transform:uppercase}
-.tb-gym svg{width:18px;height:18px;color:var(--red)}
+.tb-gym svg{width:18px;height:18px;color:var(--red-text)}
 .tb-gym small{font:700 12px var(--cond);letter-spacing:.14em;color:var(--muted);border-right:1px solid var(--line);padding-right:8px}
 .tb-gym{white-space:nowrap;flex:none}
 @media (max-width:1380px){.tb-addr{display:none}}
 @media (max-width:900px){.tb-r a:not(.tb-coach):not(.tb-mob){display:none}}
 .tb-gym b{font:900 22px/1 var(--cond);letter-spacing:.06em;color:#fff}
-.tb-gym:hover b{color:var(--red)}
+.tb-gym:hover b{color:var(--red-text)}
 .tb-addr{margin-left:14px;color:var(--muted)}
 @media (max-width:480px){.tb-l{overflow:visible}.tb-gym small{display:none}.tb-gym b{font-size:20px}.tb-mob{display:none!important}}
 .tb-coach{display:inline-flex;align-items:center;gap:6px;color:var(--bone)!important;border:1px solid var(--line);padding:5px 10px}
@@ -388,7 +390,7 @@ footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080
 .navapp{display:none}
 @media (max-width:1180px){.navapp{display:list-item}}
 .tt .day.today{outline:2px solid var(--red);outline-offset:-2px}
-.tt .day.today h3::after{content:" · today";color:var(--red);font-size:.7em;letter-spacing:.08em}
+.tt .day.today h3::after{content:" · today";color:var(--red-text);font-size:.7em;letter-spacing:.08em}
 @media (max-width:520px),(min-width:1181px) and (max-width:1260px){.navr [data-install]{display:none}}
 @media (max-width:1700px){.navr .lg{display:none}.navr .sm{display:inline}.nav ul{gap:18px}}
 @media (max-width:640px){.brand span{display:none}.navr .btn{padding:10px 11px;font-size:13px}.navr{gap:6px}}
@@ -415,7 +417,7 @@ footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080
  .ddb{width:100%;justify-content:space-between;padding:14px 4px;font-size:22px;border-bottom:1px solid var(--line)}
  .dd.open .ddb i{transform:rotate(-135deg) translateY(-2px)}
  .nav ul.sub a{font-size:18px;padding:11px 4px;border-bottom:1px solid var(--line)}
- .dd.cur>.ddb{box-shadow:none;color:var(--red)}
+ .dd.cur>.ddb{box-shadow:none;color:var(--red-text)}
 }
 /* pages + menu */
 .view>section.flush:first-child{padding-top:clamp(64px,9vw,112px)}
@@ -431,7 +433,7 @@ footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080
  .nav ul{position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:0;background:#07080b;border-bottom:3px solid var(--red);padding:8px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
  .nav ul.open{display:flex}
  .nav ul a{display:block;padding:14px 4px;font-size:22px;border-bottom:1px solid var(--line)}
- .nav ul a[aria-current="page"]{box-shadow:none;color:var(--red)}
+ .nav ul a[aria-current="page"]{box-shadow:none;color:var(--red-text)}
 }
 @media (max-width:420px){.navr .btn{display:none}}
 .explore{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
@@ -440,7 +442,7 @@ footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080
 .ex:hover img{transform:scale(1.05)}
 .ex::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,12,16,.92),transparent 60%)}
 .ex span{position:absolute;z-index:1;left:16px;right:16px;bottom:16px;display:grid;gap:2px}
-.ex small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.ex small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red-text)}
 .ex b{font:900 30px/1 var(--display);text-transform:uppercase}
 @media (max-width:860px){.explore{grid-template-columns:1fr 1fr}}
 .nextband{background:var(--red)}
@@ -459,7 +461,7 @@ footer{padding-block:56px 40px;border-top:4px solid var(--red);background:#07080
 .ticker:hover .tk-track,.ticker:focus-within .tk-track{animation-play-state:paused}
 @keyframes tk{to{transform:translateX(-50%)}}
 .tk-item{display:flex;align-items:center;gap:10px;padding:13px 26px;white-space:nowrap;font:600 16px var(--body);color:var(--soft);text-decoration:none;border-right:1px solid var(--line)}
-.tk-item b{font:700 14px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.tk-item b{font:700 14px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red-text)}
 .tk-item.hot b{color:var(--tbc)}
 .tk-item strong{color:var(--bone)}
 a.tk-item:hover{color:var(--bone)}
@@ -491,7 +493,7 @@ a.cdi:hover svg{color:#25d366}
 .vplay svg{width:28px;height:28px;margin-left:3px}
 .vdur{position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.8);font:700 13px var(--cond);letter-spacing:.08em;padding:3px 8px;font-variant-numeric:tabular-nums}
 .vmeta{display:grid;gap:4px;padding:16px 18px 20px}
-.vmeta small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.vmeta small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red-text)}
 .vmeta b{font:900 24px/1.05 var(--display);text-transform:uppercase}
 .vmeta span{color:var(--soft);font-size:15px}
 @media (max-width:980px){.vgrid{grid-template-columns:1fr 1fr}}
@@ -580,8 +582,9 @@ a.cdi:hover svg{color:#25d366}
 .ntix{border-left:4px solid var(--red);padding-left:12px}
 .ntix b{color:var(--bone);margin-right:6px;font:700 14px var(--cond);letter-spacing:.12em;text-transform:uppercase}
 .nevent{display:grid;grid-template-columns:1fr 1.2fr 1.6fr;gap:2px;background:var(--line);margin-top:18px;border:2px solid var(--line)}
+.nevent .shbtn{background:var(--ink-2);color:var(--bone);border:1px solid #3a3f4c}
 .nevent div{background:var(--ink);padding:16px 18px;display:grid;gap:2px;min-width:0}
-.nevent small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.nevent small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red-text)}
 .nevent b{font:900 22px/1.1 var(--display);text-transform:uppercase}
 .nevent span{color:var(--soft);font-size:15px;overflow-wrap:anywhere}
 
@@ -610,7 +613,7 @@ a.cdi:hover svg{color:#25d366}
 
 /* areas */
 .tier{margin-top:28px}
-.tier h3{font-size:26px;margin-bottom:12px;color:var(--red)}
+.tier h3{font-size:26px;margin-bottom:12px;color:var(--red-text)}
 .tcards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .tcard{position:relative;aspect-ratio:4/3;overflow:hidden;text-decoration:none;display:block;background:var(--ink-2)}
 .tcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;transition:transform .5s,opacity .3s}
@@ -629,7 +632,7 @@ a.cdi:hover svg{color:#25d366}
 .getting{background:var(--ink-2);border-top:4px solid var(--red);padding:24px;display:grid;gap:14px}
 .rlist{display:grid;gap:2px;background:var(--line)}
 .rlist div{background:var(--ink);padding:12px 14px;display:grid;gap:2px}
-.rlist small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.rlist small{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--red-text)}
 .rlist span{color:var(--soft);font-size:16px}
 .also{color:var(--soft)}
 .tnote{color:var(--muted);font-size:14px}
@@ -641,7 +644,7 @@ a.cdi:hover svg{color:#25d366}
 
 /* programmes, levels, faq */
 .psec{display:grid;gap:10px}.psec h3{font-size:32px}.psec p{color:var(--soft);max-width:62ch}
-.related{display:grid;gap:8px;margin-top:8px}.related a{font:700 16px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--red);text-decoration:none}
+.related{display:grid;gap:8px;margin-top:8px}.related a{font:700 16px var(--cond);letter-spacing:.1em;text-transform:uppercase;color:var(--red-text);text-decoration:none}
 .progs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .progs a{position:relative;aspect-ratio:1;overflow:hidden;text-decoration:none;background:var(--ink-2)}
 .progs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;transition:opacity .3s,transform .5s}
@@ -652,12 +655,12 @@ a.cdi:hover svg{color:#25d366}
 @media (max-width:900px){.progs{grid-template-columns:repeat(2,1fr)}}
 .ladder2{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--line);border:2px solid var(--line)}
 .ladder2 div{background:var(--ink-2);padding:20px 18px 22px;display:grid;gap:6px;align-content:start}
-.ladder2 small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.ladder2 small{font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--red-text)}
 .ladder2 b{font:900 30px/1 var(--display);text-transform:uppercase}
 .ladder2 p{color:var(--soft);font-size:15px}
 @media (max-width:1000px){.ladder2{grid-template-columns:1fr}}
 .faqall{display:grid;grid-template-columns:1fr 1fr;gap:28px 48px}
-.faqg h3{font-size:28px;color:var(--red);margin-bottom:6px}
+.faqg h3{font-size:28px;color:var(--red-text);margin-bottom:6px}
 @media (max-width:860px){.faqall{grid-template-columns:1fr}}
 a.tagc{text-decoration:none}
 .paytab{width:100%;border-collapse:collapse}.paytab th,.paytab td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left}.paytab th{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}.paytab td b{font:900 22px var(--display);text-transform:uppercase}.paytab td.p{font:700 20px var(--cond);white-space:nowrap}
@@ -668,7 +671,7 @@ a.tagc{text-decoration:none}
 .hero-news{display:none}
 .hero-news{background:rgba(11,12,16,.82);border:1px solid var(--line);border-top:4px solid var(--red);padding:14px;backdrop-filter:blur(6px);gap:12px}
 .hn-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font:700 13px var(--cond);letter-spacing:.16em;text-transform:uppercase}
-.hn-head span{color:var(--red)}.hn-head a{color:var(--soft);text-decoration:none}.hn-head a:hover{color:#fff}
+.hn-head span{color:var(--red-text)}.hn-head a{color:var(--soft);text-decoration:none}.hn-head a:hover{color:#fff}
 .hn-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hn-card{display:grid;gap:3px;text-decoration:none;color:var(--bone);min-width:0}
 .hn-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#000}
@@ -1012,7 +1015,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Ready?</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
-<div class="view" data-view="classes" data-title="Muay Thai &amp; Kickboxing Classes and Timetable | Warrior Spirit, Potters Bar" data-desc="Beginners, pads, drills and sparring, and kids classes at Warrior Spirit in Potters Bar. See the weekly timetable and prices, and book your free first class." hidden>
+<div class="view" data-view="classes" data-title="Muay Thai Classes &amp; Timetable, Potters Bar | Warrior Spirit" data-desc="Beginners, pads, drills and sparring, and kids classes at Warrior Spirit in Potters Bar. See the weekly timetable and prices, and book your free first class." hidden>
   <section class="band flush" id="classes">
     <div class="wrap">
       <div class="stack head">
@@ -1074,7 +1077,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Thursday 7pm beginners</span><h2>Come and try it</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
-<div class="view" data-view="pt" data-title="Personal Training &amp; 1-to-1 Muay Thai, Potters Bar | Warrior Spirit" data-desc="1-to-1, doubles and small-group personal training with Jay, Aaron and Kian in Potters Bar. From £40 an hour. Book online." hidden>
+<div class="view" data-view="pt" data-title="1-to-1 Muay Thai &amp; PT in Potters Bar | Warrior Spirit" data-desc="1-to-1, doubles and small-group personal training with Jay, Aaron and Kian in Potters Bar. From £40 an hour. Book online." hidden>
   <section class="split rev" id="pt" aria-labelledby="pt-h">
     <div class="photo"><img src="photos/pads-kick.webp" alt="Coach holding pads for a one-to-one session" loading="lazy"></div>
     <div class="txt">
@@ -1086,12 +1089,12 @@ a.tagc{text-decoration:none}
   <section class="band" id="pt-sessions" aria-labelledby="pts-h">
     <div class="wrap">
       <div class="stack head"><span class="kick">Choose your session</span><h2 id="pts-h">Choose your focus</h2><p class="lede">From your very first pad session to the last hard round before a fight. Every session is booked outside class times, around you. <a href="#pt-coaches">Choose your coach</a>.</p>
-        <p class="legend2"><span class="meter" aria-label="Intensity 1 out of 5"><i class="on"></i><i></i><i></i><i></i><i></i></span> <span>Intensity, from gentle to fight pace</span></p></div>
+        <p class="legend2"><span class="meter" role="img" aria-label="Intensity 1 out of 5"><i class="on"></i><i></i><i></i><i></i><i></i></span> <span>Intensity, from gentle to fight pace</span></p></div>
       <div class="ptcards">
         <article class="ptcard" id="pt-fund">
           <div class="photo"><img src="photos/pads-2.webp" alt="" loading="lazy"><span class="pttag">Start here</span></div>
           <div class="ptc">
-            <div class="pthead"><h3>Fundamentals</h3><span class="meter" aria-label="Intensity 2 out of 5"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div>
+            <div class="pthead"><h3>Fundamentals</h3><span class="meter" role="img" aria-label="Intensity 2 out of 5"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div>
             <p class="best"><b>Best for</b> Complete beginners, nervous starters and anyone coming back after time off.</p>
             <ul class="ticks"><li>Stance, guard and footwork</li><li>Punches, kicks, knees and elbows, one at a time</li><li>Basic defence and blocking</li><li>Ready to join group classes with confidence</li></ul>
             <div class="ptfoot"><span class="ptprice">1 to 2 hours · from £40</span><a class="btn" href="/book?type=fundamentals">Book</a></div>
@@ -1100,7 +1103,7 @@ a.tagc{text-decoration:none}
         <article class="ptcard" id="pt-fit">
           <div class="photo"><img src="photos/pads-1.webp" alt="" loading="lazy"><span class="pttag">Sweat, not sparring</span></div>
           <div class="ptc">
-            <div class="pthead"><h3>Fitness Pads</h3><span class="meter" aria-label="Intensity 3 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+            <div class="pthead"><h3>Fitness Pads</h3><span class="meter" role="img" aria-label="Intensity 3 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
             <p class="best"><b>Best for</b> Getting fit, losing weight, burning off stress. No contact, ever.</p>
             <ul class="ticks"><li>Warm-up and mobility</li><li>Round after round on the pads and bag</li><li>Combinations at your pace</li><li>Core and conditioning finisher</li></ul>
             <div class="ptfoot"><span class="ptprice">1 to 2 hours · from £40</span><a class="btn" href="/book?type=fitness-pads">Book</a></div>
@@ -1109,7 +1112,7 @@ a.tagc{text-decoration:none}
         <article class="ptcard" id="pt-skill">
           <div class="photo"><img src="photos/pads-2.webp" alt="" loading="lazy"><span class="pttag">Level up</span></div>
           <div class="ptc">
-            <div class="pthead"><h3>Technique & Skills</h3><span class="meter" aria-label="Intensity 4 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+            <div class="pthead"><h3>Technique & Skills</h3><span class="meter" role="img" aria-label="Intensity 4 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
             <p class="best"><b>Best for</b> Members who want to sharpen up, and anyone thinking about an interclub.</p>
             <ul class="ticks"><li>Combinations, timing and counters</li><li>Clinch work and knees</li><li>Fixing the habits holding you back</li><li>Light technical sparring if you want it</li></ul>
             <div class="ptfoot"><span class="ptprice">1 to 2 hours · from £40</span><a class="btn" href="/book?type=technique">Book</a></div>
@@ -1118,7 +1121,7 @@ a.tagc{text-decoration:none}
         <article class="ptcard" id="pt-camp">
           <div class="photo"><img src="photos/fight-ring.webp" alt="" loading="lazy"><span class="pttag">Hardcore</span></div>
           <div class="ptc">
-            <div class="pthead"><h3>Fight Camp</h3><span class="meter" aria-label="Intensity 5 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+            <div class="pthead"><h3>Fight Camp</h3><span class="meter" role="img" aria-label="Intensity 5 out of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
             <p class="best"><b>Best for</b> Fighters with a date booked, from interclubs to semi-pro.</p>
             <ul class="ticks"><li>Hard pad rounds at fight pace</li><li>Conditioning built for the rounds you’ll fight</li><li>Game plan for your opponent</li><li>Sparring, corner work and fight-week prep</li></ul>
             <div class="ptfoot"><span class="ptprice">1 to 2 hours · from £40</span><a class="btn" href="/book?type=fight-camp">Book</a></div>
@@ -1208,7 +1211,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">1-to-1 from £40 · doubles from £45 · groups from £55</span><h2>Book your first session</h2></div><a class="btn" href="/book">Book a PT session →</a></div></section>
 </div>
 
-<div class="view" data-view="fight" data-title="Fight Team, Muay Thai Fighters in Potters Bar | Warrior Spirit" data-desc="Meet the Warrior Spirit fight team in Potters Bar. Fight camps, interclub to amateur and semi-pro shows, and coaches in your corner." hidden>
+<div class="view" data-view="fight" data-title="Muay Thai Fight Team, Potters Bar | Warrior Spirit" data-desc="Meet the Warrior Spirit fight team in Potters Bar. Fight camps, interclub to amateur and semi-pro shows, and coaches in your corner." hidden>
   <section class="band fight" id="fight-team">
     <video class="cover" data-loop src="video/loop-action.mp4" poster="video/loop-action.jpg" muted loop playsinline preload="none" aria-hidden="true"></video>
     <div class="wrap">
@@ -1514,7 +1517,7 @@ a.tagc{text-decoration:none}
             <h3>Medals and big smiles on show day</h3>
             <p>A proud day for the team. Our young fighters stepped through the ropes, put the work from camp into practice, and came home with medals.</p>
             <div class="more" hidden><p>Every one of them earned it on the pads and in sparring in the weeks before. Thanks to the families who came to support, and to the coaches in the corner all day.</p><p class="ph" data-opt="fight-results" data-ek="opt.fight-results">[Fighter names and results from the show]</p></div>
-            <button class="readbtn" type="button">Read more</button>
+            <button class="readbtn" type="button" aria-expanded="false">Read more</button>
           </div>
         </article>
         <article class="post" data-cat="video">
@@ -1533,7 +1536,7 @@ a.tagc{text-decoration:none}
             <h3>Why we wrap every time</h3>
             <p>Wraps support the small bones in your hands and your wrist. Here's why they matter in every session, not just fight night.</p>
             <div class="more" hidden><p>Wrap firmly, but not so tight you lose feeling. Cover the wrist, the back of the hand and between the knuckles. Your coach will show you the method we use, so ask at your first class.</p></div>
-            <button class="readbtn" type="button">Read more</button>
+            <button class="readbtn" type="button" aria-expanded="false">Read more</button>
           </div>
         </article>
         <article class="post" data-cat="fight">
@@ -1543,7 +1546,7 @@ a.tagc{text-decoration:none}
             <h3>In the corner at Nak Muay Rising</h3>
             <p>One minute between rounds. What the corner says, and why fighters train to listen.</p>
             <div class="more" hidden><p>Breathe, drink, one or two clear instructions, then back out. Those sixty seconds can turn a fight, and we practise them in camp so they're second nature on the night.</p></div>
-            <button class="readbtn" type="button">Read more</button>
+            <button class="readbtn" type="button" aria-expanded="false">Read more</button>
           </div>
         </article>
         <article class="post" data-cat="nutrition">
@@ -1553,7 +1556,7 @@ a.tagc{text-decoration:none}
             <h3>Five simple rules for fuelling training</h3>
             <p>No fad diets. Just the basics that keep you training hard and recovering well.</p>
             <div class="more" hidden><p>1. Eat a proper meal two to three hours before training. 2. Drink water through the day, not just in class. 3. Get some protein in every meal. 4. Plan food for busy days so you're not grabbing rubbish. 5. Sleep counts as much as food.</p></div>
-            <button class="readbtn" type="button">Read more</button>
+            <button class="readbtn" type="button" aria-expanded="false">Read more</button>
           </div>
         </article>
         <article class="post" data-cat="fight">
@@ -1563,7 +1566,7 @@ a.tagc{text-decoration:none}
             <h3>Hands raised</h3>
             <p>That moment when camp pays off. Steve gets his hand raised at Warriors League.</p>
             <div class="more" hidden data-opt="steve-result"><p class="ph" data-ek="opt.steve-result">[Steve’s opponent, the show and the result]</p></div>
-            <button class="readbtn" type="button" data-opt="steve-result">Read more</button>
+            <button class="readbtn" type="button" aria-expanded="false" data-opt="steve-result">Read more</button>
           </div>
         </article>
       </div>
@@ -1926,7 +1929,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Hoddesdon to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
-<div class="view" data-view="welwyn-garden-city" data-title="Muay Thai &amp; Kickboxing near Welwyn Garden City | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Welwyn Garden City at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+<div class="view" data-view="welwyn-garden-city" data-title="Muay Thai &amp; Kickboxing, Welwyn Garden City | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Welwyn Garden City at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
   <section class="townhero">
     <img class="cover" src="photos/pads-1.webp" alt="">
     <div class="wrap"><div class="stack">
@@ -2025,7 +2028,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Radlett to Potters Bar</span><h2>Your first class is waiting</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
-<div class="view" data-view="southgate-cockfosters" data-title="Muay Thai &amp; Kickboxing near Southgate & Cockfosters | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Southgate & Cockfosters at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
+<div class="view" data-view="southgate-cockfosters" data-title="Muay Thai near Southgate &amp; Cockfosters | Warrior Spirit" data-desc="Muay Thai and kickboxing classes for Southgate & Cockfosters at Warrior Spirit, Potters Bar. Beginners, kids, fitness, PT and fight team." hidden>
   <section class="townhero">
     <img class="cover" src="photos/win-corner.webp" alt="">
     <div class="wrap"><div class="stack">
@@ -2100,7 +2103,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Kickboxing</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
-<div class="view" data-view="fitness" data-title="Kickboxing & Muay Thai Fitness Classes, Potters Bar | Warrior Spirit" data-desc="Get fit with Muay Thai and kickboxing in Potters Bar. Pad work, bag work and conditioning, no sparring needed." hidden>
+<div class="view" data-view="fitness" data-title="Kickboxing Fitness Classes, Potters Bar | Warrior Spirit" data-desc="Get fit with Muay Thai and kickboxing in Potters Bar. Pad work, bag work and conditioning, no sparring needed." hidden>
   <section class="townhero">
     <img class="cover" src="photos/wh2-dino-aaron-pads-jay-watching.webp" alt="" style="object-position:60% 45%">
     <div class="wrap"><div class="stack">
@@ -2121,7 +2124,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Fitness</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
-<div class="view" data-view="women" data-title="Muay Thai & Kickboxing for Women, Potters Bar | Warrior Spirit" data-desc="Women’s Muay Thai and kickboxing in Potters Bar. Friendly mixed classes, fitness, confidence and self-defence skills." hidden>
+<div class="view" data-view="women" data-title="Women's Kickboxing &amp; Muay Thai, Potters Bar | Warrior Spirit" data-desc="Women’s Muay Thai and kickboxing in Potters Bar. Friendly mixed classes, fitness, confidence and self-defence skills." hidden>
   <section class="townhero">
     <img class="cover" src="photos/pads-2.webp" alt="" style="object-position:50% 30%">
     <div class="wrap"><div class="stack">
@@ -2142,7 +2145,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Women</span><h2>Try your first class</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
-<div class="view" data-view="self-defence" data-title="Self-Defence Classes in Potters Bar | Warrior Spirit Muay Thai" data-desc="Build real self-defence skills and confidence with Muay Thai in Potters Bar. Striking, clinch work and awareness." hidden>
+<div class="view" data-view="self-defence" data-title="Self-Defence Classes in Potters Bar | Warrior Spirit" data-desc="Build real self-defence skills and confidence with Muay Thai in Potters Bar. Striking, clinch work and awareness." hidden>
   <section class="townhero">
     <img class="cover" src="photos/pads-1.webp" alt="" style="object-position:50% 40%">
     <div class="wrap"><div class="stack">
@@ -2195,7 +2198,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Questions about paying?</span><h2>Ask at the gym</h2></div><a class="btn" href="#contact" data-enq="Membership">Send us a message →</a></div></section>
 </div>
 
-<div class="view" data-view="fight-levels" data-title="Muay Thai Fight Levels Explained: Interclubs, N, C, B and A Class | Warrior Spirit" data-desc="What are interclubs and N-Class, C-Class, B-Class and A-Class Muay Thai fights? A plain-English guide from Warrior Spirit, Potters Bar." hidden>
+<div class="view" data-view="fight-levels" data-title="Muay Thai Fight Levels Explained | Warrior Spirit" data-desc="What are interclubs and N-Class, C-Class, B-Class and A-Class Muay Thai fights? A plain-English guide from Warrior Spirit, Potters Bar." hidden>
   <section class="townhero">
     <img class="cover" src="photos/wh2-dino-punch-round.webp" alt="" style="object-position:70% 40%">
     <div class="wrap"><div class="stack">
@@ -2238,7 +2241,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Still unsure?</span><h2>Just come and try it</h2></div><a class="btn" href="#contact" data-enq="Free first class">Book a free class →</a></div></section>
 </div>
 
-<div class="view" data-view="safeguarding" data-title="Safeguarding & Child Protection | Warrior Spirit Muay Thai, Potters Bar" data-desc="How Warrior Spirit Muay Thai keeps children and young people safe: DBS-checked coaches, first aid, supervision, photo consent and how to raise a concern." hidden>
+<div class="view" data-view="safeguarding" data-title="Safeguarding &amp; Child Protection | Warrior Spirit" data-desc="How Warrior Spirit Muay Thai keeps children and young people safe: DBS-checked coaches, first aid, supervision, photo consent and how to raise a concern." hidden>
   <section class="band">
     <div class="wrap policy">
       <span class="kick">Safeguarding</span>
@@ -2265,7 +2268,7 @@ a.tagc{text-decoration:none}
   <section class="nextband"><div class="wrap"><div><span class="kick">Kids Muay Thai</span><h2>Questions? Talk to us</h2></div><a class="btn" href="#contact" data-enq="Kids class">Get in touch →</a></div></section>
 </div>
 
-<div class="view" data-view="contact" data-title="Contact and Free First Class | Warrior Spirit Muay Thai, Potters Bar" data-desc="Book your free first class or ask a question. Warrior Spirit Muay Thai and Kickboxing, Next Gen Fitness, Mount Grace Road, Potters Bar. Call 07904 032142." hidden>
+<div class="view" data-view="contact" data-title="Contact &amp; Free First Class, Potters Bar | Warrior Spirit" data-desc="Book your free first class or ask a question. Warrior Spirit Muay Thai and Kickboxing, Next Gen Fitness, Mount Grace Road, Potters Bar. Call 07904 032142." hidden>
   <section class="band contact" id="contact">
     <img class="cover" src="photos/class-welcome.webp" alt="" loading="lazy">
     <div class="wrap">
@@ -2439,7 +2442,7 @@ a.tagc{text-decoration:none}
   if(!(matchMedia('(display-mode: standalone)').matches||navigator.standalone))items.push({label:'App',html:'<strong>Get our app</strong> on your home screen. Tap here to add it.',href:'#get-app',logo:true});
   items.push({label:'Follow',html:'<strong>@warriorspirit_muaythai</strong> for fight nights, training and results.',href:SOCIAL.instagram,ext:true});
   function render(){return items.map(function(it){var tag=it.href?'a':'span',attrs=it.href?' href="'+it.href+'"'+(it.ext?' target="_blank" rel="noopener"':''):'';return '<'+tag+' class="tk-item'+(it.cls?' '+it.cls:'')+'"'+attrs+'>'+(it.logo?'<img src="img/logo.webp" alt="" width="28" height="28" style="border-radius:50%;flex:none">':'')+'<b>'+it.label+'</b><span>'+it.html+'</span></'+tag+'>'}).join('')}
-  var tr=document.getElementById('tkTrack');tr.innerHTML=render()+'<div aria-hidden="true" style="display:flex">'+render()+'</div>';
+  var tr=document.getElementById('tkTrack');if(!tr){window.__gymRefresh=function(h){HOURS=h};window.__tkRefresh=function(t){TT=t};return}tr.innerHTML=render()+'<div aria-hidden="true" style="display:flex">'+render()+'</div>';
   [].forEach.call(tr.lastChild.querySelectorAll('a'),function(a){a.tabIndex=-1});
   tr.style.setProperty('--tk-dur',Math.max(40,items.length*7)+'s');
   window.__gymRefresh=function(h){HOURS=h;items[gymIdx]=gymItem();window.__tkRefresh(TT)};
@@ -2547,13 +2550,15 @@ a.tagc{text-decoration:none}
   function show(n){imgs[i].classList.remove('on');dots.children[i].setAttribute('aria-pressed','false');i=(n+imgs.length)%imgs.length;imgs[i].classList.add('on');imgs.forEach(function(x,k){if(x.tagName==='VIDEO'){if(k===i&&noVid){x.pause();return}if(k===i){x.currentTime=0;var pr=x.play();if(pr)pr.catch(function(){})}else x.pause()}});dots.children[i].setAttribute('aria-pressed','true')}
   function build(){imgs=[].slice.call(document.querySelectorAll('#slides>*'));dots.innerHTML='';i=0;
   imgs.forEach(function(im,k){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Photo '+(k+1));b.setAttribute('aria-pressed',k?'false':'true');b.addEventListener('click',function(){show(k);restart()});dots.appendChild(b)})}
-  build();
+  if(dots)build();
   var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function restart(){clearInterval(t);if(!still)t=setInterval(function(){show(i+1)},6000)}
-  restart();
-  window.__hero={stop:function(){clearInterval(t)},go:restart,rebuild:function(){clearInterval(t);build();restart()}};
+  if(dots)restart();
+  window.__hero={stop:function(){clearInterval(t)},go:function(){if(dots)restart()},rebuild:function(){if(!dots)return;clearInterval(t);build();restart()}};
   var sel=document.getElementById('enq');
-  document.querySelectorAll('[data-enq]').forEach(function(a){a.addEventListener('click',function(){var v=a.getAttribute('data-enq').replace('&amp;','&');[].some.call(sel.options,function(o){if(o.text===v){sel.value=o.value;return true}})})});
+  function pickEnq(v){if(!sel)return false;return [].some.call(sel.options,function(o){if(o.text===v){sel.value=o.value;return true}})}
+  document.querySelectorAll('[data-enq]').forEach(function(a){a.addEventListener('click',function(){var v=a.getAttribute('data-enq').replace('&amp;','&');if(!pickEnq(v)){try{sessionStorage.setItem('ws_enq',v)}catch(x){}}})});
+  try{var pre=sessionStorage.getItem('ws_enq');if(pre&&pickEnq(pre))sessionStorage.removeItem('ws_enq')}catch(x){}
   document.querySelectorAll('.chip').forEach(function(c){c.addEventListener('click',function(){
     var f=c.getAttribute('data-f');
     document.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',x===c?'true':'false')});
@@ -2562,7 +2567,7 @@ a.tagc{text-decoration:none}
   document.querySelectorAll('.readbtn').forEach(function(b){b.addEventListener('click',function(){
     var post=b.closest('.post');
     if(b.hasAttribute('data-play')){var v=post.querySelector('video');if(v.paused){v.muted=false;v.play().catch(function(){});b.textContent='Pause clip'}else{v.pause();b.textContent='Play clip'}return}
-    var m=post.querySelector('.more');m.hidden=!m.hidden;b.textContent=m.hidden?'Read more':'Show less';
+    var m=post.querySelector('.more');m.hidden=!m.hidden;b.textContent=m.hidden?'Read more':'Show less';b.setAttribute('aria-expanded',m.hidden?'false':'true');
   })});
   /* phone: required, checked as people type (the same rules as api/_lib/phone.js) */
   function checkPhone(raw) {
@@ -2589,6 +2594,7 @@ a.tagc{text-decoration:none}
     return { ok: false, why: 'That phone number doesn’t look right. Start it with 0, or +44 for a UK number.' };
   }
   var phEl=document.getElementById('phone'),phHint=document.getElementById('phoneHint'),phTouched=false;
+  if(!phEl)return;
   function phoneState(){var r=checkPhone(phEl.value),rp=(document.getElementById('reply')||{}).value||'';
     phEl.classList.toggle('bad',phTouched&&!r.ok);phHint.className='fhint'+(phTouched?(r.ok?(/whatsapp|text/i.test(rp)&&r.mobile===false?' bad':' ok'):' bad'):'');
     phHint.textContent=!phTouched?'':!r.ok?r.why:(/whatsapp|text/i.test(rp)&&r.mobile===false)?'That looks like a landline. WhatsApp and texts need a mobile.':(r.mobile===null?'Looks right (a number outside the UK).':'Looks right: '+r.value);
