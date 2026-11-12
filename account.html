@@ -39,6 +39,7 @@
       <label for="re">Email<input id="re" type="email" autocomplete="email" required></label>
       <label for="rp">Choose a password<input id="rp" type="password" autocomplete="new-password" minlength="8" required></label>
       <p class="err" id="rerr" hidden></p>
+      <div data-human id="rHuman"></div>
       <button class="btn full" type="submit">Create account</button>
       <p class="muted" style="font-size:15px">Already have an account? <a href="/account">Log in</a></p>
     </form>
@@ -46,6 +47,7 @@
       <p class="muted">Enter your email and we’ll send you a link to choose a new password.</p>
       <label for="fe">Email<input id="fe" type="email" autocomplete="email" required></label>
       <p class="ok" id="fok" hidden></p>
+      <div data-human id="fHuman"></div>
       <button class="btn full" type="submit">Send reset link</button>
       <p class="muted" style="font-size:15px"><a href="/account">Back to log in</a></p>
     </form>
@@ -110,9 +112,10 @@
   </section>
 </main>
 
+<script src="/assets/human.js"></script>
 <script type="module">
 const $ = s => document.querySelector(s);
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const api = async (url, data) => {
   const r = await fetch(url, data === undefined ? { credentials: 'same-origin' } : { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
   let j = {}; try { j = await r.json(); } catch {}
@@ -249,14 +252,19 @@ $('#logForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#lerr'), '');
   try { await api('/api/auth?action=login', { email: $('#le').value, password: $('#lp').value }); init(); } catch (err) { show($('#lerr'), err.message); }
 });
+const rHuman = window.wsHuman ? wsHuman($('#rHuman')) : null, fHuman = window.wsHuman ? wsHuman($('#fHuman')) : null;
 $('#regForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#rerr'), '');
-  try { await api('/api/auth?action=register', { name: $('#rn').value, mobile: $('#rm').value, email: $('#re').value, password: $('#rp').value }); history.replaceState(null, '', '/account'); init(); }
+  const cfToken = rHuman ? await rHuman.token() : '';
+  if (rHuman) rHuman.reset();
+  try { await api('/api/auth?action=register', { name: $('#rn').value, mobile: $('#rm').value, email: $('#re').value, password: $('#rp').value, cfToken }); history.replaceState(null, '', '/account'); init(); }
   catch (err) { show($('#rerr'), err.message); }
 });
 $('#forgotForm').addEventListener('submit', async e => {
   e.preventDefault();
-  try { await api('/api/auth?action=forgot', { email: $('#fe').value }); } catch {}
+  const cfToken = fHuman ? await fHuman.token() : '';
+  if (fHuman) fHuman.reset();
+  try { await api('/api/auth?action=forgot', { email: $('#fe').value, cfToken }); } catch {}
   show($('#fok'), 'If there’s an account with that email, a reset link is on its way. Check your junk folder too.');
 });
 $('#resetForm').addEventListener('submit', async e => {

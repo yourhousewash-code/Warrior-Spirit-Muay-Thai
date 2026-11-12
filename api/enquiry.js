@@ -1,5 +1,6 @@
 /* Website enquiries (free class, PT, kids, questions): saved for Jay and emailed to the gym. */
 import { checkPhone } from './_lib/phone.js';
+import { humanCheck, NOT_HUMAN } from './_lib/turnstile.js';
 import {
   redis, COACHES, loadCoaches, send, bad, setupProblem, body, clean, validEmail, rateLimit, coachSession, coachEmail, mail, id, fmt, SITE,
 } from './_lib/core.js';
@@ -16,6 +17,7 @@ export default async function handler(req, res) {
       if (b.website) return send(res, 200, { ok: true }); // spam trap
       const ip = (req.headers['x-forwarded-for'] || '').split(',')[0] || 'x';
       if (!(await rateLimit(`enq:${ip}`, 6, 3600))) return bad(res, 'Too many messages from here. Please call or WhatsApp us instead.', 429);
+      if (!(await humanCheck(b.cfToken, ip)).ok) return bad(res, NOT_HUMAN, 403);
       const e = {
         id: id('e'), about: clean(b.about, 80), name: clean(b.name, 80), phone: clean(b.phone, 30), email: clean(b.email, 120).toLowerCase(),
         reply: clean(b.reply, 30), experience: clean(b.experience, 40), when: clean(b.when, 120), message: clean(b.message, 1500),

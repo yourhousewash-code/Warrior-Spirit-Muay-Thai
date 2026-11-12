@@ -1,3 +1,4 @@
+import { humanCheck, NOT_HUMAN, turnstileSiteKey } from './_lib/turnstile.js';
 import crypto from 'node:crypto';
 import {
   redis, COACHES, loadCoaches, activeIds, publicIds, send, bad, setupProblem, body, clean, validEmail, rateLimit,
@@ -22,7 +23,7 @@ export default async function handler(req, res) {
       case 'coach-login': {
         if (req.method !== 'POST') return bad(res, 'Use POST', 405);
         const cid = clean(b.username, 30).toLowerCase();
-        if (!(await rateLimit(`coach:${cid}:${ip}`, 8, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
+        if (!(await rateLimit(`coach:${cid}:${ip}`, 8, 900)) || !(await rateLimit(`coach-all:${cid}`, 20, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
         if (!COACHES[cid]?.active || !(await checkCoachPassword(cid, String(b.password || '')))) return bad(res, 'That username or password isn’t right.', 401);
         /* Two-step sign-in: owners always, other coaches if they switched it on. A trusted device skips the code. */
         const ts = await twoStepState(cid);
@@ -251,6 +252,7 @@ export default async function handler(req, res) {
       case 'register': {
         if (req.method !== 'POST') return bad(res, 'Use POST', 405);
         if (!(await rateLimit(`reg:${ip}`, 10, 3600))) return bad(res, 'Too many sign-ups from here. Try again later.', 429);
+        if (!(await humanCheck(b.cfToken, ip)).ok) return bad(res, NOT_HUMAN, 403);
         const email = clean(b.email, 120).toLowerCase(), name = clean(b.name, 80), mobile = clean(b.mobile, 30), pw = String(b.password || '');
         if (!name) return bad(res, 'Add your name.');
         if (!validEmail(email)) return bad(res, 'Add a valid email address.');
@@ -266,7 +268,7 @@ export default async function handler(req, res) {
       case 'login': {
         if (req.method !== 'POST') return bad(res, 'Use POST', 405);
         const email = clean(b.email, 120).toLowerCase();
-        if (!(await rateLimit(`login:${email}:${ip}`, 8, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
+        if (!(await rateLimit(`login:${email}:${ip}`, 8, 900)) || !(await rateLimit(`login:${email}`, 20, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
         const u = await redis.hgetall(`user:${email}`);
         if (!u || !checkPassword(String(b.password || ''), u.hash)) return bad(res, 'That email or password isn’t right.', 401);
         setSession(res, 'ws_user', { email }, 60);
@@ -279,7 +281,7 @@ export default async function handler(req, res) {
         return send(res, 200, { user: u ? userOut(u) : null });
       }
       case 'logout': clearSession(res, 'ws_user'); return send(res, 200, { ok: true });
-      case 'config': return send(res, 200, { google: process.env.GOOGLE_CLIENT_ID || '' });
+      case 'config': return send(res, 200, { google: process.env.GOOGLE_CLIENT_ID || '', turnstile: turnstileSiteKey() });
       case 'verify': {
         const token = clean(req.query.token, 80);
         const email = token && await redis.get(`verify:${token}`);
@@ -340,6 +342,8 @@ export default async function handler(req, res) {
       }
       case 'forgot': {
         const email = clean(b.email, 120).toLowerCase();
+        if (!(await rateLimit(`forgot-ip:${ip}`, 10, 3600))) return bad(res, 'Too many requests from here. Try again later.', 429);
+        if (!(await humanCheck(b.cfToken, ip)).ok) return bad(res, NOT_HUMAN, 403);
         if (validEmail(email) && (await rateLimit(`forgot:${email}`, 3, 3600)) && (await redis.exists(`user:${email}`))) {
           const token = crypto.randomBytes(24).toString('base64url');
           await redis.set(`reset:${token}`, email, { ex: 3600 });
@@ -352,6 +356,7 @@ export default async function handler(req, res) {
         return send(res, 200, { ok: true });
       }
       case 'reset': {
+        if (!(await rateLimit(`reset-ip:${ip}`, 10, 3600))) return bad(res, 'Too many attempts. Try again later.', 429);
         const token = clean(b.token, 80), pw = String(b.password || '');
         const email = await redis.get(`reset:${token}`);
         if (!email) return bad(res, 'That reset link has expired. Ask for a new one.', 410);
