@@ -1,6 +1,6 @@
 import {
   redis, COACHES, loadCoaches, activeIds, publicIds, TYPES, FORMATS, DURATIONS, DEFAULT_PRICES, getPrices, priceOf, minsLabel,
-  send, bad, setupProblem, body, clean, id, fmt, mail, mailReady, coachEmail, coachSession, userSession, SITE, ADDRESS, rateLimit,
+  send, bad, setupProblem, body, clean, id, fmt, mail, mailReady, coachEmail, coachSession, userSession, loadUser, SITE, ADDRESS, rateLimit,
 } from './_lib/core.js';
 import { vcal } from './_lib/ics.js';
 import { ptEvent, classBookingEvent } from './_lib/calevents.js';
@@ -45,6 +45,7 @@ export default async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   await loadCoaches();
+  await loadUser(req);
   const action = clean(req.query.action, 40);
   const b = body(req);
   try {

@@ -1,6 +1,6 @@
 # Handoff pack: Warrior Spirit Muay Thai website
 
-**Version 2 · 6 Nov 2026, 19:15 UK.** A snapshot, not live. Source: Agent Rules CORE v2.8, Lead add-on v2.0, Builder add-on v2.1, Offline agents add-on v2.0, `Orders\ALL.md` up to A-027, `warrior-spirit-orders.md` up to WS-001. Refreshed by the lead (Warrior Spirit website agent, Claude) at the end of every session where orders or rules change.
+**Version 3 · 14 Nov 2026, 01:30 UK.** A snapshot, not live. Source: Agent Rules CORE v2.11, Lead add-on v2.0, Builder add-on v2.1, Offline agents add-on v2.0, `Orders\ALL.md` up to A-066, `warrior-spirit-orders.md` up to WS-007. Refreshed by the lead (Warrior Spirit website agent, Claude) at the end of every session where orders or rules change.
 
 **Stale if** it is more than 7 days old, or older than the latest order mentioned in `handoffs/TASKS.md`. If stale: draft only, and ask the lead.
 
@@ -36,6 +36,9 @@ Green (needed, in scope, reversible, free): note it in your handoff as "also did
 - **A-017:** nothing goes live without Steve's exact approval. Ongoing.
 - **A-022:** never create an account; suggest using a shared one first. Ongoing.
 - **A-026:** ideas that get the club to more paying members, or make this site something SRS can sell to other clubs, are welcome in your handoff.
+- **A-063 (Codex at the publish gate):** releases touching sign-in, payments, permissions, personal data or the whole site get one bounded Codex review before the publish line. The lead writes `warrior-spirit-codex-review-request.md` in The Manor; Codex answers in `warrior-spirit-codex-review.md` beside it. Review only: no merging, no publishing.
+- **A-065 (GPT team):** Lucius leads the GPT side; the Warrior Spirit lead stays the project's lead. Asks reach you as work files from Alfred; answers go back as advice.
+- **A-066 (links, the honest way):** never buy, swap or network links, never make doorway pages, mass AI pages, fake reviews or fake mentions. Research and drafts are welcome; sending outreach needs Steve's yes per batch.
 
 Open tasks are in `handoffs/TASKS.md`.
 

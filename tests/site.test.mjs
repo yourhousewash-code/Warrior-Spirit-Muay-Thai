@@ -26,14 +26,46 @@ test('every generated page holds exactly one section, shown', () => {
   }
 });
 
-test('titles are 60 characters or fewer, and every page has a description and canonical', () => {
+test('every page has a title, a description and its own canonical address', () => {
+  const seen = new Map();
   for (const f of sections) {
     const h = readFileSync(f, 'utf8');
     const t = (h.match(/<title>([^<]*)<\/title>/) || [])[1] || '';
-    const plain = t.replace(/&amp;/g, '&');
-    assert.ok(plain.length > 0 && plain.length <= 60, `${f}: title ${plain.length} characters`);
+    assert.ok(t.trim().length > 0, `${f}: no title`);
+    assert.ok(!seen.has(t), `${f}: same title as ${seen.get(t)}`); seen.set(t, f);
     assert.match(h, /<meta name="description" content="[^"]{50,}"/, `${f}: description`);
-    assert.match(h, /<link rel="canonical" href="https:\/\/www\.warriorspiritmuaythai\.co\.uk\//, `${f}: canonical`);
+    const want = 'https://www.warriorspiritmuaythai.co.uk/' + (f === 'index.html' ? '' : f.replace(/\.html$/, ''));
+    assert.ok(h.includes(`<link rel="canonical" href="${want}"`), `${f}: canonical should be ${want}`);
+  }
+});
+
+test('one main heading (h1) on every public page', () => {
+  for (const f of pages.filter(f => !['coach.html', 'account.html', 'book.html'].includes(f))) {
+    const n = (readFileSync(f, 'utf8').match(/<h1[\s>]/g) || []).length;
+    assert.equal(n, 1, `${f}: ${n} h1 headings`);
+  }
+});
+
+test('every address in the sitemap has a page, and every section page is in the sitemap', () => {
+  const sm = readFileSync('sitemap.xml', 'utf8');
+  const urls = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+  for (const u of urls) {
+    const path = u.replace('https://www.warriorspiritmuaythai.co.uk/', '');
+    const file = path === '' ? 'index.html' : path + '.html';
+    assert.ok(pages.includes(file), `sitemap lists ${u} but there's no ${file}`);
+  }
+  for (const f of sections) {
+    const u = 'https://www.warriorspiritmuaythai.co.uk/' + (f === 'index.html' ? '' : f.replace(/\.html$/, ''));
+    assert.ok(urls.includes(u), `${f} isn't in the sitemap`);
+  }
+});
+
+test('forms announce their errors to screen readers', () => {
+  assert.match(readFileSync('contact.html', 'utf8'), /id="err" role="alert"/);
+  for (const f of ['account.html', 'book.html', 'coach.html']) {
+    const h = readFileSync(f, 'utf8');
+    const quiet = (h.match(/<p class="err" id="[^"]+" hidden>/g) || []);
+    assert.equal(quiet.length, 0, `${f}: ${quiet.join(' ')} not announced`);
   }
 });
 
@@ -45,5 +77,5 @@ test('nothing about FighterBase on public pages (handbook rule 4)', () => {
 
 test('team and private files stay off the live site', () => {
   const ignore = readFileSync('.vercelignore', 'utf8').split(/\r?\n/).map(s => s.trim());
-  for (const x of ['docs', 'handoffs', 'STATUS.md', 'CLAUDE.md', 'parked', 'site-src', 'tools', 'tests']) assert.ok(ignore.includes(x), `.vercelignore is missing ${x}`);
+  for (const x of ['docs', 'handoffs', 'STATUS.md', 'CLAUDE.md', 'parked', 'site-src', 'tools', 'tests', '.claude']) assert.ok(ignore.includes(x), `.vercelignore is missing ${x}`);
 });

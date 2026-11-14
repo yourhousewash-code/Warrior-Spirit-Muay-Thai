@@ -1,6 +1,6 @@
 # Tasks: Warrior Spirit Muay Thai website
 
-Copied by the lead (Warrior Spirit website agent, Claude) from The Manor. **The Manor is the only real list**: the status card `C:\The Manor\Businesses\SRS\warrior-spirit-status.md`, `C:\The Manor\Businesses\SRS\warrior-spirit-orders.md` and `C:\The Manor\Batcave\Orders\ALL.md`. Last copied: 6 Nov 2026, 19:15 UK (orders up to A-027 and WS-001).
+Copied by the lead (Warrior Spirit website agent, Claude) from The Manor. **The Manor is the only real list**: the status card `C:\The Manor\Businesses\SRS\warrior-spirit-status.md`, `C:\The Manor\Businesses\SRS\warrior-spirit-orders.md` and `C:\The Manor\Batcave\Orders\ALL.md`. Last copied: 14 Nov 2026, 01:30 UK (orders up to A-066 and WS-007).
 
 Team (Team Rules v1): lead Claude · builder Claude · partner GPT. Only the builder changes code; only the lead deals with outside accounts (Google, Bing, Cloudflare, listings, applications). The partner researches, reviews and drafts, and reports with a handoff file in this folder (`YYYY-MM-DD-<from>-<subject>.md`) or one HANDOFF block for Steve to paste to the lead.
 
@@ -19,7 +19,10 @@ Goal: the site brings the club new paying members every month, and shows it with
 | 6 | Real-use checks: two-step code emails, Drive photo sync, calendar feeds, reminder emails, share studio on phones, Photos hub buttons | Lead with Steve | Not set | Each checked in real use and noted on the card |
 | 7 | Handbook "To confirm" items: sending Gmail account, Facebook/YouTube accounts, `.com` redirect, opening hours in the Google-readable details, replacing the 10 AI pictures | Steve | Not set | Each answered in the handbook |
 | 8 | FighterBase link | Parked until Steve says FighterBase is operational | — | — |
-| 9 | Backlog: slimmer page files, content security policy, one settings file for business details, online payments and memberships | Builder | Not urgent | — |
+| 9 | Backlog: enforce the content security policy (by 28 Nov 2026), one settings file for business details. Payments and memberships go to FighterBase when it's ready (Steve, 11 Nov) | Builder | 28 Nov for the policy | Policy enforced with no console reports (checked) |
+| 10 | Audit-fix release (branch `audit-fixes-2026-11`): Council C-007 conditions met on the branch; Codex review (A-063) of the request file in The Manor; the club owner's OK on the privacy wording; then Steve's "publish commit …" | Lead; Codex reviews | 15 Nov | Live and checked |
+| 11 | Links plan (A-066): 20 genuine link and mention chances ranked, 2–3 citable pages, batch 1 of outreach drafts | Lead; partner may research | 19 Nov | Plan saved in The Manor with one "yes, send batch 1" line |
+| 12 | Team plan (A-064): social media sub-manager and other future roles | Lead | 20 Nov | Plan saved in The Manor |
 
 ## Orders that apply to the partner
 

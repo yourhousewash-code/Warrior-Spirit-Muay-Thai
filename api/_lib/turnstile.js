@@ -3,7 +3,10 @@
    until Steve has made the widget. The token is always checked here on the server; the page alone is never trusted. */
 export const turnstileSiteKey = () => (process.env.TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY ? process.env.TURNSTILE_SITE_KEY : '');
 
-export async function humanCheck(token, ip) {
+/* A missing, expired, invalid or already-used token always fails. If Cloudflare itself can't be reached, `failOpen`
+   decides: the enquiry form lets the person through (losing a real enquiry costs more, and its rate limit still
+   applies); sign-up and password reset refuse and ask the person to try again. */
+export async function humanCheck(token, ip, { failOpen = false } = {}) {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret || !process.env.TURNSTILE_SITE_KEY) return { ok: true, skipped: true };
   if (!token || typeof token !== 'string' || token.length > 2048) return { ok: false };
@@ -13,12 +16,12 @@ export async function humanCheck(token, ip) {
       body: new URLSearchParams({ secret, response: token, remoteip: ip && ip !== 'x' ? ip : '' }),
       signal: AbortSignal.timeout(5000),
     });
+    if (!r.ok) throw new Error(`siteverify answered ${r.status}`);
     const j = await r.json();
-    return { ok: !!j.success };
+    return { ok: j.success === true, codes: Array.isArray(j['error-codes']) ? j['error-codes'] : [] };
   } catch (e) {
-    // Cloudflare unreachable: let the person through (the rate limits still apply) rather than lose a real enquiry
     console.error('turnstile check failed', e?.message);
-    return { ok: true, unreachable: true };
+    return { ok: !!failOpen, unreachable: true };
   }
 }
 

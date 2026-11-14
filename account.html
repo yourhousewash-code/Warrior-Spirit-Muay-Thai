@@ -29,7 +29,7 @@
     <form id="logForm" class="panel">
       <label for="le">Email<input id="le" type="email" autocomplete="email" required></label>
       <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
-      <p class="err" id="lerr" hidden></p>
+      <p class="err" id="lerr" role="alert" hidden></p>
       <button class="btn full" type="submit">Log in</button>
       <p class="muted" style="font-size:15px"><a href="?forgot=1">Forgotten password?</a> · New here? <a href="?new=1">Create an account</a></p>
     </form>
@@ -38,7 +38,7 @@
       <label for="rm">Mobile<input id="rm" type="tel" autocomplete="tel" required></label>
       <label for="re">Email<input id="re" type="email" autocomplete="email" required></label>
       <label for="rp">Choose a password<input id="rp" type="password" autocomplete="new-password" minlength="8" required></label>
-      <p class="err" id="rerr" hidden></p>
+      <p class="err" id="rerr" role="alert" hidden></p>
       <div data-human id="rHuman"></div>
       <button class="btn full" type="submit">Create account</button>
       <p class="muted" style="font-size:15px">Already have an account? <a href="/account">Log in</a></p>
@@ -46,14 +46,14 @@
     <form id="forgotForm" class="panel" hidden>
       <p class="muted">Enter your email and we’ll send you a link to choose a new password.</p>
       <label for="fe">Email<input id="fe" type="email" autocomplete="email" required></label>
-      <p class="ok" id="fok" hidden></p>
+      <p class="ok" id="fok" role="status" hidden></p>
       <div data-human id="fHuman"></div>
       <button class="btn full" type="submit">Send reset link</button>
       <p class="muted" style="font-size:15px"><a href="/account">Back to log in</a></p>
     </form>
     <form id="resetForm" class="panel" hidden>
       <label for="np">New password<input id="np" type="password" autocomplete="new-password" minlength="8" required></label>
-      <p class="err" id="nerr" hidden></p>
+      <p class="err" id="nerr" role="alert" hidden></p>
       <button class="btn full" type="submit">Save new password</button>
     </form>
   </section>
@@ -75,7 +75,7 @@
       <h2>Book a place in a class</h2>
       <p class="muted" style="font-size:15px">These classes have a limited number of places. Pick one and, if you like, ask for a reminder.</p>
       <div id="clsList" class="list"></div>
-      <p class="err" id="clsErr" hidden></p>
+      <p class="err" id="clsErr" role="alert" hidden></p>
     </div>
     <div class="panel" id="calPanel">
       <h2>Put it in your phone calendar</h2>
@@ -97,7 +97,7 @@
       </div>
       <p class="muted" style="font-size:14px"><b>Booking for your child?</b> This covers your child too. If you choose “Please leave me out”, your name goes on a list the coaches can see, so they know to leave you, and your child, out of photos and videos. You can change this at any time, or just tell a coach.</p>
       <p class="muted" id="phWhen" style="font-size:14px" hidden></p>
-      <p class="ok" id="phOk" hidden></p><p class="err" id="phErr" hidden></p>
+      <p class="ok" id="phOk" hidden></p><p class="err" id="phErr" role="alert" hidden></p>
     </div>
     <div class="panel" id="clubPanel">
       <h2>Club class timetable</h2>

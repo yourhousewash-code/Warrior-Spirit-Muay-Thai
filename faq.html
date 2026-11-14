@@ -108,7 +108,7 @@ html:not(.wse) [data-opt]:not([data-on]),html:not(.wse) [data-opt-alt][data-on]{
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:calc(80px + env(safe-area-inset-top,0px))}
+html{scroll-behavior:smooth;scroll-padding-top:calc(80px + env(safe-area-inset-top,0px));scroll-padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 body{background:var(--ink);color:var(--bone);font:17px/1.6 var(--body)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--ink)}
@@ -118,7 +118,7 @@ img,video{display:block;max-width:100%}
 .band{padding-block:clamp(64px,9vw,112px)}
 .flush{padding-top:0}
 h1,h2,h3{font-family:var(--display);text-transform:uppercase;line-height:.9;margin:0;text-wrap:balance}
-h2{font-size:clamp(44px,7.5vw,88px);font-weight:900}
+h2,h1.h2{font-size:clamp(44px,7.5vw,88px);font-weight:900}
 h3{font-size:30px;font-weight:900}
 p{margin:0;max-width:62ch}
 .kick{font:700 14px/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--red-text);display:inline-flex;align-items:center;gap:10px}
@@ -754,9 +754,11 @@ a.tagc{text-decoration:none}
   .ex::after{background:linear-gradient(0deg,rgba(11,12,16,.95),rgba(11,12,16,.1) 70%)}
   .tcard b,.progs b{font-size:22px}
 }
+.skip{position:absolute;left:12px;top:-80px;z-index:200;background:var(--bone);color:#0b0c10;padding:12px 16px;font:700 15px var(--cond);letter-spacing:.06em;text-transform:uppercase;text-decoration:none}.skip:focus{top:12px}main:focus{outline:none}
 </style>
 </head>
 <body>
+<a class="skip" href="#top">Skip to content</a>
 
 <div class="topbar"><div class="wrap">
   <span class="tb-l"><a class="tb-gym" href="tel:07904032142" aria-label="Call the gym on 07904 032142"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg><small>Gym phone</small><b>07904 032142</b></a><span class="tb-hide tb-addr"> Next Gen Fitness, Mount Grace Road, Potters Bar</span></span>
@@ -803,7 +805,7 @@ a.tagc{text-decoration:none}
   </div>
 </header>
 
-<main id="top">
+<main id="top" tabindex="-1">
 
 
 
@@ -843,7 +845,7 @@ a.tagc{text-decoration:none}
 <div class="view" data-view="faq" data-title="Muay Thai & Kickboxing FAQ | Warrior Spirit, Potters Bar" data-desc="Answers to common questions about Muay Thai and kickboxing classes at Warrior Spirit in Potters Bar: prices, kids, kit, sparring and fighting.">
   <section class="band">
     <div class="wrap">
-      <div class="stack head"><span class="kick">FAQ</span><h2>Your questions, answered</h2><p class="lede">Everything people usually ask before their first class. Can’t see yours? <a href="/contact">Ask us</a>.</p></div>
+      <div class="stack head"><span class="kick">FAQ</span><h1 class="h2">Your questions, answered</h1><p class="lede">Everything people usually ask before their first class. Can’t see yours? <a href="/contact">Ask us</a>.</p></div>
       <div class="faqall"><div class="faqg"><h3>Getting started</h3><details><summary>Do I need any experience?</summary><p>No. Thursday’s 7pm beginners class starts from zero.</p></details><details><summary>Do I need to be fit?</summary><p>No. Fitness comes from training. Everyone works at their own pace.</p></details><details><summary>What should I wear?</summary><p>Shorts and a T-shirt. We train barefoot.</p></details><details><summary>What should I bring?</summary><p>Water and a towel. Hand wraps and gloves are worth getting early; ask a coach what to buy.</p></details><details data-opt="gloves"><summary>Can I borrow kit?</summary><p class="ph" data-ek="opt.gloves">[Say whether beginners can borrow gloves, and for how many classes]</p></details><details><summary>How do I book my first class?</summary><p>Your first class is free. Send us a message through the contact form and we’ll point you to the best class.</p></details></div><div class="faqg"><h3>Classes and membership</h3><details><summary>How much is membership?</summary><p>There are two prices: adults £75 a month, all inclusive, and kids (7 to 13) £65 a month. There are no separate student or concession prices. Your first class is free.</p></details><details><summary>How much is personal training?</summary><p>1-to-1 sessions start from £40 an hour. Doubles (two people) start from £45 and small groups from £55. Sessions run for 1 hour, 1½ hours or 2 hours.</p></details><details><summary>When are classes?</summary><p>Monday to Friday evenings, with kids classes Monday to Thursday at 5:30pm. See the timetable.</p></details><details><summary>Is there open gym?</summary><p data-hours="faq">Yes, members can use the gym from 9am to 9pm on weekdays outside class times.</p></details><details><summary>Are you open at weekends?</summary><p>Saturday mornings are for personal training, 8am to 12pm. Sunday is closed.</p></details><details data-opt="contract-terms"><summary>Do you have a contract?</summary><p class="ph" data-ek="opt.contract-terms">[Say whether there’s a contract or minimum term, and how much notice members give to stop]</p></details></div><div class="faqg"><h3>Muay Thai and kickboxing</h3><details><summary>What is Muay Thai?</summary><p>The national sport of Thailand, known as the art of eight limbs because it uses fists, elbows, knees and shins.</p></details><details><summary>Is Muay Thai the same as kickboxing?</summary><p>It is a form of kickboxing that adds knees, elbows and the clinch.</p></details><details><summary>Do you do boxing?</summary><p>We don’t run separate boxing classes, but Muay Thai includes plenty of boxing technique.</p></details><details><summary>Is Muay Thai good for fitness?</summary><p>Yes. It’s a demanding full-body workout that builds strength, stamina and coordination.</p></details><details><summary>Do I have to spar?</summary><p>No. Sparring is optional and only once a coach says you’re ready.</p></details></div><div class="faqg"><h3>Kids</h3><details><summary>What age can kids start?</summary><p>Our kids classes are for ages 7 to 13.</p></details><details><summary>Is it safe for children?</summary><p>Yes. Kids train on pads and drills with no hard sparring. Head coach Jay is DBS checked, first-aid trained and has over 18 years of teaching experience. Read our <a href="/safeguarding">safeguarding policy</a>.</p></details><details><summary>Can kids compete?</summary><p>When they and their parents are ready, we take kids to interclubs.</p></details></div><div class="faqg"><h3>Fighting</h3><details><summary>How do I join the fight team?</summary><p>Train regularly, then talk to the coaches. They’ll tell you when you’re ready for an interclub.</p></details><details><summary>What is an interclub?</summary><p>A friendly, controlled bout between gyms, usually with protective kit.</p></details><details><summary>What do N-Class and C-Class mean?</summary><p>They’re levels for amateur fighters. See our guide to fight levels.</p></details></div><div class="faqg"><h3>Getting here</h3><details><summary>Where are you?</summary><p>Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB.</p></details><details data-opt="parking"><summary>Is there parking?</summary><p class="ph" data-ek="opt.parking">[Parking details: where to park, and whether it’s free]</p></details><details><summary>Are you the old Hoddesdon Muay Thai?</summary><p>Yes. The club started in Hoddesdon, moved to Potters Bar and became Warrior Spirit. Along the way we also took over our friends’ gym, WMT Muay Thai.</p></details><details><summary>Which areas do members come from?</summary><p>Potters Bar, Barnet, Cuffley, Cheshunt, Hatfield, Enfield, Hoddesdon and more. See areas we cover.</p></details></div></div>
     </div>
   </section>
@@ -1043,6 +1045,7 @@ a.tagc{text-decoration:none}
     if(window.__gymRefresh)window.__gymRefresh(j.hours);
   }).catch(function(){});
 })();
+(function(){var sk=document.querySelector('.skip'),m=document.getElementById('top');if(sk&&m)sk.addEventListener('click',function(e){e.preventDefault();m.focus();m.scrollIntoView()})})();
 (function(){
   var views=[].slice.call(document.querySelectorAll('.view')),menu=document.getElementById('menu'),burger=document.getElementById('burger');
   var dds=[].slice.call(menu.querySelectorAll('.dd'));
@@ -1161,7 +1164,7 @@ a.tagc{text-decoration:none}
     var rp=document.getElementById('reply').value;
     if(/whatsapp|text/i.test(rp)&&ph.mobile===false){err.textContent='WhatsApp and texts need a mobile number. Add a mobile, or pick “Phone call”.';err.hidden=false;p.focus();return}
     if(/email/i.test(rp)&&!em.value.trim()){err.textContent='Add your email address, or pick another way to reply.';err.hidden=false;em.focus();return}
-    if(!document.getElementById('okc').checked){err.textContent='Tick the box so we can contact you about your enquiry.';err.hidden=false;return}
+    if(!document.getElementById('okc').checked){err.textContent='Tick the box so we can contact you about your enquiry.';err.hidden=false;document.getElementById('okc').focus();return}
     var f=e.target,btn=f.querySelector('button[type=submit]'),v=function(i){return (document.getElementById(i)||{}).value||''};
     btn.disabled=true;btn.textContent='Sending…';
     (hum?hum.token():Promise.resolve('')).then(function(tok){return fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({about:v('enq'),name:v('name'),phone:v('phone'),email:v('email'),reply:v('reply'),experience:v('exp'),when:v('when'),message:v('msg'),consent:true,website:v('hpw'),page:(window.__view?window.__view():'home'),cfToken:tok})})})

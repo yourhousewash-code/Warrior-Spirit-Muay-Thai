@@ -108,7 +108,7 @@ html:not(.wse) [data-opt]:not([data-on]),html:not(.wse) [data-opt-alt][data-on]{
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:calc(80px + env(safe-area-inset-top,0px))}
+html{scroll-behavior:smooth;scroll-padding-top:calc(80px + env(safe-area-inset-top,0px));scroll-padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 body{background:var(--ink);color:var(--bone);font:17px/1.6 var(--body)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--ink)}
@@ -118,7 +118,7 @@ img,video{display:block;max-width:100%}
 .band{padding-block:clamp(64px,9vw,112px)}
 .flush{padding-top:0}
 h1,h2,h3{font-family:var(--display);text-transform:uppercase;line-height:.9;margin:0;text-wrap:balance}
-h2{font-size:clamp(44px,7.5vw,88px);font-weight:900}
+h2,h1.h2{font-size:clamp(44px,7.5vw,88px);font-weight:900}
 h3{font-size:30px;font-weight:900}
 p{margin:0;max-width:62ch}
 .kick{font:700 14px/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--red-text);display:inline-flex;align-items:center;gap:10px}
@@ -754,9 +754,11 @@ a.tagc{text-decoration:none}
   .ex::after{background:linear-gradient(0deg,rgba(11,12,16,.95),rgba(11,12,16,.1) 70%)}
   .tcard b,.progs b{font-size:22px}
 }
+.skip{position:absolute;left:12px;top:-80px;z-index:200;background:var(--bone);color:#0b0c10;padding:12px 16px;font:700 15px var(--cond);letter-spacing:.06em;text-transform:uppercase;text-decoration:none}.skip:focus{top:12px}main:focus{outline:none}
 </style>
 </head>
 <body>
+<a class="skip" href="#top">Skip to content</a>
 
 <div class="topbar"><div class="wrap">
   <span class="tb-l"><a class="tb-gym" href="tel:07904032142" aria-label="Call the gym on 07904 032142"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg><small>Gym phone</small><b>07904 032142</b></a><span class="tb-hide tb-addr"> Next Gen Fitness, Mount Grace Road, Potters Bar</span></span>
@@ -803,7 +805,7 @@ a.tagc{text-decoration:none}
   </div>
 </header>
 
-<main id="top">
+<main id="top" tabindex="-1">
 
 
 
@@ -821,7 +823,7 @@ a.tagc{text-decoration:none}
 <div class="view" data-view="areas" data-title="Areas we cover | Warrior Spirit Muay Thai, Potters Bar" data-desc="Muay Thai and kickboxing in Potters Bar for Barnet, Cuffley, Cheshunt, Hatfield, Enfield, St Albans, Hoddesdon and nearby.">
   <section class="band">
     <div class="wrap">
-      <div class="stack head"><span class="kick">Areas we cover</span><h2>Training from your town</h2><p class="lede">Warrior Spirit is in Potters Bar, and members come from all over south Hertfordshire and north London. Find your town for travel times, routes and the classes that suit you best.</p></div>
+      <div class="stack head"><span class="kick">Areas we cover</span><h1 class="h2">Training from your town</h1><p class="lede">Warrior Spirit is in Potters Bar, and members come from all over south Hertfordshire and north London. Find your town for travel times, routes and the classes that suit you best.</p></div>
       <div class="tier"><h3>Our home town</h3><div class="tcards"><a class="tcard" href="/potters-bar"><img src="photos/jay-win.webp" alt="" loading="lazy"><span><b>Potters Bar</b><small>In town</small></span></a></div></div><div class="tier"><h3>Close by</h3><div class="tcards"><a class="tcard" href="/brookmans-park"><img src="photos/pads-1.webp" alt="" loading="lazy"><span><b>Brookmans Park</b><small>About 5 min</small></span></a><a class="tcard" href="/cuffley"><img src="photos/pads-2.webp" alt="" loading="lazy"><span><b>Cuffley</b><small>About 10 min</small></span></a><a class="tcard" href="/barnet"><img src="photos/pads-kick.webp" alt="" loading="lazy"><span><b>Barnet</b><small>About 10–15 min</small></span></a></div></div><div class="tier"><h3>Worth the drive</h3><div class="tcards"><a class="tcard" href="/hatfield"><img src="photos/pads-kick.webp" alt="" loading="lazy"><span><b>Hatfield</b><small>About 15 min</small></span></a><a class="tcard" href="/borehamwood"><img src="photos/knee.webp" alt="" loading="lazy"><span><b>Borehamwood</b><small>About 15 min</small></span></a><a class="tcard" href="/enfield"><img src="photos/win-corner.webp" alt="" loading="lazy"><span><b>Enfield</b><small>About 15–20 min</small></span></a><a class="tcard" href="/waltham-cross"><img src="photos/bag.webp" alt="" loading="lazy"><span><b>Waltham Cross</b><small>About 15 min</small></span></a><a class="tcard" href="/cheshunt"><img src="photos/team-medal.webp" alt="" loading="lazy"><span><b>Cheshunt</b><small>About 15–20 min</small></span></a><a class="tcard" href="/radlett"><img src="photos/pads-2.webp" alt="" loading="lazy"><span><b>Radlett</b><small>About 15 min</small></span></a><a class="tcard" href="/southgate-cockfosters"><img src="photos/win-corner.webp" alt="" loading="lazy"><span><b>Southgate & Cockfosters</b><small>About 15–20 min</small></span></a></div></div><div class="tier"><h3>Further afield</h3><div class="tcards"><a class="tcard" href="/hoddesdon"><img src="photos/corner-crowd.webp" alt="" loading="lazy"><span><b>Hoddesdon</b><small>About 25 min</small></span></a><a class="tcard" href="/welwyn-garden-city"><img src="photos/pads-1.webp" alt="" loading="lazy"><span><b>Welwyn Garden City</b><small>About 20 min</small></span></a><a class="tcard" href="/st-albans"><img src="photos/bag.webp" alt="" loading="lazy"><span><b>St Albans</b><small>About 20–25 min</small></span></a></div></div>
       <p class="tnote" style="margin-top:20px">Travel times are approximate, by car, off-peak. Don't see your town? <a href="/contact">Ask us</a>.</p>
     </div>
@@ -1044,6 +1046,7 @@ a.tagc{text-decoration:none}
     if(window.__gymRefresh)window.__gymRefresh(j.hours);
   }).catch(function(){});
 })();
+(function(){var sk=document.querySelector('.skip'),m=document.getElementById('top');if(sk&&m)sk.addEventListener('click',function(e){e.preventDefault();m.focus();m.scrollIntoView()})})();
 (function(){
   var views=[].slice.call(document.querySelectorAll('.view')),menu=document.getElementById('menu'),burger=document.getElementById('burger');
   var dds=[].slice.call(menu.querySelectorAll('.dd'));
@@ -1162,7 +1165,7 @@ a.tagc{text-decoration:none}
     var rp=document.getElementById('reply').value;
     if(/whatsapp|text/i.test(rp)&&ph.mobile===false){err.textContent='WhatsApp and texts need a mobile number. Add a mobile, or pick “Phone call”.';err.hidden=false;p.focus();return}
     if(/email/i.test(rp)&&!em.value.trim()){err.textContent='Add your email address, or pick another way to reply.';err.hidden=false;em.focus();return}
-    if(!document.getElementById('okc').checked){err.textContent='Tick the box so we can contact you about your enquiry.';err.hidden=false;return}
+    if(!document.getElementById('okc').checked){err.textContent='Tick the box so we can contact you about your enquiry.';err.hidden=false;document.getElementById('okc').focus();return}
     var f=e.target,btn=f.querySelector('button[type=submit]'),v=function(i){return (document.getElementById(i)||{}).value||''};
     btn.disabled=true;btn.textContent='Sending…';
     (hum?hum.token():Promise.resolve('')).then(function(tok){return fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({about:v('enq'),name:v('name'),phone:v('phone'),email:v('email'),reply:v('reply'),experience:v('exp'),when:v('when'),message:v('msg'),consent:true,website:v('hpw'),page:(window.__view?window.__view():'home'),cfToken:tok})})})

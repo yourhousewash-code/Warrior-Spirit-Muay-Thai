@@ -101,7 +101,7 @@
             <label for="re">Email<input id="re" type="email" autocomplete="email" required></label>
             <label for="rp">Choose a password<input id="rp" type="password" autocomplete="new-password" minlength="8" required></label>
           </div>
-          <p class="err" id="rerr" hidden></p>
+          <p class="err" id="rerr" role="alert" hidden></p>
           <button class="btn" type="submit">Create account &amp; continue</button>
         </form>
         <form id="logForm" class="stack" hidden>
@@ -109,7 +109,7 @@
             <label for="le">Email<input id="le" type="email" autocomplete="email" required></label>
             <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
           </div>
-          <p class="err" id="lerr" hidden></p>
+          <p class="err" id="lerr" role="alert" hidden></p>
           <div class="row"><button class="btn" type="submit">Log in &amp; continue</button><a class="muted" href="/account?forgot=1">Forgotten password?</a></div>
         </form>
       </div>
@@ -121,7 +121,7 @@
         <label for="bn" id="bnLabel">Anything your coach should know? (optional)<textarea id="bn" maxlength="400" placeholder="Experience, injuries, goals…"></textarea></label>
         <label for="brem">Reminder (optional)<select id="brem"><option value="none">No reminder</option><option value="morning">Email me on the morning of the session</option><option value="evening">Email me the evening before</option></select></label>
         <p class="muted" style="font-size:15px">Payment is taken at the gym. You can cancel from your account up to 24 hours before. Paying online is coming soon.</p>
-        <p class="err" id="berr" hidden></p>
+        <p class="err" id="berr" role="alert" hidden></p>
         <button class="btn" type="submit" id="bookBtn">Confirm booking</button>
       </form>
     </section>

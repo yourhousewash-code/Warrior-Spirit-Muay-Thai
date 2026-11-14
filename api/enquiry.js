@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       if (b.website) return send(res, 200, { ok: true }); // spam trap
       const ip = (req.headers['x-forwarded-for'] || '').split(',')[0] || 'x';
       if (!(await rateLimit(`enq:${ip}`, 6, 3600))) return bad(res, 'Too many messages from here. Please call or WhatsApp us instead.', 429);
-      if (!(await humanCheck(b.cfToken, ip)).ok) return bad(res, NOT_HUMAN, 403);
+      if (!(await humanCheck(b.cfToken, ip, { failOpen: true })).ok) return bad(res, NOT_HUMAN, 403);
       const e = {
         id: id('e'), about: clean(b.about, 80), name: clean(b.name, 80), phone: clean(b.phone, 30), email: clean(b.email, 120).toLowerCase(),
         reply: clean(b.reply, 30), experience: clean(b.experience, 40), when: clean(b.when, 120), message: clean(b.message, 1500),

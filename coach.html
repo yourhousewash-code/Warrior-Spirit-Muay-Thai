@@ -304,7 +304,7 @@ button.mth.phc{display:block;width:100%;border:0}
     <form id="loginForm" class="stack">
       <label for="lu">Username<input id="lu" autocomplete="username" autocapitalize="none" required></label>
       <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
-      <p class="err" id="lerr" hidden></p>
+      <p class="err" id="lerr" role="alert" hidden></p>
       <button class="btn full" type="submit">Log in</button>
       <p class="muted" style="margin:0"><a href="#" id="forgotLink">Forgot your password?</a></p>
     </form>
@@ -313,7 +313,7 @@ button.mth.phc{display:block;width:100%;border:0}
       <p class="muted" id="codeTo">We’ve emailed you a 6-digit code. It runs out in 10 minutes.</p>
       <label for="lc">Sign-in code<input id="lc" class="codein" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="000000" aria-describedby="codeTo" required></label>
       <label class="tick" for="ltrust"><input type="checkbox" id="ltrust" checked><span>Trust this device for 30 days<small>You won’t need a code here until then. Untick on a shared computer.</small></span></label>
-      <p class="err" id="cerr" role="alert" hidden></p><p class="ok" id="cok" hidden></p>
+      <p class="err" id="cerr" role="alert" hidden></p><p class="ok" id="cok" role="status" hidden></p>
       <button class="btn full" type="submit">Sign in</button>
       <p class="muted" style="margin:0">No email? <button type="button" class="linkbtn" id="resendCode">Send a new code</button> <span id="resendWait"></span></p>
       <p class="muted" style="margin:0;font-size:15px"><b style="color:var(--soft)">Wrong email?</b> The code goes to the email saved on your coach account. If that address is wrong or you can’t get into it, ask <span id="codeAsk">Jay or Steve</span> to change it in Manage coaches.</p>
@@ -322,14 +322,14 @@ button.mth.phc{display:block;width:100%;border:0}
     <form id="forgotForm" class="stack" hidden>
       <p class="muted">Enter your username and we’ll email a reset link to the address saved on your account.</p>
       <label for="fu">Username<input id="fu" autocomplete="username" autocapitalize="none" required></label>
-      <p class="ok" id="fok" hidden></p><p class="err" id="ferr" hidden></p>
+      <p class="ok" id="fok" role="status" hidden></p><p class="err" id="ferr" role="alert" hidden></p>
       <button class="btn full" type="submit">Email me a reset link</button>
       <p class="muted" style="margin:0"><a href="#" id="backLogin">Back to log in</a></p>
     </form>
     <form id="resetForm" class="stack" hidden>
       <p class="muted">Choose a new password (at least 8 characters).</p>
       <label for="rp">New password<input id="rp" type="password" autocomplete="new-password" minlength="8" required></label>
-      <p class="err" id="rerr" hidden></p>
+      <p class="err" id="rerr" role="alert" hidden></p>
       <button class="btn full" type="submit">Save and log in</button>
     </form>
   </section>
@@ -437,7 +437,7 @@ button.mth.phc{display:block;width:100%;border:0}
         <p class="note" id="wdefault" hidden>These are the recommended starting hours: weekdays 6–10pm and Saturday 8am–12pm. Change them any time and press Save. While any class is on you’re shown as not available, unless you choose to be.</p>
         <div class="wk" id="weekly"></div>
         <div class="detail clash" id="wclash" hidden></div>
-        <p class="err" id="werr" hidden></p><p class="ok" id="wok" hidden></p>
+        <p class="err" id="werr" role="alert" hidden></p><p class="ok" id="wok" role="status" hidden></p>
         <button class="btn" type="submit" style="justify-self:start">Save weekly hours</button>
       </form>
 
@@ -451,7 +451,7 @@ button.mth.phc{display:block;width:100%;border:0}
             <label for="ot">Last day<input id="ot" type="date" required></label>
           </div>
           <label for="on">Note (optional)<input id="on" maxlength="60" placeholder="e.g. Holiday, Fight trip"></label>
-          <p class="err" id="oerr" hidden></p><p class="ok" id="ook" hidden></p>
+          <p class="err" id="oerr" role="alert" hidden></p><p class="ok" id="ook" role="status" hidden></p>
           <button class="btn" type="submit" style="justify-self:start">Add time off</button>
           <div class="list" id="offList"></div>
         </form>
@@ -469,7 +469,7 @@ button.mth.phc{display:block;width:100%;border:0}
           </div>
           <label for="aw">Repeat<select id="aw"><option value="1">Just this date</option><option value="2">Weekly for 2 weeks</option><option value="4">Weekly for 4 weeks</option></select></label>
           <div class="detail clash" id="aclash" hidden></div>
-          <p class="err" id="aerr" hidden></p><p class="ok" id="aok" hidden></p>
+          <p class="err" id="aerr" role="alert" hidden></p><p class="ok" id="aok" role="status" hidden></p>
           <button class="btn" type="submit" style="justify-self:start">Add times</button>
           <div class="list" id="extraList"></div>
         </form>
@@ -486,7 +486,7 @@ button.mth.phc{display:block;width:100%;border:0}
         <p class="note" id="prDefault" hidden>These are the suggested starting prices. Change any of them and press Save.</p>
         <div class="ptable" id="ptable"></div>
         <label for="gmax" style="max-width:260px">Most people in a group<input id="gmax" type="number" min="3" max="20" step="1"></label>
-        <p class="err" id="prerr" hidden></p><p class="ok" id="prok" hidden></p>
+        <p class="err" id="prerr" role="alert" hidden></p><p class="ok" id="prok" role="status" hidden></p>
         <button class="btn" type="submit" style="justify-self:start">Save prices</button>
       </form>
     </div>
@@ -520,7 +520,7 @@ button.mth.phc{display:block;width:100%;border:0}
             </div>
           </div>
         </div>
-        <p class="err" id="pferr" hidden></p><p class="ok" id="pfok" hidden></p>
+        <p class="err" id="pferr" role="alert" hidden></p><p class="ok" id="pfok" role="status" hidden></p>
         <div class="row"><button class="btn" type="submit" id="pfSubmit">Send to Jay for approval</button><button type="button" class="btn ghost" id="pfDiscard" hidden>Discard my changes</button></div>
       </form>
     </div>
@@ -552,7 +552,7 @@ button.mth.phc{display:block;width:100%;border:0}
           <label for="ncPw">Starting password<input id="ncPw" required minlength="8" value="Muaythai" autocomplete="off"></label>
         </div>
         <p class="muted" style="font-size:14px">Give them the username and starting password yourself. If you add their email, we’ll send them the login link and username (not the password).</p>
-        <p class="err" id="ncerr" hidden></p><p class="ok" id="ncok" hidden></p>
+        <p class="err" id="ncerr" role="alert" hidden></p><p class="ok" id="ncok" role="status" hidden></p>
         <button class="btn" type="submit" style="justify-self:start">Add coach</button>
       </form>
     </div>
@@ -596,7 +596,7 @@ button.mth.phc{display:block;width:100%;border:0}
           <label class="btn small" for="libAdd" style="color:#fff">+ Add photos<input id="libAdd" type="file" accept="image/*" multiple hidden></label>
         </div>
         <p class="muted" style="margin:0;font-size:14px" id="libHelp"></p>
-        <p class="ok" id="libProg" hidden></p><p class="err" id="libErr" hidden></p>
+        <p class="ok" id="libProg" role="status" hidden></p><p class="err" id="libErr" role="alert" hidden></p>
         <div class="mgrid" id="libGrid"><p class="muted">Loading…</p></div>
       </section>
 
@@ -606,7 +606,7 @@ button.mth.phc{display:block;width:100%;border:0}
           <h2>Photos for the website</h2>
           <p class="muted" style="margin:0">Add photos you’d like on the website or on a coach page. They go straight into All photos, shrunk to a sensible size. Only use photos of children if their parents are happy for them to be on the website.</p>
           <label class="btn" for="libAdd2" style="color:#fff;justify-self:start">+ Add photos<input id="libAdd2" type="file" accept="image/*" multiple hidden></label>
-          <p class="ok" id="addProg" hidden></p><p class="err" id="addErr" hidden></p>
+          <p class="ok" id="addProg" role="status" hidden></p><p class="err" id="addErr" role="alert" hidden></p>
         </div>
         <div class="panel">
           <h2>Send photos &amp; videos to the club</h2>
@@ -635,7 +635,7 @@ button.mth.phc{display:block;width:100%;border:0}
           <button type="button" class="btn ghost" id="mReset" hidden>Put back the original</button>
         </div>
         <p class="muted" style="margin:0;font-size:14px" id="mNote">Photos are shrunk automatically and added to All photos too. For videos, MP4 works on every phone and computer. Only use photos of children if their parents are happy for them to be on the website.</p>
-        <p class="err" id="mErr" hidden></p><p class="ok" id="mProg" hidden></p>
+        <p class="err" id="mErr" role="alert" hidden></p><p class="ok" id="mProg" role="status" hidden></p>
         <div class="mgrid" id="mGrid"></div>
         <div class="row" style="position:sticky;bottom:0;background:var(--ink-2);padding:10px 0">
           <button type="button" class="btn" id="mSave" disabled>Save changes</button>
@@ -647,7 +647,7 @@ button.mth.phc{display:block;width:100%;border:0}
       <section class="panel stack own" data-ppanel="spots" style="gap:14px" hidden>
         <h2>Page photos</h2>
         <p class="muted" style="margin:0">Every photo on the website’s pages that can be swapped, page by page. Replace one with any photo from the library, or put back the original. Changes go live straight away (the same as tapping a photo in “Edit the website”). Photos built into the page design, such as town page banners and link cards, can’t be swapped so aren’t listed. The carousel, video gallery and class pictures have their own places.</p>
-        <p class="ok" id="spotOk" hidden></p><p class="err" id="spotErr" hidden></p>
+        <p class="ok" id="spotOk" role="status" hidden></p><p class="err" id="spotErr" role="alert" hidden></p>
         <div id="spotList" class="stack" style="gap:10px"><p class="muted">Loading…</p></div>
       </section>
 
@@ -655,7 +655,7 @@ button.mth.phc{display:block;width:100%;border:0}
         <h2>From the club Drive</h2>
         <p class="muted" style="margin-top:0">Photos coaches have uploaded to the club Google Drive. Tick the ones you want and press Add. They’re copied to the website and shrunk for you. Videos can’t be picked from here yet.</p>
         <div class="mgrid" id="drvGrid"><p class="muted">Loading…</p></div>
-        <p class="err" id="drvErr" hidden></p><p class="ok" id="drvProg" hidden></p>
+        <p class="err" id="drvErr" role="alert" hidden></p><p class="ok" id="drvProg" role="status" hidden></p>
         <div class="row" style="margin-top:12px"><button type="button" class="btn" id="drvAdd" disabled>Add to the website</button><button type="button" class="btn ghost" id="drvClose">Close</button></div>
       </dialog>
       <dialog id="mDlg" class="dlg">
@@ -672,7 +672,7 @@ button.mth.phc{display:block;width:100%;border:0}
             <div class="mchecks"><span class="muted">Shows under:</span><label><input type="checkbox" id="mdCFight"> Fights</label><label><input type="checkbox" id="mdCWin"> Wins</label><label><input type="checkbox" id="mdCTrain"> Training</label></div>
             <label class="btn ghost" for="mdPoster" style="justify-self:start">Change the thumbnail picture<input id="mdPoster" type="file" accept="image/*" hidden></label>
           </div>
-          <p class="err" id="mdErr" hidden></p><p class="ok" id="mdProg" hidden></p>
+          <p class="err" id="mdErr" role="alert" hidden></p><p class="ok" id="mdProg" role="status" hidden></p>
           <div class="row"><button class="btn" type="submit" id="mdOk">Done</button></div>
         </form>
       </dialog>
@@ -703,7 +703,7 @@ button.mth.phc{display:block;width:100%;border:0}
       <p class="muted" id="scHelp">Tap a class to change it, or tap an empty space on a day to add one. Times move in 15-minute steps. Saving updates the website timetable, the “what’s on” ticker and everyone’s free personal-training times.</p>
       <div class="sc-tabs" id="scTabs" role="tablist" aria-label="Day"></div>
       <div class="sc" id="scGrid" aria-label="Weekly class calendar"></div>
-      <p class="err" id="scErr" hidden></p>
+      <p class="err" id="scErr" role="alert" hidden></p>
 
 
       <section class="panel" id="rosterPanel" hidden>
@@ -717,14 +717,14 @@ button.mth.phc{display:block;width:100%;border:0}
         <p class="note" id="ntHint" hidden>You’ve changed the timetable. Members’ subscribed calendars update by themselves. Do you also want to email everyone?</p>
         <p class="muted">Sends an email with the current timetable to every member with an account (they can turn these emails off). Add a short note if you like.</p>
         <label for="ntNote">Note (optional)<input id="ntNote" maxlength="400" placeholder="e.g. Thursday beginners now start at 7:30pm from next week"></label>
-        <p class="err" id="ntErr" hidden></p><p class="ok" id="ntOk" hidden></p>
+        <p class="err" id="ntErr" role="alert" hidden></p><p class="ok" id="ntOk" role="status" hidden></p>
         <button class="btn" type="button" id="ntSend" style="justify-self:start">Email members the timetable</button>
       </section>
 
       <section class="panel stack" id="ciPanel" data-admin-only hidden style="gap:12px">
         <h2>Class pictures</h2>
         <p class="muted" style="margin:0">The picture shown on each class on the website timetable. Pick any photo from the photo library.</p>
-        <p class="err" id="ciErr" hidden></p>
+        <p class="err" id="ciErr" role="alert" hidden></p>
         <div class="mgrid" id="ciGrid"></div>
         <dialog id="ciDlg" class="dlg" style="width:min(760px,calc(100vw - 24px))"><h2 id="ciTitle">Choose a picture</h2><div class="mgrid" id="ciPick" style="max-height:60vh;overflow:auto"></div><p><button type="button" class="btn ghost" id="ciClose">Cancel</button></p></dialog>
       </section>
@@ -736,7 +736,7 @@ button.mth.phc{display:block;width:100%;border:0}
           <input type="hidden" id="tfId">
           <label for="tfName">Class type name<input id="tfName" maxlength="40" placeholder="e.g. Women’s Muay Thai" required></label>
           <label for="tfDesc">Description<textarea id="tfDesc" maxlength="400" rows="3" placeholder="What is this class, who is it for, what should they bring?"></textarea></label>
-          <p class="err" id="tfErr" hidden></p>
+          <p class="err" id="tfErr" role="alert" hidden></p>
           <div class="row"><button class="btn" type="submit" id="tfSave">Add class type</button><button class="btn ghost" type="button" id="tfCancel" hidden>Cancel</button></div>
         </form>
       </section>
@@ -754,7 +754,7 @@ button.mth.phc{display:block;width:100%;border:0}
           </div>
           <label for="cfMax">Places (optional)<input id="cfMax" type="number" min="1" max="60" inputmode="numeric" placeholder="e.g. 20. Leave empty for no limit"></label>
           <p class="muted" style="margin:0;font-size:13px">Set a number and members can book a place from their account, up to that many. Leave it empty and people just turn up.</p>
-          <p class="err" id="cfErr" hidden></p>
+          <p class="err" id="cfErr" role="alert" hidden></p>
           <div class="row"><button class="btn" type="submit" id="cfSave">Save class</button><button class="btn ghost" type="button" id="cfCancel">Cancel</button><button class="btn ghost" type="button" id="cfDel" hidden style="margin-left:auto;color:var(--bad)">Remove class</button></div>
         </form>
       </dialog>
@@ -769,7 +769,7 @@ button.mth.phc{display:block;width:100%;border:0}
         <h2>Gym opening hours</h2>
         <p class="muted">The general hours members can use the gym. They show on the website timetable, the prices and FAQ pages and the “what’s on” ticker. Class times are set in the Class schedule.</p>
         <div class="list" id="hoursList"></div>
-        <p class="err" id="hrErr" hidden></p><p class="ok" id="hrOk" hidden></p>
+        <p class="err" id="hrErr" role="alert" hidden></p><p class="ok" id="hrOk" role="status" hidden></p>
         <button class="btn" type="button" id="hrSave" style="justify-self:start">Save opening hours</button>
       </section>
       <section class="panel" id="optsPanel" data-admin-only hidden>
@@ -777,7 +777,7 @@ button.mth.phc{display:block;width:100%;border:0}
         <p class="muted" style="margin:0">Some parts of the website are optional. Switch on the ones the club uses. Anything switched off is left out completely, so visitors never see an empty space or wording that still needs filling in.</p>
         <p class="note" style="margin:0">Before you switch something on, its wording must be filled in. Open <a href="/?edit=1">Edit the website</a> on the page shown (or use the “Fill it in” link), tap the faded part with the blue edge and replace the words in [square brackets]. Then come back here and switch it on. Until the wording is filled in, the switch stays off.</p>
         <div class="list" id="optList"><p class="muted">Loading…</p></div>
-        <p class="err" id="optErr" hidden></p><p class="ok" id="optOk" hidden></p>
+        <p class="err" id="optErr" role="alert" hidden></p><p class="ok" id="optOk" role="status" hidden></p>
       </section>
     </div>
 
@@ -785,7 +785,7 @@ button.mth.phc{display:block;width:100%;border:0}
     <div data-view="overview" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
       <div class="calhead"><h1>Site overview</h1></div>
-      <p class="err" id="ovErr" hidden></p>
+      <p class="err" id="ovErr" role="alert" hidden></p>
       <div class="panel stack" id="ovSummary" style="gap:8px"></div>
       <p class="muted" style="margin:0">Tap a photo to open it in <a href="#photos">Photos &amp; videos</a>, where you can see every place it’s shown and change it.</p>
       <div class="panel stack" style="gap:12px"><h2>Photos not used anywhere yet</h2><div class="mgrid" id="ovUnused"></div></div>
@@ -801,7 +801,7 @@ button.mth.phc{display:block;width:100%;border:0}
         <button type="button" role="tab" data-sptab="saved" aria-selected="true">Saved posts</button>
         <button type="button" role="tab" data-sptab="ideas" aria-selected="false">Our ideas</button>
       </div>
-      <p class="err" id="spErr" hidden></p>
+      <p class="err" id="spErr" role="alert" hidden></p>
       <div class="sharegrid" id="shareGrid"></div>
       <dialog id="postDlg" class="dlg" style="width:min(820px,calc(100vw - 24px))">
         <h2 id="pdTitle" style="margin:0 0 14px">New post</h2>
@@ -831,13 +831,13 @@ button.mth.phc{display:block;width:100%;border:0}
               <li>Read it out loud before posting. Check names, times and prices.</li>
               <li>Post when members are online: early morning, lunchtime or evening.</li>
             </ul></details>
-          <p class="err" id="pdErr" hidden></p>
+          <p class="err" id="pdErr" role="alert" hidden></p>
           <div class="row"><button type="button" class="btn" id="pdSave">Save post</button><button type="button" class="btn ghost" id="pdCancel">Cancel</button></div>
         </div>
       </dialog>
       <dialog id="pickDlg" class="dlg" style="width:min(760px,calc(100vw - 24px))"><h2>Choose a picture</h2>
         <div class="row"><label class="btn small" for="pkUp" style="color:#fff">+ Add a new picture<input id="pkUp" type="file" accept="image/*" hidden></label></div>
-        <p class="err" id="pkErr" hidden></p><div class="mgrid" id="pkGrid" style="max-height:55vh;overflow:auto;margin-top:10px"></div>
+        <p class="err" id="pkErr" role="alert" hidden></p><div class="mgrid" id="pkGrid" style="max-height:55vh;overflow:auto;margin-top:10px"></div>
         <p><button type="button" class="btn ghost" id="pkClose">Cancel</button></p></dialog>
     </div>
 
@@ -850,14 +850,14 @@ button.mth.phc{display:block;width:100%;border:0}
           <h2>Booking emails</h2>
           <p class="muted">We email you when someone books or cancels one of your sessions.</p>
           <label for="se">Your email<input id="se" type="email" autocomplete="email"></label>
-          <p class="ok" id="seok" hidden>Saved.</p><p class="err" id="seerr" hidden></p>
+          <p class="ok" id="seok" role="status" hidden>Saved.</p><p class="err" id="seerr" role="alert" hidden></p>
           <button class="btn" type="submit">Save email</button>
         </form>
         <form id="pwForm" class="panel">
           <h2>Change password</h2>
           <label for="pc">Current password<input id="pc" type="password" autocomplete="current-password" required></label>
           <label for="pn">New password<input id="pn" type="password" autocomplete="new-password" minlength="8" required></label>
-          <p class="ok" id="pwok" hidden>Password changed.</p><p class="err" id="pwerr" hidden></p>
+          <p class="ok" id="pwok" role="status" hidden>Password changed.</p><p class="err" id="pwerr" role="alert" hidden></p>
           <button class="btn" type="submit">Change password</button>
         </form>
       </div>
@@ -878,7 +878,7 @@ button.mth.phc{display:block;width:100%;border:0}
           <p class="err" id="tsOffErr" role="alert" hidden></p>
           <div class="row"><button class="btn" type="submit">Switch off</button><button type="button" class="btn ghost" id="tsOffCancel">Keep it on</button></div>
         </form>
-        <p class="ok" id="tsOk" hidden></p><p class="err" id="tsErr" hidden></p>
+        <p class="ok" id="tsOk" role="status" hidden></p><p class="err" id="tsErr" role="alert" hidden></p>
         <h3>Trusted devices</h3>
         <p class="muted">Phones and computers where you ticked “Trust this device”. They skip the code for 30 days. Remove any you don’t recognise or don’t use any more: that also signs them out.</p>
         <div class="list" id="tsDevices"><p class="empty">Loading…</p></div>

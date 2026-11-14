@@ -154,9 +154,25 @@ export function coachSession(req) {
   if (c.admin && !d.m) return null; // an owner session from before two-step sign-in: sign in again with a code
   return c;
 }
-export function userSession(req) {
+/* Members. Each account has a session number ("sg" in its database record). A password reset raises it, which ends every
+   older login on every device. Call loadUser(req) once at the start of a request; userSession(req) then gives the
+   signed-in member's email, or null. */
+export async function loadUser(req) {
+  req.wsUser = null;
   const d = unsign(cookies(req).ws_user);
-  return d && d.email ? d.email : null;
+  if (!d || !d.email) return null;
+  const sg = Number(await redis.hget(`user:${d.email}`, 'sg')) || 0;
+  if ((Number(d.sg) || 0) === sg) req.wsUser = d.email;
+  return req.wsUser;
+}
+export function userSession(req) {
+  if (req.wsUser === undefined) throw new Error('loadUser(req) must run before userSession(req)');
+  return req.wsUser;
+}
+/* Signs a member in on this device for 60 days, tied to the account's current session number. */
+export async function startMember(res, email) {
+  const sg = Number(await redis.hget(`user:${email}`, 'sg')) || 0;
+  setSession(res, 'ws_user', { email, sg }, 60);
 }
 
 /* ---------- helpers ---------- */

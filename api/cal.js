@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { redis, COACHES, loadCoaches, send, bad, setupProblem, clean, userSession, SITE } from './_lib/core.js';
+import { redis, COACHES, loadCoaches, send, bad, setupProblem, clean, userSession, loadUser, SITE } from './_lib/core.js';
 import { londonDate, DAY, getClasses, getCover, classInstances } from './_lib/avail.js';
 import { vcal } from './_lib/ics.js';
 import { ptEvent, classBookingEvent, clubClassEvent } from './_lib/calevents.js';
@@ -36,6 +36,7 @@ export default async function handler(req, res) {
   if (problem) return bad(res, problem, 503);
   try {
     await loadCoaches();
+    await loadUser(req);
     const site = host(req), feed = clean(req.query.feed, 10), action = clean(req.query.action, 10);
 
     /* the whole club timetable, public: anyone can subscribe */

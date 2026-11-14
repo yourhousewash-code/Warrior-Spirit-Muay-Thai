@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 import {
   redis, COACHES, loadCoaches, activeIds, publicIds, send, bad, setupProblem, body, clean, validEmail, rateLimit,
   hashPassword, checkPassword, checkCoachPassword, setSession, clearSession, saveCoaches,
-  coachSession, userSession, coachEmail, mail, mailReady, SITE, readSigned, SESS,
+  coachSession, userSession, loadUser, startMember, coachEmail, mail, mailReady, SITE, readSigned, SESS,
 } from './_lib/core.js';
 import {
   twoStepState, askWho, startSession, endAllSessions, listDevices, trustedDevice, touchDevice, trustThisDevice,
@@ -14,6 +14,7 @@ export default async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   await loadCoaches();
+  await loadUser(req);
   const action = clean(req.query.action, 40);
   const b = body(req);
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0] || 'x';
@@ -262,7 +263,7 @@ export default async function handler(req, res) {
         if (exists) return bad(res, 'There’s already an account with that email. Log in instead, or reset your password.', 409);
         await redis.hset(`user:${email}`, { email, name, mobile, hash: hashPassword(pw), verified: 'no', created: Date.now() });
         await sendVerify(email, name);
-        setSession(res, 'ws_user', { email }, 60);
+        await startMember(res, email);
         return send(res, 200, { user: userOut({ email, name, mobile, verified: 'no' }) });
       }
       case 'login': {
@@ -270,8 +271,10 @@ export default async function handler(req, res) {
         const email = clean(b.email, 120).toLowerCase();
         if (!(await rateLimit(`login:${email}:${ip}`, 8, 900)) || !(await rateLimit(`login:${email}`, 20, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
         const u = await redis.hgetall(`user:${email}`);
-        if (!u || !checkPassword(String(b.password || ''), u.hash)) return bad(res, 'That email or password isn’t right.', 401);
-        setSession(res, 'ws_user', { email }, 60);
+        /* The same message, and the same password work, whether or not the account exists, so neither gives it away. */
+        const ok = checkPassword(String(b.password || ''), u?.hash || DUMMY_HASH);
+        if (!u || !u.hash || !ok) return bad(res, 'That email or password isn’t right.', 401);
+        await startMember(res, email);
         return send(res, 200, { user: userOut(u) });
       }
       case 'me': {
@@ -288,7 +291,7 @@ export default async function handler(req, res) {
         if (!email) { res.statusCode = 302; res.setHeader('Location', '/account?verified=expired'); return res.end(); }
         await redis.hset(`user:${email}`, { verified: 'yes' });
         await redis.del(`verify:${token}`);
-        setSession(res, 'ws_user', { email }, 60);
+        await startMember(res, email);
         res.statusCode = 302; res.setHeader('Location', '/account?verified=1'); return res.end();
       }
       case 'resend': {
@@ -337,7 +340,7 @@ export default async function handler(req, res) {
         if (!u) {
           await redis.hset(`user:${email}`, { email, name: clean(t.name || email.split('@')[0], 80), mobile: '', hash: '', google: 'yes', verified: 'yes', created: Date.now() });
         } else if (u.verified === 'no') await redis.hset(`user:${email}`, { verified: 'yes', google: 'yes' });
-        setSession(res, 'ws_user', { email }, 60);
+        await startMember(res, email);
         return send(res, 200, { user: userOut(await redis.hgetall(`user:${email}`)) });
       }
       case 'forgot': {
@@ -362,8 +365,9 @@ export default async function handler(req, res) {
         if (!email) return bad(res, 'That reset link has expired. Ask for a new one.', 410);
         if (pw.length < 8) return bad(res, 'Choose a password of at least 8 characters.');
         await redis.hset(`user:${email}`, { hash: hashPassword(pw) });
+        await redis.hincrby(`user:${email}`, 'sg', 1); // ends every older login, on every device
         await redis.del(`reset:${token}`);
-        setSession(res, 'ws_user', { email }, 60);
+        await startMember(res, email);
         return send(res, 200, { ok: true });
       }
       default: return bad(res, 'Unknown action', 404);
@@ -374,6 +378,7 @@ export default async function handler(req, res) {
   }
 }
 
+const DUMMY_HASH = hashPassword('not-a-real-password-' + crypto.randomBytes(8).toString('hex'));
 const OPTOUT = 'photo:optout'; // hash: member email → { name, at } for everyone who asked to be left out of photos and videos
 function userOut(u) { return { email: u.email, name: u.name, mobile: u.mobile || '', verified: u.verified !== 'no', needsMobile: !(u.mobile || '').replace(/\D/g, '').length, photos: u.photos === 'out' || u.photos === 'ok' ? u.photos : '', photosAt: Number(u.photosAt) || 0 }; }
 async function sendVerify(email, name) {
