@@ -126,3 +126,10 @@ test('a password reset signs the account out everywhere else', async () => {
   assert.equal((await call(auth, { query: { action: 'login' }, body: { email, password: 'second-password' }, ip: '198.51.100.9' })).status, 200);
   assert.equal((await call(auth, { query: { action: 'reset' }, body: { token, password: 'third-password' }, ip: '198.51.100.8' })).status, 410, 'a reset link works once');
 });
+
+test('no shared starting password: a coach without their own password can\'t sign in', async () => {
+  for (const username of ['aaron', 'kian', 'jay']) {
+    const r = await call(auth, { query: { action: 'coach-login' }, body: { username, password: 'Muaythai' }, ip: '198.51.100.30' });
+    assert.equal(r.status, 401, `${username} signed in with the old shared password`);
+  }
+});

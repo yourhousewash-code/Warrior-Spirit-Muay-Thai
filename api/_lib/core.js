@@ -9,7 +9,9 @@ export const SITE = process.env.SITE_URL || 'https://warrior-spirit-muay-thai.ve
 export const GYM = 'Warrior Spirit Muay Thai & Kickboxing';
 export const ADDRESS = 'Next Gen Fitness, Mount Grace Road, Potters Bar EN6 1RB';
 
-/* Coaches. The original three start with the password "Muaythai"; Jay can add more coaches from the coach area.
+/* Coaches. Every coach signs in with a password of their own: set by an owner when the coach is added (Manage coaches),
+   or chosen by the coach through "Forgotten password". There is no shared starting password (16 Nov 2026, security sweep:
+   the code is public, so a shared default would let anyone in). Jay can add more coaches from the coach area.
    COACHES is filled from the database at the start of every request (loadCoaches). */
 export const BASE_COACHES = {
   jay:   { id: 'jay',   name: 'Jay Shepherd', first: 'Jay',   admin: true,  active: true, base: true, photo: 'photos/jay-portrait.webp', envEmail: 'COACH_EMAIL_JAY' },
@@ -49,7 +51,6 @@ export async function saveCoaches() {
 }
 export const activeIds = () => Object.keys(COACHES).filter(k => COACHES[k].active);
 export const publicIds = () => Object.keys(COACHES).filter(k => COACHES[k].listed);
-export const START_PASSWORD = 'Muaythai';
 
 /* What the session focuses on. */
 export const TYPES = {
@@ -94,9 +95,7 @@ export async function coachHash(id) {
 }
 export async function checkCoachPassword(id, pw) {
   const h = await coachHash(id);
-  if (h) return checkPassword(pw, h);
-  if (BASE_COACHES[id]?.owner) return false;
-  return pw === START_PASSWORD;
+  return h ? checkPassword(pw, h) : false;
 }
 
 /* ---------- signed cookies ---------- */

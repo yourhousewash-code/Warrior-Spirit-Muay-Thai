@@ -550,7 +550,7 @@ button.mth.phc{display:block;width:100%;border:0}
         </div>
         <div class="row">
           <label for="ncEmail">Their email (optional)<input id="ncEmail" type="email" placeholder="So they get booking alerts" autocomplete="off"></label>
-          <label for="ncPw">Starting password<input id="ncPw" required minlength="8" value="Muaythai" autocomplete="off"></label>
+          <label for="ncPw">Starting password<input id="ncPw" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
         </div>
         <p class="muted" style="font-size:14px">Give them the username and starting password yourself. If you add their email, we’ll send them the login link and username (not the password).</p>
         <p class="err" id="ncerr" role="alert" hidden></p><p class="ok" id="ncok" role="status" hidden></p>
@@ -2076,7 +2076,7 @@ $('#addCoach').addEventListener('submit', async e => {
   try {
     const r = await api('/api/auth?action=coach-add', { name: $('#ncName').value, username: $('#ncUser').value, email: $('#ncEmail').value, password: $('#ncPw').value });
     show($('#ncok'), `${r.coach.first} has been added. Their username is “${r.coach.id}” and their starting password is “${$('#ncPw').value}”. They can log in at ${location.origin}/coach.`);
-    e.target.reset(); $('#ncPw').value = 'Muaythai'; delete $('#ncUser').dataset.touched;
+    e.target.reset(); delete $('#ncUser').dataset.touched;
     await refreshMe(); loadTeam();
   } catch (err) { show($('#ncerr'), err.message); }
 });
