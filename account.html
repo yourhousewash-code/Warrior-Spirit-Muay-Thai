@@ -180,8 +180,8 @@ async function loadBookings() {
     const now = Date.now();
     const up = bookings.filter(b => b.status === 'booked' && b.start > now);
     const past = bookings.filter(b => !(b.status === 'booked' && b.start > now)).reverse();
-    $('#upcoming').innerHTML = up.length ? up.map(b => `<div class="item booked"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)} · ${b.mins} min${RT[b.remind] ? ' · ' + RT[b.remind] : ''}</div><div class="meta"><a href="${calLink(b.id)}">Add to calendar</a></div></div>
-      <div class="acts">${b.canCancel ? `<button class="btn small ghost" data-cancel="${b.id}">Cancel</button>` : '<span class="muted" style="font-size:14px">Within 24h</span>'}</div></div>`).join('')
+    $('#upcoming').innerHTML = up.length ? up.map(b => `<div class="item booked"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)} · ${b.mins} min${RT[b.remind] ? ' · ' + RT[b.remind] : ''}</div><div class="meta"><a href="${esc(calLink(b.id))}">Add to calendar</a></div></div>
+      <div class="acts">${b.canCancel ? `<button class="btn small ghost" data-cancel="${esc(b.id)}">Cancel</button>` : '<span class="muted" style="font-size:14px">Within 24h</span>'}</div></div>`).join('')
       : '<p class="empty">No sessions booked. <a href="/book">Book one now</a>.</p>';
     $('#pastPanel').hidden = !past.length;
     $('#past').innerHTML = past.map(b => `<div class="item ${b.status === 'cancelled' ? 'cancelled' : ''}"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.type)} with ${esc(b.coachName)}${b.status === 'cancelled' ? ' · cancelled' : ''}</div></div></div>`).join('');
@@ -194,8 +194,8 @@ async function loadClassBookings() {
   try {
     const { bookings } = await api('/api/pt?action=class-mine');
     const up = bookings.filter(b => b.status === 'booked' && b.start > Date.now());
-    $('#upClasses').innerHTML = up.map(b => `<div class="item booked"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.className)} class with ${esc(b.coachName)} · ${b.mins} min${RT[b.remind] ? ' · ' + RT[b.remind] : ''}</div><div class="meta"><a href="${calLink(b.id)}">Add to calendar</a></div></div>
-      <div class="acts">${b.canCancel ? `<button class="btn small ghost" data-ccancel="${b.id}">Cancel place</button>` : '<span class="muted" style="font-size:14px">Within 2h</span>'}</div></div>`).join('');
+    $('#upClasses').innerHTML = up.map(b => `<div class="item booked"><div><b>${esc(b.when)}</b><div class="meta">${esc(b.className)} class with ${esc(b.coachName)} · ${b.mins} min${RT[b.remind] ? ' · ' + RT[b.remind] : ''}</div><div class="meta"><a href="${esc(calLink(b.id))}">Add to calendar</a></div></div>
+      <div class="acts">${b.canCancel ? `<button class="btn small ghost" data-ccancel="${esc(b.id)}">Cancel place</button>` : '<span class="muted" style="font-size:14px">Within 2h</span>'}</div></div>`).join('');
   } catch {}
 }
 async function loadClassDates() {
