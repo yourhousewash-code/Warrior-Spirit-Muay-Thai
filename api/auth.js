@@ -273,7 +273,7 @@ export default async function handler(req, res) {
         if (!(await rateLimit(`login:${email}:${ip}`, 8, 900)) || !(await rateLimit(`login:${email}`, 20, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
         const u = await redis.hgetall(`user:${email}`);
         /* The same message, and the same password work, whether or not the account exists, so neither gives it away. */
-        const ok = checkPassword(String(b.password || ''), u?.hash || DUMMY_HASH);
+        const ok = checkPassword(String(b.password || ''), u?.hash || DUMMY_HASH());
         if (!u || !u.hash || !ok) return bad(res, 'That email or password isn’t right.', 401);
         await startMember(res, email);
         return send(res, 200, { user: userOut(u) });
@@ -379,7 +379,9 @@ export default async function handler(req, res) {
   }
 }
 
-const DUMMY_HASH = hashPassword('not-a-real-password-' + crypto.randomBytes(8).toString('hex'));
+/* Made on first use, not when the file loads (Cloudflare Workers allow no random numbers at load time). */
+let dummyHash = '';
+const DUMMY_HASH = () => dummyHash || (dummyHash = hashPassword('not-a-real-password-' + crypto.randomBytes(8).toString('hex')));
 const OPTOUT = 'photo:optout'; // hash: member email → { name, at } for everyone who asked to be left out of photos and videos
 function userOut(u) { return { email: u.email, name: u.name, mobile: u.mobile || '', verified: u.verified !== 'no', needsMobile: !(u.mobile || '').replace(/\D/g, '').length, photos: u.photos === 'out' || u.photos === 'ok' ? u.photos : '', photosAt: Number(u.photosAt) || 0 }; }
 async function sendVerify(email, name) {
