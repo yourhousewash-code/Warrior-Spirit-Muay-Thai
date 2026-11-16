@@ -524,12 +524,14 @@ export default async function handler(req, res) {
       }
       case 'class-roster': { // coaches: who has booked into their limited classes over the next two weeks
         const c = coachSession(req); if (!c) return bad(res, 'Please log in.', 401);
-        const classes = (await getClasses()).filter(k => k.max && (c.admin || k.coach === c.id)), cover = await getCover(), out = [];
+        /* Owners see every class; a coach sees their own classes and any date they're covering (security lesson S-003). */
+        const classes = (await getClasses()).filter(k => k.max), cover = await getCover(), out = [];
         for (let d = londonDate(Date.now()), n = 0; n < 15; d = addDays(d, 1), n++) {
           for (const k of classes) {
             if (dow(d) !== k.day) continue;
             const start = londonMs(d, k.start); if (start < Date.now() - 3 * 3600e3) continue;
             const ov = cover[`${k.id}|${d}`]; if (ov === 'none') continue;
+            if (!(c.admin || k.coach === c.id || ov === c.id)) continue;
             const taken = await redis.hgetall(`classbook:${k.id}:${d}`) || {}, people = [];
             for (const cid of Object.values(taken)) { const cb = await redis.hgetall(`cbk:${cid}`); if (cb) people.push({ id: cb.id, name: cb.name, mobile: cb.mobile }); }
             out.push({ classId: k.id, date: d, name: k.name, when: fmt(start), start, max: k.max, people });
