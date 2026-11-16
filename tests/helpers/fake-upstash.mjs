@@ -25,7 +25,22 @@ export async function startFakeUpstash() {
       case 'hgetall': { const e = live(a[0]); return e ? [...e.v].flat() : []; }
       case 'hincrby': { const h = hash(a[0]); const v = Number(h.get(a[1]) || 0) + Number(a[2]); h.set(a[1], String(v)); return v; }
       case 'zadd': { const e = live(a[0]) || { v: new Map(), t: 'zset' }; kv.set(a[0], e); for (let i = 1; i < a.length; i += 2) e.v.set(String(a[i + 1]), Number(a[i])); return 1; }
-      case 'zrange': { const e = live(a[0]); if (!e) return []; return [...e.v].filter(([, s]) => s >= Number(a[1]) && s <= Number(a[2])).sort((x, y) => x[1] - y[1]).map(([m]) => m); }
+      case 'zrange': {
+        const e = live(a[0]); if (!e) return [];
+        const opts = a.slice(3).map(x => String(x).toLowerCase()), sorted = [...e.v].sort((x, y) => x[1] - y[1]);
+        let picked;
+        if (opts.includes('byscore')) picked = sorted.filter(([, s]) => s >= Number(a[1]) && s <= Number(a[2]));
+        else { const n = sorted.length, from = Number(a[1]) < 0 ? n + Number(a[1]) : Number(a[1]), to = Number(a[2]) < 0 ? n + Number(a[2]) : Number(a[2]); picked = sorted.slice(from, to + 1); }
+        return opts.includes('withscores') ? picked.flatMap(([m, s]) => [m, String(s)]) : picked.map(([m]) => m);
+      }
+      case 'scan': return ['0', [...kv.keys()].filter(k => live(k))];
+      case 'type': { const e = live(a[0]); return !e ? 'none' : e.t || 'string'; }
+      case 'pttl': { const e = live(a[0]); return !e ? -2 : e.exp ? e.exp - Date.now() : -1; }
+      case 'pexpire': { const e = live(a[0]); if (!e) return 0; e.exp = Date.now() + Number(a[1]); return 1; }
+      case 'smembers': { const e = live(a[0]); return e ? [...e.v] : []; }
+      case 'sadd': { let e = live(a[0]); if (!e) { e = { v: new Set(), t: 'set' }; kv.set(a[0], e); } let n = 0; for (const m of a.slice(1)) if (!e.v.has(String(m))) { e.v.add(String(m)); n++; } return n; }
+      case 'lrange': { const e = live(a[0]); return e ? e.v.slice() : []; }
+      case 'rpush': { let e = live(a[0]); if (!e) { e = { v: [], t: 'list' }; kv.set(a[0], e); } e.v.push(...a.slice(1).map(String)); return e.v.length; }
       default: throw new Error(`fake upstash: ${c} not supported`);
     }
   };
