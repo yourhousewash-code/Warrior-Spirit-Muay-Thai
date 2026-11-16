@@ -1,6 +1,19 @@
 # Cloudflare Worker for the Warrior Spirit website (WS-011). Not deployed: plan in The Manor, warrior-spirit-cloudflare-move-plan.md.
-# Keys (UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, SESSION_SECRET and the rest) go in Cloudflare's settings, never in this file.
+# Keys (UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, SESSION_SECRET, CRON_SECRET and the rest) go in Cloudflare's settings, never in this file.
+# Before a deploy: npm run pages && node tools/build-cloudflare.mjs (fills ./public, which git ignores).
 name = "warrior-spirit"
 main = "worker.mjs"
 compatibility_date = "2025-09-01"
 compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "none"
+# The API, the coach profile pages and the calendar feeds go to the Worker; everything else is a plain file.
+run_worker_first = ["/api/*", "/team/*", "/calendar/*"]
+
+# The two daily jobs (the same times as vercel.json, UTC). CRON_SECRET must be set, or cron.js refuses the run.
+[triggers]
+crons = ["0 6 * * *", "0 17 * * *"]
