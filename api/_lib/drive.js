@@ -41,6 +41,25 @@ export async function folderId(token) {
 }
 
 
+/* A separate "Warrior Spirit Backups" folder for the nightly database copies (coaches don't browse it). */
+export const KEY_BACKUP_FOLDER = 'gdrive:backupfolder';
+export async function backupFolder(token) {
+  const saved = await redis.get(KEY_BACKUP_FOLDER);
+  if (saved) {
+    const chk = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(String(saved))}?fields=id,trashed`, { headers: { authorization: `Bearer ${token}` } });
+    const cj = await chk.json().catch(() => ({}));
+    if (chk.ok && cj.id && !cj.trashed) return String(saved);
+  }
+  const r = await fetch('https://www.googleapis.com/drive/v3/files?fields=id', {
+    method: 'POST', headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ name: 'Warrior Spirit Backups', mimeType: 'application/vnd.google-apps.folder' }),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.id) throw new Error('Couldn’t create the backups folder.');
+  await redis.set(KEY_BACKUP_FOLDER, j.id);
+  return j.id;
+}
+
 export async function driveTrash(token, id) {
   const r = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}`, { method: 'PATCH', headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' }, body: JSON.stringify({ trashed: true }) });
   return r.ok;

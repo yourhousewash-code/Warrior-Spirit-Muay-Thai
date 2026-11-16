@@ -4,6 +4,8 @@
    Each booking is only ever reminded once. */
 import { redis, COACHES, loadCoaches, send, bad, setupProblem, clean, mail, fmt, SITE, ADDRESS, TYPES, FORMATS } from './_lib/core.js';
 import { londonMs, londonDate, addDays } from './_lib/avail.js';
+import { nightlyBackup } from './_lib/backup.js';
+import { accessToken, backupFolder } from './_lib/drive.js';
 
 export default async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
@@ -35,6 +37,8 @@ export default async function handler(req, res) {
         `Can’t make it? Please cancel from your account (up to 2 hours before) so someone else can have your place: ${SITE}/account`]);
       if (ok2) { await redis.hset(`cbk:${cb.id}`, { reminded: '1' }); sent++; }
     }
-    return send(res, 200, { run, date, sent });
+    /* Morning run: the nightly database copy to Drive (off until BACKUP_KEY is set; a failure never stops the reminders). */
+    const backup = run === 'morning' ? await nightlyBackup({ accessToken, backupFolder }) : undefined;
+    return send(res, 200, { run, date, sent, ...(backup ? { backup } : {}) });
   } catch (e) { console.error(e); return bad(res, 'Reminder run failed.', 500); }
 }
