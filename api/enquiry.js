@@ -23,6 +23,7 @@ export default async function handler(req, res) {
         reply: clean(b.reply, 30), experience: clean(b.experience, 40), when: clean(b.when, 120), message: clean(b.message, 1500),
         page: clean(b.page, 60), created: Date.now(), status: 'new',
       };
+      e.message = screen(e.message); e.when = screen(e.when); // security lesson S-008
       if (!e.name) return bad(res, 'Add your name so we know who to reply to.');
       const ph = checkPhone(e.phone);
       if (!ph.ok) return bad(res, ph.why);
@@ -64,4 +65,20 @@ export default async function handler(req, res) {
     console.error(err);
     return bad(res, 'Something went wrong. Please call or WhatsApp us instead.', 500);
   }
+}
+
+/* Security lesson S-008: free text never keeps a card number or a password. A run of 13 to 19 digits that passes the card
+   check (Luhn), or text after "password", is replaced before the enquiry is saved or emailed. Phone numbers are 11 digits
+   and stay as they are. */
+export function screen(text) {
+  let t = String(text || '');
+  t = t.replace(/\b(?:\d[ -]?){12,18}\d\b/g, m => (luhn(m.replace(/\D/g, '')) ? '[card number removed]' : m));
+  t = t.replace(/\b(pass ?word|pwd|pin)\b\s*(?:is|:|=)?\s*\S+/gi, '$1 [removed]');
+  return t;
+}
+function luhn(d) {
+  if (d.length < 13 || d.length > 19) return false;
+  let sum = 0;
+  for (let i = 0; i < d.length; i++) { let n = Number(d[d.length - 1 - i]); if (i % 2) { n *= 2; if (n > 9) n -= 9; } sum += n; }
+  return sum % 10 === 0;
 }

@@ -50,7 +50,7 @@ export default async function handler(req, res) {
     const ld = {
       '@context': 'https://schema.org', '@type': 'Person', name: c.name, jobTitle: p.role || 'Muay Thai coach', description: p.intro || undefined,
       image: photo.startsWith('http') ? photo : SITE + '/' + photo.replace(/^\//, ''), url: `${SITE}/team/${id}`,
-      sameAs: p.instagram ? [`https://www.instagram.com/${p.instagram}/`] : undefined,
+      sameAs: p.instagram && /^[A-Za-z0-9._]{1,30}$/.test(p.instagram) ? [`https://www.instagram.com/${p.instagram}/`] : undefined,
       worksFor: { '@type': 'SportsActivityLocation', name: 'Warrior Spirit Muay Thai & Kickboxing', address: ADDRESS, url: SITE },
       makesOffer: Number.isFinite(lowest) ? { '@type': 'Offer', name: 'Personal training', priceCurrency: 'GBP', price: lowest } : undefined,
     };
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
     ${p.intro ? `<p class="lede">${esc(p.intro)}</p>` : ''}
     <div class="row">
       <a class="btn" href="/book?coach=${id}">Book a session with ${esc(c.first)}</a>
-      ${p.instagram ? `<a class="btn ghost" href="https://www.instagram.com/${esc(p.instagram)}/" target="_blank" rel="noopener">@${esc(p.instagram)}</a>` : ''}
+      ${p.instagram && /^[A-Za-z0-9._]{1,30}$/.test(p.instagram) ? `<a class="btn ghost" href="https://www.instagram.com/${esc(p.instagram)}/" target="_blank" rel="noopener">@${esc(p.instagram)}</a>` : ''}
     </div>
     ${Number.isFinite(lowest) ? `<p class="muted">Personal training from ${money(lowest)} · pay at the gym</p>` : ''}
   </div>

@@ -968,7 +968,7 @@ a.tagc{text-decoration:none}
   var NAME={instagram:'Instagram',facebook:'Facebook',youtube:'YouTube',tiktok:'TikTok',whatsapp:'WhatsApp'};
   function draw(){document.querySelectorAll('[data-socials]').forEach(function(box){
     box.textContent='';
-    Object.keys(SOCIAL).forEach(function(k){if(!SOCIAL[k])return;var a=document.createElement('a');a.href=SOCIAL[k];a.target='_blank';a.rel='noopener';a.setAttribute('aria-label',NAME[k]);a.title=NAME[k];a.innerHTML=ICON[k];box.appendChild(a)})})}
+    Object.keys(SOCIAL).forEach(function(k){if(!/^https:\/\/[^\s"'<>]+$/i.test(SOCIAL[k]||''))return;var a=document.createElement('a');a.href=SOCIAL[k];a.target='_blank';a.rel='noopener';a.setAttribute('aria-label',NAME[k]);a.title=NAME[k];a.innerHTML=ICON[k];box.appendChild(a)})})}
   draw();
   /* owners switch on the YouTube channel in the coach area (What the website shows) */
   window.__social=function(k,url){if(k in SOCIAL&&SOCIAL[k]!==url){SOCIAL[k]=url;draw()}};
@@ -1211,7 +1211,7 @@ window.__pub=window.fetch?fetch('/api/site?action=public').then(function(r){retu
     Object.keys(d.options).forEach(function(k){
       var o=d.options[k]||{},on=!!o.on;set(k,on);
       if(on&&/^https:\/\/[\w.\-]+\//.test(o.link||'')){
-        each('[data-opt-link]',function(a){if(a.getAttribute('data-opt-link')===k)a.href=o.link});
+        each('[data-opt-link]',function(a){if(a.getAttribute('data-opt-link')===k&&/^https:\/\/[^\s"'<>]+$/i.test(o.link||''))a.href=o.link});
         if(window.__social)window.__social(k,o.link);
       }
     });
@@ -1246,7 +1246,7 @@ window.__pub=window.fetch?fetch('/api/site?action=public').then(function(r){retu
         (p.background||'').split(/\n\s*\n/).map(function(t){return t.trim()}).filter(Boolean).reverse().forEach(function(t){var el=document.createElement('p');el.className='ptext';el.textContent=t;anchor.after(el)});}
       var chips=sec.querySelector('.pchips'); if(chips&&p.chips){chips.textContent='';p.chips.split('\n').map(function(t){return t.trim()}).filter(Boolean).forEach(function(t){var sp=document.createElement('span');sp.textContent=t;chips.appendChild(sp)})}
       var ask=sec.querySelector('.ask'); if(ask){if(p.ask){ask.textContent='';var b=document.createElement('b');b.textContent='Ask '+first+' about';ask.appendChild(b);ask.appendChild(document.createTextNode(' '+p.ask));ask.hidden=false}else ask.hidden=true}
-      var ig=sec.querySelector('.igbtn'); if(ig){if(p.instagram){ig.href='https://www.instagram.com/'+encodeURIComponent(p.instagram)+'/';var l=ig.querySelector('span');if(l)l.textContent='@'+p.instagram;ig.hidden=false}else ig.hidden=true}
+      var ig=sec.querySelector('.igbtn'); if(ig){if(p.instagram&&/^[A-Za-z0-9._]{1,30}$/.test(p.instagram)){ig.href='https://www.instagram.com/'+encodeURIComponent(p.instagram)+'/';var l=ig.querySelector('span');if(l)l.textContent='@'+p.instagram;ig.hidden=false}else ig.hidden=true}
       var img=sec.querySelector('.photo img'); if(img&&p.photo)img.src=p.photo;
     });
   }).catch(function(){});

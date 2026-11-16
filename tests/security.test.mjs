@@ -133,3 +133,11 @@ test('no shared starting password: a coach without their own password can\'t sig
     assert.equal(r.status, 401, `${username} signed in with the old shared password`);
   }
 });
+
+test('enquiry free text never keeps a card number or a password (S-008)', async () => {
+  const { screen } = await import('../api/enquiry.js');
+  assert.equal(screen('card 4242 4242 4242 4242 thanks'), 'card [card number removed] thanks');
+  assert.match(screen('my password is hunter2'), /password \[removed\]/);
+  assert.equal(screen('call 07700 900123'), 'call 07700 900123', 'phone numbers stay');
+  assert.equal(screen('ref 1234 5678 9012 3456'), 'ref 1234 5678 9012 3456', 'a number that fails the card check stays');
+});
