@@ -1,0 +1,6 @@
+# Cloudflare Worker for the Warrior Spirit website (WS-011). Not deployed: plan in The Manor, warrior-spirit-cloudflare-move-plan.md.
+# Keys (UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, SESSION_SECRET and the rest) go in Cloudflare's settings, never in this file.
+name = "warrior-spirit"
+main = "worker.mjs"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]

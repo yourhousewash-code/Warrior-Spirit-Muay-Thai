@@ -77,5 +77,5 @@ test('nothing about FighterBase on public pages (handbook rule 4)', () => {
 
 test('team and private files stay off the live site', () => {
   const ignore = readFileSync('.vercelignore', 'utf8').split(/\r?\n/).map(s => s.trim());
-  for (const x of ['docs', 'handoffs', 'STATUS.md', 'CLAUDE.md', 'parked', 'site-src', 'tools', 'tests', '.claude']) assert.ok(ignore.includes(x), `.vercelignore is missing ${x}`);
+  for (const x of ['docs', 'handoffs', 'STATUS.md', 'CLAUDE.md', 'parked', 'site-src', 'tools', 'tests', '.claude', 'cloudflare']) assert.ok(ignore.includes(x), `.vercelignore is missing ${x}`);
 });
