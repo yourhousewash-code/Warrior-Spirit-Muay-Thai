@@ -141,3 +141,23 @@ test('enquiry free text never keeps a card number or a password (S-008)', async 
   assert.equal(screen('call 07700 900123'), 'call 07700 900123', 'phone numbers stay');
   assert.equal(screen('ref 1234 5678 9012 3456'), 'ref 1234 5678 9012 3456', 'a number that fails the card check stays');
 });
+
+test('class rosters: a coach sees their own classes and dates they cover, not others (S-003)', async () => {
+  const { londonDate, addDays, dow } = await import('../api/_lib/avail.js');
+  const pt = (await import('../api/pt.js')).default;
+  const day = addDays(londonDate(Date.now()), 3), wd = dow(day);
+  db.kv.set('classes', { v: JSON.stringify([
+    { id: 'r-jay', day: wd, start: '18:00', end: '19:00', name: 'Pads', coach: 'jay', max: 10 },
+    { id: 'r-kian', day: wd, start: '19:00', end: '20:00', name: 'Drills', coach: 'kian', max: 10 },
+  ]) });
+  db.kv.set('classcover', { v: JSON.stringify({ [`r-jay|${day}`]: 'aaron' }) });
+  // sign Aaron in with a password of his own (an owner would set it)
+  const { hashPassword } = await import('../api/_lib/core.js');
+  db.kv.set('coach:aaron:hash', { v: hashPassword('aarons-own-password') });
+  const login = await call(auth, { query: { action: 'coach-login' }, body: { username: 'aaron', password: 'aarons-own-password' }, ip: '198.51.100.31' });
+  assert.equal(login.status, 200, JSON.stringify(login.json));
+  const cookie = cookieFrom(login.headers['set-cookie']);
+  const r = await call(pt, { method: 'GET', query: { action: 'class-roster' }, cookie });
+  const ids = [...new Set(r.json.classes.map(k => k.classId))];
+  assert.deepEqual(ids, ['r-jay'], 'Aaron sees the class he covers, not Kian\'s');
+});
