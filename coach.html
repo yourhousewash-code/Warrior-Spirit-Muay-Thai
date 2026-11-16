@@ -336,6 +336,7 @@ button.mth.phc{display:block;width:100%;border:0}
 
   <section id="dash" hidden class="stack" style="gap:22px">
     <div class="warnbar" id="noEmailBar" role="alert" hidden></div>
+    <div class="warnbar" id="movedBar" hidden></div>
     <!-- ===== HOME ===== -->
     <div data-view="home" class="stack" style="gap:22px">
       <div class="stack" style="gap:8px">
@@ -1064,6 +1065,8 @@ async function init() {
   $('#loginView').hidden = !!me; $('#dash').hidden = !me; $('#logout').hidden = !me;
   if (!me) return;
   $('#hello').textContent = `Hi ${me.first}`;
+  /* FighterBase switch-over (api/_lib/switchover.js): the server only sends `moved` once it's switched on. */
+  try { const cfg = await api('/api/auth?action=config'); if (cfg.moved) { $('#movedBar').textContent = `Switched over: members now make new bookings for adult classes and PT in the ${cfg.moved.name} app. Bookings made on this website before the switch still show here until they've happened, and kids classes are still booked here. The website's wording, photos, timetable and enquiries are still managed here.`; $('#movedBar').hidden = false; } } catch {}
   for (const k of Object.keys(COLS)) delete COLS[k];
   for (const t of me.team) COLS[t.id] = t.first;
   if (!me.admin) { for (const k of Object.keys(COLS)) if (k !== me.id) delete COLS[k]; }

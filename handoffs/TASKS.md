@@ -1,6 +1,6 @@
 # Tasks: Warrior Spirit Muay Thai website
 
-Copied by the lead (Warrior Spirit website agent, Claude) from The Manor. **The Manor is the only real list**: the status card `C:\The Manor\Businesses\SRS\warrior-spirit-status.md`, `C:\The Manor\Businesses\SRS\warrior-spirit-orders.md` and `C:\The Manor\Batcave\Orders\ALL.md`. Last copied: 14 Nov 2026, 01:30 UK (orders up to A-066 and WS-007).
+Copied by the lead (Warrior Spirit website agent, Claude) from The Manor. **The Manor is the only real list**: the status card `C:\The Manor\Businesses\SRS\warrior-spirit-status.md`, `C:\The Manor\Businesses\SRS\warrior-spirit-orders.md` and `C:\The Manor\Batcave\Orders\ALL.md`. Last copied: 14 Nov 2026, 01:15 UK (orders up to A-066 and WS-007).
 
 Team (Team Rules v1): lead Claude · builder Claude · partner GPT. Only the builder changes code; only the lead deals with outside accounts (Google, Bing, Cloudflare, listings, applications). The partner researches, reviews and drafts, and reports with a handoff file in this folder (`YYYY-MM-DD-<from>-<subject>.md`) or one HANDOFF block for Steve to paste to the lead.
 

@@ -3,6 +3,8 @@ import { redis, COACHES, loadCoaches, send, bad, setupProblem, clean, userSessio
 import { londonDate, DAY, getClasses, getCover, classInstances } from './_lib/avail.js';
 import { vcal } from './_lib/ics.js';
 import { ptEvent, classBookingEvent, clubClassEvent } from './_lib/calevents.js';
+import { vevent } from './_lib/ics.js';
+import { switchedOn, fbLink, SWITCHOVER } from './_lib/switchover.js';
 
 const host = req => `https://${req.headers['x-forwarded-host'] || req.headers.host || 'www.warriorspiritmuaythai.co.uk'}`;
 const ics = (res, name, body, cache) => {
@@ -54,7 +56,15 @@ export default async function handler(req, res) {
       const t = clean(req.query.t, 80).replace(/\.ics$/i, '');
       const email = t ? await redis.get(`calfeed:${t}`) : null;
       if (!email) return bad(res, 'That calendar link isn’t valid.', 404);
-      return ics(res, 'my-warrior-spirit.ics', vcal('My Warrior Spirit sessions', await mineEvents(email, site), { refreshHours: 1 }), 'private, max-age=300');
+      const evs = await mineEvents(email, site);
+      /* After the switch-over: the bookings still running here, plus one note telling the member where new bookings live. */
+      if (switchedOn()) {
+        const d = new Date(); d.setUTCHours(9, 0, 0, 0); const start = d.getTime();
+        evs.push(vevent({ uid: `moved-${t}@warriorspiritmuaythai.co.uk`, start, end: start + 15 * 60e3, stamp: start,
+          summary: `New bookings are in the ${SWITCHOVER.name} app`, url: fbLink('join'),
+          description: `Bookings you made on our website before the switch still show here. New classes and PT are booked in the ${SWITCHOVER.name} app: open it, then Schedule, Add to your calendar, for your new calendar link. ${fbLink('join')}` }));
+      }
+      return ics(res, 'my-warrior-spirit.ics', vcal('My Warrior Spirit sessions', evs, { refreshHours: 1 }), 'private, max-age=300');
     }
 
     /* one booking, for “Add to calendar” */

@@ -1,6 +1,6 @@
 # Handoff pack: Warrior Spirit Muay Thai website
 
-**Version 3 · 14 Nov 2026, 01:30 UK.** A snapshot, not live. Source: Agent Rules CORE v2.11, Lead add-on v2.0, Builder add-on v2.1, Offline agents add-on v2.0, `Orders\ALL.md` up to A-066, `warrior-spirit-orders.md` up to WS-007. Refreshed by the lead (Warrior Spirit website agent, Claude) at the end of every session where orders or rules change.
+**Version 3 · 14 Nov 2026, 01:15 UK.** A snapshot, not live. Source: Agent Rules CORE v2.11, Lead add-on v2.0, Builder add-on v2.1, Offline agents add-on v2.0, `Orders\ALL.md` up to A-066, `warrior-spirit-orders.md` up to WS-007. Refreshed by the lead (Warrior Spirit website agent, Claude) at the end of every session where orders or rules change.
 
 **Stale if** it is more than 7 days old, or older than the latest order mentioned in `handoffs/TASKS.md`. If stale: draft only, and ask the lead.
 

@@ -1,4 +1,5 @@
 import { humanCheck, NOT_HUMAN, turnstileSiteKey } from './_lib/turnstile.js';
+import { switchInfo } from './_lib/switchover.js';
 import crypto from 'node:crypto';
 import {
   redis, COACHES, loadCoaches, activeIds, publicIds, send, bad, setupProblem, body, clean, validEmail, rateLimit,
@@ -284,7 +285,7 @@ export default async function handler(req, res) {
         return send(res, 200, { user: u ? userOut(u) : null });
       }
       case 'logout': clearSession(res, 'ws_user'); return send(res, 200, { ok: true });
-      case 'config': return send(res, 200, { google: process.env.GOOGLE_CLIENT_ID || '', turnstile: turnstileSiteKey() });
+      case 'config': return send(res, 200, { google: process.env.GOOGLE_CLIENT_ID || '', turnstile: turnstileSiteKey(), ...(switchInfo() ? { moved: switchInfo() } : {}) });
       case 'verify': {
         const token = clean(req.query.token, 80);
         const email = token && await redis.get(`verify:${token}`);

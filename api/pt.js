@@ -2,6 +2,7 @@ import {
   redis, COACHES, loadCoaches, activeIds, publicIds, TYPES, FORMATS, DURATIONS, DEFAULT_PRICES, getPrices, priceOf, minsLabel,
   send, bad, setupProblem, body, clean, id, fmt, mail, mailReady, coachEmail, coachSession, userSession, loadUser, SITE, ADDRESS, rateLimit,
 } from './_lib/core.js';
+import { switchedOn, fbLink, isKidsClass, MOVED } from './_lib/switchover.js';
 import { vcal } from './_lib/ics.js';
 import { ptEvent, classBookingEvent } from './_lib/calevents.js';
 import {
@@ -52,6 +53,8 @@ export default async function handler(req, res) {
     switch (action) {
       /* ----- public: open slots ----- */
       case 'open': {
+        /* After the FighterBase switch-over, new PT bookings are made in FighterBase (bookings already made still run here). */
+        if (switchedOn()) return send(res, 410, { error: MOVED('PT booking'), moved: fbLink('pt') });
         /* Start times customers can book for a given length, with each coach's prices. */
         const from = Date.now() + 2 * 3600e3, to = Date.now() + 42 * DAY;
         const pick = clean(req.query.coach, 20);
@@ -388,6 +391,7 @@ export default async function handler(req, res) {
 
       /* ----- customers: book, list, cancel ----- */
       case 'book': {
+        if (switchedOn()) return send(res, 410, { error: MOVED('PT booking'), moved: fbLink('pt') });
         const email = userSession(req); if (!email) return bad(res, 'Please log in to book.', 401);
         const u = await redis.hgetall(`user:${email}`); if (!u) return bad(res, 'Please log in again.', 401);
         if (u.verified === 'no' && mailReady()) return bad(res, 'Please confirm your email first. We’ve sent you a link (check your junk folder), then press Confirm again.', 403);
@@ -453,7 +457,8 @@ export default async function handler(req, res) {
       /* ----- booking a place in a class that has a limit ----- */
       case 'class-dates': { // public: bookable classes over the next two weeks, with places left
         const email = userSession(req);
-        const classes = (await getClasses()).filter(k => k.max && COACHES[k.coach]), cover = await getCover();
+        /* After the switch-over only kids classes are booked here (adults book in FighterBase). */
+        const classes = (await getClasses()).filter(k => k.max && COACHES[k.coach] && (!switchedOn() || isKidsClass(k))), cover = await getCover();
         const out = [];
         for (let d = londonDate(Date.now()), n = 0; n < 15; d = addDays(d, 1), n++) {
           for (const k of classes) {
@@ -474,6 +479,7 @@ export default async function handler(req, res) {
         if (!String(u.mobile || '').replace(/\D/g, '').length) return bad(res, 'Add your mobile number so your coach can reach you.', 400);
         const inst = await classOn(clean(b.classId, 40), clean(b.date, 12));
         if (!inst || inst.cancelled) return bad(res, 'That class isn’t running on that date.', 404);
+        if (switchedOn() && !isKidsClass(inst.k)) return send(res, 410, { error: MOVED('Class booking'), moved: fbLink('book') });
         if (inst.start < Date.now() + 30 * 60e3) return bad(res, 'Booking for that class has closed.', 409);
         if (inst.start > Date.now() + 15 * DAY) return bad(res, 'You can book up to two weeks ahead.', 409);
         const lock = `classlock:${inst.k.id}:${inst.date}`;

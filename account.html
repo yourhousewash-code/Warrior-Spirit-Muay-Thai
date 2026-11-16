@@ -32,6 +32,7 @@
       <p class="err" id="lerr" role="alert" hidden></p>
       <button class="btn full" type="submit">Log in</button>
       <p class="muted" style="font-size:15px"><a href="?forgot=1">Forgotten password?</a> · New here? <a href="?new=1">Create an account</a></p>
+      <p class="vnote" id="movedOut" hidden></p>
     </form>
     <form id="regForm" class="panel" hidden>
       <label for="rn">Your name<input id="rn" autocomplete="name" required></label>
@@ -64,7 +65,8 @@
     <h1 id="hello">Hi</h1>
     <div class="vok" id="vok" hidden>Thanks, your email is confirmed. You’re all set to book.</div>
     <div class="vnote" id="vnote" hidden>Please confirm your email: we’ve sent you a link (check your junk folder). You’ll need it before you can book. <button type="button" id="resendV">Send it again</button></div>
-    <div class="row"><a class="btn" href="/book">Book a PT session</a></div>
+    <div class="row"><a class="btn" href="/book" id="ptBtn">Book a PT session</a></div>
+    <p class="vnote" id="movedIn" hidden></p>
     <div class="panel">
       <h2>Upcoming sessions</h2>
       <div id="upClasses" class="list"></div>
@@ -72,7 +74,7 @@
       <p class="muted" style="font-size:15px">You can cancel online up to 24 hours before. Closer to the time, please message the gym.</p>
     </div>
     <div class="panel" id="clsPanel" hidden>
-      <h2>Book a place in a class</h2>
+      <h2 id="clsH">Book a place in a class</h2>
       <p class="muted" style="font-size:15px">These classes have a limited number of places. Pick one and, if you like, ask for a reminder.</p>
       <div id="clsList" class="list"></div>
       <p class="err" id="clsErr" role="alert" hidden></p>
@@ -125,7 +127,23 @@ const api = async (url, data) => {
 const show = (el, msg) => { el.textContent = msg; el.hidden = !msg; };
 const q = new URLSearchParams(location.search);
 
+/* FighterBase switch-over (api/_lib/switchover.js): the server only sends `moved` once it's switched on. Adults then book in
+   the app; bookings already made here still show and can be cancelled; kids classes are still booked here. */
+let moved = null;
+const movedReady = fetch('/api/auth?action=config', { credentials: 'same-origin' }).then(r => r.json()).then(j => { moved = j.moved || null; }).catch(() => {});
+function showMoved() {
+  if (!moved) return;
+  const a = (href, text) => `<a href="${esc(href)}" rel="noopener">${esc(text)}</a>`;
+  $('#movedOut').innerHTML = `Adults now book classes and personal training in the ${esc(moved.name)} app: ${a(moved.join, 'join or sign in there')}. Booking a kids class for your child? Create an account here.`;
+  $('#movedOut').hidden = false;
+  $('#movedIn').innerHTML = `New bookings for adult classes and personal training are made in the ${esc(moved.name)} app: ${a(moved.join, 'open it here')}. Bookings you made on this website before still show below, and you can cancel them here. Kids classes are still booked here.`;
+  $('#movedIn').hidden = false;
+  $('#ptBtn').href = moved.pt; $('#ptBtn').textContent = `Book PT in the ${moved.name} app`; $('#ptBtn').rel = 'noopener';
+  $('#clsH').textContent = 'Book a place in a kids class';
+}
+
 async function init() {
+  await movedReady; showMoved();
   let user = null;
   try { user = (await api('/api/auth?action=me')).user; } catch {}
   $('#out').hidden = !!user; $('#in').hidden = !user; $('#logout').hidden = !user;
