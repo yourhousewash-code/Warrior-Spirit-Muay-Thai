@@ -228,7 +228,7 @@ Checked against the SRS standards on 1 Nov 2026. "Verified" means checked on the
 | Affiliate disclosure | **n/a** | No affiliate links |
 | https and HSTS | **Done** | Verified: HSTS max-age 63072000 |
 | Frame, nosniff, referrer, permissions headers | **Done** | Verified |
-| Content security policy | **Partly** | Report-only since the 12 Nov 2026 branch; enforce after a check of the live pages and the coach area |
+| Content security policy | **Partly** | Report-only since the 12 Nov 2026 branch; enforce after a check of the live pages and the coach area. Local check 17 Nov 2026 with `tools/csp-check.mjs` (every page in a real browser with the policy enforced): 38 pages, nothing blocked. Once the report-only policy is live, run the same tool against the live site (`node tools/csp-check.mjs https://www.warriorspiritmuaythai.co.uk`) and with a coach signed in, then switch the header to enforced |
 | Two-step verification on every account | **Partly** | Coach area done 4 Nov 2026 (required for owners). Outside accounts (Vercel, GitHub, Google, names.co.uk, Upstash) still to confirm: each person turns it on in that account's settings |
 
 ## 10. Wanted next
