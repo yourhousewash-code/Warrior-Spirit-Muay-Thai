@@ -65,3 +65,16 @@ test('the nightly job saves to Drive, bins copies older than 30 days, and is off
     assert.equal(broken.ok, false, 'a failure is reported, not thrown');
   } finally { globalThis.fetch = realFetch; }
 });
+
+test('copying the database to another gives a matching copy, refuses a non-empty target, and --check spots a difference (WS-011 step 1)', async () => {
+  const { copyDatabase } = await import('../tools/copy-database.mjs');
+  const C = await startFakeUpstash();
+  try {
+    const to = { UPSTASH_REDIS_REST_URL: C.url, UPSTASH_REDIS_REST_TOKEN: 'test' };
+    const r = await copyDatabase(envOf(A), to);
+    assert.equal(r.same, true, JSON.stringify(r)); assert.ok(r.from.count > 3);
+    await assert.rejects(() => copyDatabase(envOf(A), to), /isn’t empty/, 'never overwrites');
+    C.kv.set('extra', { v: 'x' });
+    assert.equal((await copyDatabase(envOf(A), to, { check: true })).same, false, 'a difference is reported');
+  } finally { await C.close(); }
+});
