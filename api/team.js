@@ -132,6 +132,8 @@ ${desc ? `<meta name="description" content="${esc(desc)}">` : ''}
 ${canonical ? `<link rel="canonical" href="${esc(canonical)}"><meta property="og:url" content="${esc(canonical)}">` : ''}
 <meta property="og:title" content="${esc(title)}">${desc ? `<meta property="og:description" content="${esc(desc)}">` : ''}
 ${image ? `<meta property="og:image" content="${esc(image.startsWith('http') ? image : SITE + '/' + image.replace(/^\//, ''))}">` : ''}
+<link rel="icon" href="/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/img/favicon-48.png" sizes="48x48" type="image/png">
 <link rel="icon" href="/img/logo.webp" type="image/webp">
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/app.css">

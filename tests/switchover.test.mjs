@@ -15,6 +15,7 @@ test('switched off (now): no FighterBase links stored, none in vercel.json, noth
   const { SWITCHOVER } = await import('../api/_lib/switchover.js');
   assert.equal(SWITCHOVER.on, false, 'the switch is off until Steve says go');
   for (const k of ['base', 'join', 'book', 'pt', 'app', 'clubFeed', 'timetable']) assert.equal(SWITCHOVER[k], '', `${k} must stay empty while off (the club code stays off public pages)`);
+  for (const f of ['fb-logo.svg', 'fb-mark.svg']) assert.ok(!existsSync(`img/${f}`), `img/${f}: FighterBase's logo isn't on the site while off`);
   const vj = JSON.parse(readFileSync('vercel.json', 'utf8'));
   assert.ok(!(vj.redirects || []).some(r => ['/book', '/book.html', '/calendar/club.ics', '/account', '/account.html'].includes(r.source)), 'no switch-over redirects while off');
   assert.equal(SWITCHOVER.kidsOnSite, false, 'everything moves on the day (Steve, 17 Nov)');
@@ -24,9 +25,9 @@ test('switched on: the build points "Get the app" at FighterBase, credits it and
   const root = resolve('.');
   const tmp = mkdtempSync(join(tmpdir(), 'ws-switch-'));
   try {
-    for (const d of ['site-src', 'tools', 'api']) cpSync(join(root, d), join(tmp, d), { recursive: true });
+    for (const d of ['site-src', 'tools', 'api', 'parked', 'img']) cpSync(join(root, d), join(tmp, d), { recursive: true });
     for (const f of ['vercel.json', 'package.json']) cpSync(join(root, f), join(tmp, f));
-    for (const d of ['img', 'photos', 'video', 'node_modules']) if (existsSync(join(root, d))) symlinkSync(join(root, d), join(tmp, d));
+    for (const d of ['photos', 'video', 'node_modules']) if (existsSync(join(root, d))) symlinkSync(join(root, d), join(tmp, d));
     const sw = join(tmp, 'api/_lib/switchover.js');
     let code = readFileSync(sw, 'utf8').replace('on: false,', 'on: true,');
     for (const [k, v] of Object.entries(TEST_LINKS)) code = code.replace(new RegExp(`^(\\s*${k}: )'',`, 'm'), `$1'${v}',`);
@@ -37,9 +38,12 @@ test('switched on: the build points "Get the app" at FighterBase, credits it and
       assert.ok(!/<[^>]*data-install|'#get-app'|install\.js/.test(h), `${f}: the website's own install is still there`);
       assert.equal(h.split('href="https://fb.example/?src=site" rel="noopener"').length - 1, 3, `${f}: the three "Get the app" buttons open FighterBase`);
       assert.ok(h.includes('href:"https://fb.example/?src=site"'), `${f}: the ticker's app item opens FighterBase`);
-      assert.ok(h.includes('Bookings powered by <a href="https://fb.example"'), `${f}: no FighterBase credit in the footer`);
+      assert.ok(h.includes('<a class="fbbadge" href="https://fb.example" rel="noopener"><span>Powered by</span><img src="/img/fb-logo.svg" alt="FighterBase"'), `${f}: the "Powered by FighterBase" badge`);
+      assert.ok(h.includes('<img src="img/logo.webp" alt="Warrior Spirit Muay Thai logo">'), `${f}: the Warrior Spirit logo is still the main one in the header`);
       assert.ok(!h.includes('My PT bookings') && h.includes('>My bookings</a>'), `${f}: "My bookings" label`);
     }
+    assert.ok(readFileSync(join(tmp, 'classes.html'), 'utf8').includes('Live timetable from <a href="https://fb.example"'), 'the timetable says it comes from FighterBase');
+    for (const f of ['fb-logo.svg', 'fb-mark.svg']) assert.ok(existsSync(join(tmp, 'img', f)), `img/${f} copied in when switched on`);
     const vj = JSON.parse(readFileSync(join(tmp, 'vercel.json'), 'utf8'));
     const r = Object.fromEntries(vj.redirects.map(x => [x.source, x]));
     assert.equal(r['/book'].destination, 'https://fb.example/#pt=CODE&src=site'); assert.equal(r['/book'].permanent, false);

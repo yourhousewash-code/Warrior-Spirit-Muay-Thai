@@ -2,7 +2,7 @@
 // Edit site-src/index.html, then run:  node tools/build-pages.mjs
 // Output (committed): index.html, <section>.html (served at /<section>), sitemap.xml,
 //   photo-usage.json (public) and api/_lib/photousage.js (the same map, for the coach area's server code)
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, copyFileSync, existsSync, unlinkSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { SITE_OPTIONS } from '../api/_lib/siteoptions.js';
 import { SWITCHOVER, switchedOn, fbLink } from '../api/_lib/switchover.js';
@@ -91,7 +91,7 @@ function keepOnlyView(html, keep) {
 
 /* FighterBase switch-over day (api/_lib/switchover.js). Off: the page is untouched. On: every "Get the app" button and the
    ticker item open the FighterBase app instead of installing this website (Steve, 17 Nov 2026: "just FighterBase"; one app
-   for members), "My PT bookings" becomes "My bookings", and the footer credits FighterBase (Steve, 11 Nov 2026: on the day
+   for members), "My PT bookings" becomes "My bookings", and the footer carries a "Powered by FighterBase" badge (Steve, 11 Nov 2026: on the day
    only). Each change must match exactly once, so a changed page stops the build. */
 function afterSwitchover(html) {
   if (!switchedOn()) return html;
@@ -100,15 +100,29 @@ function afterSwitchover(html) {
     if (count !== n) throw new Error(`switch-over: expected ${n} of ${JSON.stringify(from.slice(0, 50))}, found ${count}`);
     html = html.split(from).join(to);
   };
-  const app = fbLink('app') || fbLink('join');
-  swap('<li class="navapp"><a role="button" tabindex="0" data-install hidden style="cursor:pointer">Get the app</a></li>', `<li class="navapp"><a href="${app}" rel="noopener">Get the app</a></li>`);
-  swap('<button type="button" class="btn ghost" data-install hidden><span class="lg">Get the app</span><span class="sm">App</span></button>', `<a class="btn ghost" data-fbapp href="${app}" rel="noopener"><span class="lg">Get the app</span><span class="sm">App</span></a>`);
+  const app = fbLink('app') || fbLink('join'), mark = '<img class="fbmark" src="/img/fb-mark.svg" alt="" width="16" height="16">';
+  /* "Powered by FighterBase" (Steve, 17 Nov 2026: the Warrior Spirit logo stays the main one, at its proper sizes; FighterBase's
+     logo and name "not too much, but ... clear"). FighterBase's own logo files (brand pack, dark-background versions). */
+  swap('.foot img{width:96px}', `.foot img{width:96px}
+.fbrow{margin:28px 0 0}
+.fbbadge{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border:1px solid var(--line);border-radius:999px;color:var(--soft);font-size:13px;text-decoration:none;line-height:1;white-space:nowrap}
+.fbbadge:hover{border-color:var(--muted);color:var(--bone)}
+.foot .fbbadge img{width:auto;height:20px}
+.fbmark,.foot .fbmark{width:16px;height:16px;vertical-align:-2px;margin-right:8px}
+.fbnote{display:flex;align-items:center;gap:6px;margin:14px 0 0;color:var(--soft);font-size:14px}
+.fbnote .fbmark{margin:0}`);
+  swap('<li class="navapp"><a role="button" tabindex="0" data-install hidden style="cursor:pointer">Get the app</a></li>', `<li class="navapp"><a href="${app}" rel="noopener">${mark}Get the app</a></li>`);
+  swap('<button type="button" class="btn ghost" data-install hidden><span class="lg">Get the app</span><span class="sm">App</span></button>', `<a class="btn ghost" data-fbapp href="${app}" rel="noopener">${mark}<span class="lg">Get the app</span><span class="sm">App</span></a>`);
   swap('.navr [data-install]', '.navr [data-fbapp]', 2);
   html = html.replace(/if\(!\(matchMedia\('\(display-mode: standalone\)'\)[^\n]*?href:'#get-app',logo:true\}\);/, `items.push({label:'App',html:'<strong>Get the ${SWITCHOVER.name} app</strong> to book classes and personal training.',href:${JSON.stringify(app)},logo:true});`);
-  swap('<button type="button" class="btn" data-install hidden style="margin-top:12px">Get the app</button>', `<a class="btn" href="${app}" rel="noopener" style="margin-top:12px">Get the app</a>`);
+  swap('<button type="button" class="btn" data-install hidden style="margin-top:12px">Get the app</button>', `<a class="btn" href="${app}" rel="noopener" style="margin-top:12px;white-space:nowrap">Get the app</a>`);
+  swap('<p class="draft" style="color:var(--muted)">', `<p class="fbrow"><a class="fbbadge" href="${SWITCHOVER.base}" rel="noopener"><span>Powered by</span><img src="/img/fb-logo.svg" alt="${SWITCHOVER.name}" width="108" height="20"></a></p>
+    <p class="draft" style="color:var(--muted)">`);
+  if (html.split('<div class="note"><span data-hours="note">').length === 2) swap('<div class="note"><span data-hours="note">', `<p class="fbnote">${mark}<span>Live timetable from <a href="${SWITCHOVER.base}" rel="noopener">${SWITCHOVER.name}</a>. Book your place in the app.</span></p>
+      <div class="note"><span data-hours="note">`);
   swap('<script src="/assets/install.js" defer></script>', '');
   swap('>My PT bookings</a>', '>My bookings</a>', 2);
-  swap('<a href="/accessibility">Accessibility</a></p>', `<a href="/accessibility">Accessibility</a> · Bookings powered by <a href="${SWITCHOVER.base}" rel="noopener">${SWITCHOVER.name}</a></p>`);
+  if (!html.includes('/img/fb-logo.svg')) throw new Error('switch-over: the "Powered by FighterBase" badge is missing');
   if (/<[^>]*data-install|'#get-app'/.test(html)) throw new Error('switch-over: a "Get the app" control is still on the page');
   return html;
 }
@@ -159,6 +173,10 @@ console.log(`built ${starts.length} pages + sitemap (${list.length} urls)`);
   const vj = JSON.parse(readFileSync('vercel.json', 'utf8'));
   const ours = ['/book', '/book.html', '/calendar/club.ics', '/account', '/account.html'];
   vj.redirects = (vj.redirects || []).filter(r => !ours.includes(r.source));
+  for (const f of ['fb-logo.svg', 'fb-mark.svg']) {
+    if (switchedOn()) copyFileSync(`parked/fighterbase/${f}`, `img/${f}`);
+    else if (existsSync(`img/${f}`)) unlinkSync(`img/${f}`); // FighterBase's logo is only on the site once it's switched on
+  }
   if (switchedOn()) {
     if (!fbLink('pt') || !fbLink('join') || !fbLink('book')) throw new Error('switch-over: fill base, join, book and pt in api/_lib/switchover.js');
     vj.redirects.unshift({ source: '/book', destination: fbLink('pt'), permanent: false }, { source: '/book.html', destination: fbLink('pt'), permanent: false });
