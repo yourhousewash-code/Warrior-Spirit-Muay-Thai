@@ -5,6 +5,7 @@ import { vcal } from './_lib/ics.js';
 import { ptEvent, classBookingEvent, clubClassEvent } from './_lib/calevents.js';
 import { vevent } from './_lib/ics.js';
 import { switchedOn, fbLink, SWITCHOVER } from './_lib/switchover.js';
+import { withLog } from './_lib/actionlog.js';
 
 const host = req => `https://${req.headers['x-forwarded-host'] || req.headers.host || 'www.warriorspiritmuaythai.co.uk'}`;
 const ics = (res, name, body, cache) => {
@@ -33,7 +34,7 @@ const mineEvents = async (email, site) => {
   return out;
 };
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   try {
@@ -90,3 +91,5 @@ export default async function handler(req, res) {
     return bad(res, 'Something went wrong on our side.', 500);
   }
 }
+
+export default withLog('cal', handler);

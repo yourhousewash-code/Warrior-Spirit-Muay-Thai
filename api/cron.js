@@ -6,8 +6,9 @@ import { redis, COACHES, loadCoaches, send, bad, setupProblem, clean, mail, fmt,
 import { londonMs, londonDate, addDays } from './_lib/avail.js';
 import { nightlyBackup } from './_lib/backup.js';
 import { accessToken, backupFolder } from './_lib/drive.js';
+import { withLog } from './_lib/actionlog.js';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
   const ok = secret ? req.headers.authorization === `Bearer ${secret}` : /vercel-cron/.test(req.headers['user-agent'] || '');
   if (!ok) return bad(res, 'Not allowed.', 401);
@@ -42,3 +43,5 @@ export default async function handler(req, res) {
     return send(res, 200, { run, date, sent, ...(backup ? { backup } : {}) });
   } catch (e) { console.error(e); return bad(res, 'Reminder run failed.', 500); }
 }
+
+export default withLog('cron', handler);

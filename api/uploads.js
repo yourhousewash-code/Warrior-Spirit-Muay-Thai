@@ -2,8 +2,9 @@ import { Readable } from 'node:stream';
 import { handleUpload } from '@vercel/blob/client';
 import { list, get, del } from '@vercel/blob';
 import { coachSession, send, bad, clean, COACHES, loadCoaches, activeIds, publicIds, setupProblem } from './_lib/core.js';
+import { withLog } from './_lib/actionlog.js';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   await loadCoaches();
@@ -79,3 +80,5 @@ export default async function handler(req, res) {
     return bad(res, e.message === 'Not allowed' ? 'Not allowed.' : 'Upload service error. Please try again.', 500);
   }
 }
+
+export default withLog('uploads', handler);

@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import { put } from '@vercel/blob';
 import { redis, COACHES, coachSession, loadCoaches, send, bad, body, clean, setupProblem } from './_lib/core.js';
 import { CLIENT_ID, CLIENT_SECRET, KEY_REFRESH, KEY_FOLDER, configured, origin, redirectUri, accessToken, folderId } from './_lib/drive.js';
+import { withLog } from './_lib/actionlog.js';
 
 /* Coach uploads go to a "Warrior Spirit Uploads" folder in the owner's Google Drive.
    One admin approves the connection once; the site then keeps a refresh token in the database
@@ -32,7 +33,7 @@ async function importFile(token, m, uploaderId) {
   return { src, name: label };
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   await loadCoaches();
@@ -172,3 +173,5 @@ export default async function handler(req, res) {
     return bad(res, e.message.startsWith('Google') || e.message.startsWith('Couldn’t') ? e.message : 'Upload service error. Please try again.', 500);
   }
 }
+
+export default withLog('gdrive', handler);

@@ -10,6 +10,7 @@ import {
   realSlots, generated, parseVirtual, getClasses, getCover, classInstances, freeIntervals, startsIn,
 } from './_lib/avail.js';
 import { liveProfile } from './_lib/profiles.js';
+import { withLog } from './_lib/actionlog.js';
 
 
 const DEFAULT_HOURS = [
@@ -42,7 +43,7 @@ async function classOn(classId, date) {
 }
 const cbView = cb => { const start = Number(cb.start); return { id: cb.id, className: cb.className, coachName: COACHES[cb.coach]?.name || cb.coach, start, mins: Number(cb.mins), when: fmt(start), status: cb.status, remind: cb.remind || 'none', canCancel: cb.status === 'booked' && start - Date.now() >= 2 * 3600e3 }; };
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   await loadCoaches();
@@ -623,3 +624,5 @@ async function notify(kind, bk) {
     await mail(staff, `PT cancelled: ${bk.name}, ${when}`, [`A PT session was cancelled by ${by}. The slot is free again.`, ...details, '', ...who]);
   }
 }
+
+export default withLog('pt', handler);

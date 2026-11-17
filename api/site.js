@@ -8,6 +8,7 @@ import { PHOTO_USAGE, TIMETABLE_URL } from './_lib/photousage.js';
 import { GALLERY, profilePhotoUrl } from './_lib/profiles.js';
 import { getClasses } from './_lib/avail.js';
 import { SITE_OPTIONS, optionByKey, missingTexts, cleanLink, effectiveOptions } from './_lib/siteoptions.js';
+import { withLog } from './_lib/actionlog.js';
 
 /* Website photos and videos that coaches can change.
    LISTS: the hero carousel and the video gallery. Until someone edits a list, the website keeps its built-in version.
@@ -204,7 +205,7 @@ async function optionsList() {
 function merge(live, delta) { const o = { ...(live || {}) }; for (const [k, v] of Object.entries(delta || {})) { if (v === null) delete o[k]; else o[k] = v; } return o; }
 const nameOf = c => COACHES[c]?.first || c;
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const action = clean(req.query.action, 20);
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
@@ -507,3 +508,5 @@ export default async function handler(req, res) {
     return bad(res, 'Something went wrong on our side. Please try again.', 500);
   }
 }
+
+export default withLog('site', handler);
