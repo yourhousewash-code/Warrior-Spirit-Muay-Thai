@@ -4,8 +4,9 @@ import { humanCheck, NOT_HUMAN } from './_lib/turnstile.js';
 import {
   redis, COACHES, loadCoaches, send, bad, setupProblem, body, clean, validEmail, rateLimit, coachSession, coachEmail, mail, id, fmt, SITE,
 } from './_lib/core.js';
+import { withLog } from './_lib/actionlog.js';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   await loadCoaches();
@@ -82,3 +83,5 @@ function luhn(d) {
   for (let i = 0; i < d.length; i++) { let n = Number(d[d.length - 1 - i]); if (i % 2) { n *= 2; if (n > 9) n -= 9; } sum += n; }
   return sum % 10 === 0;
 }
+
+export default withLog('enquiry', handler);

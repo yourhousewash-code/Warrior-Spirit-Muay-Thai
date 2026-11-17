@@ -21,6 +21,7 @@ export async function startFakeUpstash() {
       case 'expire': { const e = live(a[0]); if (!e) return 0; e.exp = Date.now() + Number(a[1]) * 1000; return 1; }
       case 'hset': { const h = hash(a[0]); let n = 0; for (let i = 1; i < a.length; i += 2) { if (!h.has(a[i])) n++; h.set(a[i], String(a[i + 1])); } return n; }
       case 'hget': return live(a[0])?.v.get?.(a[1]) ?? null;
+      case 'hmget': { const e = live(a[0]); return a.slice(1).map(f => e?.v.get?.(f) ?? null); }
       case 'hdel': { const e = live(a[0]); let n = 0; if (e) for (const f of a.slice(1)) if (e.v.delete(f)) n++; return n; }
       case 'hgetall': { const e = live(a[0]); return e ? [...e.v].flat() : []; }
       case 'hincrby': { const h = hash(a[0]); const v = Number(h.get(a[1]) || 0) + Number(a[2]); h.set(a[1], String(v)); return v; }

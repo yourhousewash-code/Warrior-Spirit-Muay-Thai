@@ -1,8 +1,10 @@
 import { Redis } from '@upstash/redis';
 import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
+import { logged, setActorFinder } from './actionlog.js';
 
-export const redis = Redis.fromEnv();
+/* Every write goes with a line in the action log (api/_lib/actionlog.js). */
+export const redis = logged(Redis.fromEnv());
 
 export const TZ = 'Europe/London';
 export const SITE = process.env.SITE_URL || 'https://warrior-spirit-muay-thai.vercel.app';
@@ -168,6 +170,8 @@ export function userSession(req) {
   if (req.wsUser === undefined) throw new Error('loadUser(req) must run before userSession(req)');
   return req.wsUser;
 }
+/* Who is acting, for the action log: a signed-in coach, else a signed-in member (once loadUser has run), else nobody. */
+setActorFinder(req => { const c = coachSession(req); if (c) return `coach:${c.id}`; return req.wsUser ? `member:${req.wsUser}` : null; });
 /* Signs a member in on this device for 60 days, tied to the account's current session number. */
 export async function startMember(res, email) {
   const sg = Number(await redis.hget(`user:${email}`, 'sg')) || 0;

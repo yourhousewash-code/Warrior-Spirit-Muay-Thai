@@ -5,6 +5,7 @@ import {
 import { liveProfile, profilePhotoUrl, GALLERY } from './_lib/profiles.js';
 import { PHOTOLIB } from './_lib/photolib.js';
 import { getClasses, freeIntervals, startsIn, DAY } from './_lib/avail.js';
+import { withLog } from './_lib/actionlog.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -13,7 +14,7 @@ const money = v => '£' + (Number.isInteger(v) ? v : v.toFixed(2));
 const dayLabel = ms => new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(ms));
 const tm = ms => new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const id = String(req.query.id || '').toLowerCase().replace(/[^a-z]/g, '');
   if (setupProblem()) return page(res, 503, 'Coming soon', '<p class="lede">Coach pages are being set up. <a href="/#team">Meet the team</a>.</p>');
   try {
@@ -176,3 +177,5 @@ main{display:grid;gap:22px}
 </body>
 </html>`);
 }
+
+export default withLog('team', handler);

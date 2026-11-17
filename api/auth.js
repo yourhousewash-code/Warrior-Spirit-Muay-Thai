@@ -10,8 +10,9 @@ import {
   twoStepState, askWho, startSession, endAllSessions, listDevices, trustedDevice, touchDevice, trustThisDevice,
   removeDevices, forgetTrustCookie, trustCookie, sendCode, checkCode, challenge, setChallenge, clearChallenge, noEmailPass, isOwner, RESEND_WAIT,
 } from './_lib/twostep.js';
+import { withLog } from './_lib/actionlog.js';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   await loadCoaches();
@@ -413,3 +414,5 @@ async function changeEmail(cid, e, by) {
   ]);
 }
 const SESS_G = cid => SESS[cid]?.g || 0;
+
+export default withLog('auth', handler);

@@ -3,6 +3,7 @@ import { get } from '@vercel/blob';
 import { redis, COACHES, loadCoaches, activeIds, publicIds, send, bad, setupProblem, body, clean, coachSession, coachEmail, mail, SITE } from './_lib/core.js';
 import { liveProfile, profilePhotoUrl } from './_lib/profiles.js';
 import { PHOTOLIB } from './_lib/photolib.js';
+import { withLog } from './_lib/actionlog.js';
 
 const FIELDS = { role: 40, intro: 500, background: 2000, chips: 400, ask: 160, instagram: 40, photo: 300, gallery: 1200 };
 async function cleanGallery(g) {
@@ -23,7 +24,7 @@ function cleanProfile(c, inp) {
 }
 const photoUrl = profilePhotoUrl;
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const problem = setupProblem();
   if (problem) return bad(res, problem, 503);
   await loadCoaches();
@@ -127,3 +128,5 @@ export default async function handler(req, res) {
     return bad(res, 'Something went wrong on our side. Please try again.', 500);
   }
 }
+
+export default withLog('profile', handler);
