@@ -8,17 +8,19 @@ import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { startFakeUpstash, call, cookieFrom } from './helpers/fake-upstash.mjs';
 
-const TEST_LINKS = { base: 'https://fb.example', join: '/#join=CODE&src=site', book: '/#book=CODE&src=site', pt: '/#pt=CODE&src=site', clubFeed: 'https://fb.example/club.ics' };
+const TEST_LINKS = { base: 'https://fb.example', join: '/#join=CODE&src=site', book: '/#book=CODE&src=site', pt: '/#pt=CODE&src=site', app: '/?src=site', clubFeed: 'https://fb.example/club.ics', timetable: 'https://fb.example/club.json' };
+const OFF = { on: false, base: '', join: '', book: '', pt: '', app: '', clubFeed: '', timetable: '', kidsOnSite: false };
 
 test('switched off (now): no FighterBase links stored, none in vercel.json, nothing about it on public pages', async () => {
   const { SWITCHOVER } = await import('../api/_lib/switchover.js');
   assert.equal(SWITCHOVER.on, false, 'the switch is off until Steve says go');
-  for (const k of ['base', 'join', 'book', 'pt', 'clubFeed']) assert.equal(SWITCHOVER[k], '', `${k} must stay empty while off (the club code stays off public pages)`);
+  for (const k of ['base', 'join', 'book', 'pt', 'app', 'clubFeed', 'timetable']) assert.equal(SWITCHOVER[k], '', `${k} must stay empty while off (the club code stays off public pages)`);
   const vj = JSON.parse(readFileSync('vercel.json', 'utf8'));
-  assert.ok(!(vj.redirects || []).some(r => ['/book', '/book.html', '/calendar/club.ics'].includes(r.source)), 'no switch-over redirects while off');
+  assert.ok(!(vj.redirects || []).some(r => ['/book', '/book.html', '/calendar/club.ics', '/account', '/account.html'].includes(r.source)), 'no switch-over redirects while off');
+  assert.equal(SWITCHOVER.kidsOnSite, false, 'everything moves on the day (Steve, 17 Nov)');
 });
 
-test('switched on: the build drops "Get the app", credits FighterBase and writes the redirects', () => {
+test('switched on: the build points "Get the app" at FighterBase, credits it and writes the redirects', () => {
   const root = resolve('.');
   const tmp = mkdtempSync(join(tmpdir(), 'ws-switch-'));
   try {
@@ -32,7 +34,9 @@ test('switched on: the build drops "Get the app", credits FighterBase and writes
     execFileSync(process.execPath, ['tools/build-pages.mjs'], { cwd: tmp, stdio: 'pipe' });
     for (const f of ['index.html', 'contact.html', 'pt.html']) {
       const h = readFileSync(join(tmp, f), 'utf8');
-      assert.ok(!/<[^>]*data-install|'#get-app'|install\.js|Get the app/.test(h), `${f}: "Get the app" still there`);
+      assert.ok(!/<[^>]*data-install|'#get-app'|install\.js/.test(h), `${f}: the website's own install is still there`);
+      assert.equal(h.split('href="https://fb.example/?src=site" rel="noopener"').length - 1, 3, `${f}: the three "Get the app" buttons open FighterBase`);
+      assert.ok(h.includes('href:"https://fb.example/?src=site"'), `${f}: the ticker's app item opens FighterBase`);
       assert.ok(h.includes('Bookings powered by <a href="https://fb.example"'), `${f}: no FighterBase credit in the footer`);
       assert.ok(!h.includes('My PT bookings') && h.includes('>My bookings</a>'), `${f}: "My bookings" label`);
     }
@@ -40,6 +44,7 @@ test('switched on: the build drops "Get the app", credits FighterBase and writes
     const r = Object.fromEntries(vj.redirects.map(x => [x.source, x]));
     assert.equal(r['/book'].destination, 'https://fb.example/#pt=CODE&src=site'); assert.equal(r['/book'].permanent, false);
     assert.equal(r['/calendar/club.ics'].destination, 'https://fb.example/club.ics');
+    assert.equal(r['/account'].destination, 'https://fb.example/#join=CODE&src=site', 'members sign in and book in FighterBase');
     assert.ok(vj.redirects.some(x => x.has), 'the old vercel.app redirect is kept');
   } finally { rmSync(tmp, { recursive: true, force: true }); }
 });
@@ -58,7 +63,7 @@ before(async () => {
 after(async () => { globalThis.fetch = realFetch; await db.close(); });
 const quiet = async fn => { const l = console.log, e = console.error; console.log = console.error = () => {}; try { return await fn(); } finally { console.log = l; console.error = e; } };
 
-test('switched on: adults are sent to FighterBase, kids classes and bookings already made stay on the site', async () => {
+test('switched on: everything is booked in FighterBase; kids stay here only if kidsOnSite is set for the day', async () => {
   const { londonDate, addDays, dow } = await import('../api/_lib/avail.js');
   const day = addDays(londonDate(Date.now()), 2), wd = dow(day);
   const classes = [
@@ -75,30 +80,67 @@ test('switched on: adults are sent to FighterBase, kids classes and bookings alr
   assert.deepEqual([...new Set(r.json.classes.map(k => k.classId))].sort(), ['k-kids', 'k-pads']);
   assert.equal((await call(auth, { method: 'GET', query: { action: 'config' } })).json.moved, undefined);
   const before = await quiet(() => call(pt, { query: { action: 'class-book' }, body: { classId: 'k-pads', date: day, remind: 'none' }, cookie: me }));
-  assert.equal(before.status, 200, 'an adult class booked before the switch');
+  assert.equal(before.status, 200, 'a class booked before the switch');
 
+  globalThis.fetch = async (u, o) => { if (String(u).startsWith('https://fb.example')) throw new Error('FighterBase not reachable in this part of the test'); return realFetch(u, o); };
   Object.assign(SW, { on: true, ...TEST_LINKS });
   try {
     const cfg = (await call(auth, { method: 'GET', query: { action: 'config' } })).json.moved;
-    assert.equal(cfg.pt, 'https://fb.example/#pt=CODE&src=site'); assert.equal(cfg.join, 'https://fb.example/#join=CODE&src=site');
+    assert.equal(cfg.pt, 'https://fb.example/#pt=CODE&src=site'); assert.equal(cfg.app, 'https://fb.example/?src=site'); assert.equal(cfg.kidsOnSite, false);
     r = await call(pt, { method: 'GET', query: { action: 'open' } });
     assert.equal(r.status, 410); assert.equal(r.json.moved, cfg.pt);
     r = await call(pt, { query: { action: 'book' }, body: {} });
     assert.equal(r.status, 410, 'new PT bookings go to FighterBase, signed in or not');
-    r = await call(pt, { method: 'GET', query: { action: 'class-dates' }, cookie: me });
-    assert.deepEqual([...new Set(r.json.classes.map(k => k.classId))], ['k-kids'], 'only kids classes are offered here');
-    r = await call(pt, { query: { action: 'class-book' }, body: { classId: 'k-pads', date: addDays(day, 7), remind: 'none' }, cookie: me });
-    assert.equal(r.status, 410, 'adult classes are booked in FighterBase');
+    r = await quiet(() => call(pt, { method: 'GET', query: { action: 'class-dates' }, cookie: me }));
+    assert.deepEqual(r.json.classes, [], 'no class is offered here'); assert.equal(r.json.moved, cfg.book);
+    for (const id of ['k-pads', 'k-kids']) {
+      r = await quiet(() => call(pt, { query: { action: 'class-book' }, body: { classId: id, date: addDays(day, 7), remind: 'none' }, cookie: me }));
+      assert.equal(r.status, 410, `${id} is booked in FighterBase`);
+    }
+    // the day's fallback: FighterBase's kids review not done, so kids stay here
+    SW.kidsOnSite = true;
+    r = await quiet(() => call(pt, { method: 'GET', query: { action: 'class-dates' }, cookie: me }));
+    assert.deepEqual([...new Set(r.json.classes.map(k => k.classId))], ['k-kids']);
     r = await quiet(() => call(pt, { query: { action: 'class-book' }, body: { classId: 'k-kids', date: day, remind: 'none' }, cookie: me }));
-    assert.equal(r.status, 200, 'kids classes are still booked here');
-    r = await call(pt, { method: 'GET', query: { action: 'class-mine' }, cookie: me });
-    assert.ok(r.json.bookings.some(b => b.className === 'Pads'), 'the adult class booked before the switch still shows');
+    assert.equal(r.status, 200, 'kids classes booked here when kidsOnSite is set');
+    SW.kidsOnSite = false;
     // the personal calendar keeps the site's bookings and adds one note about the move
     const tok = (await call(cal, { method: 'POST', query: { action: 'link' }, cookie: me })).json.me.split('/').pop().replace('.ics', '');
     let body = '';
     const res = { statusCode: 200, status(s) { this.statusCode = s; return this; }, setHeader() { return this; }, getHeader() {}, end(b) { body = b; }, json(d) { body = JSON.stringify(d); } };
-    await cal({ method: 'GET', query: { feed: 'me', t: tok }, headers: { host: 'www.warriorspiritmuaythai.co.uk' } }, res);
-    assert.match(body, /SUMMARY:Pads \(Warrior Spirit\)/); assert.match(body, /SUMMARY:New bookings are in the FighterBase app/);
-  } finally { Object.assign(SW, { on: false, base: '', join: '', book: '', pt: '', clubFeed: '' }); }
+    await quiet(() => cal({ method: 'GET', query: { feed: 'me', t: tok }, headers: { host: 'www.warriorspiritmuaythai.co.uk' } }, res));
+    assert.match(body, /SUMMARY:New bookings are in the FighterBase app/);
+  } finally { Object.assign(SW, OFF); globalThis.fetch = realFetch; }
   assert.equal((await call(auth, { method: 'GET', query: { action: 'config' } })).json.moved, undefined, 'switched back off');
+});
+
+test('switched on: the timetable and opening hours come from FighterBase\'s feed, cached, with the last good copy if it fails', async () => {
+  const { mapClasses, mapHours, CACHE_KEY } = await import('../api/_lib/fbtimetable.js');
+  const feed = { club: { name: 'Warrior Spirit' }, classes: [
+    { day: 'Monday', dow: 0, time: '18:30', mins: 60, title: 'Drills & sparring', coach: 'Jay', kids: false, places: 20, weeks: null },
+    { day: 'Tuesday', dow: 1, time: '17:30', mins: 50, title: 'Kids Muay Thai', coach: 'Jay', kids: true, places: null, weeks: null },
+    { day: 'Sunday', dow: 6, time: '10:00', mins: 90, title: 'Open mat', coach: 'Sam', kids: false, places: null, weeks: 'B' },
+  ], hours: { monday: { open: '09:00', close: '21:00' }, tuesday: '09:00-21:00', wednesday: { open: '09:00', close: '21:00' }, thursday: { open: '09:00', close: '21:00' }, friday: { open: '09:00', close: '21:00' }, saturday: { open: '08:00', close: '12:00' }, sunday: { closed: true } } };
+  const mapped = mapClasses(feed);
+  assert.deepEqual(mapped.map(k => [k.day, k.start, k.end, k.coach, k.coachName]), [[1, '18:30', '19:30', 'jay', 'Jay'], [2, '17:30', '18:20', 'jay', 'Jay'], [0, '10:00', '11:30', '', 'Sam']], 'days moved to Sunday = 0, end times worked out, coaches matched');
+  assert.equal(mapped[2].name, 'Open mat (week B)'); assert.equal(mapped[0].max, 20); assert.equal(mapped[1].kids, true);
+  assert.equal(mapHours(feed.hours).length, 7); assert.equal(mapHours({ monday: '?' }), null, 'an unknown shape keeps the site\'s own hours');
+
+  let calls = 0, fail = false;
+  globalThis.fetch = async (u, o) => { if (!String(u).startsWith('https://fb.example')) return realFetch(u, o); calls++; if (fail) throw new Error('down'); assert.equal(String(u), TEST_LINKS.timetable); return new Response(JSON.stringify(feed), { status: 200 }); };
+  Object.assign(SW, { on: true, ...TEST_LINKS });
+  try {
+    db.kv.delete(CACHE_KEY);
+    let r = await call(pt, { method: 'GET', query: { action: 'timetable' } });
+    assert.deepEqual(r.json.classes.map(k => [k.name, k.coach]), [['Drills & sparring', 'Jay'], ['Kids Muay Thai', 'Jay'], ['Open mat (week B)', 'Sam']]);
+    r = await call(pt, { method: 'GET', query: { action: 'hours' } });
+    assert.equal(r.json.hours.find(h => h.day === 6).close, '12:00'); assert.equal(r.json.hours.find(h => h.day === 0).closed, true);
+    assert.equal(calls, 1, 'the second read came from the 15-minute copy');
+    fail = true; db.kv.set(CACHE_KEY, { v: JSON.stringify({ at: 0, data: { classes: mapped, hours: null } }) });
+    r = await quiet(() => call(pt, { method: 'GET', query: { action: 'timetable' } }));
+    assert.equal(r.json.classes.length, 3, 'FighterBase down: the last good copy is shown');
+    db.kv.delete(CACHE_KEY);
+    r = await quiet(() => call(pt, { method: 'GET', query: { action: 'timetable' } }));
+    assert.ok(r.json.classes.some(k => k.name === 'Pads'), 'never fetched and FighterBase down: the site\'s own timetable');
+  } finally { Object.assign(SW, OFF); globalThis.fetch = realFetch; }
 });

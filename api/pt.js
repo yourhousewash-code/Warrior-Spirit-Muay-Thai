@@ -2,7 +2,7 @@ import {
   redis, COACHES, loadCoaches, activeIds, publicIds, TYPES, FORMATS, DURATIONS, DEFAULT_PRICES, getPrices, priceOf, minsLabel,
   send, bad, setupProblem, body, clean, id, fmt, mail, mailReady, coachEmail, coachSession, userSession, loadUser, SITE, ADDRESS, rateLimit,
 } from './_lib/core.js';
-import { switchedOn, fbLink, isKidsClass, MOVED } from './_lib/switchover.js';
+import { switchedOn, fbLink, bookableHere, MOVED } from './_lib/switchover.js';
 import { vcal } from './_lib/ics.js';
 import { ptEvent, classBookingEvent } from './_lib/calevents.js';
 import {
@@ -10,6 +10,7 @@ import {
   realSlots, generated, parseVirtual, getClasses, getCover, classInstances, freeIntervals, startsIn,
 } from './_lib/avail.js';
 import { liveProfile } from './_lib/profiles.js';
+import { fbHours } from './_lib/fbtimetable.js';
 import { withLog } from './_lib/actionlog.js';
 
 
@@ -18,7 +19,7 @@ const DEFAULT_HOURS = [
   { day: 4, open: '09:00', close: '21:00' }, { day: 5, open: '09:00', close: '21:00' },
   { day: 6, open: '08:00', close: '12:00', note: 'Personal training only' }, { day: 0, closed: true },
 ];
-async function getHours() { const h = await redis.get('gymhours'); return Array.isArray(h) && h.length === 7 ? h : DEFAULT_HOURS.map(x => ({ ...x })); }
+async function getHours() { const fb = await fbHours(); if (fb) return fb; const h = await redis.get('gymhours'); return Array.isArray(h) && h.length === 7 ? h : DEFAULT_HOURS.map(x => ({ ...x })); }
 
 const DEFAULT_TYPES = [
   { id: 't-kids', name: 'Kids Muay Thai', desc: 'Fun, safe, properly coached Muay Thai for ages 7 to 13. Confidence, discipline and fitness.', by: 'jay' },
@@ -147,7 +148,8 @@ async function handler(req, res) {
       /* ----- class timetable ----- */
       case 'timetable': { // public: the club class timetable (used on the account page)
         const types = await getTypes();
-        const list = (await getClasses()).filter(k => COACHES[k.coach]).map(k => ({ id: k.id, max: k.max || 0, day: k.day, start: k.start, end: k.end, name: k.name, coach: COACHES[k.coach].first, desc: k.desc || (types.find(t => t.name.toLowerCase() === k.name.toLowerCase()) || {}).desc || '' }));
+        /* After the switch-over this is FighterBase's timetable (api/_lib/fbtimetable.js), so Jay edits classes in one place. */
+        const list = (await getClasses()).filter(k => COACHES[k.coach] || k.coachName !== undefined).map(k => ({ id: k.id, max: k.max || 0, day: k.day, start: k.start, end: k.end, name: k.name, coach: COACHES[k.coach]?.first || k.coachName || '', desc: k.desc || (types.find(t => t.name.toLowerCase() === k.name.toLowerCase()) || {}).desc || '' }));
         return send(res, 200, { classes: list });
       }
       case 'classes': {
@@ -458,8 +460,9 @@ async function handler(req, res) {
       /* ----- booking a place in a class that has a limit ----- */
       case 'class-dates': { // public: bookable classes over the next two weeks, with places left
         const email = userSession(req);
-        /* After the switch-over only kids classes are booked here (adults book in FighterBase). */
-        const classes = (await getClasses()).filter(k => k.max && COACHES[k.coach] && (!switchedOn() || isKidsClass(k))), cover = await getCover();
+        /* After the switch-over classes are booked in FighterBase (kids too, unless `kidsOnSite` is set for the day). */
+        if (switchedOn() && !bookableHere({ kids: true })) return send(res, 200, { classes: [], moved: fbLink('book') });
+        const classes = (await getClasses()).filter(k => k.max && COACHES[k.coach] && bookableHere(k)), cover = await getCover();
         const out = [];
         for (let d = londonDate(Date.now()), n = 0; n < 15; d = addDays(d, 1), n++) {
           for (const k of classes) {
@@ -480,7 +483,7 @@ async function handler(req, res) {
         if (!String(u.mobile || '').replace(/\D/g, '').length) return bad(res, 'Add your mobile number so your coach can reach you.', 400);
         const inst = await classOn(clean(b.classId, 40), clean(b.date, 12));
         if (!inst || inst.cancelled) return bad(res, 'That class isn’t running on that date.', 404);
-        if (switchedOn() && !isKidsClass(inst.k)) return send(res, 410, { error: MOVED('Class booking'), moved: fbLink('book') });
+        if (!bookableHere(inst.k)) return send(res, 410, { error: MOVED('Class booking'), moved: fbLink('book') });
         if (inst.start < Date.now() + 30 * 60e3) return bad(res, 'Booking for that class has closed.', 409);
         if (inst.start > Date.now() + 15 * DAY) return bad(res, 'You can book up to two weeks ahead.', 409);
         const lock = `classlock:${inst.k.id}:${inst.date}`;

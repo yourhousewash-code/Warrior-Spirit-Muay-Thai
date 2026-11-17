@@ -1,6 +1,7 @@
 /* Availability: weekly regular hours, holidays/days off, blocked times, and one-off slots.
    All dates and times are UK (Europe/London) local time. */
 import { redis, TZ } from './core.js';
+import { fbClasses } from './fbtimetable.js';
 
 export const DAY = 864e5;
 export const LENGTHS = [30, 45, 60, 75, 90, 120];
@@ -52,7 +53,8 @@ export const DEFAULT_CLASSES = [
   { id: 'thu-beg', day: 4, start: '19:00', end: '20:00', name: 'Beginners', coach: 'aaron' },
   { id: 'fri-spar', day: 5, start: '18:00', end: '19:00', name: 'Sparring', coach: 'aaron' },
 ];
-export async function getClasses() { const c = await redis.get('classes'); return Array.isArray(c) ? c : DEFAULT_CLASSES.map(x => ({ ...x })); }
+/* After the switch-over FighterBase's timetable is the one shown (api/_lib/fbtimetable.js). */
+export async function getClasses() { const fb = await fbClasses(); if (fb) return fb; const c = await redis.get('classes'); return Array.isArray(c) ? c : DEFAULT_CLASSES.map(x => ({ ...x })); }
 export async function getCover() { const c = await redis.get('classcover'); return c && typeof c === 'object' && !Array.isArray(c) ? c : {}; }
 /* Every class happening between two times, with one-off cover applied ('none' = cancelled that date). */
 export async function classInstances(from, to, classes, cover) {

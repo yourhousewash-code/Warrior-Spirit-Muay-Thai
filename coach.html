@@ -1066,7 +1066,17 @@ async function init() {
   if (!me) return;
   $('#hello').textContent = `Hi ${me.first}`;
   /* FighterBase switch-over (api/_lib/switchover.js): the server only sends `moved` once it's switched on. */
-  try { const cfg = await api('/api/auth?action=config'); if (cfg.moved) { $('#movedBar').textContent = `Switched over: members now make new bookings for adult classes and PT in the ${cfg.moved.name} app. Bookings made on this website before the switch still show here until they've happened, and kids classes are still booked here. The website's wording, photos, timetable and enquiries are still managed here.`; $('#movedBar').hidden = false; } } catch {}
+  /* After the switch FighterBase runs classes, PT, hours, prices and bookings (Steve, 17 Nov 2026), so those tiles go; the
+     website's wording, photos, coach profiles, enquiries and settings stay here. */
+  try {
+    const cfg = await api('/api/auth?action=config');
+    if (cfg.moved) {
+      const m = cfg.moved, kids = m.kidsOnSite;
+      $('#movedBar').textContent = `Switched over: classes, personal training, opening hours and bookings are run in the ${m.name} app${kids ? ', except kids classes, which are still booked here for now' : ''}. The website shows ${m.name}'s timetable. Its wording, photos, coach profiles and enquiries are still managed here.`;
+      $('#movedBar').hidden = false;
+      for (const t of ['availability', 'prices', ...(kids ? [] : ['bookings', 'schedule'])]) document.querySelectorAll(`.tile[data-go="${t}"]`).forEach(b => { b.hidden = true; });
+    }
+  } catch {}
   for (const k of Object.keys(COLS)) delete COLS[k];
   for (const t of me.team) COLS[t.id] = t.first;
   if (!me.admin) { for (const k of Object.keys(COLS)) if (k !== me.id) delete COLS[k]; }

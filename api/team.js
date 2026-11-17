@@ -6,6 +6,7 @@ import { liveProfile, profilePhotoUrl, GALLERY } from './_lib/profiles.js';
 import { PHOTOLIB } from './_lib/photolib.js';
 import { getClasses, freeIntervals, startsIn, DAY } from './_lib/avail.js';
 import { withLog } from './_lib/actionlog.js';
+import { switchedOn, fbLink, SWITCHOVER } from './_lib/switchover.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -32,7 +33,8 @@ async function handler(req, res) {
     const mins = priceOf(prices, 'one', 60) ? 60 : DURATIONS.find(m => priceOf(prices, fmtKey, m)) || 60;
     const from = Date.now() + 2 * 3600e3;
     let lastKept = 0;
-    const starts = startsIn(await freeIntervals(id, from, from + 14 * DAY), mins, from)
+    /* After the switch-over the coach's free times live in FighterBase, so the page links there instead of showing the site's. */
+    const starts = switchedOn() ? [] : startsIn(await freeIntervals(id, from, from + 14 * DAY), mins, from)
       .filter(t => { if (t >= lastKept + mins * 6e4) { lastKept = t; return true; } return false; }).slice(0, 12);
     const classes = (await getClasses()).filter(k => k.coach === id).sort((a, b) => ((a.day + 6) % 7) - ((b.day + 6) % 7) || a.start.localeCompare(b.start));
     const others = publicIds().filter(k => k !== id).map(k => COACHES[k]);
@@ -85,10 +87,12 @@ ${gallery ? `<section class="gal">${gallery}</section>` : ''}
 
 <div class="two">
   <section class="panel">
-    <h2>Next free times</h2>
+    ${switchedOn() ? `<h2>Book a session</h2>
+    <p class="muted">${esc(c.first)}’s free times, and booking, are in the ${esc(SWITCHOVER.name)} app.</p>
+    <a class="btn" href="${esc(fbLink('pt'))}" rel="noopener">Book PT in the ${esc(SWITCHOVER.name)} app</a>` : `<h2>Next free times</h2>
     <p class="muted">${esc(minsLabel(mins))} sessions in the next two weeks. Tap a time to book it.</p>
     <div class="slotsl">${slotHtml}</div>
-    <a class="more" href="/book?coach=${id}">See all times and options →</a>
+    <a class="more" href="/book?coach=${id}">See all times and options →</a>`}
   </section>
   <section class="panel">
     <h2>Prices</h2>

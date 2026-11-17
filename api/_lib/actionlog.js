@@ -17,7 +17,7 @@ export const KEEP_SECONDS = 400 * 86400;
 const MAX_CHARS = 200000;
 
 /* Keys that are short-lived or are themselves secrets: not logged at all. */
-const SKIP = [/^audit:/, /^rl:/, /^booklock:/, /^classlock:/, /^slotlock:/, /^reset:/, /^verify:/, /^coach:reset:/, /^coach:[^:]+:2fa:/, /^gdrive:state:/, /^gdrive:sync$/, /^calfeed:/];
+const SKIP = [/^audit:/, /^rl:/, /^booklock:/, /^classlock:/, /^slotlock:/, /^reset:/, /^verify:/, /^coach:reset:/, /^coach:[^:]+:2fa:/, /^gdrive:state:/, /^gdrive:sync$/, /^calfeed:/, /^fb:timetable$/];
 /* Keys whose value is a secret: the change is logged, the value isn't. */
 const HIDE_KEY = [/^coach:[^:]+:hash$/, /^coach:[^:]+:2fa$/, /^gdrive:refresh$/];
 /* Fields inside a record whose value is a secret. */

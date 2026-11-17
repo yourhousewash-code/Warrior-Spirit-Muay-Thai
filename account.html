@@ -134,12 +134,13 @@ const movedReady = fetch('/api/auth?action=config', { credentials: 'same-origin'
 function showMoved() {
   if (!moved) return;
   const a = (href, text) => `<a href="${esc(href)}" rel="noopener">${esc(text)}</a>`;
-  $('#movedOut').innerHTML = `Adults now book classes and personal training in the ${esc(moved.name)} app: ${a(moved.join, 'join or sign in there')}. Booking a kids class for your child? Create an account here.`;
+  const kids = moved.kidsOnSite;
+  $('#movedOut').innerHTML = `Classes and personal training are booked in the ${esc(moved.name)} app: ${a(moved.join, 'join or sign in there')}.${kids ? ' Booking a kids class for your child? Create an account here.' : ''}`;
   $('#movedOut').hidden = false;
-  $('#movedIn').innerHTML = `New bookings for adult classes and personal training are made in the ${esc(moved.name)} app: ${a(moved.join, 'open it here')}. Bookings you made on this website before still show below, and you can cancel them here. Kids classes are still booked here.`;
+  $('#movedIn').innerHTML = `New bookings are made in the ${esc(moved.name)} app: ${a(moved.join, 'open it here')}.${kids ? ' Kids classes are still booked here.' : ''}`;
   $('#movedIn').hidden = false;
   $('#ptBtn').href = moved.pt; $('#ptBtn').textContent = `Book PT in the ${moved.name} app`; $('#ptBtn').rel = 'noopener';
-  $('#clsH').textContent = 'Book a place in a kids class';
+  $('#clsH').textContent = kids ? 'Book a place in a kids class' : 'Classes are booked in the app';
 }
 
 async function init() {

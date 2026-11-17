@@ -89,9 +89,10 @@ function keepOnlyView(html, keep) {
   return res + html.slice(at);
 }
 
-/* FighterBase switch-over day (api/_lib/switchover.js). Off: the page is untouched. On: the "Get the app" buttons and
-   ticker item go (two apps would confuse members), "My PT bookings" becomes "My bookings", and the footer credits FighterBase
-   (Steve, 11 Nov 2026: on the day only). Each change must match exactly once, so a changed page stops the build. */
+/* FighterBase switch-over day (api/_lib/switchover.js). Off: the page is untouched. On: every "Get the app" button and the
+   ticker item open the FighterBase app instead of installing this website (Steve, 17 Nov 2026: "just FighterBase"; one app
+   for members), "My PT bookings" becomes "My bookings", and the footer credits FighterBase (Steve, 11 Nov 2026: on the day
+   only). Each change must match exactly once, so a changed page stops the build. */
 function afterSwitchover(html) {
   if (!switchedOn()) return html;
   const swap = (from, to, n = 1) => {
@@ -99,10 +100,12 @@ function afterSwitchover(html) {
     if (count !== n) throw new Error(`switch-over: expected ${n} of ${JSON.stringify(from.slice(0, 50))}, found ${count}`);
     html = html.split(from).join(to);
   };
-  html = html.replace(/\n\s*<li class="navapp">.*?<\/li>/, '');
-  html = html.replace(/\n\s*<button type="button" class="btn ghost" data-install hidden>.*?<\/button>/, '');
-  html = html.replace(/\n\s*if\(!\(matchMedia\('\(display-mode: standalone\)'\)[^\n]*#get-app'[^\n]*/, '');
-  swap('<button type="button" class="btn" data-install hidden style="margin-top:12px">Get the app</button>', '');
+  const app = fbLink('app') || fbLink('join');
+  swap('<li class="navapp"><a role="button" tabindex="0" data-install hidden style="cursor:pointer">Get the app</a></li>', `<li class="navapp"><a href="${app}" rel="noopener">Get the app</a></li>`);
+  swap('<button type="button" class="btn ghost" data-install hidden><span class="lg">Get the app</span><span class="sm">App</span></button>', `<a class="btn ghost" data-fbapp href="${app}" rel="noopener"><span class="lg">Get the app</span><span class="sm">App</span></a>`);
+  swap('.navr [data-install]', '.navr [data-fbapp]', 2);
+  html = html.replace(/if\(!\(matchMedia\('\(display-mode: standalone\)'\)[^\n]*?href:'#get-app',logo:true\}\);/, `items.push({label:'App',html:'<strong>Get the ${SWITCHOVER.name} app</strong> to book classes and personal training.',href:${JSON.stringify(app)},logo:true});`);
+  swap('<button type="button" class="btn" data-install hidden style="margin-top:12px">Get the app</button>', `<a class="btn" href="${app}" rel="noopener" style="margin-top:12px">Get the app</a>`);
   swap('<script src="/assets/install.js" defer></script>', '');
   swap('>My PT bookings</a>', '>My bookings</a>', 2);
   swap('<a href="/accessibility">Accessibility</a></p>', `<a href="/accessibility">Accessibility</a> · Bookings powered by <a href="${SWITCHOVER.base}" rel="noopener">${SWITCHOVER.name}</a></p>`);
@@ -150,15 +153,17 @@ writeFileSync('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xm
 console.log(`built ${starts.length} pages + sitemap (${list.length} urls)`);
 
 /* Switch-over redirects in vercel.json: old booking and calendar addresses keep working (302 while things settle).
-   Off: none of these redirects exist. On: /book goes to FighterBase PT booking and the club calendar to FighterBase's feed. */
+   Off: none of these redirects exist. On: /book goes to FighterBase PT booking, the club calendar to FighterBase's feed, and
+   /account (members' sign-in, bookings and class booking) to FighterBase's sign in or join, unless kids stay on the site. */
 {
   const vj = JSON.parse(readFileSync('vercel.json', 'utf8'));
-  const ours = ['/book', '/book.html', '/calendar/club.ics'];
+  const ours = ['/book', '/book.html', '/calendar/club.ics', '/account', '/account.html'];
   vj.redirects = (vj.redirects || []).filter(r => !ours.includes(r.source));
   if (switchedOn()) {
     if (!fbLink('pt') || !fbLink('join') || !fbLink('book')) throw new Error('switch-over: fill base, join, book and pt in api/_lib/switchover.js');
     vj.redirects.unshift({ source: '/book', destination: fbLink('pt'), permanent: false }, { source: '/book.html', destination: fbLink('pt'), permanent: false });
     if (SWITCHOVER.clubFeed) vj.redirects.unshift({ source: '/calendar/club.ics', destination: SWITCHOVER.clubFeed, permanent: false });
+    if (!SWITCHOVER.kidsOnSite) vj.redirects.unshift({ source: '/account', destination: fbLink('join'), permanent: false }, { source: '/account.html', destination: fbLink('join'), permanent: false });
   }
   writeFileSync('vercel.json', JSON.stringify(vj, null, 2) + '\n');
   console.log(`switch-over: ${switchedOn() ? 'ON, redirects written' : 'off'}`);
