@@ -161,3 +161,14 @@ test('class rosters: a coach sees their own classes and dates they cover, not ot
   const ids = [...new Set(r.json.classes.map(k => k.classId))];
   assert.deepEqual(ids, ['r-jay'], 'Aaron sees the class he covers, not Kian\'s');
 });
+
+test('a coach without a password of their own has no session (ends any made with the old starting password; breach follow-up)', async () => {
+  const { hashPassword } = await import('../api/_lib/core.js');
+  db.kv.set('coach:kian:hash', { v: hashPassword('kians-own-password') });
+  const login = await call(auth, { query: { action: 'coach-login' }, body: { username: 'kian', password: 'kians-own-password' }, ip: '198.51.100.32' });
+  assert.equal(login.status, 200, JSON.stringify(login.json));
+  const cookie = cookieFrom(login.headers['set-cookie']);
+  assert.equal((await call(auth, { method: 'GET', query: { action: 'coach-me' }, cookie })).json.coach?.id, 'kian');
+  db.kv.delete('coach:kian:hash');
+  assert.ok(!(await call(auth, { method: 'GET', query: { action: 'coach-me' }, cookie })).json.coach, 'the session is refused');
+});
