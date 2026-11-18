@@ -38,6 +38,10 @@ export async function loadCoaches() {
     const base = BASE_COACHES[c.id];
     COACHES[c.id] = { ...(base || {}), ...c, admin: ADMIN_IDS.includes(c.id), active: c.active !== false };
   }
+  /* Which coaches have a password of their own (breach follow-up, 18 Nov 2026): a coach without one can't sign in, and any
+     session they still hold from the old shared starting password is refused (coachSession). */
+  const ids = Object.keys(COACHES), own = ids.length ? await redis.mget(...ids.map(id => `coach:${id}:hash`)) : [];
+  ids.forEach((id, i) => { COACHES[id].hasPw = !!own[i]; });
   /* A new coach shows on the website and booking page once Jay has published their profile. */
   for (const c of Object.values(COACHES)) {
     const live = await redis.get(`profile:${c.id}:live`);
@@ -47,7 +51,7 @@ export async function loadCoaches() {
   return COACHES;
 }
 export async function saveCoaches() {
-  await redis.set('coaches', Object.values(COACHES).map(({ listed, ...c }) => c));
+  await redis.set('coaches', Object.values(COACHES).map(({ listed, hasPw, ...c }) => c));
 }
 export const activeIds = () => Object.keys(COACHES).filter(k => COACHES[k].active);
 export const publicIds = () => Object.keys(COACHES).filter(k => COACHES[k].listed);
@@ -146,7 +150,7 @@ function appendCookie(res, c) {
 export function coachSession(req) {
   const d = unsign(cookies(req).ws_coach);
   const c = d && COACHES[d.id];
-  if (!c || !c.active) return null;
+  if (!c || !c.active || !c.hasPw) return null; // no password of their own: no session (ends any made with the old starting password)
   const s = SESS[d.id] || {};
   if ((d.g || 0) !== (s.g || 0)) return null; // ended by "Sign out everywhere" or a password change
   if (d.dv && s.out && s.out[d.dv]) return null; // this trusted device was removed
