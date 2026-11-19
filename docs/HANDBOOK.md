@@ -303,6 +303,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 16 Nov 2026 | Class rosters (S-003): a coach sees the bookings for their own classes and for any date they're covering; owners see every class. Before, a cover coach saw nothing for the class they were taking |
 | 16 Nov 2026 | Cloudflare Workers move, step 3 (WS-011): every API file except the Google Drive photo import now runs through the Worker adapter, with the Vercel rewrites, headers and daily jobs copied across; not deployed, nothing changes on the live site |
 | 17 Nov 2026 | Action log built (A-069, due 27 Nov, brought forward): every change made through the site is logged with who, before and after, kept 400 days; secrets never logged. Not live until the Two-AI check. The privacy page will need a line about it (with the other privacy wording waiting for Jay or Steve) |
+| 19 Nov 2026 | **The starting-password incident is closed as not reportable** (Steve, in the chat, 11:41: "nothing has gone anywhere other than me so far": only his own test data was on the site, so no other person's data could be seen). Fixes live: 976d43a (18 Nov, no starting password) and fb0b15e (19 Nov 11:43, Steve's words "publish fb0b15e": a coach with no password of their own has no session). Record: `warrior-spirit-breach-log.md` in The Manor. Test member data is cleared on switch-over day; logins are kept |
 
 ## 12. Still to decide
 
