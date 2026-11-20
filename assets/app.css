@@ -125,3 +125,5 @@ textarea{min-height:80px;resize:vertical}
 .sharecard .row{display:flex;gap:8px;flex-wrap:wrap}
 
 @media (max-width:560px){#clsList .item{flex-wrap:wrap}#clsList .item>div:first-child{flex:1 1 100%}#clsList .acts{width:100%;display:flex;gap:8px;align-items:center}#clsList .acts select{flex:1}}
+/* Hidden trap field on public forms (A-100): people never see it; bots fill it in. */
+.hp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}

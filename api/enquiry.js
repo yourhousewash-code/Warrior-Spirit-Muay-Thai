@@ -1,6 +1,7 @@
 /* Website enquiries (free class, PT, kids, questions): saved for Jay and emailed to the gym. */
 import { checkPhone } from './_lib/phone.js';
 import { humanCheck, NOT_HUMAN } from './_lib/turnstile.js';
+import { MIN_FILL_MS, pitchReason, countBlocked, blockedThisMonth } from './_lib/spam.js';
 import {
   redis, COACHES, loadCoaches, send, bad, setupProblem, body, clean, validEmail, rateLimit, coachSession, coachEmail, mail, id, fmt, SITE,
 } from './_lib/core.js';
@@ -15,10 +16,10 @@ async function handler(req, res) {
   try {
     if (action === 'send') {
       if (req.method !== 'POST') return bad(res, 'Use POST', 405);
-      if (b.website) return send(res, 200, { ok: true }); // spam trap
+      if (b.website) { await countBlocked('trap'); return send(res, 200, { ok: true }); } // hidden trap field: a bot
       const ip = (req.headers['x-forwarded-for'] || '').split(',')[0] || 'x';
-      if (!(await rateLimit(`enq:${ip}`, 6, 3600))) return bad(res, 'Too many messages from here. Please call or WhatsApp us instead.', 429);
-      if (!(await humanCheck(b.cfToken, ip, { failOpen: true })).ok) return bad(res, NOT_HUMAN, 403);
+      if (!(await rateLimit(`enq:${ip}`, 6, 3600))) { await countBlocked('network'); return bad(res, 'Too many messages from here. Please call or WhatsApp us instead.', 429); }
+      if (!(await humanCheck(b.cfToken, ip, { failOpen: true })).ok) { await countBlocked('human'); return bad(res, NOT_HUMAN, 403); }
       const e = {
         id: id('e'), about: clean(b.about, 80), name: clean(b.name, 80), phone: clean(b.phone, 30), email: clean(b.email, 120).toLowerCase(),
         reply: clean(b.reply, 30), experience: clean(b.experience, 40), when: clean(b.when, 120), message: clean(b.message, 1500),
@@ -33,8 +34,16 @@ async function handler(req, res) {
       if (/email/i.test(e.reply) && !e.email) return bad(res, 'Add your email address, or pick another way to reply.');
       if (e.email && !validEmail(e.email)) return bad(res, 'That email address doesn’t look right.');
       if (!b.consent) return bad(res, 'Tick the box so we can contact you about your enquiry.');
+      for (const who of [e.phone, e.email].filter(Boolean)) {
+        if (!(await rateLimit(`enq-who:${who}`, 3, 86400))) { await countBlocked('person'); return bad(res, 'You’ve already sent us a few messages today. We’ll reply soon, or call us on 07904 032142.', 429); }
+      }
+      /* Sent too quickly to be typed, or a sales pitch: saved and flagged, not emailed (A-100). The sender sees "sent". */
+      const fast = !(Number(b.elapsed) >= MIN_FILL_MS);
+      const pitch = pitchReason([e.name, e.about, e.when, e.message].join(' '));
+      if (fast || pitch) { e.status = 'spam'; e.flag = fast ? 'sent too quickly' : pitch; }
       await redis.hset(`enquiry:${e.id}`, e);
       await redis.zadd('enquiries', { score: e.created, member: e.id });
+      if (e.status === 'spam') { await countBlocked(fast ? 'fast' : 'pitch'); return send(res, 200, { ok: true }); }
       const to = [await coachEmail('jay'), process.env.BOOKINGS_COPY_EMAIL || '', 'warriorspirit@gmail.com'].filter((v, i, a) => v && a.indexOf(v) === i);
       await mail(to, `New enquiry: ${e.about || 'Website'}, ${e.name}`, [
         `New enquiry from the website (${fmt(e.created)}).`, '',
@@ -53,7 +62,7 @@ async function handler(req, res) {
       const ids = await redis.zrange('enquiries', Date.now() - 180 * 864e5, Date.now() + 1, { byScore: true });
       const out = [];
       for (const i of ids.reverse().slice(0, 200)) { const e = await redis.hgetall(`enquiry:${i}`); if (e) out.push({ ...e, created: Number(e.created), when_: fmt(Number(e.created)) }); }
-      return send(res, 200, { enquiries: out, unread: out.filter(e => e.status === 'new').length });
+      return send(res, 200, { enquiries: out, unread: out.filter(e => e.status === 'new').length, spam: out.filter(e => e.status === 'spam').length, blocked: await blockedThisMonth() });
     }
     if (action === 'status' && req.method === 'POST') {
       const e = await redis.hgetall(`enquiry:${clean(b.id, 40)}`);
