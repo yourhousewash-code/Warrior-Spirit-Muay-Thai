@@ -30,6 +30,7 @@
       <label for="le">Email<input id="le" type="email" autocomplete="email" required></label>
       <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
       <p class="err" id="lerr" role="alert" hidden></p>
+      <div data-human id="lHuman"></div>
       <button class="btn full" type="submit">Log in</button>
       <p class="muted" style="font-size:15px"><a href="?forgot=1">Forgotten password?</a> · New here? <a href="?new=1">Create an account</a></p>
       <p class="vnote" id="movedOut" hidden></p>
@@ -268,9 +269,12 @@ document.addEventListener('click', async e => {
   catch (err) { c.disabled = false; c.textContent = 'Cancel'; c.dataset.confirm = ''; const p = document.createElement('p'); p.className = 'err'; p.textContent = err.message; $('#upcoming').prepend(p); }
 });
 
+const lHuman = window.wsHuman ? wsHuman($('#lHuman')) : null;
 $('#logForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#lerr'), '');
-  try { await api('/api/auth?action=login', { email: $('#le').value, password: $('#lp').value }); init(); } catch (err) { show($('#lerr'), err.message); }
+  const cfToken = lHuman ? await lHuman.token() : '';
+  if (lHuman) lHuman.reset();
+  try { await api('/api/auth?action=login', { email: $('#le').value, password: $('#lp').value, cfToken }); init(); } catch (err) { show($('#lerr'), err.message); }
 });
 const rHuman = window.wsHuman ? wsHuman($('#rHuman')) : null, fHuman = window.wsHuman ? wsHuman($('#fHuman')) : null;
 $('#regForm').addEventListener('submit', async e => {

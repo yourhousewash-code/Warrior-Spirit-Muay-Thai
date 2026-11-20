@@ -28,6 +28,8 @@ async function handler(req, res) {
         if (req.method !== 'POST') return bad(res, 'Use POST', 405);
         const cid = clean(b.username, 30).toLowerCase();
         if (!(await rateLimit(`coach:${cid}:${ip}`, 8, 900)) || !(await rateLimit(`coach-all:${cid}`, 20, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
+        /* Bot check (A-100). If Cloudflare can't be reached, sign-in still works: the attempt limits above still apply. */
+        if (!(await humanCheck(b.cfToken, ip, { failOpen: true })).ok) { await countBlocked('human'); return bad(res, NOT_HUMAN, 403); }
         if (!COACHES[cid]?.active || !(await checkCoachPassword(cid, String(b.password || '')))) return bad(res, 'That username or password isn’t right.', 401);
         /* Two-step sign-in: owners always, other coaches if they switched it on. A trusted device skips the code. */
         const ts = await twoStepState(cid);
@@ -274,6 +276,7 @@ async function handler(req, res) {
         if (req.method !== 'POST') return bad(res, 'Use POST', 405);
         const email = clean(b.email, 120).toLowerCase();
         if (!(await rateLimit(`login:${email}:${ip}`, 8, 900)) || !(await rateLimit(`login:${email}`, 20, 900))) return bad(res, 'Too many attempts. Try again in 15 minutes.', 429);
+        if (!(await humanCheck(b.cfToken, ip, { failOpen: true })).ok) { await countBlocked('human'); return bad(res, NOT_HUMAN, 403); } // A-100, as coach sign-in
         const u = await redis.hgetall(`user:${email}`);
         /* The same message, and the same password work, whether or not the account exists, so neither gives it away. */
         const ok = checkPassword(String(b.password || ''), u?.hash || DUMMY_HASH());
