@@ -305,6 +305,7 @@ button.mth.phc{display:block;width:100%;border:0}
       <label for="lu">Username<input id="lu" autocomplete="username" autocapitalize="none" required></label>
       <label for="lp">Password<input id="lp" type="password" autocomplete="current-password" required></label>
       <p class="err" id="lerr" role="alert" hidden></p>
+      <div data-human id="lHuman"></div>
       <button class="btn full" type="submit">Log in</button>
       <p class="muted" style="margin:0"><a href="#" id="forgotLink">Forgot your password?</a></p>
     </form>
@@ -891,6 +892,7 @@ button.mth.phc{display:block;width:100%;border:0}
   </section>
 </main>
 
+<script src="/assets/human.js"></script>
 <script type="module">
 import { upload } from '/assets/blob-client.js';
 const $ = s => document.querySelector(s);
@@ -1100,10 +1102,13 @@ $('#resetForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#rerr'), '');
   try { await api('/api/auth?action=coach-reset', { token: RESET, password: $('#rp').value }); history.replaceState(null, '', '/coach'); location.reload(); } catch (err) { show($('#rerr'), err.message); }
 });
+const lHuman = window.wsHuman ? wsHuman($('#lHuman')) : null; // bot check on sign-in (A-100); off until the keys are set
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault(); show($('#lerr'), '');
+  const cfToken = lHuman ? await lHuman.token() : '';
+  if (lHuman) lHuman.reset();
   try {
-    const j = await api('/api/auth?action=coach-login', { username: $('#lu').value, password: $('#lp').value });
+    const j = await api('/api/auth?action=coach-login', { username: $('#lu').value, password: $('#lp').value, cfToken });
     if (j.step === 'code') return showCodeStep(j);
     $('#lp').value = ''; init();
   }
