@@ -1,4 +1,5 @@
 import { humanCheck, NOT_HUMAN, turnstileSiteKey } from './_lib/turnstile.js';
+import { countBlocked } from './_lib/spam.js';
 import { switchInfo } from './_lib/switchover.js';
 import crypto from 'node:crypto';
 import {
@@ -254,8 +255,9 @@ async function handler(req, res) {
       /* ----- customers ----- */
       case 'register': {
         if (req.method !== 'POST') return bad(res, 'Use POST', 405);
-        if (!(await rateLimit(`reg:${ip}`, 10, 3600))) return bad(res, 'Too many sign-ups from here. Try again later.', 429);
-        if (!(await humanCheck(b.cfToken, ip)).ok) return bad(res, NOT_HUMAN, 403);
+        if (b.website) { await countBlocked('trap'); return bad(res, 'Something went wrong. Please try again, or call us on 07904 032142.'); } // hidden trap field (A-100)
+        if (!(await rateLimit(`reg:${ip}`, 10, 3600))) { await countBlocked('network'); return bad(res, 'Too many sign-ups from here. Try again later.', 429); }
+        if (!(await humanCheck(b.cfToken, ip)).ok) { await countBlocked('human'); return bad(res, NOT_HUMAN, 403); }
         const email = clean(b.email, 120).toLowerCase(), name = clean(b.name, 80), mobile = clean(b.mobile, 30), pw = String(b.password || '');
         if (!name) return bad(res, 'Add your name.');
         if (!validEmail(email)) return bad(res, 'Add a valid email address.');
@@ -347,8 +349,9 @@ async function handler(req, res) {
       }
       case 'forgot': {
         const email = clean(b.email, 120).toLowerCase();
-        if (!(await rateLimit(`forgot-ip:${ip}`, 10, 3600))) return bad(res, 'Too many requests from here. Try again later.', 429);
-        if (!(await humanCheck(b.cfToken, ip)).ok) return bad(res, NOT_HUMAN, 403);
+        if (b.website) { await countBlocked('trap'); return send(res, 200, { ok: true }); } // hidden trap field (A-100)
+        if (!(await rateLimit(`forgot-ip:${ip}`, 10, 3600))) { await countBlocked('network'); return bad(res, 'Too many requests from here. Try again later.', 429); }
+        if (!(await humanCheck(b.cfToken, ip)).ok) { await countBlocked('human'); return bad(res, NOT_HUMAN, 403); }
         if (validEmail(email) && (await rateLimit(`forgot:${email}`, 3, 3600)) && (await redis.exists(`user:${email}`))) {
           const token = crypto.randomBytes(24).toString('base64url');
           await redis.set(`reset:${token}`, email, { ex: 3600 });
