@@ -531,7 +531,8 @@ button.mth.phc{display:block;width:100%;border:0}
     <!-- ===== ENQUIRIES (Jay) ===== -->
     <div data-view="enquiries" class="stack" style="gap:18px" hidden>
       <button type="button" class="back" data-go="home">← Back to dashboard</button>
-      <div class="calhead"><h1>Enquiries</h1><div class="seg" role="group" aria-label="Show"><button type="button" data-ef="new" aria-pressed="true">To reply</button><button type="button" data-ef="all" aria-pressed="false">All</button></div></div>
+      <div class="calhead"><h1>Enquiries</h1><div class="seg" role="group" aria-label="Show"><button type="button" data-ef="new" aria-pressed="true">To reply</button><button type="button" data-ef="all" aria-pressed="false">All</button><button type="button" data-ef="spam" aria-pressed="false">Spam <span id="enqSpam"></span></button></div></div>
+      <p class="muted" id="enqBlocked" hidden></p>
       <div class="panel"><div class="list" id="enqList"><p class="empty">Loading…</p></div></div>
     </div>
 
@@ -2102,17 +2103,21 @@ async function countEnquiries() {
 async function loadEnquiries() {
   const box = $('#enqList');
   try {
-    const { enquiries, unread } = await api('/api/enquiry?action=list');
+    const { enquiries, unread, spam = 0, blocked = {} } = await api('/api/enquiry?action=list');
     $('#enqBadge').textContent = unread; $('#enqBadge').hidden = !unread;
-    const list = enquiries.filter(e => enqFilter === 'all' || e.status === 'new');
-    if (!list.length) { box.innerHTML = `<p class="empty">${enqFilter === 'new' ? 'All caught up. No enquiries waiting for a reply.' : 'No enquiries yet.'}</p>`; return; }
+    $('#enqSpam').textContent = spam ? `(${spam})` : '';
+    const bots = (blocked.trap || 0) + (blocked.human || 0) + (blocked.network || 0) + (blocked.person || 0), flagged = (blocked.fast || 0) + (blocked.pitch || 0);
+    $('#enqBlocked').textContent = `This month: ${bots} bot or repeat message${bots === 1 ? '' : 's'} stopped, ${flagged} flagged as spam. Flagged ones are kept under Spam, in case a real one is there.`;
+    $('#enqBlocked').hidden = !(bots || flagged);
+    const list = enquiries.filter(e => enqFilter === 'spam' ? e.status === 'spam' : e.status !== 'spam' && (enqFilter === 'all' || e.status === 'new'));
+    if (!list.length) { box.innerHTML = `<p class="empty">${enqFilter === 'new' ? 'All caught up. No enquiries waiting for a reply.' : enqFilter === 'spam' ? 'Nothing flagged as spam.' : 'No enquiries yet.'}</p>`; return; }
     box.innerHTML = list.map(e => {
       const wa = e.phone ? e.phone.replace(/\D/g, '').replace(/^0/, '44') : '';
-      return `<div class="item enq ${e.status === 'new' ? 'booked' : 'done'}"><div><b>${esc(e.name)}</b> <span class="pill">${esc(e.about || 'Enquiry')}</span>
+      return `<div class="item enq ${e.status === 'new' ? 'booked' : 'done'}"><div><b>${esc(e.name)}</b> <span class="pill">${esc(e.about || 'Enquiry')}</span>${e.status === 'spam' ? ` <span class="pill">Flagged: ${esc(e.flag || 'spam')}</span>` : ''}
         <div class="meta">${esc(e.when_)} · wants a reply by <strong>${esc(e.reply || 'any')}</strong>${e.experience ? ' · ' + esc(e.experience) : ''}${e.when ? ' · best days: ' + esc(e.when) : ''}<br>
         ${e.phone ? `<a href="tel:${esc(e.phone)}">${esc(e.phone)}</a> · <a href="https://wa.me/${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}${e.phone && e.email ? ' · ' : ''}${e.email ? `<a href="mailto:${esc(e.email)}">${esc(e.email)}</a>` : ''}</div>
         ${e.message ? `<div class="msg">${esc(e.message)}</div>` : ''}</div>
-        <div class="acts"><button type="button" class="btn small ${e.status === 'new' ? '' : 'ghost'}" data-enqst="${esc(e.id)}" data-to="${e.status === 'new' ? 'done' : 'new'}">${e.status === 'new' ? 'Mark replied' : 'Move back to reply'}</button></div></div>`;
+        <div class="acts"><button type="button" class="btn small ${e.status === 'new' ? '' : 'ghost'}" data-enqst="${esc(e.id)}" data-to="${e.status === 'new' ? 'done' : 'new'}">${e.status === 'new' ? 'Mark replied' : e.status === 'spam' ? 'Not spam' : 'Move back to reply'}</button></div></div>`;
     }).join('');
   } catch (err) { box.innerHTML = `<p class="err">${esc(err.message)}</p>`; }
 }

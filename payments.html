@@ -1170,6 +1170,8 @@ a.tagc{text-decoration:none}
   var phEl=document.getElementById('phone'),phHint=document.getElementById('phoneHint'),phTouched=false;
   if(!phEl)return;
   var hum=window.wsHuman?window.wsHuman(document.querySelector('#enquiry [data-human]')):null;
+  /* A-100: time from first touching the form to sending it; a bot posting straight away is flagged, not emailed. */
+  var t0=0;document.getElementById('enquiry').addEventListener('focusin',function(){if(!t0)t0=Date.now()});
   function phoneState(){var r=checkPhone(phEl.value),rp=(document.getElementById('reply')||{}).value||'';
     phEl.classList.toggle('bad',phTouched&&!r.ok);phHint.className='fhint'+(phTouched?(r.ok?(/whatsapp|text/i.test(rp)&&r.mobile===false?' bad':' ok'):' bad'):'');
     phHint.textContent=!phTouched?'':!r.ok?r.why:(/whatsapp|text/i.test(rp)&&r.mobile===false)?'That looks like a landline. WhatsApp and texts need a mobile.':(r.mobile===null?'Looks right (a number outside the UK).':'Looks right: '+r.value);
@@ -1191,7 +1193,7 @@ a.tagc{text-decoration:none}
     if(!document.getElementById('okc').checked){err.textContent='Tick the box so we can contact you about your enquiry.';err.hidden=false;document.getElementById('okc').focus();return}
     var f=e.target,btn=f.querySelector('button[type=submit]'),v=function(i){return (document.getElementById(i)||{}).value||''};
     btn.disabled=true;btn.textContent='Sending…';
-    (hum?hum.token():Promise.resolve('')).then(function(tok){return fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({about:v('enq'),name:v('name'),phone:v('phone'),email:v('email'),reply:v('reply'),experience:v('exp'),when:v('when'),message:v('msg'),consent:true,website:v('hpw'),page:(window.__view?window.__view():'home'),cfToken:tok})})})
+    (hum?hum.token():Promise.resolve('')).then(function(tok){return fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({about:v('enq'),name:v('name'),phone:v('phone'),email:v('email'),reply:v('reply'),experience:v('exp'),when:v('when'),message:v('msg'),consent:true,website:v('hpw'),elapsed:t0?Date.now()-t0:0,page:(window.__view?window.__view():'home'),cfToken:tok})})})
       .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Something went wrong.');return j})})
       .then(function(){f.reset();if(hum)hum.reset();phTouched=false;phoneState();document.getElementById('ok').hidden=false;btn.textContent='Sent ✓';setTimeout(function(){btn.disabled=false;btn.textContent='Send enquiry'},4000)})
       .catch(function(x){if(hum)hum.reset();err.textContent=x.message+' You can also call us on 07904 032142.';err.hidden=false;btn.disabled=false;btn.textContent='Send enquiry'});

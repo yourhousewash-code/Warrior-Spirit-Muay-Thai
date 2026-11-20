@@ -231,10 +231,13 @@ function mailer() {
   return transport;
 }
 export const mailReady = () => !!mailer();
+export const MAIL_CAP = 300; // emails a day from the site
 export async function mail(to, subject, lines, opts = {}) {
   const t = mailer();
   const list = [].concat(to).filter(Boolean);
   if (!t || !list.length) { console.log('[mail skipped]', subject, list); return false; }
+  /* A-100 spending cap: a flood of sign-ups or resets can't use up the Gmail account's daily allowance (about 500). */
+  if (!(await rateLimit(`mail-day:${new Date().toISOString().slice(0, 10)}`, MAIL_CAP, 2 * 86400))) { console.error('[mail cap reached]', subject); return false; }
   const text = lines.join('\n');
   const html = `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111">${lines.map(l => l ? `<p style="margin:0 0 10px">${escapeHtml(l)}</p>` : '').join('')}<p style="margin:16px 0 0;color:#666;font-size:13px">${GYM}<br>${ADDRESS}</p></div>`;
   try {

@@ -6,7 +6,7 @@
    remembers the request, so the log line knows who is acting.
    Kept: one list per month (`audit:YYYY-MM`), 400 days; the nightly copy takes it off-site with everything else.
    Never kept: passwords (even scrambled), two-step secrets and codes, sign-in and reset links, calendar feed links, the
-   Google Drive key, and short-lived keys (rate limits, locks). Edits made directly in the Upstash console are not seen:
+   Google Drive key, short-lived keys (rate limits, locks) and the monthly spam counts. Edits made directly in the Upstash console are not seen:
    the rule is no console edits to live data.
    Read it with: node tools/action-log.mjs (see the file for filters). Nothing in the code deletes from it. */
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -17,7 +17,7 @@ export const KEEP_SECONDS = 400 * 86400;
 const MAX_CHARS = 200000;
 
 /* Keys that are short-lived or are themselves secrets: not logged at all. */
-const SKIP = [/^audit:/, /^rl:/, /^booklock:/, /^classlock:/, /^slotlock:/, /^reset:/, /^verify:/, /^coach:reset:/, /^coach:[^:]+:2fa:/, /^gdrive:state:/, /^gdrive:sync$/, /^calfeed:/, /^fb:timetable$/];
+const SKIP = [/^audit:/, /^rl:/, /^booklock:/, /^classlock:/, /^slotlock:/, /^reset:/, /^verify:/, /^coach:reset:/, /^coach:[^:]+:2fa:/, /^gdrive:state:/, /^gdrive:sync$/, /^calfeed:/, /^fb:timetable$/, /^spamcount:/];
 /* Keys whose value is a secret: the change is logged, the value isn't. */
 const HIDE_KEY = [/^coach:[^:]+:hash$/, /^coach:[^:]+:2fa$/, /^gdrive:refresh$/];
 /* Fields inside a record whose value is a secret. */

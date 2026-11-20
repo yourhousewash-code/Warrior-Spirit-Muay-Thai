@@ -172,3 +172,55 @@ test('a coach without a password of their own has no session (ends any made with
   db.kv.delete('coach:kian:hash');
   assert.ok(!(await call(auth, { method: 'GET', query: { action: 'coach-me' }, cookie })).json.coach, 'the session is refused');
 });
+
+// A-100: spam and bot layers on the enquiry form, sign-up and forgotten password (19 to 20 Nov 2026).
+const month = () => `spamcount:${new Date().toISOString().slice(0, 7)}`;
+
+test('enquiry layers: trap, too quick and sales pitches are kept out of the inbox; real ones go through', async () => {
+  keysOff();
+  const { blockedThisMonth } = await import('../api/_lib/spam.js');
+  const before = db.keys('enquiry:').length, was = await blockedThisMonth();
+  const body = (phone, extra) => ({ about: 'Free first class', name: 'Real Person', phone, reply: 'WhatsApp', consent: true, ...extra });
+  let r = await quiet(() => call(enquiry, { body: body('07700 900201', { website: 'http://bot.example', elapsed: 9000 }), ip: '198.51.100.60' }));
+  assert.equal(r.status, 200, 'a bot is told "sent"'); assert.equal(db.keys('enquiry:').length, before, 'and nothing is saved');
+  r = await quiet(() => call(enquiry, { body: body('07700 900202', { elapsed: 400 }), ip: '198.51.100.61' }));
+  assert.equal(r.status, 200);
+  r = await quiet(() => call(enquiry, { body: body('07700 900203', { elapsed: 8000, message: 'Hi, we offer SEO services to get you on the first page of Google.' }), ip: '198.51.100.62' }));
+  assert.equal(r.status, 200);
+  r = await quiet(() => call(enquiry, { body: body('07700 900204', { elapsed: 8000, message: 'Can my son try the kids class on Monday? I saw your website.' }), ip: '198.51.100.63' }));
+  assert.equal(r.status, 200);
+  assert.equal(db.keys('enquiry:').length, before + 3, 'flagged ones are kept, never deleted');
+  const now = await blockedThisMonth(), added = k => (now[k] || 0) - (was[k] || 0);
+  assert.equal(added('trap'), 1); assert.equal(added('fast'), 1); assert.equal(added('pitch'), 1);
+  const { redis } = await import('../api/_lib/core.js');
+  const all = await Promise.all(db.keys('enquiry:').map(k => redis.hgetall(k)));
+  const st = phone => all.find(e => e.phone.replace(/\D/g, '') === phone)?.status;
+  assert.equal(st('07700900202'), 'spam'); assert.equal(st('07700900203'), 'spam'); assert.equal(st('07700900204'), 'new', 'the real one waits for a reply');
+});
+
+test('enquiry layers: one phone or email can send three a day, then is asked to call', async () => {
+  keysOff();
+  const body = { about: 'PT', name: 'Keen Person', phone: '07700 900299', reply: 'WhatsApp', consent: true, elapsed: 8000 };
+  for (let i = 0; i < 3; i++) assert.equal((await quiet(() => call(enquiry, { body, ip: `198.51.100.${70 + i}` }))).status, 200);
+  const r = await quiet(() => call(enquiry, { body, ip: '198.51.100.79' }));
+  assert.equal(r.status, 429); assert.match(r.json.error, /call us/);
+});
+
+test('sales pitch check: flags pitches, leaves ordinary enquiries alone', async () => {
+  const { pitchReason } = await import('../api/_lib/spam.js');
+  for (const t of ['We can build you a new website design at a low price', 'Guest post opportunity on our blog', 'Dear business owner, increase your leads',
+    'Visit https://a.example and www.b.example for marketing', 'Bitcoin investment returns'])
+    assert.equal(pitchReason(t), 'sales pitch', t);
+  for (const t of ['Can I bring my daughter to the kids class?', 'I saw your website, how much is PT with Jay?', 'Dear Sir, I would like to book a free class for my son.',
+    'Is there parking? I work in marketing and finish at 6.', 'Do you do fight camps before a bout?', ''])
+    assert.equal(pitchReason(t), '', t);
+});
+
+test('sign-up and forgotten password: the hidden trap field stops bots before anything is saved or emailed', async () => {
+  keysOff();
+  const users = db.keys('user:').length, resets = db.keys('reset:').length;
+  let r = await quiet(() => call(auth, { query: { action: 'register' }, body: { name: 'Bot', mobile: '07700 900300', email: 'bot@example.com', password: 'longenough1', website: 'x' }, ip: '198.51.100.80' }));
+  assert.equal(r.status, 400); assert.equal(db.keys('user:').length, users, 'no account made');
+  r = await quiet(() => call(auth, { query: { action: 'forgot' }, body: { email: 'bot@example.com', website: 'x' }, ip: '198.51.100.81' }));
+  assert.equal(r.status, 200, 'told "sent" like everyone else'); assert.equal(db.keys('reset:').length, resets, 'no reset link made');
+});
