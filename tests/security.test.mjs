@@ -224,3 +224,17 @@ test('sign-up and forgotten password: the hidden trap field stops bots before an
   r = await quiet(() => call(auth, { query: { action: 'forgot' }, body: { email: 'bot@example.com', website: 'x' }, ip: '198.51.100.81' }));
   assert.equal(r.status, 200, 'told "sent" like everyone else'); assert.equal(db.keys('reset:').length, resets, 'no reset link made');
 });
+
+test('member and coach sign-in: refused without a good token when the check is on (A-100)', async () => {
+  keysOn(); cf.mode = 'ok';
+  let r = await call(auth, { query: { action: 'login' }, body: { email: 'nobody@example.com', password: 'whatever1' }, ip: '198.51.100.90' });
+  assert.equal(r.status, 403); assert.match(r.json.error, /couldn’t confirm/);
+  r = await call(auth, { query: { action: 'coach-login' }, body: { username: 'aaron', password: 'whatever1' }, ip: '198.51.100.91' });
+  assert.equal(r.status, 403);
+  r = await call(auth, { query: { action: 'login' }, body: { email: 'nobody@example.com', password: 'whatever1', cfToken: 'good-token' }, ip: '198.51.100.92' });
+  assert.equal(r.status, 401, 'with a good token it goes on to check the password');
+  cf.mode = 'down';
+  r = await quiet(() => call(auth, { query: { action: 'coach-login' }, body: { username: 'aaron', password: 'whatever1', cfToken: 'good-token' }, ip: '198.51.100.93' }));
+  assert.equal(r.status, 401, 'Cloudflare down: sign-in still works (the attempt limits still apply)');
+  cf.mode = 'ok'; keysOff();
+});
