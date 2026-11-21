@@ -249,6 +249,20 @@ Most urgent first.
 11. Later: online payments and memberships. Check-in and attendance (likely FighterBase).
 12. Optional: ~~an activity log of who changed what~~ (built 17 Nov 2026 as the action log, branch `action-log`). Vercel Pro for "one hour before" reminders. Pro would also lift the 12-function limit.
 
+## 10a. Automate it for the user (order A-116)
+
+What people do by hand on or around this site today, and what could do it for them. Cheapest and safest first. Agents never send messages, spend money or publish anything public without the right yes (`Batcave\Publishing rules.md`). Members' bookings, payments and reminders move to FighterBase, so they're left out here. Re-ranked monthly; new hand steps go in as soon as they're seen (A-117).
+
+| # | Done by hand today | Who | Kind | What could do it | Effort |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Replying to each website enquiry (free class times, what to bring, prices) by WhatsApp or phone | Jay | Do it for them | A ready-made reply drafted for each enquiry, opened in WhatsApp with one tap; Jay checks and sends. Later a managed agent that drafts it with the right class times | Small (drafts), medium (agent) |
+| 2 | Looking through the Spam list in case a real enquiry is there | Jay | Keep it working | A daily check of flagged enquiries that moves obvious real ones back to "To reply" and tells Jay | Small |
+| 3 | Checking the site still works: the form, links, speed, Google indexing | SRS | Keep it working | Turbo's monitor once the site is added (Wanted next 9), with a weekly test enquiry to Steve's own inbox (A-113) | Small, once added |
+| 4 | Writing news posts (results, gradings, events) and picking photos for them | Jay, coaches | Keep it moving | A managed agent drafts a post from FighterBase results and the newest Drive photos (resized, alt text written); Jay approves it in edit mode | Medium |
+| 5 | Choosing and placing new photos on the site | Owners | Keep it moving | Suggest the best new Drive photos for empty or old photo spots (the photo map knows every spot); one tap to accept | Medium |
+| 6 | Google profile posts, review replies and listings | Jay, SRS | Keep it moving | Turbo's Google tools and Turbo Link, once SRS has manager access (Wanted next 1) | Small, once access exists |
+| 7 | Changing wording or asking SRS for a change by phone | Owners | Do it for them | Edit mode already does wording and photos; next, a "Request a change" box on every item (handoff to the Site Factory, 21 Nov) that a managed agent can pick up | Medium |
+
 ## 11. Decisions log
 
 Dates come from the repo history and chats. "Chat, date not recorded" means the decision was made in conversation and the exact day was not kept.
@@ -312,6 +326,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 20 Nov 2026 | Order A-099 breach-ready: the whole history (154 commits, every branch) was scanned for secrets. **Lesson:** truffleHog's entropy and pattern checks did not find the old starting password; a simple rule for `password = "..."` style assignments did. Use a scanner with a generic password rule (for example gitleaks) for future scans. The scan also found an early coach access code (23 Oct, a page with nothing behind it, removed the same day); recorded in the breach log as Incident 2. Payment lessons P-010 to P-029 don't apply: the site takes no payments. |
 | 20 Nov 2026 | Order A-102: no solicitor checks on any list or gate until Steve says; Alfred reminds him at the public launch. |
 | 21 Nov 2026 | The Legal PA passed the bot-check privacy wording (20 Nov 01:34, with one change: say the club reads flagged enquiries). Added to the privacy page on `action-log`: a "Checking you're a person" section, a cookies line, and the attempt counts now kept "within a day" (the per-person enquiry limit lasts a day). The last change and the date go to the Legal PA at the release gate. The Legal PA also agreed Incident 2 isn't a personal data breach; Steve confirms the old code and password aren't used anywhere else. |
+| 21 Nov 2026 | Order A-116: "Automate it for the user" section added (10a), seven hand steps ranked. Order WS-014: the edit mode handoff for the Site Factory and Turbo written (`Businesses\SRS\warrior-spirit-handoff-2026-11-21-site-factory-edit-mode.md`), including what went wrong (saved edits can stop matching when source wording changes; edits shown only after JavaScript runs). |
 
 ## 12. Still to decide
 
