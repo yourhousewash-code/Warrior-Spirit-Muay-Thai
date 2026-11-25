@@ -324,6 +324,7 @@ Dates come from the repo history and chats. "Chat, date not recorded" means the 
 | 20 Nov 2026 | Order A-102: no solicitor checks on any list or gate until Steve says; Alfred reminds him at the public launch. |
 | 21 Nov 2026 | The Legal PA passed the bot-check privacy wording (20 Nov 01:34, with one change: say the club reads flagged enquiries). Added to the privacy page on `action-log`: a "Checking you're a person" section, a cookies line, and the attempt counts now kept "within a day" (the per-person enquiry limit lasts a day). The last change and the date go to the Legal PA at the release gate. The Legal PA also agreed Incident 2 isn't a personal data breach; Steve confirms the old code and password aren't used anywhere else. |
 | 21 Nov 2026 | Order A-116: "Automate it for the user" section added (10a), seven hand steps ranked. Order WS-014: the edit mode handoff for the Site Factory and Turbo written (`Businesses\SRS\warrior-spirit-handoff-2026-11-21-site-factory-edit-mode.md`), including what went wrong (saved edits can stop matching when source wording changes; edits shown only after JavaScript runs). |
+| 25 Nov 2026 | Sitemap dates now come from each page's last real change (`git log --no-merges`), so merging the release branch into the others no longer changes every date. Checked: a rebuild after the merge changes nothing on `fighterbase-plugin` or `cloudflare-move`. (A-117 "Simpler next time", 21 Nov.) |
 
 ## 12. Still to decide
 
