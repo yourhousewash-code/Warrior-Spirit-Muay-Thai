@@ -135,7 +135,7 @@ function page(v) {
 for (const v of starts) writeFileSync(v.key === 'home' ? 'index.html' : `${v.key}.html`, page(v));
 
 // sitemap with real last-changed dates (date of the last commit that touched each source)
-const day = f => { try { return execSync(`git log -1 --format=%cs -- ${f}`, { encoding: 'utf8' }).trim() || null; } catch { return null; } };
+const day = f => { try { return execSync(`git log -1 --no-merges --format=%cs -- ${f}`, { encoding: 'utf8' }).trim() || null; } catch { return null; } };
 const today = new Date().toISOString().slice(0, 10);
 const tpl = day('site-src/index.html') || today;
 const list = [
