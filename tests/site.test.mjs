@@ -79,3 +79,13 @@ test('team and private files stay off the live site', () => {
   const ignore = readFileSync('.vercelignore', 'utf8').split(/\r?\n/).map(s => s.trim());
   for (const x of ['docs', 'handoffs', 'STATUS.md', 'CLAUDE.md', 'parked', 'site-src', 'tools', 'tests', '.claude']) assert.ok(ignore.includes(x), `.vercelignore is missing ${x}`);
 });
+
+test('sitemap dates come from each page\'s last real change, never from a merge (WS-015)', async () => {
+  const { execSync } = await import('node:child_process');
+  const real = f => execSync(`git log -1 --no-merges --format=%cs -- ${f}`, { encoding: 'utf8' }).trim();
+  const map = readFileSync('sitemap.xml', 'utf8');
+  const lastmod = p => (map.match(new RegExp(`<loc>[^<]*${p}</loc><lastmod>([^<]+)</lastmod>`)) || [])[1];
+  assert.equal(lastmod('/privacy'), real('privacy.html'), 'the privacy page keeps the date of its own last change');
+  assert.equal(lastmod('/classes'), real('site-src/index.html'), 'section pages take the date of the source page');
+  assert.match(readFileSync('tools/build-pages.mjs', 'utf8'), /git log -1 --no-merges/, 'the build skips merge commits');
+});
